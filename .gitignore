@@ -46,6 +46,8 @@ playwright-report/
 *.log
 
 # BMAD: keep shared framework, skills, plans and documentation
+# .agents/skills is a byte-identical copy of .claude/skills - only track the latter
+.agents/
 _bmad/config.user.toml
 _bmad/custom/*.user.toml
 _bmad/render/
