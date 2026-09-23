@@ -46,8 +46,9 @@ playwright-report/
 *.log
 
 # BMAD: keep shared framework, skills, plans and documentation
-# .agents/skills is a byte-identical copy of .claude/skills - only track the latter
-#.agents/
+# .agents/skills (Codex) and .claude/skills (Claude Code) hold the same skills for
+# two harnesses. Both are tracked on purpose, so the whole group shares one agent
+# setup. Only machine-local settings are ignored below.
 _bmad/config.user.toml
 _bmad/custom/*.user.toml
 _bmad/render/
