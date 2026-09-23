@@ -1,0 +1,19 @@
+# Normalize all text files to LF in the repository.
+# The working tree still follows core.autocrlf, so Windows checkouts get CRLF.
+# This keeps the repo consistent no matter how each member has Git configured.
+* text=auto
+
+# Must be LF in the working tree too - these run on Linux (CI, WSL, containers)
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Never convert binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.zip binary
