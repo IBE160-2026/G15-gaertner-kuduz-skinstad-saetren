@@ -19,7 +19,6 @@ Den felles briefen inneholder ingen markedstall eller eksterne kilder. Materiale
 
 - Norsk helseregion, 3 000+ ansatte: manuell turnusprosess tok flere dager per måned, opptil 40 timer månedlig per avdeling. Planleggere måtte samtidig ta hensyn til kompetanse, arbeidsbelastning, ansattpreferanser, lovkrav og kontinuitet i pasientbehandlingen.
   [aien.no — AI revolusjonerer turnusplanlegging i helsevesenet](https://www.aien.no/case-studies/healthcare-scheduling)
-- Trøndelag politidistrikt: fire ansatte arbeider utelukkende med oppsett av vaktlag. *(Observasjon oppgitt av Johan — bør bekreftes med kilde før den brukes i innlevering.)*
 - Internasjonalt: ett enkelt forfall tilsvarte tradisjonelt rundt 30 minutter med telefonrunder.
   [indeavor.com — Frontline Absence Management](https://www.indeavor.com/blog/frontline-absence-management-best-practices/)
 
