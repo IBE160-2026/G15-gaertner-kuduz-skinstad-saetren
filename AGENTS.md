@@ -1,5 +1,5 @@
 <!-- bmad:context -->
-<!-- Verifisert 2026-09-23 mot 7e70b89. Vedlikeholdes av bmad-project-context;
+<!-- Verifisert 2026-09-23 mot 98f3536. Vedlikeholdes av bmad-project-context;
      endringer inne i denne blokka blir erstattet ved refresh.
      Behold det du vil ta vare på utenfor markørene. -->
 
@@ -21,8 +21,13 @@ er `product-brief.md` i roten.
   avveininger mellom kandidater som regelmotoren allerede har godkjent.
 - Aldri skriv API-nøkler i kildekode. Les dem fra miljøvariabler, og dokumenter nye
   variabler i `.env.example` uten verdier.
-- Hver commit bærer én `KI:`-trailer med verdien `generert`, `generert-rettet`
-  eller `manuell`. Måtte KI-generert kode rettes, si i brødteksten hva som var galt.
+- Endrer commiten filer fra tidligere arbeid, si i brødteksten hvorfor: snudd
+  beslutning, en utsatt avgjørelse som kom til forfall, eller feil oppdaget i
+  ettertid. Det står ikke i diffen og kan ikke rekonstrueres senere.
+- Måtte generert kode rettes, si i brødteksten hva som var galt. Det er
+  dokumentasjonen av kvalitetssikring emnet ber om.
+- Går arbeidet i branch, er PR-gjennomgangen kvalitetssikringen. Den enkelte er
+  ansvarlig for gjennomgangen av eget arbeid.
 - Kode generert av KI logges i `docs/ki-logg/<dato>-<tema>.md`: oppgaven, prompten,
   hva modellen leverte, hva som ble rettet og hvorfor, og hvordan resultatet er
   kvalitetssikret. Emnet vurderer denne dokumentasjonen.
@@ -46,8 +51,8 @@ er `product-brief.md` i roten.
   de faktiske kommandoene for installasjon, kjøring og test her. Ikke gjett dem.
 - TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som
   de lokale kommandoene ikke dekker.
-- Hent ut KI-dokumentasjonen ved innlevering:
-  `git log --format='%h %s | %(trailers:key=KI,valueonly)'`
+- Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering
+  ligger i `docs/ki-logg/README.md`. Ikke skriv dem på nytt.
 
 ## Konvensjoner som avviker fra standard
 
