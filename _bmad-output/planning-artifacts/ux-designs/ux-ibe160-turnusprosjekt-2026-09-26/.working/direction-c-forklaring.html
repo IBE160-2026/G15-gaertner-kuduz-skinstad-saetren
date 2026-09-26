@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<title>Turnushjelperen — Retning C</title>
+<!--
+  RETNING C: «FORKLARINGSDREVET / MODERNE TEKNISK»
+  Rasjonale: Prosjektets kjernedifferensiator er den KI-genererte avveiningen (§4.5), ikke selve
+  rangeringstallet — derfor gjør denne retningen "hvorfor" til hovedinnholdet visuelt: hard
+  data (kostnad/belastning) vises kompakt øverst i hvert kort, mens begrunnelsen får en tydelig
+  merket, romslig panel-seksjon nedenfor med eksplisitte pluss/minus-punkter. Mørk, rolig
+  tech-estetikk signaliserer "presist system", og et lite AI-merke skiller alltid KI-tekst fra
+  deterministiske tall — reflekterer §4.5 sitt krav om at KI aldri skal fremstå som å bestemme.
+-->
+<style>
+/*
+  FARGEPALETT — Retning C (Forklaringsdrevet)
+  --bg-app:       #10151c   (mørk appbakgrunn)
+  --bg-panel:     #171d26   (kortbakgrunn)
+  --bg-panel2:    #1d242f   (forklaringspanel, litt lysere for å skille fra kortet)
+  --border:       #2a3441   (kantlinjer)
+  --text-main:    #e8ecf1   (primær tekst, nesten hvit)
+  --text-mute:    #8b97a8   (sekundær tekst)
+  --accent:       #6c8cff   (elektrisk blå — rangeringstall, lenker)
+  --accent-soft:  #24304a   (bakgrunn for aksent-merker)
+  --ai-badge:     #a684ff   (lilla — markerer alt KI-generert innhold, konsekvent i hele appen)
+  --ok:           #4ad0a0   (grønn — "trekker opp" / ordinær sats)
+  --down:         #ff8a80   (korall-rød — "trekker ned" / overtid, dempet, ikke alarmrød)
+  --amber:        #ffc669   (varsel — nær grense arbeidsbelastning)
+*/
+:root{
+  --bg-app:#10151c; --bg-panel:#171d26; --bg-panel2:#1d242f; --border:#2a3441;
+  --text-main:#e8ecf1; --text-mute:#8b97a8; --accent:#6c8cff; --accent-soft:#24304a;
+  --ai-badge:#a684ff; --ok:#4ad0a0; --down:#ff8a80; --amber:#ffc669;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; padding:32px; background:#05070a; display:flex; justify-content:center;
+  font-family:"Segoe UI", system-ui, Arial, sans-serif; color:var(--text-main);
+}
+.browser{
+  width:1120px; background:var(--bg-app); border-radius:12px; overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.55); border:1px solid #232b36;
+}
+.chrome{background:#0c1016; padding:9px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #232b36;}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dot.r{background:#4a3436;} .dot.y{background:#4a4434;} .dot.g{background:#324a3a;}
+.urlbar{margin-left:10px; background:#151b24; border:1px solid #2a3441; border-radius:6px; padding:5px 12px; font-size:11.5px; color:var(--text-mute); flex:1; font-family:Consolas,monospace;}
+.appbar{padding:16px 28px 6px; display:flex; justify-content:space-between; align-items:center;}
+.brand{font-size:15px; font-weight:700; letter-spacing:.4px;}
+.brand span{color:var(--accent);}
+.user{font-size:11.5px; color:var(--text-mute);}
+.content{padding:10px 28px 30px;}
+.vaktbox{display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; margin:10px 0 22px;}
+.vaktbox h1{font-size:15.5px; margin:0 0 4px; font-weight:600;}
+.vaktbox .meta{font-size:11.5px; color:var(--text-mute);}
+.req-chip{background:var(--accent-soft); color:var(--accent); border-radius:6px; padding:6px 13px; font-size:11.5px; font-weight:700;}
+.hint{font-size:12px; color:var(--text-mute); margin-bottom:16px;}
+.hint b{color:var(--text-main);}
+
+.card{background:var(--bg-panel); border:1px solid var(--border); border-radius:12px; margin-bottom:16px; overflow:hidden;}
+.card.top{border-color:var(--accent);}
+.card-head{display:flex; justify-content:space-between; align-items:center; padding:14px 20px; gap:16px;}
+.who{display:flex; align-items:center; gap:12px;}
+.rank-badge{width:30px; height:30px; border-radius:8px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;}
+.card.top .rank-badge{background:var(--accent); color:#0c1016;}
+.name{font-size:15px; font-weight:700;}
+.role{font-size:11px; color:var(--text-mute);}
+.metrics{display:flex; gap:18px;}
+.metric{text-align:right;}
+.metric .k{font-size:9.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-mute);}
+.metric .v{font-size:12.5px; font-weight:700;}
+.metric.ord .v{color:var(--ok);} .metric.ot .v{color:var(--down);} .metric.warn .v{color:var(--amber);}
+
+.ai-panel{background:var(--bg-panel2); border-top:1px solid var(--border); padding:16px 20px 18px;}
+.ai-label{display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:.4px; color:var(--ai-badge); text-transform:uppercase; margin-bottom:10px;}
+.ai-dot{width:6px; height:6px; border-radius:50%; background:var(--ai-badge);}
+.reason-grid{display:flex; gap:22px; margin-bottom:10px;}
+.reason-col{flex:1;}
+.reason-col .h{font-size:10.5px; font-weight:700; margin-bottom:5px;}
+.reason-col.up .h{color:var(--ok);}
+.reason-col.down .h{color:var(--down);}
+.reason-col ul{margin:0; padding-left:16px; font-size:12px; line-height:1.55; color:#cbd3dd;}
+.conclusion{font-size:12.5px; line-height:1.6; color:var(--text-main); border-top:1px dashed var(--border); padding-top:10px; margin-top:4px;}
+.conclusion b{color:var(--ai-badge);}
+.pref-note{font-size:11px; color:var(--text-mute); margin-top:8px;}
+.pref-note b{color:#cbd3dd;}
+
+.collapsed-panel{background:var(--bg-panel2); border-top:1px solid var(--border); padding:10px 20px; font-size:11.5px; color:var(--ai-badge); font-weight:600; display:flex; justify-content:space-between; align-items:center;}
+.collapsed-panel .prev{color:var(--text-mute); font-weight:400; font-style:italic;}
+
+.excluded{margin-top:8px; padding:14px 20px; background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; font-size:11.5px; color:var(--text-mute);}
+.excluded b{color:var(--text-main);}
+
+.empty-section{margin-top:30px;}
+.empty-title{font-size:11.5px; color:var(--text-mute); margin-bottom:10px; text-align:center;}
+.empty-card{max-width:600px; margin:0 auto; background:var(--bg-panel); border:1px dashed var(--border); border-radius:12px; padding:28px; text-align:center;}
+.empty-icon{width:48px; height:48px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:20px; font-weight:800;}
+.empty-card h3{margin:0 0 8px; font-size:14.5px;}
+.empty-card p{margin:0; font-size:12px; color:var(--text-mute); line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="browser">
+  <div class="chrome">
+    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+    <div class="urlbar">turnushjelperen.no/vakt/4127/kandidater</div>
+  </div>
+  <div class="appbar">
+    <div class="brand">Turnus<span>hjelperen</span></div>
+    <div class="user">Kari Vestby · Kirurgisk sengepost</div>
+  </div>
+
+  <div class="content">
+    <div class="vaktbox">
+      <div>
+        <h1>Dagvakt, kirurgisk sengepost — trenger ny bemanning</h1>
+        <div class="meta">I morgen 27.09.2026 · 07:00–15:00 · Silje Amundsen sykemeldt</div>
+      </div>
+      <div class="req-chip">Kompetansekrav: Kvalifisert</div>
+    </div>
+    <div class="hint"><b>4 gyldige kandidater</b> av 25 ansatte. Begrunnelsen under hvert navn viser nøyaktig hva som talte for og imot — regelfiltrering og kostnad er alltid beregnet deterministisk, KI forklarer bare.</div>
+
+    <div class="card top">
+      <div class="card-head">
+        <div class="who">
+          <div class="rank-badge">1</div>
+          <div><div class="name">Ingrid Dahl</div><div class="role">Sykepleier · Fullt kvalifisert</div></div>
+        </div>
+        <div class="metrics">
+          <div class="metric ord"><div class="k">Kostnad</div><div class="v">Ordinær kr 385/t</div></div>
+          <div class="metric"><div class="k">Belastning</div><div class="v">32,5 t/uke</div></div>
+        </div>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-label"><span class="ai-dot"></span>KI-forklaring</div>
+        <div class="reason-grid">
+          <div class="reason-col up">
+            <div class="h">Trekker opp</div>
+            <ul><li>Fullt kvalifisert for vakttypen</li><li>Ordinær timesats, ingen overtid</li><li>Lav arbeidsbelastning denne uken</li></ul>
+          </div>
+          <div class="reason-col down">
+            <div class="h">Trekker ned</div>
+            <ul><li>Ingen forhold av betydning</li></ul>
+          </div>
+        </div>
+        <div class="conclusion"><b>Konklusjon:</b> Rangeres øverst fordi kostnad, kompetanse og belastning peker samme vei.</div>
+        <div class="pref-note"><b>Registrert preferanse:</b> «Ønsker gjerne flere vakter denne perioden.»</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="who">
+          <div class="rank-badge">2</div>
+          <div><div class="name">Jonas Bakke</div><div class="role">Sykepleier · Kvalifisert (nær fullt)</div></div>
+        </div>
+        <div class="metrics">
+          <div class="metric ot"><div class="k">Kostnad</div><div class="v">Overtid kr 578/t</div></div>
+          <div class="metric"><div class="k">Belastning</div><div class="v">26 t/uke</div></div>
+        </div>
+      </div>
+      <div class="collapsed-panel">
+        <span><span class="ai-dot" style="display:inline-block;"></span> KI-forklaring (sammenslått) — <span class="prev">"Rangeres over nr. 3 og 4 selv om overtid koster mer, fordi kompetansen er nærmest full kvalifisering…"</span></span>
+        <span>Vis alt ▾</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="who">
+          <div class="rank-badge">3</div>
+          <div><div class="name">Mette Solberg</div><div class="role">Sykepleier · Fullt kvalifisert</div></div>
+        </div>
+        <div class="metrics">
+          <div class="metric ord"><div class="k">Kostnad</div><div class="v">Ordinær kr 385/t</div></div>
+          <div class="metric warn"><div class="k">Belastning</div><div class="v">44 t/uke</div></div>
+        </div>
+      </div>
+      <div class="collapsed-panel">
+        <span><span class="ai-dot" style="display:inline-block;"></span> KI-forklaring (sammenslått) — <span class="prev">"Trekkes ned av høy arbeidsbelastning og eget ønske om færre vakter, til tross for lav kostnad…"</span></span>
+        <span>Vis alt ▾</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="who">
+          <div class="rank-badge">4</div>
+          <div><div class="name">Thomas Nygård</div><div class="role">Sykepleier · Delvis opplært</div></div>
+        </div>
+        <div class="metrics">
+          <div class="metric ord"><div class="k">Kostnad</div><div class="v">Ordinær kr 350/t</div></div>
+          <div class="metric"><div class="k">Belastning</div><div class="v">30 t/uke</div></div>
+        </div>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-label"><span class="ai-dot"></span>KI-forklaring</div>
+        <div class="reason-grid">
+          <div class="reason-col up"><div class="h">Trekker opp</div><ul><li>Billigst i timesats av alle gyldige kandidater</li></ul></div>
+          <div class="reason-col down"><div class="h">Trekker ned</div><ul><li>Lengst fra full kvalifisering for denne vakttypen</li><li>Ingen registrert preferanse å vekte inn</li></ul></div>
+        </div>
+        <div class="conclusion"><b>Konklusjon:</b> Rangeres sist blant de gyldige — billigst alene er ikke nok til å veie opp for kompetanseavstanden.</div>
+      </div>
+    </div>
+
+    <div class="excluded"><b>21 ansatte utelukket av harde regler</b> — vises aldri her og kan aldri nevnes av KI-forklaringen (testbar invariant, SM-2).</div>
+
+    <div class="empty-section">
+      <div class="empty-title">Tilstandsvariant — ingen gyldige kandidater (nattevakt 28.09)</div>
+      <div class="empty-card">
+        <div class="empty-icon">Ø</div>
+        <h3>Ingen gyldige kandidater funnet</h3>
+        <p>Regelmotoren har kjørt ferdig — alle 25 ansatte er utelukket av kompetansekrav, kolliderende vakter eller hviletidsreglene. Dette er et fullstendig resultat, ikke en lastefeil. KI genererer ingen forklaring her, fordi det ikke finnes noe gyldig grunnlag å forklare.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

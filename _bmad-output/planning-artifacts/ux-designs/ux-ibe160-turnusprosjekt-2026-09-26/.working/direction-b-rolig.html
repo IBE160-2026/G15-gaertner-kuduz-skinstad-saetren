@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<title>Turnushjelperen — Retning B</title>
+<!--
+  RETNING B: «ROLIG OG MENNESKELIG»
+  Rasjonale: Kari tar denne beslutningen i en presset situasjon og skal kunne stå inne for den
+  overfor et menneske (den ansatte som får vakten) — denne retningen bruker luftige kort, varme
+  jordfarger og tydelig typografisk hierarki fremfor tabellrader, slik at det føles som en rolig
+  samtale om et menneskelig valg, ikke et regneark. Fortsatt profesjonelt: ingen lekne ikoner,
+  ingen chat-bobler, bare god plass og lesbarhet under tidspress.
+-->
+<style>
+/*
+  FARGEPALETT — Retning B (Rolig / Humant)
+  --bg-app:      #faf6f0   (varm off-white bakgrunn)
+  --bg-card:     #ffffff   (kortbakgrunn)
+  --bg-header:   #f3ece1   (topplinje, sand)
+  --border:      #e7ddd0   (svake kortkanter)
+  --text-main:   #362f27   (varm mørk brun-grå, ikke svart)
+  --text-mute:   #83766a   (sekundær tekst)
+  --accent:      #c1694f   (terrakotta — primær aksent, rangering-badge)
+  --accent-soft: #f1ddd4   (lys terrakotta bakgrunn)
+  --sage:        #7c9473   (salvie-grønn — positive signaler/preferanser)
+  --sage-soft:   #e6ecdf   (lys salvie bakgrunn)
+  --amber:       #b8863a   (varm oker — overtid, uten å signalisere «feil»)
+  --amber-soft:  #f4e9d6
+*/
+:root{
+  --bg-app:#faf6f0; --bg-card:#ffffff; --bg-header:#f3ece1; --border:#e7ddd0;
+  --text-main:#362f27; --text-mute:#83766a; --accent:#c1694f; --accent-soft:#f1ddd4;
+  --sage:#7c9473; --sage-soft:#e6ecdf; --amber:#b8863a; --amber-soft:#f4e9d6;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; padding:32px; background:#e9e2d6; display:flex; justify-content:center;
+  font-family:"Segoe UI", "Helvetica Neue", Arial, sans-serif; color:var(--text-main);
+}
+.browser{
+  width:1100px; background:#fff; border-radius:14px; overflow:hidden;
+  box-shadow:0 14px 40px rgba(60,45,25,.22);
+}
+.chrome{
+  background:#efe7db; padding:10px 16px; display:flex; align-items:center; gap:8px;
+}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dot.r{background:#e8a08c;} .dot.y{background:#e9cf8f;} .dot.g{background:#a9c199;}
+.urlbar{
+  margin-left:10px; background:#fff; border:1px solid #e0d5c4; border-radius:20px;
+  padding:5px 14px; font-size:11.5px; color:#8a7c6c; flex:1;
+}
+.appbar{
+  background:var(--bg-header); padding:18px 30px; display:flex; justify-content:space-between; align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.appbar .brand{font-size:19px; font-weight:600; color:var(--text-main); letter-spacing:.2px;}
+.appbar .user{font-size:12.5px; color:var(--text-mute);}
+.content{padding:30px 34px 36px; background:var(--bg-app);}
+.vaktbox{
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; gap:20px;
+}
+.vaktbox h1{font-size:21px; font-weight:600; margin:0 0 6px;}
+.vaktbox .meta{font-size:13px; color:var(--text-mute);}
+.req-badge{
+  background:var(--accent-soft); color:var(--accent); padding:8px 16px; border-radius:20px;
+  font-size:12.5px; font-weight:600; white-space:nowrap;
+}
+.section-title{font-size:13.5px; color:var(--text-mute); margin:0 0 14px; font-weight:500;}
+.card{
+  background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:20px 24px;
+  margin-bottom:16px; display:flex; gap:20px; align-items:flex-start;
+  box-shadow:0 2px 6px rgba(60,45,25,.05);
+}
+.card.top{border:1.5px solid var(--accent); box-shadow:0 4px 14px rgba(193,105,79,.15);}
+.avatar{
+  width:52px; height:52px; border-radius:50%; background:var(--accent-soft); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; flex-shrink:0;
+}
+.card.top .avatar{background:var(--accent); color:#fff;}
+.card-body{flex:1;}
+.card-top-row{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;}
+.rank-name{display:flex; align-items:baseline; gap:10px;}
+.rank-num{font-size:13px; color:var(--accent); font-weight:700;}
+.name{font-size:16.5px; font-weight:600;}
+.role{font-size:12px; color:var(--text-mute); margin-top:2px;}
+.stats{display:flex; gap:10px; flex-wrap:wrap;}
+.stat{
+  background:#f7f3ec; border-radius:10px; padding:7px 13px; font-size:12px; color:var(--text-main);
+  display:flex; flex-direction:column; gap:1px; min-width:108px;
+}
+.stat .k{color:var(--text-mute); font-size:10.5px; text-transform:uppercase; letter-spacing:.3px;}
+.stat .v{font-weight:600;}
+.stat.ord .v{color:var(--sage);}
+.stat.ot .v{color:var(--amber);}
+.pref-tag{
+  display:inline-block; background:var(--sage-soft); color:#4d6146; border-radius:20px; padding:4px 12px;
+  font-size:11.5px; margin-top:10px; font-weight:500;
+}
+.explain{
+  margin-top:12px; background:#fbf8f3; border-left:3px solid var(--accent); border-radius:0 10px 10px 0;
+  padding:10px 16px; font-size:12.5px; line-height:1.6; color:#4b4238;
+}
+.explain b{color:var(--text-main);}
+.explain-collapsed{
+  margin-top:10px; font-size:12px; color:var(--accent); font-weight:600; cursor:default;
+}
+.excluded{
+  margin-top:22px; background:#f4efe6; border-radius:14px; padding:16px 22px; font-size:12.5px; color:var(--text-mute);
+}
+.excluded b{color:var(--text-main);}
+.empty-wrap{margin-top:36px;}
+.empty-card{
+  background:var(--bg-card); border:1px dashed var(--border); border-radius:18px; padding:34px;
+  text-align:center; max-width:560px; margin:0 auto;
+}
+.empty-icon{
+  width:56px; height:56px; border-radius:50%; background:var(--amber-soft); color:var(--amber);
+  display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 14px; font-weight:700;
+}
+.empty-card h3{margin:0 0 8px; font-size:16px;}
+.empty-card p{margin:0; font-size:13px; color:var(--text-mute); line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="browser">
+  <div class="chrome">
+    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+    <div class="urlbar">turnushjelperen.no/vakt/4127</div>
+  </div>
+  <div class="appbar">
+    <div class="brand">Turnushjelperen</div>
+    <div class="user">Kari Vestby · Kirurgisk sengepost</div>
+  </div>
+
+  <div class="content">
+    <div class="vaktbox">
+      <div>
+        <h1>Vakt som må bemannes: Dagvakt, kirurgisk sengepost</h1>
+        <div class="meta">I morgen, lørdag 27.09 · kl. 07:00–15:00 · Silje Amundsen har meldt seg syk</div>
+      </div>
+      <div class="req-badge">Krever: Kvalifisert sykepleier</div>
+    </div>
+
+    <p class="section-title">4 av 25 ansatte er gyldige kandidater for denne vakten. Her er de rangert.</p>
+
+    <div class="card top">
+      <div class="avatar">ID</div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div class="rank-name"><span class="rank-num">Nr. 1</span><div><div class="name">Ingrid Dahl</div><div class="role">Sykepleier · 6 år på avdelingen</div></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat ord"><span class="k">Kostnad</span><span class="v">Ordinær · kr 385/t</span></div>
+          <div class="stat"><span class="k">Arbeidsbelastning</span><span class="v">32,5 t denne uken</span></div>
+          <div class="stat"><span class="k">Kompetanse</span><span class="v">Fullt kvalifisert</span></div>
+        </div>
+        <span class="pref-tag">Har sagt hun gjerne tar flere vakter nå</span>
+        <div class="explain"><b>Hvorfor øverst:</b> Full kompetanse for vakttypen, vanlig timesats, lav belastning denne uken — og hun har selv uttrykt ønske om flere vakter. Ingen motstridende hensyn.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="avatar">JB</div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div class="rank-name"><span class="rank-num">Nr. 2</span><div><div class="name">Jonas Bakke</div><div class="role">Sykepleier · 3 år på avdelingen</div></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat ot"><span class="k">Kostnad</span><span class="v">Overtid · kr 578/t</span></div>
+          <div class="stat"><span class="k">Arbeidsbelastning</span><span class="v">26 t denne uken</span></div>
+          <div class="stat"><span class="k">Kompetanse</span><span class="v">Kvalifisert (nær fullt)</span></div>
+        </div>
+        <span class="pref-tag">Fleksibel på vakter</span>
+        <div class="explain-collapsed">Se begrunnelse ›</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="avatar">MS</div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div class="rank-name"><span class="rank-num">Nr. 3</span><div><div class="name">Mette Solberg</div><div class="role">Sykepleier · 9 år på avdelingen</div></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat ord"><span class="k">Kostnad</span><span class="v">Ordinær · kr 385/t</span></div>
+          <div class="stat"><span class="k">Arbeidsbelastning</span><span class="v">44 t denne uken</span></div>
+          <div class="stat"><span class="k">Kompetanse</span><span class="v">Fullt kvalifisert</span></div>
+        </div>
+        <span class="pref-tag" style="background:var(--amber-soft); color:#7a5a1e;">Har bedt om færre vakter fremover</span>
+        <div class="explain-collapsed">Se begrunnelse ›</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="avatar">TN</div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div class="rank-name"><span class="rank-num">Nr. 4</span><div><div class="name">Thomas Nygård</div><div class="role">Sykepleier · 1 år på avdelingen</div></div></div>
+        </div>
+        <div class="stats">
+          <div class="stat ord"><span class="k">Kostnad</span><span class="v">Ordinær · kr 350/t (billigst)</span></div>
+          <div class="stat"><span class="k">Arbeidsbelastning</span><span class="v">30 t denne uken</span></div>
+          <div class="stat"><span class="k">Kompetanse</span><span class="v">Delvis opplært</span></div>
+        </div>
+        <div class="explain"><b>Hvorfor sist:</b> Billigst i timesats, men lengst unna full kompetanse for denne vakttypen blant de gyldige kandidatene — derfor rangert nederst selv om kostnaden isolert sett er lavest.</div>
+      </div>
+    </div>
+
+    <div class="excluded">
+      <b>21 ansatte er ikke aktuelle</b> for denne vakten — de er automatisk filtrert bort fordi de mangler kompetanse, har en kolliderende vakt, eller ville brutt hviletidsreglene. Du trenger ikke sjekke dem manuelt.
+    </div>
+
+    <div class="empty-wrap">
+      <p class="section-title" style="text-align:center;">Tilstandsvariant: samme skjerm når ingen kandidater er gyldige (nattevakt 28.09)</p>
+      <div class="empty-card">
+        <div class="empty-icon">–</div>
+        <h3>Ingen gyldige kandidater akkurat nå</h3>
+        <p>Alle 25 ansatte er filtrert bort av kompetansekrav, kolliderende vakter eller hviletidsreglene. Dette er et fullført resultat, ikke en feil. Vurder å dele opp vakten eller hente inn hjelp utenfor turnusen.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

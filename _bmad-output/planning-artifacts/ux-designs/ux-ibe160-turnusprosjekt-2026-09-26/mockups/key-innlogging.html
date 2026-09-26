@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<title>Turnushjelperen — Innlogging</title>
+<!--
+  NØKKELSKJERM: INNLOGGING
+  Illustrerer FR-13 (enkel brukernavn/passord-innlogging, én rolle — Turnusansvarlig, ingen andre roller i v1).
+  Har ingen presedens i direction-a-fagsystem.html, så skjemaet er holdt minimalt og nøkternt for å ikke
+  introdusere et nytt visuelt språk: samme fargetokens, appbar-stil og «browser chrome»-innramming videreføres.
+-->
+<style>
+/*
+  FARGEPALETT — videreført fra Retning A (Fagsystem), uendret
+  --bg-app:#eef1f4 --bg-panel:#ffffff --bg-header:#16324a --border:#c7d0d9
+  --text-main:#1b2733 --text-mute:#5b6b7a --accent:#16324a --ok:#1f7a4d
+  --warn:#a15a00 --danger:#8c2f2f --row-alt:#f5f7f9 --tag-bg:#e7ecf1
+*/
+:root{
+  --bg-app:#eef1f4; --bg-panel:#ffffff; --bg-header:#16324a; --border:#c7d0d9;
+  --text-main:#1b2733; --text-mute:#5b6b7a; --accent:#16324a; --ok:#1f7a4d;
+  --warn:#a15a00; --danger:#8c2f2f; --row-alt:#f5f7f9; --tag-bg:#e7ecf1;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; padding:32px; background:#d7dde3;
+  font-family:"Segoe UI", Arial, sans-serif; color:var(--text-main);
+  display:flex; justify-content:center;
+}
+.browser{
+  width:1180px; background:#fff; border-radius:8px; overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.25); border:1px solid #b6bec6;
+}
+.chrome{
+  background:#dde2e7; padding:9px 14px; display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid #b6bec6;
+}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dot.r{background:#e8635a;} .dot.y{background:#e8b93f;} .dot.g{background:#3fae5a;}
+.urlbar{
+  margin-left:10px; background:#fff; border:1px solid #c2c9d0; border-radius:5px;
+  padding:4px 10px; font-size:11.5px; color:#55606a; flex:1; font-family:Consolas,monospace;
+}
+.appbar{
+  background:var(--bg-header); color:#fff; padding:12px 22px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.appbar .brand{font-size:14.5px; font-weight:700; letter-spacing:.3px;}
+.appbar .user{font-size:12px; color:#b9c7d4;}
+.content{
+  padding:64px 22px 84px; background:var(--bg-app); min-height:520px;
+  display:flex; justify-content:center;
+}
+.login-card{
+  width:360px; background:var(--bg-panel); border:1px solid var(--border); border-radius:4px;
+  padding:28px 30px 24px; height:fit-content;
+}
+.login-card h1{font-size:16px; margin:0 0 4px; font-weight:700;}
+.login-card .sub{font-size:12px; color:var(--text-mute); margin:0 0 22px; line-height:1.5;}
+.field{margin-bottom:16px;}
+.field label{
+  display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+  color:var(--text-mute); margin-bottom:5px;
+}
+.field input{
+  width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:3px;
+  font-size:13px; font-family:inherit; color:var(--text-main); background:#fff;
+}
+.field input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+.btn-primary{
+  width:100%; background:var(--accent); color:#fff; border:none; border-radius:3px;
+  padding:11px 0; font-size:13px; font-weight:700; letter-spacing:.2px; margin-top:6px; cursor:default;
+}
+.role-note{
+  margin-top:18px; padding:9px 12px; background:var(--tag-bg); border:1px solid var(--border);
+  border-radius:3px; font-size:11.5px; color:var(--text-mute); line-height:1.5;
+}
+.role-note b{color:var(--text-main);}
+.scope-note{font-size:10.5px; color:var(--text-mute); margin-top:14px; text-align:center; line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="browser">
+  <div class="chrome">
+    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+    <div class="urlbar">turnushjelperen.no/logg-inn</div>
+  </div>
+  <div class="appbar">
+    <div class="brand">TURNUSHJELPEREN</div>
+    <div class="user">Ikke innlogget</div>
+  </div>
+
+  <div class="content">
+    <div class="login-card">
+      <h1>Logg inn</h1>
+      <p class="sub">Beslutningsstøtte for gjenbemanning av vakter. Kun for turnusansvarlig.</p>
+
+      <div class="field">
+        <label for="u">Brukernavn</label>
+        <input id="u" type="text" value="kari.vestby">
+      </div>
+      <div class="field">
+        <label for="p">Passord</label>
+        <input id="p" type="password" value="••••••••••">
+      </div>
+
+      <button class="btn-primary">Logg inn</button>
+
+      <div class="role-note">
+        <b>Én rolle:</b> Turnushjelperen har i denne versjonen kun tilgang for <b>turnusansvarlig</b>.
+        Ansatte logger ikke inn her og registrerer ikke egne preferanser selv.
+      </div>
+      <div class="scope-note">Ingen selvbetjent registrering eller passordgjenoppretting i denne versjonen.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<title>Turnushjelperen — Godkjenning</title>
+<!--
+  NØKKELSKJERM: GODKJENNING
+  Illustrerer FR-12 (turnusansvarlig kan velge en hvilken som helst Gyldig kandidat — ikke nødvendigvis
+  den øverst rangerte — og må gi eksplisitt Godkjenning før noe anses gjennomført). Kari velger her bevisst
+  Jonas Bakke (rangert nr. 2, overtidssats) fremfor Ingrid Dahl (nr. 1), for å vise at avvik fra rangeringen
+  er en gyldig, støttet arbeidsflyt, ikke en feiltilstand. Viderefører direction-a-fagsystem.html sine tokens,
+  kostnadsfarger (grønn=ordinær/oker=overtid, aldri rødt) og arbeidsbelastningslinje, samt mønsteret med
+  progressiv visning — KI-begrunnelsen for den valgte kandidaten er nå den som vises utvidet.
+-->
+<style>
+/*
+  FARGEPALETT — videreført fra Retning A (Fagsystem), uendret
+  --bg-app:#eef1f4 --bg-panel:#ffffff --bg-header:#16324a --border:#c7d0d9
+  --text-main:#1b2733 --text-mute:#5b6b7a --accent:#16324a --ok:#1f7a4d
+  --warn:#a15a00 --danger:#8c2f2f --row-alt:#f5f7f9 --tag-bg:#e7ecf1
+*/
+:root{
+  --bg-app:#eef1f4; --bg-panel:#ffffff; --bg-header:#16324a; --border:#c7d0d9;
+  --text-main:#1b2733; --text-mute:#5b6b7a; --accent:#16324a; --ok:#1f7a4d;
+  --warn:#a15a00; --danger:#8c2f2f; --row-alt:#f5f7f9; --tag-bg:#e7ecf1;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; padding:32px; background:#d7dde3;
+  font-family:"Segoe UI", Arial, sans-serif; color:var(--text-main);
+  display:flex; justify-content:center;
+}
+.browser{
+  width:1180px; background:#fff; border-radius:8px; overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.25); border:1px solid #b6bec6;
+}
+.chrome{
+  background:#dde2e7; padding:9px 14px; display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid #b6bec6;
+}
+.dot{width:11px;height:11px;border-radius:50%;}
+.dot.r{background:#e8635a;} .dot.y{background:#e8b93f;} .dot.g{background:#3fae5a;}
+.urlbar{
+  margin-left:10px; background:#fff; border:1px solid #c2c9d0; border-radius:5px;
+  padding:4px 10px; font-size:11.5px; color:#55606a; flex:1; font-family:Consolas,monospace;
+}
+.appbar{
+  background:var(--bg-header); color:#fff; padding:12px 22px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.appbar .brand{font-size:14.5px; font-weight:700; letter-spacing:.3px;}
+.appbar .user{font-size:12px; color:#b9c7d4;}
+.crumbs{
+  background:#f7f9fb; padding:8px 22px; font-size:11.5px; color:var(--text-mute);
+  border-bottom:1px solid var(--border);
+}
+.crumbs b{color:var(--text-main);}
+.content{padding:20px 22px 32px; background:var(--bg-app); display:flex; justify-content:center;}
+.panel{width:760px;}
+
+.vaktbox{
+  background:var(--bg-panel); border:1px solid var(--border); border-radius:4px;
+  padding:14px 18px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;
+}
+.vaktbox h1{font-size:15px; margin:0 0 4px; font-weight:700;}
+.vaktbox .meta{font-size:12px; color:var(--text-mute);}
+.vaktbox .req{
+  background:var(--tag-bg); border:1px solid var(--border); border-radius:3px;
+  padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--accent); white-space:nowrap;
+}
+
+.section-title{
+  font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+  color:var(--text-mute); margin:18px 0 6px;
+}
+
+.candidate-card{
+  background:var(--bg-panel); border:1px solid var(--border); border-radius:4px; padding:16px 18px;
+}
+.cand-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;}
+.cand-name{font-size:15px; font-weight:700;}
+.cand-sub{font-size:11.5px; color:var(--text-mute); margin-top:2px;}
+.rank-pill{
+  font-size:11px; font-weight:700; color:var(--text-mute); background:var(--tag-bg);
+  border:1px solid var(--border); border-radius:3px; padding:3px 9px; white-space:nowrap;
+}
+.facts{display:flex; gap:28px; margin:12px 0 14px; flex-wrap:wrap;}
+.fact .lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--text-mute); margin-bottom:3px;}
+.cost-ord{color:var(--ok); font-weight:700;}
+.cost-ot{color:var(--warn); font-weight:700;}
+.bar-wrap{width:110px; height:7px; background:#e2e7ec; border-radius:3px; overflow:hidden; margin-top:4px;}
+.bar{height:100%; background:var(--accent);}
+.tag{
+  display:inline-block; background:var(--tag-bg); border:1px solid var(--border); border-radius:3px;
+  padding:1px 7px; font-size:10.5px; color:var(--text-main); margin-top:3px;
+}
+
+.explain{
+  background:#f2f6f9; border:1px solid var(--border); border-radius:3px; padding:12px 16px; font-size:12px; line-height:1.55; margin-top:4px;
+}
+.explain .lbl{font-weight:700; color:var(--accent); display:block; margin-bottom:3px; font-size:10.5px; text-transform:uppercase; letter-spacing:.3px;}
+.pill-up{color:var(--ok); font-weight:700;}
+.pill-down{color:var(--danger); font-weight:700;}
+
+.deviation-note{
+  margin-top:16px; border:1px dashed var(--border); border-radius:4px; padding:12px 16px;
+  font-size:12px; color:var(--text-main); background:#f7f9fb; line-height:1.55;
+}
+.deviation-note .lbl{
+  display:block; font-weight:700; color:var(--accent); font-size:10.5px; text-transform:uppercase;
+  letter-spacing:.3px; margin-bottom:5px;
+}
+.deviation-note .compare{color:var(--text-mute); font-size:11.5px; margin-top:6px;}
+
+.confirm-box{
+  margin-top:20px; background:var(--bg-panel); border:1px solid var(--border); border-radius:4px;
+  padding:18px 20px;
+}
+.confirm-box h2{font-size:13.5px; margin:0 0 8px; font-weight:700;}
+.confirm-box p{font-size:12px; color:var(--text-mute); line-height:1.6; margin:0 0 14px;}
+.confirm-box p b{color:var(--text-main);}
+.confirm-actions{display:flex; justify-content:flex-end; gap:10px;}
+.btn-secondary{
+  background:#fff; color:var(--text-main); border:1px solid var(--border); border-radius:3px;
+  padding:10px 18px; font-size:12.5px; font-weight:700; cursor:default;
+}
+.btn-primary{
+  background:var(--accent); color:#fff; border:none; border-radius:3px;
+  padding:10px 18px; font-size:12.5px; font-weight:700; letter-spacing:.2px; cursor:default;
+}
+.not-done-note{font-size:10.5px; color:var(--text-mute); margin-top:10px; text-align:right;}
+</style>
+</head>
+<body>
+<div class="browser">
+  <div class="chrome">
+    <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+    <div class="urlbar">turnushjelperen.no/vakt/4127/godkjenning</div>
+  </div>
+  <div class="appbar">
+    <div class="brand">TURNUSHJELPEREN</div>
+    <div class="user">Innlogget: Kari Vestby (turnusansvarlig) · Avdeling Kirurgisk sengepost</div>
+  </div>
+  <div class="crumbs">Turnus &gt; Kirurgisk sengepost &gt; Vakt #4127 &gt; Kandidater &gt; <b>Godkjenning</b></div>
+
+  <div class="content">
+    <div class="panel">
+      <div class="vaktbox">
+        <div>
+          <h1>Vakt #4127 — Dagvakt, Kirurgisk sengepost</h1>
+          <div class="meta">Lørdag 27.09.2026 · 07:00–15:00 (8 t) · Meldt fra: Silje Amundsen (sykemeldt)</div>
+        </div>
+        <div class="req">Min. kompetansenivå: KVALIFISERT</div>
+      </div>
+
+      <div class="section-title">Valgt kandidat</div>
+      <div class="candidate-card">
+        <div class="cand-head">
+          <div>
+            <div class="cand-name">Jonas Bakke</div>
+            <div class="cand-sub">Sykepleier · 3 år ansiennitet</div>
+          </div>
+          <div class="rank-pill">Rangert nr. 2 av 4 gyldige</div>
+        </div>
+
+        <div class="facts">
+          <div class="fact">
+            <div class="lbl">Kompetanse</div>
+            Kvalifisert<div class="tag">Nivå 3/4</div>
+          </div>
+          <div class="fact">
+            <div class="lbl">Kostnad</div>
+            <span class="cost-ot">Overtid</span><div class="sub">kr 578/t</div>
+          </div>
+          <div class="fact">
+            <div class="lbl">Arbeidsbelastning (uke)</div>
+            26 t<div class="bar-wrap"><div class="bar" style="width:38%"></div></div>
+          </div>
+          <div class="fact">
+            <div class="lbl">Preferanse</div>
+            <span class="tag">Fleksibel</span>
+          </div>
+        </div>
+
+        <div class="explain">
+          <span class="lbl">KI-generert begrunnelse</span>
+          <span class="pill-up">▲ Trekker opp:</span> kvalifisert for vakttypen, lav gjeldende arbeidsbelastning, og har selv oppgitt fleksibilitet på kort varsel.
+          <span class="pill-down">▼ Trekker ned:</span> vakten utløser overtidssats for Jonas denne uken, og han er ikke fullt kvalifisert (nivå 3/4) slik Ingrid Dahl er.
+        </div>
+      </div>
+
+      <div class="deviation-note">
+        <span class="lbl">Avvik fra anbefalt rangering</span>
+        Ingrid Dahl er rangert øverst (nr. 1) og er fortsatt en gyldig kandidat, men er <b>ikke</b> valgt her. Dette er en tillatt handling —
+        Turnushjelperen anbefaler, den bestemmer aldri selv.
+        <div class="compare">Ingrid Dahl: ordinær sats (kr 385/t), fullt kvalifisert, 32,5 t arbeidsbelastning · Jonas Bakke: overtidssats (kr 578/t), kvalifisert, 26 t arbeidsbelastning.</div>
+      </div>
+
+      <div class="confirm-box">
+        <h2>Bekreft erstatning</h2>
+        <p>Du er i ferd med å sette <b>Jonas Bakke</b> inn i <b>Vakt #4127</b> (Dagvakt, 27.09.2026, 07:00–15:00) i stedet for Silje Amundsen.
+        Ingen endring gjøres i turnusen før du trykker <b>Godkjenn erstatning</b>. Handlingen registreres med ditt navn og tidspunkt.</p>
+        <div class="confirm-actions">
+          <button class="btn-secondary">Avbryt</button>
+          <button class="btn-primary">Godkjenn erstatning</button>
+        </div>
+      </div>
+      <div class="not-done-note">Status: ikke gjennomført — venter på eksplisitt godkjenning</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
