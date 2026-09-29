@@ -6,13 +6,14 @@ inputDocuments:
   - _bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/DESIGN.md
   - _bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/EXPERIENCE.md
   - _bmad-output/planning-artifacts/briefs/brief-ibe160-turnushjelperen-2026-09-08/addendum.md
+  - _bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/mockups/key-vaktvalg.html
 ---
 
 # Turnushjelperen - Epic-oppdeling
 
 ## Oversikt
 
-Dette dokumentet deler kravene fra PRD, UX-kontrakten (DESIGN.md + EXPERIENCE.md) og arkitektur-spinen opp i epics og stories som kan implementeres. Lovgrunnlaget i addendum §2 er brukt for grensetilfellene i regelmotoren.
+Dette dokumentet deler kravene fra PRD, UX-kontrakten (DESIGN.md + EXPERIENCE.md) og arkitektur-spinen opp i epics og stories som kan implementeres. Lovgrunnlaget i addendum §2 er brukt for grensetilfellene i regelmotoren. Mockupen `key-vaktvalg.html` er brukt for detaljene på Vaktvalg-flaten.
 
 ## Kravoversikt
 
@@ -114,9 +115,9 @@ NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (E
 
 UX-DR1: Designtokens. Farger (`bg-app`, `bg-panel`, `bg-header`/`accent`, `border`, `text-main`, `text-mute`, `ok`, `warn`, `danger`, `row-alt`, `tag-bg`), typografiroller (`brand` 14,5/700, `heading` 15/700, `section-label` 12/700 versaler, `column-header` 10,5/700 versaler, `body` 12,5/400/1,55, `meta` 11/400), spacing-skala (4/8/12/16/22/32, `content-padding` 22px, `row-padding` 9px 12px) og radius (`sm` 3px, `DEFAULT` 4px, `full`) implementeres som CSS-variabler etter DESIGN.md. Systemfont `Segoe UI, Arial, sans-serif`. Ingen skygger (bare 1px kantlinjer), ingen gradienter, ingen farger utover paletten og ikke dark-mode-først.
 UX-DR2: Appbar. Bakgrunn `bg-header` med hvit tekst. Til venstre står «TURNUSHJELPEREN» i `brand`-typografi. Til høyre står innlogget bruker + avdeling, eller «Ikke innlogget» på innloggingssiden. Innholdet endres bare ved inn- og utlogging.
-UX-DR3: Brødsmulesti (`Turnus > Avdeling > Vakt > …`) ligger fast under appbar på alle skjermer etter innlogging. Det finnes ingen sidemeny eller fanenavigasjon, og flyten er lineær.
+UX-DR3: Brødsmulesti ligger fast under appbar på alle skjermer etter innlogging. Etter mockupene er den `Turnus > Avdeling > Periode` på Vaktvalg (for eksempel «Uke 39–40, 2026»), `Turnus > Avdeling > Vakt #<nr> — <vakttype> <dato>` på kandidatflaten og `Turnus > Avdeling > Vakt #<nr> > Kandidater > Godkjenning` på Godkjenning. Det finnes ingen sidemeny eller fanenavigasjon, og flyten er lineær.
 UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord» uten kontosperring [ASSUMPTION]. Det finnes ingen registrering og ingen passordgjenoppretting.
-UX-DR5: Vaktvalg-flate, bygd ut fra teksten i EXPERIENCE.md fordi `key-vaktvalg.html` ikke finnes. Flaten viser en oversikt over avdelingens vakter i perioden. Seksjonen «Krever handling» ligger øverst, atskilt fra normalt bemannede vakter, som vises nøkternt under. Hver vakt som mangler bemanning vises i en `alert-box` med 4px venstrekant i `danger`, sirkulært «!»-ikon, «Mangler bemanning»-tekst og primærknappen «Velg vakt — finn erstatter →». Knappen er eneste vei inn i kandidatrangeringen for vakten.
+UX-DR5: Vaktvalg-flate etter `mockups/key-vaktvalg.html`. Seksjonen «Krever handling» (`section-label`) ligger øverst. Hver vakt som mangler bemanning, vises i en `alert-box` med 4px venstrekant i `danger` og sirkulært «!»-ikon. Boksen har overskriften «Vakt #<nr> — <vakttype>, <avdeling>» og en linje med dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når (for eksempel «Silje Amundsen meldt fra sykemeldt kl. 06:14»). Primærknappen «Velg vakt — finn erstatter →» er eneste vei inn i kandidatrangeringen for vakten. Under står seksjonen «Øvrige vakter denne perioden — bemannet» som tabell med kolonnene Vakt (#nr i `accent`, fet), Dato, Tid (tidsrom og varighet, med vakttype som undertekst), Ansatt (navn, med stilling og ansiennitet som `meta`) og Status (tag «Bemannet»). En fotnote nederst til høyre viser når Turnusen sist ble oppdatert og antall ansatte i avdelingen. Mockupens «Se detaljer»-lenke og grønne «Bemannet»-tag er ikke tatt med (se story 1.5).
 UX-DR6: Tilstanden «Ingen vakter krever handling» på Vaktvalg. Seksjonen skjules, eller den viser nøytral tekst («Ingen vakter krever handling nå»), aldri en tom «!»-boks [ASSUMPTION].
 UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, arbeidsbelastning, preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenærhet vises som vanlig rekkefølge, ikke som et eget merke.
 UX-DR8: Rangeringsnummer (`rank-badge`) i `accent`, fet og 14px.
@@ -225,7 +226,8 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 **Given** en tom database
 **When** utvikleren kjører den dokumenterte kommandoen for testdata
-**Then** databasen inneholder én Turnus for én avdeling med 20–30 Ansatte og deres Vakter over en periode
+**Then** databasen inneholder én Turnus for én avdeling med 20–30 Ansatte og deres Vakter over en periode (i mockupen Kirurgisk sengepost, uke 39–40 2026)
+**And** Turnusen har et tidspunkt for sist oppdatert
 **And** kommandoen kan kjøres flere ganger uten å lage duplikater
 
 **Given** lagringsadapteren
@@ -235,11 +237,12 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 **Given** en Vakt i testdataene
 **When** den leses
-**Then** den har start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
+**Then** den har vaktnummer, vakttype (dag, kveld eller natt), start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
+**And** en Vakt som mangler bemanning, har hvem som var satt opp og tidspunktet det ble meldt fra (UX-DR5)
 
 **Given** en Ansatt i testdataene
 **When** den leses
-**Then** den har et fiktivt navn, et Kompetansenivå per vakttype og eventuelt en forhåndsdefinert tekstbasert Ansattpreferanse (ÅB-4)
+**Then** den har et fiktivt navn, stilling, ansiennitet i år, et Kompetansenivå per vakttype og eventuelt en forhåndsdefinert tekstbasert Ansattpreferanse (ÅB-4)
 
 **Given** testdataene
 **When** de brukes i demo
@@ -264,7 +267,7 @@ So that Turnushjelperen ikke er åpen for alle (FR13).
 **When** jeg logger inn
 **Then** API-et utsteder ett JWT som settes i en `httpOnly`-cookie, ikke i `localStorage` (AD-3)
 **And** jeg sendes videre til en foreløpig innlogget startside
-**And** appbaren viser innlogget bruker og avdeling
+**And** appbaren viser «Innlogget: <navn> (turnusansvarlig) · Avdeling <avdeling>» (UX-DR2)
 
 **Given** feil brukernavn eller passord
 **When** jeg prøver å logge inn
@@ -316,13 +319,27 @@ So that jeg straks ser hva som må håndteres.
 
 **Given** at jeg er innlogget
 **When** jeg kommer til Vaktvalg
-**Then** jeg ser brødsmulestien `Turnus > Avdeling` fast under appbar (UX-DR3)
-**And** seksjonen «Krever handling» ligger øverst, atskilt fra de normalt bemannede vaktene, som vises nøkternt under (UX-DR5)
+**Then** jeg ser brødsmulestien `Turnus > <avdeling> > <periode>`, for eksempel «Turnus > Kirurgisk sengepost > Uke 39–40, 2026», fast under appbar (UX-DR3)
+**And** seksjonen «Krever handling» ligger øverst, og seksjonen «Øvrige vakter denne perioden — bemannet» ligger under (UX-DR5)
 
 **Given** en Vakt som mangler bemanning
 **When** den vises under «Krever handling»
-**Then** den står i en varselboks med 4px venstrekant i `danger`, sirkulært «!»-ikon, teksten «Mangler bemanning», vaktens tidspunkt og hvem som var satt opp
-**And** boksen har primærknappen «Velg vakt — finn erstatter →» (UX-DR5)
+**Then** den står i en varselboks med 4px venstrekant i `danger` og sirkulært «!»-ikon (UX-DR5)
+**And** overskriften er «Vakt #<nr> — <vakttype>, <avdeling>», for eksempel «Vakt #4127 — Dagvakt, Kirurgisk sengepost»
+**And** linjen under viser dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når, for eksempel «Lørdag 27.09.2026 · 07:00–15:00 (8 t) · Mangler bemanning — Silje Amundsen meldt fra sykemeldt kl. 06:14»
+**And** boksen har primærknappen «Velg vakt — finn erstatter →» (UX-DR5, UX-DR22)
+
+**Given** de bemannede vaktene i perioden
+**When** de vises
+**Then** de står i en tabell med kolonnene Vakt, Dato, Tid, Ansatt og Status (UX-DR5)
+**And** vaktnummeret vises i `accent` og fet, tiden vises med varighet og vakttype som undertekst, og den Ansatte vises med navn og stilling og ansiennitet som `meta`
+**And** annenhver rad har `row-alt`
+**And** statusen «Bemannet» vises som nøytral tag, uten `ok`-farge. Mockupen bruker grønn her, men DESIGN.md reserverer `ok` for ordinær sats, og spine-dokumentet vinner ved konflikt (EXPERIENCE.md § Information Architecture)
+**And** mockupens «Se detaljer»-lenke tas ikke med, fordi ingen FR beskriver en detaljvisning for en bemannet vakt
+
+**Given** Vaktvalg-flaten
+**When** den vises
+**Then** en fotnote nederst til høyre viser når Turnusen sist ble oppdatert og antall ansatte i avdelingen, for eksempel «Turnus oppdatert 26.09.2026 06:20 · 25 ansatte totalt i avdelingen» (UX-DR5)
 
 **Given** at ingen vakter mangler bemanning
 **When** jeg kommer til Vaktvalg
@@ -343,8 +360,8 @@ So that jeg vet nøyaktig hvilken vakt jeg finner en erstatter for (FR1).
 
 **Given** en Vakt under «Krever handling»
 **When** jeg trykker «Velg vakt — finn erstatter →»
-**Then** jeg kommer til kandidatflaten for vakten, med egen URL
-**And** brødsmulestien viser `Turnus > Avdeling > Vakt #<nr>` (UX-DR3)
+**Then** jeg kommer til kandidatflaten for vakten, med egen URL (i mockupene `/vakt/<nr>/kandidater`)
+**And** brødsmulestien viser `Turnus > <avdeling> > Vakt #<nr> — <vakttype> <dato>`, for eksempel «Turnus > Kirurgisk sengepost > Vakt #4127 — Dagvakt 27.09.2026» (UX-DR3)
 **And** flaten viser vaktens start- og sluttidspunkt og kompetansekrav (FR1)
 
 **Given** at knappen er den eneste veien inn
@@ -566,7 +583,7 @@ So that jeg har kontroll over beslutningen og ingenting skjer før jeg bekrefter
 **Given** listen over Gyldige kandidater på kandidatflaten
 **When** jeg velger en Kandidat, uansett plassering i listen
 **Then** jeg kommer til Godkjenning-flaten, som er en egen flate med egen URL og ikke en dialog (UX-DR17)
-**And** brødsmulestien viser `Turnus > Avdeling > Vakt #<nr> > Godkjenning` (UX-DR3)
+**And** brødsmulestien viser `Turnus > <avdeling> > Vakt #<nr> > Kandidater > Godkjenning` (UX-DR3)
 
 **Given** Godkjenning-flaten
 **When** den vises
