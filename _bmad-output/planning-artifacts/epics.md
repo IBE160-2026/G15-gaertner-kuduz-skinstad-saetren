@@ -99,13 +99,13 @@ NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (E
 
 ### Åpne beslutninger
 
-> **⚠️ ÅPNE BESLUTNINGER — ikke avklart i gruppa per 2026-09-29.** Stories som er merket med en blokkerende ÅB-ID nedenfor, kan skrives og estimeres, men **ikke implementeres** før gruppa har tatt beslutningen og ført den inn her. Når en beslutning er tatt, skal den dateres her, og merknaden i de berørte stories skal fjernes.
+> **ÅPNE BESLUTNINGER.** Opprinnelig satt opp 2026-09-29. Stories som er merket med en blokkerende ÅB-ID, kan skrives og estimeres, men ikke implementeres før gruppa har tatt beslutningen og ført den inn her. **Oppdatering 2026-10-06:** ÅB-1, ÅB-2 og ÅB-3 — de tre som blokkerte Epic 4 og deler av Epic 5 — er nå løst. ÅB-4 til ÅB-7 er fortsatt åpne, men blokkerer ikke (midlertidige tolkninger er i bruk, se status per rad).
 
 | ID | Beslutning | Kilde | Blokkerer | Status |
 |---|---|---|---|---|
-| **ÅB-1** | Innbyrdes vekting mellom Myke faktorer i Rangeringen (kostnad, arbeidsbelastning, Ansattpreferanse, kompetansenærhet). Det eneste som er bekreftet, er at kompetansenærhet teller tungt når ingen Kandidat er fullt kvalifisert. | PRD §8.2, arkitektur § Deferred | FR9 og alle stories som implementerer Rangering | **Åpen, blokkerer** |
-| **ÅB-2** | Kostnadsmodellen: hvilke satser og betingelser som skiller ordinær sats fra overtidssats. | PRD §8.3, arkitektur § Deferred | FR7 og stories som implementerer kostnadsberegning | **Åpen, blokkerer** |
-| **ÅB-3** | Terskelen for arbeidsbelastning: hva «~90 %» er prosent av (for eksempel stillingsprosent eller et fast antall timer i perioden). | DESIGN.md `workload-bar`, arkitektur AD-1 (`RangertKandidat`) | FR8, feltet «prosent av terskel» i `RangertKandidat` og UX-DR9 | **Åpen, blokkerer** |
+| **ÅB-1** | ~~Innbyrdes vekting mellom Myke faktorer i Rangeringen~~ — **løst 2026-10-06.** Poengbasert modell (0–100 poeng per faktor, vektet sum): Kostnad 30 %, Arbeidsbelastning 30 %, Ansattpreferanse 20 %, Kompetansenærhet 20 %. Se PRD §4.4 for full tabell og poengsettingsregler. | PRD §4.4 (oppdatert) | FR9 og alle stories som implementerer Rangering | **Løst 2026-10-06** |
+| **ÅB-2** | ~~Kostnadsmodellen: hvilke satser og betingelser som skiller ordinær sats fra overtidssats~~ — **løst 2026-10-06.** Individuell timelønn per Ansatt. Ordinær terskel 36 t/uke (addendum §2). Timer utover: 150 % sats. Se PRD §4.3. | PRD §4.3 (oppdatert) | FR7 og stories som implementerer kostnadsberegning | **Løst 2026-10-06** |
+| **ÅB-3** | ~~Terskelen for arbeidsbelastning: hva «~90 %» er prosent av~~ — **løst 2026-10-06.** Gjenbruker ÅB-2s 36-timers normaluke: planlagte timer denne uken (uten vurdert Vakt) ÷ 36, «høy belastning» ved ~90 % (ca. 32–33 t). Se PRD §4.3, FR-8. | PRD §4.3 (oppdatert) | FR8, feltet «prosent av terskel» i `RangertKandidat` og UX-DR9 | **Løst 2026-10-06** |
 | **ÅB-4** | Om turnusansvarlig skal kunne redigere Ansattpreferanser i appen. | PRD §2.2 | Ingenting. Midlertidig beslutning: preferansene er **forhåndsdefinert i testdataene** i v1 inntil videre, og ingen story bygger et redigeringsskjema. | Åpen, blokkerer ikke |
 | **ÅB-5** | Hvordan 11-timersregelen regnes: hvile før og etter vakten hver for seg, eller et rullerende vindu på 24 timer. | aml. § 10-8 (1), addendum §2 | Ingenting. Midlertidig tolkning: hvile før og etter vakten må hver være minst 11 timer (story 2.3). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_11_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
 | **ÅB-6** | Hvilket vindu 35-timersregelen gjelder for: kalenderuke (man–søn) eller et rullerende vindu på 7 dager. | aml. § 10-8 (2), addendum §2 | Ingenting. Midlertidig tolkning: kalenderuke (story 2.4). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_35_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
@@ -148,9 +148,9 @@ FR3: Epic 2 - Filtrere på kolliderende vakt
 FR4: Epic 2 - Filtrere på 11-timersregelen
 FR5: Epic 2 - Filtrere på 35-timersregelen
 FR6: Epic 2 - Eksplisitt melding når ingen kandidater er gyldige
-FR7: Epic 4 - Forenklet kostnad per kandidat (blokkert av ÅB-2)
-FR8: Epic 4 - Arbeidsbelastning per kandidat (terskelen er blokkert av ÅB-3)
-FR9: Epic 4 - Rangering av gyldige kandidater (blokkert av ÅB-1)
+FR7: Epic 4 - Forenklet kostnad per kandidat (kostnadsmodell løst, ÅB-2)
+FR8: Epic 4 - Arbeidsbelastning per kandidat (terskel løst, ÅB-3)
+FR9: Epic 4 - Rangering av gyldige kandidater (vekting løst, ÅB-1)
 FR10: Epic 5 - KI-tolkning av tekstbaserte ansattpreferanser
 FR11: Epic 5 - KI-forklaring (Avveining) per kandidat, med reservetekst ved feil
 FR12: Epic 3 - To-stegs godkjenning av valgt kandidat
@@ -160,7 +160,7 @@ FR13: Epic 1 - Innlogging som turnusansvarlig
 
 > **Utkast til gjennomgang i gruppa (2026-09-29).** Strukturen er godkjent som arbeidsgrunnlag, men kan endres etter at gruppa har sett over den.
 
-Rekkefølgen er 1 → 2 → 3 → 4 → 5. Hvert epic fungerer uten de senere. Godkjenning (Epic 3) ligger bevisst før rangeringen, så hele flyten fra innlogging til godkjenning virker mens ÅB-1–3 er åpne.
+Rekkefølgen er 1 → 2 → 3 → 4 → 5. Hvert epic fungerer uten de senere. Godkjenning (Epic 3) ligger bevisst før rangeringen, så hele flyten fra innlogging til godkjenning virker uavhengig av rekkefølgen epicene bygges i. **Alle tre åpne beslutninger (ÅB-1, ÅB-2, ÅB-3) er løst 2026-10-06** — se § Åpne beslutninger.
 
 ### Epic 1: Innlogging og vaktoversikt
 Turnusansvarlig logger inn, ser avdelingens vakter i perioden med vakten som mangler bemanning øverst under «Krever handling», og kan velge den. Epicet setter også opp prosjektet fra bunnen, fordi arkitekturen ikke angir noen starter-mal. I tillegg kommer fiktive testdata, designtokens, appbar og brødsmulesti.
@@ -175,7 +175,7 @@ Turnusansvarlig velger en gyldig kandidat og godkjenner i to steg. Vakten blir b
 **FR-er som dekkes:** FR12
 
 ### Epic 4: Rangering etter kostnad, arbeidsbelastning og kompetanse
-De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. ⚠️ Blokkert av ÅB-1, ÅB-2 og ÅB-3.
+De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle tre åpne beslutninger (ÅB-1 vekting, ÅB-2 kostnadsmodell, ÅB-3 arbeidsbelastningsterskel) er løst 2026-10-06 — se PRD §4.3, §4.4.
 **FR-er som dekkes:** FR7, FR8, FR9
 
 ### Epic 5: KI-forklaring av avveininger
@@ -242,13 +242,13 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 **Given** en Ansatt i testdataene
 **When** den leses
-**Then** den har et fiktivt navn, stilling, ansiennitet i år, et Kompetansenivå per vakttype og eventuelt en forhåndsdefinert tekstbasert Ansattpreferanse (ÅB-4)
+**Then** den har et fiktivt navn, stilling, ansiennitet i år, et Kompetansenivå per vakttype, en individuell timelønn (ordinær sats, ÅB-2 løst 2026-10-06, se PRD §4.3) og eventuelt en forhåndsdefinert tekstbasert Ansattpreferanse (ÅB-4)
 
 **Given** testdataene
 **When** de brukes i demo
 **Then** minst én Vakt (#4127) mangler bemanning og har gyldige kandidater etter planen
 **And** minst én Vakt (#4189, nattevakt) mangler bemanning og er satt opp slik at alle Ansatte vil bli utelukket av Harde regler
-**And** ingen lønns- eller satsfelt er lagt inn, fordi kostnadsmodellen venter på ÅB-2
+**And** minst én gyldig Kandidat i et testscenario har nok planlagte timer denne uken til at Vakten ville gitt overtid (over 36 t/uke, PRD §4.3), slik at kostnadsmodellens overtidssats faktisk testes
 
 ### Story 1.3: Innlogging for turnusansvarlig
 
@@ -570,7 +570,7 @@ So that jeg ikke tror at listen er tom på grunn av en feil eller treg lasting (
 
 ## Epic 3: Godkjenning av erstatter
 
-Turnusansvarlig velger en gyldig kandidat og godkjenner i to steg. Vakten blir bemannet gjennom én eneste skrivevei, og bekreftelsen vises på vaktoversikten. Etter dette epicet fungerer hele flyten fra innlogging til godkjenning, selv om ÅB-1 til ÅB-3 fortsatt er åpne.
+Turnusansvarlig velger en gyldig kandidat og godkjenner i to steg. Vakten blir bemannet gjennom én eneste skrivevei, og bekreftelsen vises på vaktoversikten. Etter dette epicet fungerer hele flyten fra innlogging til godkjenning. (ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06.)
 
 ### Story 3.1: Velge kandidat og se godkjenningsflaten
 
@@ -648,7 +648,7 @@ So that vaktendringen blir gjennomført, men bare når jeg har bestemt det (FR12
 
 De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle beregninger er deterministiske og ligger i `domene/regelmotor`, uten KI (NFR1, NFR3).
 
-> ⛔ **Epicet er i hovedsak blokkert.** Bare story 4.1 kan implementeres nå. Story 4.2 til 4.5 venter på ÅB-1, ÅB-2 og ÅB-3 (se § Åpne beslutninger).
+> ✅ **Epicet er ikke lenger blokkert.** ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06 — se PRD §4.3, §4.4 og § Åpne beslutninger.
 
 ### Story 4.1: Timer i perioden per kandidat
 
@@ -673,7 +673,7 @@ So that jeg ser hvem som allerede har mye å gjøre (FR8).
 
 ### Story 4.2: Arbeidsbelastningslinje med terskel
 
-> ⛔ **Blokkert av ÅB-3.** Storien kan ikke implementeres før gruppa har bestemt hva terskelen for arbeidsbelastning (~90 %) er prosent av, og ført beslutningen inn under § Åpne beslutninger.
+ÅB-3 er løst 2026-10-06 — se PRD §4.3, FR-8 for terskelen brukt i akseptansekriteriene under.
 
 As a turnusansvarlig,
 I want en linje som viser arbeidsbelastningen i forhold til en terskel,
@@ -681,7 +681,7 @@ So that jeg ser med et blikk hvem som nærmer seg for mye (FR8).
 
 **Acceptance Criteria:**
 
-**Given** terskelen fastsatt i ÅB-3
+**Given** terskelen i PRD §4.3 (planlagte timer denne uken, uten vurdert Vakt, ÷ 36 timer)
 **When** arbeidsbelastningen beregnes
 **Then** domenekjernen regner ut prosent av terskel deterministisk (NFR1)
 
@@ -699,7 +699,7 @@ So that jeg ser med et blikk hvem som nærmer seg for mye (FR8).
 
 ### Story 4.3: Forenklet kostnad per kandidat
 
-> ⛔ **Blokkert av ÅB-2.** Storien kan ikke implementeres før gruppa har bestemt satsene og betingelsene som skiller ordinær sats fra overtidssats, og ført beslutningen inn under § Åpne beslutninger.
+ÅB-2 er løst 2026-10-06 — se PRD §4.3 for kostnadsmodellen brukt i akseptansekriteriene under.
 
 As a turnusansvarlig,
 I want å se om vakten blir ordinær sats eller overtid for hver kandidat, og hva det koster per time,
@@ -707,9 +707,9 @@ So that jeg kan ta hensyn til kostnaden i valget (FR7).
 
 **Acceptance Criteria:**
 
-**Given** satsene og betingelsene fastsatt i ÅB-2
+**Given** kostnadsmodellen i PRD §4.3 (individuell timelønn, ordinær terskel 36 t/uke, 150 % sats utover)
 **When** kostnaden beregnes for en Gyldig kandidat
-**Then** domenekjernen avgjør om Vakten gir ordinær sats eller overtidssats, og beregner beløpet (FR7)
+**Then** domenekjernen sammenligner Kandidatens planlagte timer denne uken (inkl. denne Vakten) mot 36-timersterskelen, og beregner beløpet: timer til og med 36 t til ordinær sats, timer utover til 150 % sats (FR7)
 **And** beregningen er uavhengig av KI (NFR3)
 **And** satsfeltene som trengs, legges til i lagringen i denne storien, og testdataene får fiktive satser (NFR11)
 
@@ -724,7 +724,7 @@ So that jeg kan ta hensyn til kostnaden i valget (FR7).
 
 ### Story 4.4: Rangering av gyldige kandidater
 
-> ⛔ **Blokkert av ÅB-1.** Storien kan ikke implementeres før gruppa har bestemt vektingen mellom de Myke faktorene og ført beslutningen inn under § Åpne beslutninger. Storien bygger også på 4.2 og 4.3, som er blokkert av ÅB-3 og ÅB-2.
+ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06 — se PRD §4.3 og §4.4 for de fullstendige modellene, brukt i akseptansekriteriene under.
 
 As a turnusansvarlig,
 I want at de gyldige kandidatene er rangert, med nøkkeltallene synlige i hver rad,
@@ -732,9 +732,9 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 
 **Acceptance Criteria:**
 
-**Given** vektingen fastsatt i ÅB-1
+**Given** poengmodellen i PRD §4.4 (Kostnad 30 %, Arbeidsbelastning 30 %, Ansattpreferanse 20 %, Kompetansenærhet 20 %, hver 0–100 poeng)
 **When** Rangeringen kjører
-**Then** alle Gyldige kandidater rangeres etter kostnad, arbeidsbelastning, Ansattpreferanse og kompetansenærhet (FR9)
+**Then** alle Gyldige kandidater får en vektet totalscore og rangeres synkende etter den (FR9)
 **And** Rangeringen skjer bare i `domene/regelmotor` og er deterministisk: samme input gir samme rekkefølge, også ved likhet mellom kandidater (NFR1)
 
 **Given** porten `RangertKandidat` i `domene/porter`
@@ -763,7 +763,7 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 
 ### Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten
 
-> ⛔ **Blokkert av ÅB-1, ÅB-2 og ÅB-3, indirekte.** Storien bygger på Rangeringen i 4.4 og nøkkeltallene i 4.2 og 4.3, og kan ikke implementeres før de er ferdige.
+ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06. Storien bygger på Rangeringen i 4.4 og nøkkeltallene i 4.2 og 4.3, og kan implementeres når de er ferdige.
 
 As a turnusansvarlig,
 I want å se nøkkeltallene for valgt kandidat, og en nøytral sammenligning når jeg velger en annen enn nr. 1,
@@ -815,7 +815,7 @@ So that jeg kan finne en erstatter også når jeg ikke sitter ved PC-en.
 
 Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avveining, med reservetekst hvis modellen feiler og kjøretidstest for lekkasje. KI beregner aldri Harde regler, arbeidstid, kostnad eller Rangering (NFR3). `adaptere/ki` kalles bare fra `adaptere/api` og ser bare det portene definerer (AD-1).
 
-> ⛔ **Epicet er delvis blokkert.** Story 5.1 kan implementeres nå, parallelt med Epic 4. Story 5.2 til 5.6 bygger på `RangertKandidat` fra story 4.4 og er dermed indirekte blokkert av ÅB-1, ÅB-2 og ÅB-3.
+> ✅ **Epicet er ikke lenger blokkert.** Story 5.1 kan implementeres parallelt med Epic 4. Story 5.2 til 5.6 bygger på `RangertKandidat` fra story 4.4 — ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06, så Epic 4 kan ferdigstilles og levere den porten.
 
 ### Story 5.1: Tolke tekstbaserte ansattpreferanser med KI
 
@@ -851,7 +851,7 @@ So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
 
 ### Story 5.2: Rangeringen bruker tolkede preferanser
 
-> ⛔ **Indirekte blokkert av ÅB-1, ÅB-2 og ÅB-3.** Storien bygger på Rangeringen i story 4.4.
+> ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på Rangeringen i story 4.4.
 
 As a turnusansvarlig,
 I want at de ansattes preferanser påvirker rangeringen,
@@ -873,7 +873,7 @@ So that den som ønsker flere vakter, kan få dem når alt annet er likt (FR10, 
 
 ### Story 5.3: Avveining per kandidat
 
-> ⛔ **Indirekte blokkert av ÅB-1, ÅB-2 og ÅB-3.** Storien bygger på `RangertKandidat` fra story 4.4.
+> ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på `RangertKandidat` fra story 4.4.
 
 As a turnusansvarlig,
 I want en forklaring i klartekst av hva som trekker opp og ned for hver kandidat,
@@ -903,7 +903,7 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 
 ### Story 5.4: Reservetekst når KI-forklaringen feiler
 
-> ⛔ **Indirekte blokkert av ÅB-1, ÅB-2 og ÅB-3.** Storien bygger på story 5.3.
+> ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på story 5.3.
 
 As a turnusansvarlig,
 I want at systemet fortsetter å virke og sier fra tydelig når KI-forklaringen mangler,
@@ -927,7 +927,7 @@ So that jeg aldri får en anbefaling uten grunnlag, og aldri står fast (FR11, N
 
 ### Story 5.5: Rader vises før forklaringene er ferdige
 
-> ⛔ **Indirekte blokkert av ÅB-1, ÅB-2 og ÅB-3.** Storien bygger på story 5.3.
+> ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på story 5.3.
 
 As a turnusansvarlig,
 I want å se rangeringen med en gang, mens forklaringene lastes etter hvert,
@@ -950,7 +950,7 @@ So that jeg kan begynne å vurdere kandidatene uten å vente på KI (UX-DR13).
 
 ### Story 5.6: Test av at utelukkede kandidater aldri når KI-laget
 
-> ⛔ **Indirekte blokkert av ÅB-1, ÅB-2 og ÅB-3.** Storien bygger på story 5.3.
+> ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på story 5.3.
 
 As a turnusansvarlig,
 I want bevis for at en utelukket ansatt aldri kan bli anbefalt eller nevnt av KI,

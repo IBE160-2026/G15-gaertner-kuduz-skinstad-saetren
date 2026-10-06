@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-09-26
+updated: 2026-10-06
 ---
 
 # PRD: Turnushjelperen
@@ -131,14 +131,18 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 
 **Beskrivelse:** For hver Gyldig kandidat beregnes en forenklet kostnadsvurdering (ordinær sats vs. overtidssats) og gjeldende arbeidsbelastning. Dette er to av de Myke faktorene Rangeringen (§4.4) bygger på.
 
+**Kostnadsmodell (bekreftet av gruppen 2026-10-06):** Hver Ansatt har en individuell timelønn (testdata). Ordinær ukentlig terskel er **36 timer/uke** (addendum §2, grensen for helkontinuerlig skiftarbeid). Timer en Kandidat allerede er satt opp på denne uken, pluss timene i Vakten som vurderes, sammenlignes mot terskelen: timer til og med 36 timer kostes til ordinær timelønn, timer utover kostes til **150 % av ordinær timelønn** (lovens minstekrav er 40 % tillegg, 50 % er vanlig praksis og enkelt å beregne). Dette er en bevisst forenkling, ikke en tariffberegning — se Out of Scope.
+
 **Funksjonelle krav:**
 
 #### FR-7: Beregne forenklet kostnad per kandidat
 
-Systemet kan beregne en forenklet kostnadsvurdering for hver Gyldig kandidat, basert på om Vakten utløser ordinær sats eller overtidssats for Kandidaten.
+Systemet kan beregne en forenklet kostnadsvurdering for hver Gyldig kandidat etter kostnadsmodellen over, basert på om Vakten utløser ordinær sats, overtidssats, eller en kombinasjon for Kandidaten.
 
 **Konsekvenser (testbare):**
 - Samme Kandidat og samme Vakt gir samme beregnet kostnad hver gang (reproduserbart).
+- En Kandidat hvis ukentlige timer (eksisterende Vakter + denne Vakten) holder seg på eller under 36 timer, kostes utelukkende til ordinær sats.
+- En Kandidat som med denne Vakten overstiger 36 timer denne uken, får timene utover terskelen kostet til 150 % av ordinær sats; øvrige timer forblir på ordinær sats.
 - Beregningen er ikke avhengig av KI.
 
 **Out of Scope:**
@@ -146,28 +150,39 @@ Systemet kan beregne en forenklet kostnadsvurdering for hver Gyldig kandidat, ba
 
 #### FR-8: Vise gjeldende arbeidsbelastning per kandidat
 
-Systemet kan vise hvor mye hver Gyldig kandidat allerede er satt opp til å arbeide i den aktuelle perioden.
+Systemet kan vise hvor mye hver Gyldig kandidat allerede er satt opp til å arbeide i den aktuelle perioden, som andel av normaluken på 36 timer (samme terskel som FR-7).
+
+**Terskel (bekreftet av gruppen 2026-10-06):** Arbeidsbelastningen vises som Kandidatens planlagte timer *denne uken* (uten den Vakten som vurderes) delt på 36 timer. Terskelen bytter til «høy belastning»-visning ved ~90 % (ca. 32–33 timer). Samme 36-timers normaluke som kostnadsmodellen i FR-7 — én terskel, to visninger. Til forskjell fra FR-7 legger denne visningen **ikke** til den vurderte Vakten; den viser eksisterende belastning som den er.
 
 **Konsekvenser (testbare):**
 - Arbeidsbelastningen oppdateres konsistent med Turnusens øvrige Vakter for Kandidaten.
+- Prosentandelen beregnes som planlagte timer denne uken ÷ 36, og bytter visuell tilstand ved ~90 % av terskelen.
 
 ### 4.4 Rangering av kandidater
 
-**Beskrivelse:** Gyldige kandidater rangeres etter Myke faktorer (§3). Rangeringen er ikke rent kostnadsstyrt — brief krever at minst ett scenario skal demonstrere at billigste Kandidat ikke nødvendigvis rangeres høyest.
+**Beskrivelse:** Gyldige kandidater rangeres etter Myke faktorer (§3) ved en poengbasert modell: hver Myk faktor gir 0–100 poeng per Kandidat, vektes, og summeres til en totalscore. Høyest totalscore rangeres øverst. Rangeringen er ikke rent kostnadsstyrt — brief krever at minst ett scenario skal demonstrere at billigste Kandidat ikke nødvendigvis rangeres høyest.
+
+**Vekting (bekreftet av gruppen 2026-10-06):**
+
+| Myk faktor | Vekt | Poengsetting |
+| --- | --- | --- |
+| Kostnad | 30 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
+| Arbeidsbelastning | 30 % | Lavest gjeldende arbeidsbelastning blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
+| Ansattpreferanse | 20 % | «Ønsker flere vakter» = 100, «fleksibel»/ingen registrert preferanse = 50, «ønsker færre vakter» = 0. |
+| Kompetansenærhet | 20 % | Fullt kvalifisert Kompetansenivå = 100 poeng; poeng synker proporsjonalt med avstand til full kvalifisering under det. |
+
+Kompetansenærhet er vektet likt med Ansattpreferanse, men gir i praksis liten utslagskraft når minst én Gyldig kandidat er fullt kvalifisert (de fleste får da nær 100 poeng uansett) — den blir avgjørende nettopp i unntakstilfellet der ingen er fullt kvalifisert, se FR-9 under.
 
 **Funksjonelle krav:**
 
 #### FR-9: Rangere gyldige kandidater
 
-Systemet kan rangere alle Gyldige kandidater for en Vakt basert på et definert sett Myke faktorer.
+Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbaserte modellen over.
 
 **Konsekvenser (testbare):**
 - Minst ett testscenario demonstrerer at den billigste Kandidaten ikke rangeres høyest, fordi andre Myke faktorer samlet sett veier tyngre.
-- Når ingen Gyldig kandidat har full kvalifisering for vakttypen, rangeres Kandidaten med Kompetansenivå nærmest full kvalifisering høyere enn de som er lenger unna, forutsatt at dette ikke motsies av de andre Myke faktorene. **Eksempel** *(fiktivt, illustrerer regelen)*: Jonas' vakt krever spesialkompetanse; ingen tilgjengelig Kandidat er fullt kvalifisert, så den nærmest fullt opplærte Kandidaten rangeres øverst blant de Gyldige — forutsatt at hviletids- og arbeidstidsreglene fortsatt er overholdt.
-- Samme input (Kandidater, Vakt, preferanser) gir samme rangeringsrekkefølge hver gang.
-
-**Notes:**
-- **[NOTE FOR PM]** Vekting mellom Myke faktorer ikke fullt bestemt — se §8, spørsmål 2.
+- Når ingen Gyldig kandidat har full kvalifisering for vakttypen, rangeres Kandidaten med Kompetansenivå nærmest full kvalifisering høyere enn de som er lenger unna, forutsatt at dette ikke motsies av de andre Myke faktorene sin vektede sum. **Eksempel** *(fiktivt, illustrerer regelen)*: Jonas' vakt krever spesialkompetanse; ingen tilgjengelig Kandidat er fullt kvalifisert, så den nærmest fullt opplærte Kandidaten rangeres øverst blant de Gyldige — forutsatt at hviletids- og arbeidstidsreglene fortsatt er overholdt.
+- Samme input (Kandidater, Vakt, preferanser) gir samme rangeringsrekkefølge hver gang — poengmodellen er en ren, deterministisk beregning, ikke avhengig av KI.
 
 ### 4.5 KI-forklaring av avveininger
 
@@ -274,10 +289,14 @@ Turnushjelperen v1 skal **ikke**:
 
 ## 8. Åpne spørsmål
 
-1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres.
-2. Endelig innbyrdes vekting mellom Myke faktorer i Rangeringen (kostnad, arbeidsbelastning, Ansattpreferanse, kompetansenærhet, §4.4) — gruppen har bekreftet at kompetansenærhet skal telle tungt når ingen Kandidat er fullt kvalifisert, men fullstendig vekting for øvrig gjenstår. Avklares av gruppen før arkitektur/epics; ingen frist satt ennå.
-3. Konkret detaljnivå i kostnadsmodellen (§4.3, FR-7) — nøyaktig hvilke satser og betingelser som skiller ordinær kostnad fra overtidskostnad.
-4. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
+1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres. Faglærers tilbakemelding på product brief (2026-10-06) vurderer KI/regelmotor-skillet som en styrke, men bekrefter ikke eksplisitt dette spørsmålet — fortsatt åpent.
+2. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
+3. **Fra faglærers tilbakemelding (2026-10-06):** sensor må kunne kjøre og teste appen uten gruppens Gemini API-nøkkel. Krever en mock-/testmodus for KI-laget (forhåndstolkede preferanser, ferdige Avveining-eksempler i testdataene, eller en tydelig dokumentert mock-modus). Ikke løst i denne PRD-en ennå — behandles i egen omgang; påvirker trolig FR-10/FR-11 og arkitekturens `adaptere/ki`.
+
+**Løst (2026-10-06):**
+- Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4 for den bekreftede poengmodellen.
+- Konkret detaljnivå i kostnadsmodellen (§4.3, FR-7) — se §4.3 for terskel (36 t/uke) og overtidstillegg (150 %).
+- Arbeidsbelastningsterskelen («~90 %» i arbeidsbelastningslinjen, opprinnelig fra DESIGN.md/arkitekturens Deferred-liste, ikke et nummerert punkt her) — se §4.3, FR-8: samme 36-timers normaluke som kostnadsmodellen.
 
 **Vurdert og bevisst utelatt fra denne PRD-en:** addendumets punkt om «arbeidsdeling og frister» er et prosjektstyringsspørsmål for gruppen, ikke et produktkrav — det hører hjemme i gruppens egen fremdriftsplan, ikke i PRD-en.
 
