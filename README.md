@@ -11,6 +11,10 @@ Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og
 - Kim O Skinstad
 - Ragnhild Sætren
 
+## Planleggingsgrunnlag
+
+- [Product brief](product-brief.md) – eneste gjeldende brief for prosjektet.
+
 ## Vurderingsgrunnlag
 
 - [Sensorveiledning del 1](docs/emne/sensorveiledning-del-1.md) – tekstgjengivelse med sidereferanser og lenke til original PDF.

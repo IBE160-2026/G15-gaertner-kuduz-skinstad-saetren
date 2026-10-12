@@ -36,9 +36,9 @@ er `product-brief.md` i roten.
 
 ## Hvor ting ligger
 
-- Gjeldende brief: `product-brief.md` i roten. Kopien under
+- Gjeldende brief: `product-brief.md` i roten. Filen under
   `_bmad-output/planning-artifacts/briefs/brief-ibe160-turnushjelperen-2026-09-08/brief.md`
-  er identisk — rediger roten, ikke kopien.
+  er en henvisning til rotfilen — rediger bare `product-brief.md`.
 - Lovgrunnlag (aml. kap. 10), emnekrav, kilder og forkastede alternativer:
   `addendum.md` i samme mappe. Les den før du foreslår harde regler.
 - Hvorfor noe ble valgt bort: `.memlog.md` i samme mappe.

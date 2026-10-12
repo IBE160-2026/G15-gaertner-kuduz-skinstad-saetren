@@ -9,7 +9,7 @@ updated: 2026-09-17
 
 Underlagsmateriale som ikke hører hjemme i selve briefen, men som er nødvendig for proposal, kravspesifikasjon, arkitektur og refleksjonsrapport.
 
-> **Gjeldende brief** er `product-brief.md` i repo-roten — gruppens felles versjon fra GitHub (`IBE160-2026/G15-gaertner-kuduz-skinstad-saetren`). `brief.md` i denne mappa er en kopi av den. Endringer i briefen gjøres i `product-brief.md` og deles via GitHub.
+> **Gjeldende brief** er `product-brief.md` i repo-roten — gruppens felles versjon fra GitHub (`IBE160-2026/G15-gaertner-kuduz-skinstad-saetren`). `brief.md` i denne mappa er en henvisning til rotfilen. Endringer i briefen gjøres i `product-brief.md` og deles via GitHub.
 
 ## 1. Kilder og faktagrunnlag
 
