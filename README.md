@@ -10,3 +10,8 @@ Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og
 - Mithad Kuduz
 - Kim O Skinstad
 - Ragnhild Sætren
+
+## Vurderingsgrunnlag
+
+- [Sensorveiledning del 1](docs/emne/sensorveiledning-del-1.md) – tekstgjengivelse med sidereferanser og lenke til original PDF.
+- [Vurderingsmatrise](docs/emne/vurderingsmatrise.md) – tiltak, dokumenterte bevis og arbeid som gjenstår.

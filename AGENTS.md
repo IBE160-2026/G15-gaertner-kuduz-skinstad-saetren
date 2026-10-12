@@ -72,3 +72,14 @@ er `product-brief.md` i roten.
   alle 214 identiske filer ut som endret.
 
 <!-- /bmad:context -->
+
+## Sensorveiledning og vurderingsgrunnlag
+
+- Les `docs/emne/sensorveiledning-del-1.md` før planlegging,
+  implementering og kvalitetssikring. PDF-en i samme mappe er originalkilden.
+- Bruk kriteriene til å prioritere og kvalitetssikre arbeidet.
+  Oppdater vurderingsmatrisen ved milepæler med lenker til faktiske bevis.
+- Koble implementerte krav til stories, PR-er, tester og KI-logger.
+  Begrunn avvik fra godkjent proposal og gjeldende plan.
+- Hvis vurderingsgrunnlaget ikke kan leses, opplys om dette før
+  vurderinger som avhenger av det.
