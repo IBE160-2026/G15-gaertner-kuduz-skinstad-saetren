@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-06
+updated: 2026-10-15
 ---
 
 # PRD: Turnushjelperen
@@ -56,9 +56,9 @@ Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn,
 - **Turnusansvarlig** — Primærbrukeren. Den eneste rollen som har tilgang til Turnushjelperen i v1.
 - **Kandidat** — En ansatt som vurderes for å overta en Vakt som må bemannes på nytt.
 - **Gyldig kandidat** — En Kandidat som ikke er utelukket av noen Hard regel.
-- **Hard regel** — Et absolutt krav (kompetanse, kolliderende vakt, hviletid, maks arbeidstid) som utelukker en Kandidat uten unntak. Beregnes deterministisk — aldri av KI.
-- **Kompetansenivå** — Hvor godt en ansatt er opplært for en gitt type Vakt, fra delvis opplært til fullt kvalifisert. Avgjør (a) om Kandidaten oppfyller Vaktens minstekrav (Hard regel, §4.2), og (b) hvor nær Kandidaten er full kvalifisering, blant Gyldige kandidater (Myk faktor, §4.4).
-- **Myk faktor** — Et hensyn som brukes til å rangere Gyldige kandidater seg imellom: kostnad, arbeidsbelastning, Ansattpreferanse, og hvor nært Kandidatens Kompetansenivå er full kvalifisering for vakttypen.
+- **Hard regel** — Et absolutt krav (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen og 35-timersregelen i v1) som utelukker en Kandidat uten unntak. Beregnes deterministisk — aldri av KI.
+- **Kompetansenivå** — Hvor godt en ansatt er opplært for en gitt type Vakt, fra delvis opplært til fullt kvalifisert. Avgjør om Kandidaten oppfyller Vaktens minstekrav (Hard regel, §4.2). Kompetansenivå gir ingen poeng i Rangeringen.
+- **Myk faktor** — Et hensyn som brukes til å rangere Gyldige kandidater seg imellom: kostnad, arbeidsbelastning og Ansattpreferanse.
 - **Ansattpreferanse** — Tekstbasert informasjon om en ansatts ønsker eller begrensninger, tolket av KI-laget som del av Rangeringen.
 - **Rangering** — Den sorterte listen over Gyldige kandidater, ordnet etter Myke faktorer.
 - **Avveining** — KI-generert forklaring av hvorfor én Kandidat rangeres over en annen.
@@ -88,11 +88,12 @@ Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus. Realiserer UJ-1.
 
 #### FR-2: Filtrere på kompetanse-minstekrav
 
-Systemet kan utelukke en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav.
+Systemet skal utelukke en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav.
 
 **Konsekvenser (testbare):**
 - 100 % av Kandidatene med Kompetansenivå under minstekravet filtreres bort i definerte testscenarioer.
-- Blant Gyldige kandidater rangeres Kompetansenivå videre som en Myk faktor, ikke som endelig utelukkelse — se FR-9.
+- Minstekravet senkes ikke dersom ingen Kandidater oppfyller det; systemet viser da ingen gyldige kandidater (FR-6).
+- Kompetansenivå påvirker bare filtreringen og inngår ikke i poengberegningen i FR-9. To ellers identiske Gyldige kandidater får samme totalscore selv om Kompetansenivået deres er forskjellig.
 
 #### FR-3: Filtrere på kolliderende vakt
 
@@ -162,16 +163,18 @@ Systemet kan vise hvor mye hver Gyldig kandidat allerede er satt opp til å arbe
 
 **Beskrivelse:** Gyldige kandidater rangeres etter Myke faktorer (§3) ved en poengbasert modell: hver Myk faktor gir 0–100 poeng per Kandidat, vektes, og summeres til en totalscore. Høyest totalscore rangeres øverst. Rangeringen er ikke rent kostnadsstyrt — brief krever at minst ett scenario skal demonstrere at billigste Kandidat ikke nødvendigvis rangeres høyest.
 
-**Vekting (bekreftet av gruppen 2026-10-06):**
+**Vekting (oppdatert etter brukerens beslutning 2026-10-15):**
+
+Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %. Vektene summerer til 100 %.
 
 | Myk faktor | Vekt | Poengsetting |
 | --- | --- | --- |
-| Kostnad | 30 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
-| Arbeidsbelastning | 30 % | Lavest gjeldende arbeidsbelastning blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
-| Ansattpreferanse | 20 % | «Ønsker flere vakter» = 100, «fleksibel»/ingen registrert preferanse = 50, «ønsker færre vakter» = 0. |
-| Kompetansenærhet | 20 % | Fullt kvalifisert Kompetansenivå = 100 poeng; poeng synker proporsjonalt med avstand til full kvalifisering under det. |
+| Kostnad | 40 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
+| Arbeidsbelastning | 35 % | Lavest gjeldende arbeidsbelastning blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
+| Ansattpreferanse | 25 % | «Ønsker flere vakter» = 100, «fleksibel»/ingen registrert preferanse = 50, «ønsker færre vakter» = 0. |
 
-Kompetansenærhet er vektet likt med Ansattpreferanse, men gir i praksis liten utslagskraft når minst én Gyldig kandidat er fullt kvalifisert (de fleste får da nær 100 poeng uansett) — den blir avgjørende nettopp i unntakstilfellet der ingen er fullt kvalifisert, se FR-9 under.
+
+Totalscore = 0,40 × kostnadspoeng + 0,35 × arbeidsbelastningspoeng + 0,25 × preferansepoeng. Kompetanse vurderes utelukkende som Hard regel i FR-2.
 
 **Funksjonelle krav:**
 
@@ -181,7 +184,6 @@ Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbas
 
 **Konsekvenser (testbare):**
 - Minst ett testscenario demonstrerer at den billigste Kandidaten ikke rangeres høyest, fordi andre Myke faktorer samlet sett veier tyngre.
-- Når ingen Gyldig kandidat har full kvalifisering for vakttypen, rangeres Kandidaten med Kompetansenivå nærmest full kvalifisering høyere enn de som er lenger unna, forutsatt at dette ikke motsies av de andre Myke faktorene sin vektede sum. **Eksempel** *(fiktivt, illustrerer regelen)*: Jonas' vakt krever spesialkompetanse; ingen tilgjengelig Kandidat er fullt kvalifisert, så den nærmest fullt opplærte Kandidaten rangeres øverst blant de Gyldige — forutsatt at hviletids- og arbeidstidsreglene fortsatt er overholdt.
 - Samme input (Kandidater, Vakt, preferanser) gir samme rangeringsrekkefølge hver gang — poengmodellen er en ren, deterministisk beregning, ikke avhengig av KI.
 
 ### 4.5 KI-forklaring av avveininger
@@ -261,7 +263,7 @@ Turnushjelperen v1 skal **ikke**:
 - Én fiktiv Turnus med ca. 20–30 ansatte (§2.2, §4.1).
 - Filtrering av Kandidater på fire Harde regler: kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen (§4.2).
 - Forenklet kostnads- og arbeidsbelastningsvurdering per Gyldig kandidat (§4.3).
-- Rangering av Gyldige kandidater på flere Myke faktorer, inkludert kompetansenærhet (§4.4).
+- Rangering av Gyldige kandidater etter kostnad (40 %), arbeidsbelastning (35 %) og Ansattpreferanse (25 %) (§4.4).
 - KI-tolkning av tekstbaserte Ansattpreferanser og KI-generert forklaring per Kandidat (§4.5).
 - Menneskelig Godkjenning som forutsetning for enhver endring (§4.6).
 - Enkel innlogging for Turnusansvarlig (§4.7).
@@ -294,7 +296,7 @@ Turnushjelperen v1 skal **ikke**:
 3. **Fra faglærers tilbakemelding (2026-10-06):** sensor må kunne kjøre og teste appen uten gruppens Gemini API-nøkkel. Krever en mock-/testmodus for KI-laget (forhåndstolkede preferanser, ferdige Avveining-eksempler i testdataene, eller en tydelig dokumentert mock-modus). Ikke løst i denne PRD-en ennå — behandles i egen omgang; påvirker trolig FR-10/FR-11 og arkitekturens `adaptere/ki`.
 
 **Løst (2026-10-06):**
-- Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4 for den bekreftede poengmodellen.
+- Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4. Oppdatert 2026-10-15: kompetansenærhet er tatt ut. Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %. Kompetanse vurderes bare som Hard regel (FR-2).
 - Konkret detaljnivå i kostnadsmodellen (§4.3, FR-7) — se §4.3 for terskel (36 t/uke) og overtidstillegg (150 %).
 - Arbeidsbelastningsterskelen («~90 %» i arbeidsbelastningslinjen, opprinnelig fra DESIGN.md/arkitekturens Deferred-liste, ikke et nummerert punkt her) — se §4.3, FR-8: samme 36-timers normaluke som kostnadsmodellen.
 

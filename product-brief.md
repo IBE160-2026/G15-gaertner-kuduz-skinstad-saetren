@@ -2,7 +2,7 @@
 title: "Product Brief: IBE160 Turnusprosjekt"
 status: draft
 created: 2026-09-15
-updated: 2026-09-16
+updated: 2026-10-15
 ---
 
 # Product Brief: IBE160 Turnusprosjekt
@@ -38,7 +38,9 @@ Prosjektets overordnede problemstilling er derfor:
 
 Brukeren tar utgangspunkt i en eksisterende turnus og velger vakten som må bemannes på nytt, i en web-app.
 
-Løsningen identifiserer først hvilke ansatte som faktisk kan vurderes. Kandidater som ikke oppfyller definerte absolutte krav, blir utelukket. Deretter sammenlignes de gjenværende kandidatene ut fra et begrenset antall relevante hensyn, blant annet arbeidsbelastning, kostnad og ansattpreferanser.
+Løsningen identifiserer først hvilke ansatte som faktisk kan vurderes. Kandidater som ikke oppfyller definerte absolutte krav, blir utelukket. Deretter rangeres de gyldige kandidatene deterministisk etter kostnad, arbeidsbelastning og ansattpreferanser. Faktorene får 0–100 poeng og vektes med henholdsvis 40 %, 35 % og 25 %, i samsvar med PRD §4.4. Kompetanse vurderes bare som et hardt minstekrav for vakten og gir ingen rangeringspoeng.
+
+**Eksempel på kompetanse som hardt krav:** Hvis en vakt på legevakten krever legekompetanse, kan en sykepleier ikke overta denne vakten. Sykepleieren utelukkes selv om vedkommende er tilgjengelig, har lavere kostnad eller ønsker flere vakter. Kompetansenærhet gir ikke unntak fra vaktens kompetansekrav; det er ikke tilstrekkelig å være nær kvalifisert.
 
 Brukeren får presentert en rangert liste over de mest aktuelle kandidatene. For hvert alternativ skal systemet vise:
 
@@ -103,8 +105,9 @@ Førsteversjonen regnes som vellykket dersom den kan demonstrere en komplett og 
 
 Førsteversjonen skal demonstrere håndtering av én turnusendring om gangen i en eksisterende, fiktiv turnus med omtrent 20–30 ansatte. Løsningen skal:
 
-- bruke et begrenset sett harde regler, for eksempel kompetanse, kolliderende vakter og noen få definerte arbeidstids-/hviletidsregler
-- sammenligne gyldige kandidater ut fra noen få myke faktorer
+- filtrere kandidater etter fire harde regler: vaktens kompetanse-minstekrav, ingen kolliderende vakter, 11-timersregelen (daglig hvile) og 35-timersregelen (ukentlig fri), som spesifisert i PRD §4.2
+- utelukke kandidater under vaktens kompetanse-minstekrav, også når ingen kandidater oppfyller kravet
+- rangere gyldige kandidater etter kostnad (40 %), arbeidsbelastning (35 %) og ansattpreferanser (25 %)
 - bruke en forenklet økonomisk modell, for eksempel ordinær kostnad kontra overtidskostnad
 - ta hensyn til et begrenset sett ansattpreferanser
 - bruke KI til å tolke og forklare myke forhold
@@ -120,6 +123,7 @@ Førsteversjonen skal ikke:
 - optimalisere en hel turnus automatisk
 - garantere full juridisk etterlevelse av arbeidsmiljøloven
 - implementere komplette tariff-, lønns- eller overtidsregler
+- kontrollere maks arbeidstid per døgn/uke eller overtidsgrenser som harde regler i v1
 - beregne full lønnskostnad med alle tillegg og avgifter
 - bruke ekte personopplysninger
 - integreres mot reelle HR-, lønns- eller turnussystemer
