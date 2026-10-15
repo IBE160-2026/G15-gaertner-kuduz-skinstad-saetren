@@ -171,7 +171,7 @@ Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %
 | --- | --- | --- |
 | Kostnad | 40 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
 | Arbeidsbelastning | 35 % | Lavest gjeldende arbeidsbelastning blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
-| Ansattpreferanse | 25 % | «Ønsker flere vakter» = 100, «fleksibel»/ingen registrert preferanse = 50, «ønsker færre vakter» = 0. |
+| Ansattpreferanse | 25 % | Fem faste nivåer: 100, 75, 50, 25 eller 0 poeng etter kategoriene i §4.5. Manglende registrert preferanse = 50 poeng, merket «ingen registrert preferanse». |
 
 
 Totalscore = 0,40 × kostnadspoeng + 0,35 × arbeidsbelastningspoeng + 0,25 × preferansepoeng. Kompetanse vurderes utelukkende som Hard regel i FR-2.
@@ -180,7 +180,7 @@ Totalscore = 0,40 × kostnadspoeng + 0,35 × arbeidsbelastningspoeng + 0,25 × p
 
 #### FR-9: Rangere gyldige kandidater
 
-Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbaserte modellen over.
+Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbaserte modellen over. Kandidatlisten viser inntil fem av de høyest rangerte. Finnes færre enn fem Gyldige kandidater, vises alle; finnes ingen, gjelder FR-6. Turnusansvarlig skal fortsatt kunne få tilgang til øvrige Gyldige kandidater for valg etter FR-12.
 
 **Konsekvenser (testbare):**
 - Minst ett testscenario demonstrerer at den billigste Kandidaten ikke rangeres høyest, fordi andre Myke faktorer samlet sett veier tyngre.
@@ -197,7 +197,41 @@ Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbas
 Systemet kan bruke en språkmodell til å tolke tekstbaserte Ansattpreferanser og gjøre dem tilgjengelige som input til Rangeringen (§4.4).
 
 **Konsekvenser (testbare):**
-- Tolkede preferanser sendes som strukturert input til Rangeringen — språkmodellen utfører ikke selve rangeringsberegningen.
+- Tolkede preferanser sendes som strukturert kategori til Rangeringen. Koden tildeler kategoriens faste poengsum; språkmodellen utfører ikke selve poengberegningen eller Rangeringen.
+- Alle de 15 definerte preferansetekstene under skal tolkes til forventet kategori. Eksakt ordlyd i KI-forklaringen er ikke en del av fasiten.
+- Manglende registrert preferanse gir 50 poeng og merkes «ingen registrert preferanse». Det skal ikke fremstilles som et uttrykkelig nøytralt ønske.
+
+**Preferansekategorier og poeng:**
+
+| Poeng | Tolkning |
+| --- | --- |
+| 100 | Ønsker aktivt flere vakter |
+| 75 | Positiv til ekstravakt ved behov |
+| 50 | Nøytral |
+| 25 | Foretrekker å slippe, men er åpen ved behov |
+| 0 | Tydelig ønske om å unngå ekstravakter |
+
+Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler.
+
+**Definerte preferansetekster med fasit:**
+
+| Nr. | Preferansetekst | Forventet tolkning | Poeng |
+| --- | --- | --- | --- |
+| 1 | «Jeg ønsker flere vakter denne uken.» | Ønsker aktivt flere vakter | 100 |
+| 2 | «Jeg vil gjerne jobbe mer enn den oppsatte turnusen.» | Ønsker aktivt flere vakter | 100 |
+| 3 | «Prioriter meg gjerne når det blir ledige ekstravakter.» | Ønsker aktivt flere vakter | 100 |
+| 4 | «Jeg trenger ikke flere vakter, men tar gjerne en ekstra ved behov.» | Positiv til ekstravakt ved behov | 75 |
+| 5 | «Hvis dere mangler folk, stiller jeg gjerne på en ekstravakt.» | Positiv til ekstravakt ved behov | 75 |
+| 6 | «Jeg er positiv til ekstravakter, selv om jeg ikke aktivt ber om flere.» | Positiv til ekstravakt ved behov | 75 |
+| 7 | «Jeg har ingen ønsker om flere eller færre vakter.» | Nøytral | 50 |
+| 8 | «For meg spiller det ingen rolle om jeg får en ekstravakt.» | Nøytral | 50 |
+| 9 | «Jeg stiller meg nøytral til å jobbe utover den oppsatte turnusen.» | Nøytral | 50 |
+| 10 | «Jeg foretrekker å slippe ekstravakter, men kan ta en hvis det trengs.» | Foretrekker å slippe, men er åpen ved behov | 25 |
+| 11 | «Spør helst andre først, men jeg er åpen for en ekstravakt ved bemanningsbehov.» | Foretrekker å slippe, men er åpen ved behov | 25 |
+| 12 | «Jeg ønsker helst bare de oppsatte vaktene, men kan stille dersom dere mangler folk.» | Foretrekker å slippe, men er åpen ved behov | 25 |
+| 13 | «Jeg ønsker ikke ekstravakter denne uken.» | Tydelig ønske om å unngå ekstravakter | 0 |
+| 14 | «Jeg ønsker færre vakter og ber om å slippe ekstraarbeid.» | Tydelig ønske om å unngå ekstravakter | 0 |
+| 15 | «Jeg ønsker kun å jobbe de vaktene som allerede står i turnusen.» | Tydelig ønske om å unngå ekstravakter | 0 |
 
 #### FR-11: Generere forklaring per kandidat
 
@@ -277,11 +311,11 @@ Turnushjelperen v1 skal **ikke**:
 **Primære**
 - **SM-1**: 100 % av Kandidatene som bryter en implementert Hard regel filtreres bort i definerte testscenarioer. Validerer FR-2 til FR-5.
 - **SM-2**: En Kandidat utelukket av en Hard regel blir aldri anbefalt av KI — testbar invariant. Validerer FR-9, FR-11.
-- **SM-3**: Turnusansvarlig får presentert en kort, rangert liste over de mest aktuelle Kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. Validerer FR-1, FR-9.
+- **SM-3**: Turnusansvarlig får presentert inntil fem av de høyest rangerte Gyldige kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. Validerer FR-1, FR-9.
 - **SM-4**: Systemet forklarer hvilke faktorer som påvirker Rangeringen av hver Kandidat. Validerer FR-11.
 - **SM-5**: Samme strukturerte input gir samme resultat hver gang for Harde regler og kostnadsberegninger (reproduserbarhet). Validerer FR-2 til FR-9.
 - **SM-6**: Minst ett scenario demonstrerer at den billigste Kandidaten ikke nødvendigvis rangeres høyest. Validerer FR-9.
-- **SM-7**: KI tolker minst noen definerte tekstbaserte Ansattpreferanser og bruker dem i forklaringen. Validerer FR-10, FR-11.
+- **SM-7**: KI tolker alle 15 definerte preferansetekster i §4.5 til forventet kategori og bruker tolkningen i forklaringen. Manglende registrert preferanse gir 50 poeng og vises som «ingen registrert preferanse». Validerer FR-10, FR-11.
 - **SM-8**: Turnusansvarlig er alltid den som tar den endelige beslutningen (Godkjenning kreves). Validerer FR-12.
 - **SM-9** *(teknisk kvalitet)*: Systemet kan bygges og kjøres fra et rent klonet repo, uten manuelle unntak eller udokumenterte oppsettsteg. Validerer hele leveransen (§4); addendum §6 peker på dette som et teknisk kvalitetskriterium som bør videreføres i PRD/spec.
 
