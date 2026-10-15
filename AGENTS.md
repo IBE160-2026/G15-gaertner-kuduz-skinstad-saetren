@@ -48,6 +48,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Hvorfor noe ble valgt bort: `.memlog.md` i samme mappe.
 - Modelltest: `docs/modelltest-openrouter.md` beskriver kjøring og vurdering;
   resultater og begrensninger dokumenteres i `docs/ki-logg/2026-10-15-modelltest-haiku.md`.
+  Sammenligning med Luna, Mistral og Gemma pågår: `docs/ki-logg/2026-10-15-modellsammenligning.md`
+  har status og overlevering.
 - Hold `_bmad/`, `.claude/skills/` og `.agents/skills/` utenfor søk i prosjektkoden —
   det er BMAD-rammeverket og utgjør 446 av 455 sporede filer.
 
