@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-14
+updated: 2026-10-15
 ---
 
 # PRD: Turnushjelperen
@@ -56,9 +56,9 @@ Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn,
 - **Turnusansvarlig** — Primærbrukeren. Den eneste rollen som har tilgang til Turnushjelperen i v1.
 - **Kandidat** — En ansatt som vurderes for å overta en Vakt som må bemannes på nytt.
 - **Gyldig kandidat** — En Kandidat som ikke er utelukket av noen Hard regel.
-- **Hard regel** — Et absolutt krav (kompetanse, kolliderende vakt, hviletid, maks arbeidstid) som utelukker en Kandidat uten unntak. Beregnes deterministisk — aldri av KI.
-- **Kompetansenivå** — Hvor godt en ansatt er opplært for en gitt type Vakt, fra delvis opplært til fullt kvalifisert. Avgjør (a) om Kandidaten oppfyller Vaktens minstekrav (Hard regel, §4.2), og (b) hvor nær Kandidaten er full kvalifisering, blant Gyldige kandidater (Myk faktor, §4.4).
-- **Myk faktor** — Et hensyn som brukes til å rangere Gyldige kandidater seg imellom: kostnad, arbeidsbelastning, Ansattpreferanse, og hvor nært Kandidatens Kompetansenivå er full kvalifisering for vakttypen.
+- **Hard regel** — Et absolutt krav (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen og 35-timersregelen i v1) som utelukker en Kandidat uten unntak. Beregnes deterministisk — aldri av KI.
+- **Kompetansenivå** — Hvor godt en ansatt er opplært for en gitt type Vakt, fra delvis opplært til fullt kvalifisert. Avgjør om Kandidaten oppfyller Vaktens minstekrav (Hard regel, §4.2). Kompetansenivå gir ingen poeng i Rangeringen.
+- **Myk faktor** — Et hensyn som brukes til å rangere Gyldige kandidater seg imellom: kostnad, arbeidsbelastning og Ansattpreferanse.
 - **Ansattpreferanse** — Tekstbasert informasjon om en ansatts ønsker eller begrensninger, tolket av KI-laget som del av Rangeringen.
 - **Rangering** — Den sorterte listen over Gyldige kandidater, ordnet etter Myke faktorer.
 - **Avveining** — KI-generert forklaring av hvorfor én Kandidat rangeres over en annen.
@@ -88,11 +88,12 @@ Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus. Realiserer UJ-1.
 
 #### FR-2: Filtrere på kompetanse-minstekrav
 
-Systemet kan utelukke en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav.
+Systemet skal utelukke en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav.
 
 **Konsekvenser (testbare):**
 - 100 % av Kandidatene med Kompetansenivå under minstekravet filtreres bort i definerte testscenarioer.
-- Blant Gyldige kandidater rangeres Kompetansenivå videre som en Myk faktor, ikke som endelig utelukkelse — se FR-9.
+- Minstekravet senkes ikke dersom ingen Kandidater oppfyller det; systemet viser da ingen gyldige kandidater (FR-6).
+- Kompetansenivå påvirker bare filtreringen og inngår ikke i poengberegningen i FR-9. To ellers identiske Gyldige kandidater får samme totalscore selv om Kompetansenivået deres er forskjellig.
 
 #### FR-3: Filtrere på kolliderende vakt
 
@@ -162,26 +163,27 @@ Systemet kan vise hvor mye hver Gyldig kandidat allerede er satt opp til å arbe
 
 **Beskrivelse:** Gyldige kandidater rangeres etter Myke faktorer (§3) ved en poengbasert modell: hver Myk faktor gir 0–100 poeng per Kandidat, vektes, og summeres til en totalscore. Høyest totalscore rangeres øverst. Rangeringen er ikke rent kostnadsstyrt — brief krever at minst ett scenario skal demonstrere at billigste Kandidat ikke nødvendigvis rangeres høyest.
 
-**Vekting (bekreftet av gruppen 2026-10-06):**
+**Vekting (oppdatert etter brukerens beslutning 2026-10-15):**
+
+Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %. Vektene summerer til 100 %.
 
 | Myk faktor | Vekt | Poengsetting |
 | --- | --- | --- |
-| Kostnad | 30 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
-| Arbeidsbelastning | 30 % | Lavest gjeldende arbeidsbelastning blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
-| Ansattpreferanse | 20 % | «Ønsker flere vakter» = 100, «fleksibel»/ingen registrert preferanse = 50, «ønsker færre vakter» = 0. |
-| Kompetansenærhet | 20 % | Fullt kvalifisert Kompetansenivå = 100 poeng; poeng synker proporsjonalt med avstand til full kvalifisering under det. |
+| Kostnad | 40 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
+| Arbeidsbelastning | 35 % | Lavest gjeldende arbeidsbelastning blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
+| Ansattpreferanse | 25 % | Fem faste nivåer: 100, 75, 50, 25 eller 0 poeng etter kategoriene i §4.5. Manglende registrert preferanse = 50 poeng, merket «ingen registrert preferanse». |
 
-Kompetansenærhet er vektet likt med Ansattpreferanse, men gir i praksis liten utslagskraft når minst én Gyldig kandidat er fullt kvalifisert (de fleste får da nær 100 poeng uansett) — den blir avgjørende nettopp i unntakstilfellet der ingen er fullt kvalifisert, se FR-9 under.
+
+Totalscore = 0,40 × kostnadspoeng + 0,35 × arbeidsbelastningspoeng + 0,25 × preferansepoeng. Kompetanse vurderes utelukkende som Hard regel i FR-2.
 
 **Funksjonelle krav:**
 
 #### FR-9: Rangere gyldige kandidater
 
-Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbaserte modellen over.
+Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbaserte modellen over. Kandidatlisten viser inntil fem av de høyest rangerte. Finnes færre enn fem Gyldige kandidater, vises alle; finnes ingen, gjelder FR-6. Turnusansvarlig skal fortsatt kunne få tilgang til øvrige Gyldige kandidater for valg etter FR-12.
 
 **Konsekvenser (testbare):**
 - Minst ett testscenario demonstrerer at den billigste Kandidaten ikke rangeres høyest, fordi andre Myke faktorer samlet sett veier tyngre.
-- Når ingen Gyldig kandidat har full kvalifisering for vakttypen, rangeres Kandidaten med Kompetansenivå nærmest full kvalifisering høyere enn de som er lenger unna, forutsatt at dette ikke motsies av de andre Myke faktorene sin vektede sum. **Eksempel** *(fiktivt, illustrerer regelen)*: Jonas' vakt krever spesialkompetanse; ingen tilgjengelig Kandidat er fullt kvalifisert, så den nærmest fullt opplærte Kandidaten rangeres øverst blant de Gyldige — forutsatt at hviletids- og arbeidstidsreglene fortsatt er overholdt.
 - Samme input (Kandidater, Vakt, preferanser) gir samme rangeringsrekkefølge hver gang — poengmodellen er en ren, deterministisk beregning, ikke avhengig av KI.
 
 ### 4.5 KI-forklaring av avveininger
@@ -195,7 +197,41 @@ Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbas
 Systemet kan bruke en språkmodell til å tolke tekstbaserte Ansattpreferanser og gjøre dem tilgjengelige som input til Rangeringen (§4.4).
 
 **Konsekvenser (testbare):**
-- Tolkede preferanser sendes som strukturert input til Rangeringen — språkmodellen utfører ikke selve rangeringsberegningen.
+- Tolkede preferanser sendes som strukturert kategori til Rangeringen. Koden tildeler kategoriens faste poengsum; språkmodellen utfører ikke selve poengberegningen eller Rangeringen.
+- Alle de 15 definerte preferansetekstene under skal tolkes til forventet kategori. Eksakt ordlyd i KI-forklaringen er ikke en del av fasiten.
+- Manglende registrert preferanse gir 50 poeng og merkes «ingen registrert preferanse». Det skal ikke fremstilles som et uttrykkelig nøytralt ønske.
+
+**Preferansekategorier og poeng:**
+
+| Poeng | Tolkning |
+| --- | --- |
+| 100 | Ønsker aktivt flere vakter |
+| 75 | Positiv til ekstravakt ved behov |
+| 50 | Nøytral |
+| 25 | Foretrekker å slippe, men er åpen ved behov |
+| 0 | Tydelig ønske om å unngå ekstravakter |
+
+Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler.
+
+**Definerte preferansetekster med fasit:**
+
+| Nr. | Preferansetekst | Forventet tolkning | Poeng |
+| --- | --- | --- | --- |
+| 1 | «Jeg ønsker flere vakter denne uken.» | Ønsker aktivt flere vakter | 100 |
+| 2 | «Jeg vil gjerne jobbe mer enn den oppsatte turnusen.» | Ønsker aktivt flere vakter | 100 |
+| 3 | «Prioriter meg gjerne når det blir ledige ekstravakter.» | Ønsker aktivt flere vakter | 100 |
+| 4 | «Jeg trenger ikke flere vakter, men tar gjerne en ekstra ved behov.» | Positiv til ekstravakt ved behov | 75 |
+| 5 | «Hvis dere mangler folk, stiller jeg gjerne på en ekstravakt.» | Positiv til ekstravakt ved behov | 75 |
+| 6 | «Jeg er positiv til ekstravakter, selv om jeg ikke aktivt ber om flere.» | Positiv til ekstravakt ved behov | 75 |
+| 7 | «Jeg har ingen ønsker om flere eller færre vakter.» | Nøytral | 50 |
+| 8 | «For meg spiller det ingen rolle om jeg får en ekstravakt.» | Nøytral | 50 |
+| 9 | «Jeg stiller meg nøytral til å jobbe utover den oppsatte turnusen.» | Nøytral | 50 |
+| 10 | «Jeg foretrekker å slippe ekstravakter, men kan ta en hvis det trengs.» | Foretrekker å slippe, men er åpen ved behov | 25 |
+| 11 | «Spør helst andre først, men jeg er åpen for en ekstravakt ved bemanningsbehov.» | Foretrekker å slippe, men er åpen ved behov | 25 |
+| 12 | «Jeg ønsker helst bare de oppsatte vaktene, men kan stille dersom dere mangler folk.» | Foretrekker å slippe, men er åpen ved behov | 25 |
+| 13 | «Jeg ønsker ikke ekstravakter denne uken.» | Tydelig ønske om å unngå ekstravakter | 0 |
+| 14 | «Jeg ønsker færre vakter og ber om å slippe ekstraarbeid.» | Tydelig ønske om å unngå ekstravakter | 0 |
+| 15 | «Jeg ønsker kun å jobbe de vaktene som allerede står i turnusen.» | Tydelig ønske om å unngå ekstravakter | 0 |
 
 #### FR-11: Generere forklaring per kandidat
 
@@ -262,7 +298,7 @@ Turnushjelperen v1 skal **ikke**:
 - Én fiktiv Turnus med ca. 20–30 ansatte (§2.2, §4.1).
 - Filtrering av Kandidater på fire Harde regler: kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen (§4.2).
 - Forenklet kostnads- og arbeidsbelastningsvurdering per Gyldig kandidat (§4.3).
-- Rangering av Gyldige kandidater på flere Myke faktorer, inkludert kompetansenærhet (§4.4).
+- Rangering av Gyldige kandidater etter kostnad (40 %), arbeidsbelastning (35 %) og Ansattpreferanse (25 %) (§4.4).
 - KI-tolkning av tekstbaserte Ansattpreferanser og KI-generert forklaring per Kandidat (§4.5).
 - Menneskelig Godkjenning som forutsetning for enhver endring (§4.6).
 - Enkel innlogging for Turnusansvarlig (§4.7).
@@ -276,11 +312,11 @@ Turnushjelperen v1 skal **ikke**:
 **Primære**
 - **SM-1**: 100 % av Kandidatene som bryter en implementert Hard regel filtreres bort i definerte testscenarioer. Validerer FR-2 til FR-5.
 - **SM-2**: En Kandidat utelukket av en Hard regel blir aldri anbefalt av KI — testbar invariant. Validerer FR-9, FR-11.
-- **SM-3**: Turnusansvarlig får presentert en kort, rangert liste over de mest aktuelle Kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. Validerer FR-1, FR-9.
+- **SM-3**: Turnusansvarlig får presentert inntil fem av de høyest rangerte Gyldige kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. Validerer FR-1, FR-9.
 - **SM-4**: Systemet forklarer hvilke faktorer som påvirker Rangeringen av hver Kandidat. Validerer FR-11.
 - **SM-5**: Samme strukturerte input gir samme resultat hver gang for Harde regler og kostnadsberegninger (reproduserbarhet). Validerer FR-2 til FR-9.
 - **SM-6**: Minst ett scenario demonstrerer at den billigste Kandidaten ikke nødvendigvis rangeres høyest. Validerer FR-9.
-- **SM-7**: KI tolker minst noen definerte tekstbaserte Ansattpreferanser og bruker dem i forklaringen. Validerer FR-10, FR-11.
+- **SM-7**: KI tolker alle 15 definerte preferansetekster i §4.5 til forventet kategori og bruker tolkningen i forklaringen. Manglende registrert preferanse gir 50 poeng og vises som «ingen registrert preferanse». Validerer FR-10, FR-11.
 - **SM-8**: Turnusansvarlig er alltid den som tar den endelige beslutningen (Godkjenning kreves). Validerer FR-12.
 - **SM-9** *(teknisk kvalitet)*: Systemet kan bygges og kjøres fra et rent klonet repo, uten manuelle unntak eller udokumenterte oppsettsteg, og uten gruppens API-nøkkel (demo-modus, §4.5). Validerer hele leveransen (§4); addendum §6 peker på dette som et teknisk kvalitetskriterium som bør videreføres i PRD/spec.
 
@@ -296,7 +332,7 @@ Turnushjelperen v1 skal **ikke**:
 - Kjøring uten gruppens nøkkel (faglærers tilbakemelding 2026-10-06, punkt 3; tidligere åpent spørsmål 3). KI-leverandøren er OpenRouter med `anthropic/claude-haiku-5.5` som standardmodell, satt i en miljøvariabel. Dette erstatter Google Gemini, som ble valgt i arkitektursteget 2026-09-29 (arkitekturens AD-6). Sensor får en OpenRouter-nøkkel med kreditt, levert i innleveringen og aldri i repoet. Om det blir den felles utviklingsnøkkelen eller en egen sensornøkkel, og hvor mye kreditt den får, avgjøres nær innlevering ut fra faktisk forbruk (epics ÅB-8). Uten nøkkel starter appen i demo-modus (§4.5). Se `sprint-change-proposal-2026-10-14.md`.
 
 **Løst (2026-10-06):**
-- Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4 for den bekreftede poengmodellen.
+- Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4. Oppdatert 2026-10-15: kompetansenærhet er tatt ut. Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %. Kompetanse vurderes bare som Hard regel (FR-2).
 - Konkret detaljnivå i kostnadsmodellen (§4.3, FR-7) — se §4.3 for terskel (36 t/uke) og overtidstillegg (150 %).
 - Arbeidsbelastningsterskelen («~90 %» i arbeidsbelastningslinjen, opprinnelig fra DESIGN.md/arkitekturens Deferred-liste, ikke et nummerert punkt her) — se §4.3, FR-8: samme 36-timers normaluke som kostnadsmodellen.
 

@@ -2,7 +2,7 @@
 title: "Product Brief: IBE160 Turnusprosjekt"
 status: draft
 created: 2026-09-15
-updated: 2026-09-16
+updated: 2026-10-15
 ---
 
 # Product Brief: IBE160 Turnusprosjekt
@@ -38,9 +38,11 @@ Prosjektets overordnede problemstilling er derfor:
 
 Brukeren tar utgangspunkt i en eksisterende turnus og velger vakten som må bemannes på nytt, i en web-app.
 
-Løsningen identifiserer først hvilke ansatte som faktisk kan vurderes. Kandidater som ikke oppfyller definerte absolutte krav, blir utelukket. Deretter sammenlignes de gjenværende kandidatene ut fra et begrenset antall relevante hensyn, blant annet arbeidsbelastning, kostnad og ansattpreferanser.
+Løsningen identifiserer først hvilke ansatte som faktisk kan vurderes. Kandidater som ikke oppfyller definerte absolutte krav, blir utelukket. Deretter rangeres de gyldige kandidatene deterministisk etter kostnad, arbeidsbelastning og ansattpreferanser. Faktorene får 0–100 poeng og vektes med henholdsvis 40 %, 35 % og 25 %, i samsvar med PRD §4.4. Kompetanse vurderes bare som et hardt minstekrav for vakten og gir ingen rangeringspoeng.
 
-Brukeren får presentert en rangert liste over de mest aktuelle kandidatene. For hvert alternativ skal systemet vise:
+**Eksempel på kompetanse som hardt krav:** Hvis en vakt på legevakten krever legekompetanse, kan en sykepleier ikke overta denne vakten. Sykepleieren utelukkes selv om vedkommende er tilgjengelig, har lavere kostnad eller ønsker flere vakter. Kompetansenærhet gir ikke unntak fra vaktens kompetansekrav; det er ikke tilstrekkelig å være nær kvalifisert.
+
+Brukeren får presentert inntil fem av de høyest rangerte gyldige kandidatene. For hvert alternativ skal systemet vise:
 
 - hvorfor kandidaten kan ta vakten
 - hvilke forhold som trekker opp
@@ -51,6 +53,20 @@ Brukeren får presentert en rangert liste over de mest aktuelle kandidatene. For
 KI skal brukes til å tolke myke, tekstbaserte preferanser og til å forklare avveiningene mellom gyldige kandidater på en forståelig måte. Beregning av harde regler, arbeidstid og kostnad skal ikke overlates til KI.
 
 Systemet skal være beslutningsstøtte, ikke en automatisk beslutningstaker. Brukeren velger selv hvilken kandidat som eventuelt skal settes inn i vakten.
+
+### Ansattpreferanser
+
+Preferansefaktoren teller 25 % av totalscoren og bruker fem faste poengnivåer:
+
+| Poeng | Tolkning |
+| --- | --- |
+| 100 | Ønsker aktivt flere vakter |
+| 75 | Positiv til ekstravakt ved behov |
+| 50 | Nøytral |
+| 25 | Foretrekker å slippe, men er åpen ved behov |
+| 0 | Tydelig ønske om å unngå ekstravakter |
+
+Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler. De 15 definerte eksempeltekstene med forventet tolkning står i PRD §4.5.
 
 ## Hva gjør dette annerledes
 
@@ -90,11 +106,11 @@ Førsteversjonen regnes som vellykket dersom den kan demonstrere en komplett og 
 - Brukeren kan velge én eksisterende vakt som må bemannes på nytt.
 - I definerte testscenarioer skal 100 % av kandidatene som bryter en implementert hard regel bli filtrert bort.
 - En kandidat som er utelukket av en hard regel, skal aldri kunne bli anbefalt av KI.
-- Brukeren skal få presentert en kort liste over de mest aktuelle kandidatene uten å måtte kontrollere alle 20–30 ansatte manuelt.
+- Brukeren skal få presentert inntil fem av de høyest rangerte gyldige kandidatene uten å måtte kontrollere alle 20–30 ansatte manuelt. Finnes færre enn fem gyldige kandidater, vises alle; finnes ingen, vises en tydelig melding.
 - Systemet skal forklare hvilke faktorer som påvirker rangeringen av hver kandidat.
 - Samme strukturerte input skal gi samme resultat for harde regler og kostnadsberegninger hver gang.
 - Systemet skal demonstrere minst ett scenario der den billigste kandidaten ikke nødvendigvis rangeres høyest, fordi andre hensyn samlet sett gjør en annen kandidat bedre.
-- KI skal kunne tolke minst noen definerte tekstbaserte ansattpreferanser og bruke disse i forklaringen av kandidatene.
+- KI skal kunne tolke de 15 definerte preferansetekstene i PRD §4.5 til forventet kategori (tre eksempler per poengnivå) og bruke tolkningen i forklaringen av kandidatene. Manglende registrert preferanse skal gi 50 poeng og vises som «ingen registrert preferanse».
 - Brukeren skal alltid være den som tar den endelige beslutningen.
 
 ## Omfang
@@ -103,8 +119,9 @@ Førsteversjonen regnes som vellykket dersom den kan demonstrere en komplett og 
 
 Førsteversjonen skal demonstrere håndtering av én turnusendring om gangen i en eksisterende, fiktiv turnus med omtrent 20–30 ansatte. Løsningen skal:
 
-- bruke et begrenset sett harde regler, for eksempel kompetanse, kolliderende vakter og noen få definerte arbeidstids-/hviletidsregler
-- sammenligne gyldige kandidater ut fra noen få myke faktorer
+- filtrere kandidater etter fire harde regler: vaktens kompetanse-minstekrav, ingen kolliderende vakter, 11-timersregelen (daglig hvile) og 35-timersregelen (ukentlig fri), som spesifisert i PRD §4.2
+- utelukke kandidater under vaktens kompetanse-minstekrav, også når ingen kandidater oppfyller kravet
+- rangere gyldige kandidater etter kostnad (40 %), arbeidsbelastning (35 %) og ansattpreferanser (25 %)
 - bruke en forenklet økonomisk modell, for eksempel ordinær kostnad kontra overtidskostnad
 - ta hensyn til et begrenset sett ansattpreferanser
 - bruke KI til å tolke og forklare myke forhold
@@ -120,6 +137,7 @@ Førsteversjonen skal ikke:
 - optimalisere en hel turnus automatisk
 - garantere full juridisk etterlevelse av arbeidsmiljøloven
 - implementere komplette tariff-, lønns- eller overtidsregler
+- kontrollere maks arbeidstid per døgn/uke eller overtidsgrenser som harde regler i v1
 - beregne full lønnskostnad med alle tillegg og avgifter
 - bruke ekte personopplysninger
 - integreres mot reelle HR-, lønns- eller turnussystemer
