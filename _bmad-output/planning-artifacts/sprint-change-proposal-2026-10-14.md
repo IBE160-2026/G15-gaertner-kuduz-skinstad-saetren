@@ -9,6 +9,12 @@ scope: moderat
 
 # Endringsforslag: KI-leverandør og kjøring uten gruppens nøkkel
 
+> **Oppdatering 2026-10-16:** Standardmodellen er senere endret fra
+> `anthropic/claude-haiku-5.5` til `openai/gpt-6-luna` etter modelltestene i
+> `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md` og
+> `docs/ki-logg/2026-10-16-robusthet-luna.md`. Forslaget under er bevart slik det ble
+> godkjent 2026-10-14. Branchnavnet viser det opprinnelige valget.
+
 ## 1. Hva som utløser endringen
 
 To forhold utløser endringen. Ingen av dem er funnet under implementering, for det finnes ingen applikasjonskode ennå.

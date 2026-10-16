@@ -280,3 +280,11 @@ ikke at den er robust generelt.
 4. Valgfritt: Gemma på betalt endepunkt med håndhevet skjema (krever ny `MODELS`-linje
    med `strict: True`).
 5. Nye testtekster for negasjon og betingede ønsker før story 5.1.
+
+## Oppfølging 16. oktober
+
+Brukeren besluttet å holde Mistral og Gemma utenfor videre testing. Den avsluttende
+sammenligningen av Haiku og Luna er
+[beslutningstesten](2026-10-16-beslutningstest-haiku-luna.md), og gruppa valgte Luna etter
+[robusthetstesten](2026-10-16-robusthet-luna.md). Punktene under «Gjenstår» er dermed
+avsluttet eller erstattet. Resten av loggen er uendret.

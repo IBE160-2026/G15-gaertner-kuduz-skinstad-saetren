@@ -83,9 +83,10 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert i testdataene inntil videre (ÅB-4, PRD §2.2). Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen er fullt kvalifisert (FR9), ingen gyldige kandidater (FR6, EXPERIENCE: Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1).
 
 **KI-integrasjon**
-- OpenRouter, med `anthropic/claude-haiku-5.5` som standardmodell i `OPENROUTER_MODEL`. Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
+- OpenRouter, med `openai/gpt-6-luna` som standardmodell i `OPENROUTER_MODEL` (valgt 2026-10-16, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
+- AD-7: `adaptere/ki` holder seg under 18 kall per minutt og 5 samtidige, venter til `X-RateLimit-Reset` ved 429 og gir opp etter 90 s. Lukkede Avveininger hentes når raden åpnes.
 - AD-6: `KI_MODUS=openrouter|demo`. Uten `OPENROUTER_API_KEY` starter appen i demo-modus. Valget skjer bare i oppstartslaget til `adaptere/api`.
-- Norskkvaliteten til Haiku 5.5 er ikke målt. En modelltest kjøres før story 5.1 implementeres, og resultatet logges i `docs/ki-logg/`.
+- Norskkvaliteten er testet før story 5.1 (`docs/ki-logg/2026-10-15-*` og `2026-10-16-*`). Luna tolket alle 15 fasittekstene i PRD §4.5 riktig i 5 av 5 runder.
 
 **Kvalitetssikring (emnekrav, gjelder alle stories)**
 - pytest på backend, med én testmodul per Hard regel under `tester/regelmotor/`.
@@ -923,6 +924,11 @@ So that jeg aldri får en anbefaling uten grunnlag, og aldri står fast (FR11, N
 **And** forklaringspanelet viser en forhåndsdefinert reservetekst fra frontendens tekstliste i stedet for Avveiningen (UX-DR14, UX-DR23)
 **And** resten av raden, Rangeringen og godkjenningen fungerer som normalt
 
+**Given** at OpenRouter svarer 429
+**When** `adaptere/ki` henter en Avveining eller tolker en preferanse
+**Then** adapteren venter til `X-RateLimit-Reset` og prøver igjen, og gir `avveining_feilet` først når 90 s er brukt (AD-7)
+**And** en felles begrenser holder adapteren under 18 kall per minutt og 5 samtidige
+
 **Given** en Avveining som nevner navnet på en Ansatt som er utelukket av en Hard regel
 **When** svaret valideres i `adaptere/ki`
 **Then** det forkastes og behandles som ubrukelig, så reserveteksten vises i stedet (NFR2, NFR10)
@@ -945,6 +951,7 @@ So that jeg kan begynne å vurdere kandidatene uten å vente på KI (UX-DR13).
 **When** kandidatflaten lastes
 **Then** alle rader med nøkkeltall vises med en gang, uten å vente på noen Avveining [ASSUMPTION, UX-DR13]
 **And** hver Avveining lastes inn i sin rad etter hvert, med en lastetilstand som er ulik både reserveteksten og tomtilstanden
+**And** lukkede Avveininger hentes først når raden åpnes, slik at vanlig bruk gir ett KI-kall per vakt (AD-7)
 
 **Given** at transporten for progressiv lasting er en utsatt beslutning (arkitektur § Deferred)
 **When** storien implementeres

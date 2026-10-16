@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 # PRD: Turnushjelperen
@@ -328,8 +328,9 @@ Turnushjelperen v1 skal **ikke**:
 
 1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres. Faglærers tilbakemelding på product brief (2026-10-06) vurderer KI/regelmotor-skillet som en styrke, men bekrefter ikke eksplisitt dette spørsmålet — fortsatt åpent.
 2. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
+
 **Løst (2026-10-14):**
-- Kjøring uten gruppens nøkkel (faglærers tilbakemelding 2026-10-06, punkt 3; tidligere åpent spørsmål 3). KI-leverandøren er OpenRouter med `anthropic/claude-haiku-5.5` som standardmodell, satt i en miljøvariabel. Dette erstatter Google Gemini, som ble valgt i arkitektursteget 2026-09-29 (arkitekturens AD-6). Sensor får en OpenRouter-nøkkel med kreditt, levert i innleveringen og aldri i repoet. Om det blir den felles utviklingsnøkkelen eller en egen sensornøkkel, og hvor mye kreditt den får, avgjøres nær innlevering ut fra faktisk forbruk (epics ÅB-8). Uten nøkkel starter appen i demo-modus (§4.5). Se `sprint-change-proposal-2026-10-14.md`.
+- Kjøring uten gruppens nøkkel (faglærers tilbakemelding 2026-10-06, punkt 3; tidligere åpent spørsmål 3). KI-leverandøren er OpenRouter med `openai/gpt-6-luna` som standardmodell, satt i en miljøvariabel (endret fra `anthropic/claude-haiku-5.5` 2026-10-16 etter modelltest, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Dette erstatter Google Gemini, som ble valgt i arkitektursteget 2026-09-29 (arkitekturens AD-6). Sensor får en OpenRouter-nøkkel med kreditt, levert i innleveringen og aldri i repoet. Om det blir den felles utviklingsnøkkelen eller en egen sensornøkkel, og hvor mye kreditt den får, avgjøres nær innlevering ut fra faktisk forbruk (epics ÅB-8). Uten nøkkel starter appen i demo-modus (§4.5). Se `sprint-change-proposal-2026-10-14.md`.
 
 **Løst (2026-10-06):**
 - Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4. Oppdatert 2026-10-15: kompetansenærhet er tatt ut. Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %. Kompetanse vurderes bare som Hard regel (FR-2).

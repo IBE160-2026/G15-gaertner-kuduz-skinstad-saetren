@@ -498,8 +498,8 @@
         </div>
         <div class="card">
           <div class="pill">KI</div>
-          <h3>OpenRouter + Claude Haiku 5.5</h3>
-          <p>Endret fra Gemini 2026-10-14. Små oppgaver, lav pris og strukturert output. Modellen er en miljøvariabel, og demo-modus gjør at appen kan kjøres uten nøkkel.</p>
+          <h3>OpenRouter + GPT-6 Luna</h3>
+          <p>Gemini ble byttet ut 2026-10-14 og Haiku 5.5 2026-10-16, etter modelltest. Lav pris og strukturert output, og takten holdes under fartsgrensen (AD-7). Modellen er en miljøvariabel, og demo-modus gjør at appen kan kjøres uten nøkkel.</p>
         </div>
       </div>
       <div class="boundary-callout" style="border-left-color: var(--primary); background: var(--primary-soft); margin-top:26px;">
@@ -614,7 +614,7 @@
         <div class="card">
           <h3>Implementasjonsdetaljer — avgjøres underveis</h3>
           <ul class="clean" style="margin:0;">
-            <li>Retry/backoff ved fartsgrense, og modelltest av Haiku 5.5 på norsk</li>
+            <li>Klientbibliotek mot OpenRouter (takt og nye forsøk er bestemt i AD-7)</li>
             <li>JWT utløpstid</li>
             <li>SQLite migreringsverktøy, ID-format (int/UUID)</li>
             <li>Feilkode-verdier og fullt responsskjema per endepunkt</li>

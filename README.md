@@ -17,10 +17,15 @@ Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og
 
 ## Modelltest før KI-integrasjonen
 
-[Testveiledningen for OpenRouter/Haiku 5.5](docs/modelltest-openrouter.md) beskriver
-den isolerte Python-testen. [Resultatet fra 15. oktober](docs/ki-logg/2026-10-15-modelltest-haiku.md)
-bekrefter API-tilgang og gode kandidatforklaringer i testutvalget, men viser avvik
-i preferansetolkningen. Selve appen er ennå ikke implementert.
+Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
+
+- [Haiku 5.5 alene](docs/ki-logg/2026-10-15-modelltest-haiku.md) og
+  [sammenligning med Luna, Mistral og Gemma](docs/ki-logg/2026-10-15-modellsammenligning.md), 15. oktober.
+- [Forhåndsregistrert beslutningstest Haiku mot Luna](docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md)
+  og [robusthetstest av Luna](docs/ki-logg/2026-10-16-robusthet-luna.md), 16. oktober.
+
+[Testveiledningen](docs/modelltest-openrouter.md) beskriver de isolerte Python-testene.
+Selve appen er ennå ikke implementert.
 
 ## Vurderingsgrunnlag
 

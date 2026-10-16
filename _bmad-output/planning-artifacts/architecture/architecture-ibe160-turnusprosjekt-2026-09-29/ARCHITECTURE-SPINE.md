@@ -33,7 +33,7 @@ Domenekjernen kaller aldri `adaptere/ki` selv i noen av retningene — `adaptere
 | --- | --- | --- |
 | Domenekjerne | `domene/regelmotor` | Harde regler (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen), kostnadsberegning, Rangering (tar `TolketPreferanse` som input, produserer `RangertKandidat`). Ren Python, null avhengighet til KI eller rammeverk. |
 | Domenekjerne | `domene/porter` | Typede grensesnitt (Pydantic-modeller: `TolketPreferanse` inn til Rangering, `RangertKandidat` ut av Rangering) — eneste kontaktflate mot driven adapters. |
-| Driven adapter | `adaptere/ki` | Språkmodell-integrasjon via OpenRouter (standardmodell `anthropic/claude-haiku-5.5`, satt i miljøvariabel). To implementasjoner bak samme port: `OpenRouterKiAdapter` (live) og `DemoKiAdapter` (forhåndsgenererte svar + mal), se AD-6. To ensrettede funksjoner: tolker Ansattpreferanse-tekst → `TolketPreferanse`, og genererer Avveining fra `RangertKandidat`. Ser og produserer kun det portene definerer. |
+| Driven adapter | `adaptere/ki` | Språkmodell-integrasjon via OpenRouter (standardmodell `openai/gpt-6-luna`, satt i miljøvariabel). To implementasjoner bak samme port: `OpenRouterKiAdapter` (live) og `DemoKiAdapter` (forhåndsgenererte svar + mal), se AD-6. Takt og nye forsøk mot leverandøren: se AD-7. To ensrettede funksjoner: tolker Ansattpreferanse-tekst → `TolketPreferanse`, og genererer Avveining fra `RangertKandidat`. Ser og produserer kun det portene definerer. |
 | Driven adapter | `adaptere/lagring` | SQLAlchemy/SQLite. Persisterer Turnus, Vakt, Ansatt, Godkjenning og innloggingssesjon. |
 | Driving adapter | `adaptere/api` | FastAPI-endepunkter. Komponerer/kobler sammen domenekjerne og driven adapters (KI, lagring). |
 | Driving adapter | `adaptere/web` | React-SPA. Snakker kun med `adaptere/api` over HTTP. |
@@ -93,13 +93,19 @@ graph LR
   2. **Demo, forklaring:** slår opp forhåndsgenerert Avveining på nøkkelen (vakt, kandidat, hash av `RangertKandidat`). Finnes den ikke, eller har de underliggende dataene endret seg (annen hash), lages en maltekst utelukkende fra feltene i `RangertKandidat`. Hashen hindrer at en utdatert forklaring vises etter at f.eks. en Godkjenning har endret arbeidsbelastningen.
   Forhåndsgenererte svar lages med `OpenRouterKiAdapter` og samme prompt som live-modus; modell, dato og kommando logges i `docs/ki-logg/`. Hver Avveining i API-svaret bærer `ki_kilde: "live" | "forhandsgenerert" | "mal"`, slik at `adaptere/web` kan merke kilden (EXPERIENCE.md § Component Patterns). I `openrouter`-modus faller adapteren **ikke** stille tilbake til demo ved feil — feil gir `avveining_feilet` (AD-4), slik at en tom kreditt eller fartsgrense er synlig.
 
+### AD-7 — KI-kall holdes under leverandørens fartsgrense
+
+- **Binds:** `adaptere/ki` (`OpenRouterKiAdapter`)
+- **Prevents:** at OpenRouters fartsgrense gir reservetekst ved vanlig bruk. Med `openai/gpt-6-luna` hadde gruppens konto en fast grense på 20 kall per kalenderminutt (`X-RateLimit-Limit: 20`, målt 2026-10-16). Uten tiltak feilet 40 av 60 kall i en belastningstopp.
+- **Rule:** Én felles begrenser i adapteren slipper gjennom høyst 18 kall per 60 sekunder og høyst 5 samtidige. Ved 429 venter adapteren til `X-RateLimit-Reset`. Ved 5xx og nettverksfeil venter den 2, 4 og 8 sekunder. Etter 90 sekunder gir kallet `avveining_feilet` (AD-4). 402, andre 4xx og ubrukelige svar prøves ikke på nytt. Lukkede Avveininger hentes først når raden åpnes (UX-DR12), og preferanser tolkes i bakgrunnen når testdataene lastes inn (story 5.1). Tallene er konstanter i adapteren og justeres hvis kontoens grense endres. Prototype, tester og målinger: `scripts/modelltest_robusthet.py` og `docs/ki-logg/2026-10-16-robusthet-luna.md` (218 av 218 kall levert, uten 429).
+
 ## Consistency Conventions
 
 | Concern | Convention |
 | --- | --- |
 | Naming (entities, files, interfaces, events) | Domenebegreper bruker PRD §3 sine termer presist, også i kode der det er treffende (Kandidat, Gyldig kandidat, Hard regel, Kompetansenivå, Rangering, Avveining, Godkjenning), jf. AGENTS.md om norsk dokumentasjon/engelsk der det er mer presist. Modulnavn følger Design Paradigm-tabellen (`domene/regelmotor`, `domene/porter`, `adaptere/api`, `adaptere/ki`, `adaptere/lagring`, `adaptere/web`) — engelske fellesbegreper som «adapter»/«port» beholdes på engelsk. |
 | Data & formats (ids, dates, error shapes, envelopes) | Feilresponsform og statusdiskriminator: se AD-4. Datoer/klokkeslett i API-kontrakten: ISO 8601. Tidssone: alle Vakt-tidspunkt lagres og beregnes i `Europe/Oslo` (DST-bevisst, ikke fast UTC-offset) — én autoritativ tidssone på tvers av domenekjerne og lagring, avgjørende for at 11-timers-/35-timersregelen (FR-4, FR-5) gir samme resultat for samme input hver gang (SM-1, SM-5), særlig rundt sommertid-overganger. Identifikatorer tildeles og eies av `adaptere/lagring` (SQLAlchemy primærnøkler); konkret ID-format (int vs. UUID) er en implementasjonsdetalj, ikke fastsatt her. |
-| State & cross-cutting (mutation, errors, logging, config, auth) | Auth/sesjon: se AD-3. Ingen mutasjon av Turnus-/Vakt-tilstand uten eksplisitt Godkjenning (FR-12) — håndheves i `adaptere/api`, aldri i frontend alene. Config: API-nøkler og hemmeligheter leses kun fra miljøvariabler, aldri hardkodet — KI-laget bruker `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` (standard `anthropic/claude-haiku-5.5`) og `KI_MODUS` (`openrouter` \| `demo`, se AD-6), i tillegg til JWT-signeringsnøkkelen; nye variabler dokumenteres udokumentert (uten verdier) i `.env.example`, iht. AGENTS.md. Runtime-driftslogging er ikke besluttet — se Deferred. KI-genereringslogg (separat fra runtime-logging, en dokumentasjonskonvensjon, ikke arkitektur): AI-generert kode logges i `docs/ki-logg/<dato>-<tema>.md`, iht. AGENTS.md. |
+| State & cross-cutting (mutation, errors, logging, config, auth) | Auth/sesjon: se AD-3. Ingen mutasjon av Turnus-/Vakt-tilstand uten eksplisitt Godkjenning (FR-12) — håndheves i `adaptere/api`, aldri i frontend alene. Config: API-nøkler og hemmeligheter leses kun fra miljøvariabler, aldri hardkodet — KI-laget bruker `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` (standard `openai/gpt-6-luna`) og `KI_MODUS` (`openrouter` \| `demo`, se AD-6), i tillegg til JWT-signeringsnøkkelen; nye variabler dokumenteres udokumentert (uten verdier) i `.env.example`, iht. AGENTS.md. Runtime-driftslogging er ikke besluttet — se Deferred. KI-genereringslogg (separat fra runtime-logging, en dokumentasjonskonvensjon, ikke arkitektur): AI-generert kode logges i `docs/ki-logg/<dato>-<tema>.md`, iht. AGENTS.md. |
 | Testing (kvalitetssikringsbevis) | pytest på backend. Ett testmodul per hard regel i regelmotoren (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen) — konvensjon, ikke bare praksis, og den konkrete mekanismen som håndhever AD-1/AD-2 sine grenser (f.eks. en test som feiler dersom `domene/regelmotor` importerer `adaptere/ki`). |
 
 ## Stack
@@ -111,7 +117,7 @@ graph LR
 | Vite | 8.3.1 |
 | TypeScript | 7.0.2 (verifisert 2026-09-29; native Go-kompilator, avløste 5.x/6.x-linjen) |
 | SQLite (via SQLAlchemy) | Ikke versjonsfestet — se Deferred |
-| OpenRouter API (OpenAI-kompatibelt) | Modell `anthropic/claude-haiku-5.5` (verifisert 2026-10-14: $0.10 / $0.50 per million tokens inn/ut, støtter `structured_outputs`). Strukturert output via JSON-skjema; resonnering av. Modellen settes i `OPENROUTER_MODEL` og kan byttes uten kodeendring. Klientbibliotek ikke valgt — se Deferred. Erstatter Google Gemini (valgt 2026-09-29), se `.memlog.md`. |
+| OpenRouter API (OpenAI-kompatibelt) | Modell `openai/gpt-6-luna`, låst til leverandøren `openai` (verifisert 2026-10-15: $0.10 / $0.50 per million tokens inn/ut, støtter `structured_outputs`). Valgt 2026-10-16 etter modelltest, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`. Strukturert output via JSON-skjema; resonnering av. Modellen settes i `OPENROUTER_MODEL` og kan byttes uten kodeendring. Klientbibliotek ikke valgt — se Deferred. Erstatter `anthropic/claude-haiku-5.5` (valgt 2026-10-14) og Google Gemini (valgt 2026-09-29), se `.memlog.md`. |
 
 ## Structural Seed
 
@@ -178,7 +184,7 @@ turnushjelperen/
 | §4.2 Regelmotor / harde regler (FR-2–FR-6) | `domene/regelmotor` | AD-1, AD-2, Testing-raden i Consistency Conventions |
 | §4.3 Kostnad og arbeidsbelastning (FR-7–FR-8) | `domene/regelmotor` | AD-1, AD-2 (reproduserbart, uavhengig av KI) |
 | §4.4 Rangering (FR-9) | `domene/regelmotor` | AD-1, AD-2 |
-| §4.5 KI-tolkning av preferanser og Avveining (FR-10–FR-11) | `adaptere/ki` (begge retninger), `domene/regelmotor` (konsumerer `TolketPreferanse`) | AD-1 (den harde systemgrensen og de to portene), AD-6 (KI-modus), config-raden i Consistency Conventions (OpenRouter-nøkkel) |
+| §4.5 KI-tolkning av preferanser og Avveining (FR-10–FR-11) | `adaptere/ki` (begge retninger), `domene/regelmotor` (konsumerer `TolketPreferanse`) | AD-1 (den harde systemgrensen og de to portene), AD-6 (KI-modus), AD-7 (takt og nye forsøk), config-raden i Consistency Conventions (OpenRouter-nøkkel) |
 | §4.6 Godkjenning av erstatter (FR-12) | `adaptere/api`, `adaptere/lagring` | AD-4 (feilform), AD-5 (skjemaeierskap), State-raden (ingen mutasjon uten Godkjenning) |
 | §4.7 Innlogging (FR-13) | `adaptere/api`, `adaptere/lagring` | AD-3 (JWT/sesjon) |
 
@@ -189,8 +195,7 @@ turnushjelperen/
 - **Ordlyd for «ingen gyldige kandidater», «innlogging feilet» og «beregner rangering»** (EXPERIENCE.md § State Patterns, merket `[ASSUMPTION]`) — atferden er spesifisert (skal skille seg tydelig fra feil/lastetilstand), men eksakt tekst er åpen.
 - **Responsive breakpoints** (DESIGN.md/EXPERIENCE.md § Responsive & Platform, merket `[ASSUMPTION]`) — kun én fast desktop-bredde (1180px) er vist i mockupene; stablingsmønster for mobil/nettbrett er foreslått, ikke bekreftet.
 - **Hosting/driftsmiljø** — kun lokal kjøring er besluttet. Render sin gratis-tier er nevnt som en mulig senere utvidelse (sovner etter 15 min inaktivitet, ca. 1 min kaldstart), men ikke valgt.
-- **Retry/backoff-policy og klientbibliotek mot OpenRouter** — AD-4 sikrer at fartsgrense (429) og tom kreditt (402) vises som «Avveining feilet» og ikke krasjer noe, men retry-/backoff-strategien i `adaptere/ki` (antall forsøk, ventetid) og valget mellom OpenAI-SDK-et og en ren HTTP-klient er ikke besluttet.
-- **Norskkvaliteten til `anthropic/claude-haiku-5.5` er ikke målt** — modellen er ikke med i EuroEvals norske leaderboard (sist oppdatert april 2026). En modelltest på norske preferansetekster og avveininger kjøres før Epic 5 implementeres, og resultatet logges i `docs/ki-logg/`. Modellbytte er en endring i `OPENROUTER_MODEL`, ikke i koden.
+- **Klientbibliotek mot OpenRouter** — valget mellom OpenAI-SDK-et og en ren HTTP-klient i `adaptere/ki` er ikke besluttet. Takt og nye forsøk er besluttet i AD-7.
 - **JWT utløpstid** (AD-3) — representasjonsform (httpOnly-cookie, ingen stille fornyelse i v1) er besluttet; nøyaktig utløpstid er ikke.
 - **SQLite-skjema/migreringsverktøy** (AD-5) — f.eks. Alembic vs. håndrullet migrering er ikke valgt. Samme gjelder eksakt SQLAlchemy-versjon (se Stack) og ID-format (int vs. UUID, se Consistency Conventions).
 - **Feilenvelope-detaljer** (AD-4) — envelope-form og statusdiskriminator er besluttet; eksakte feilkode-verdier og fullt responsskjema per endepunkt er ikke.

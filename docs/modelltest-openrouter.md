@@ -1,5 +1,10 @@
 # Modelltest via OpenRouter
 
+Gruppa valgte `openai/gpt-6-luna` 16. oktober. Denne veiledningen beskriver testverktøyet
+fra 15. oktober. De senere testene har egne skript og logger, se
+[Senere tester](#senere-tester). Haiku står fortsatt som standard i dette verktøyet, slik at
+de loggførte kjøringene kan gjentas.
+
 Dette er et isolert forsøk før story 5.1, ikke appens KI-adapter. Python 3.12.5
 brukes, kun standardbiblioteket. Kjør fra prosjektroten:
 
@@ -69,6 +74,9 @@ sendes. HTTP-feilkropp og autorisasjonsheader logges ikke.
 - «Kan ta ekstravakt», tidspunktspreferanse og «ønsker ikke flere» er konservativt
   klassifisert som `ingen_registrert`. Dette er testens eksplisitte tolkningsregel;
   endelig portkontrakt og visning av slike ønsker må avklares i story 5.1.
+  *Oppdatert 2026-10-16:* PRD §4.5 bruker nå fem preferansenivåer (100/75/50/25/0),
+  der betinget tilgjengelighet gir 75 eller 25. Fasittesten mot den nye modellen er
+  `scripts/modelltest_prd_fasit.py`.
 - En feil gir ikke automatisk nytt kall. Nettverks-/API-feil avslutter kjøringen
   med delrapport. Eneste unntak er HTTP 429 med `--retry-429 N`: forespørselen er
   da avvist før modellen svarte, så et nytt forsøk kan ikke velge et gunstigere svar.
@@ -82,6 +90,17 @@ Scenariene tester FR-10 og deler av FR-11/SM-7. Alle kandidatverdier er faste
 testeksempler; ingen regelmotor er implementert. Testen beviser verken juridisk
 korrekthet, lekkasje-invarianten i story 5.6, appens feilhåndtering eller generell
 motstand mot prompt injection. Ingen utelukkede kandidater sendes til modellen.
+
+## Senere tester
+
+| Skript | Hva | Logg |
+|---|---|---|
+| `scripts/modelltest_beslutning.py` | Forhåndsregistrert beslutningstest Haiku mot Luna, prompt A/B, 1 020 kall | [2026-10-16-beslutningstest-haiku-luna.md](ki-logg/2026-10-16-beslutningstest-haiku-luna.md) |
+| `scripts/modelltest_robusthet.py` | Takt og nye forsøk under last, prototype for AD-7 | [2026-10-16-robusthet-luna.md](ki-logg/2026-10-16-robusthet-luna.md) |
+| `scripts/modelltest_prd_fasit.py` | De 15 fasittekstene i PRD §4.5 med fem nivåer | samme logg, del 2 |
+
+Alle er tørrkjøring uten `--live`. Testene kjøres med samme `unittest`-kommando som over.
+Kjør ikke flere live-tester mot Luna samtidig: kontoen har 20 kall per minutt.
 
 Kilder kontrollert 2026-10-15:
 [modell](https://openrouter.ai/anthropic/claude-haiku-5.5),

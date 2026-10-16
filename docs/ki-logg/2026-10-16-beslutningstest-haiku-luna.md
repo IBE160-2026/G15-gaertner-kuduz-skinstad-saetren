@@ -328,3 +328,12 @@ ikke gjort her.
    («omtale»), men ingen modell utførte beregning eller rangering.
 
 `python -B -m unittest discover -s scripts -p "test_modelltest*.py"`: 37 av 37 bestått.
+
+## Oppfølging
+
+Brukeren valgte Luna samme dag, på vilkår av at en pålitelig løsning kan bygges.
+[Robusthetstesten](2026-10-16-robusthet-luna.md) bekreftet det med takt-politikk (AD-7).
+Den viste også at PRD på `main` har fått fem preferansenivåer etter at denne testen ble
+designet. Preferansedelen her er derfor målt mot en eldre kontrakt. Luna besto
+fasittesten mot den nye kontrakten (75 av 75). Standardmodellen er nå endret i
+dokumentasjonen, og vilkårene i [Anbefaling](#anbefaling) er ført inn som AD-7.

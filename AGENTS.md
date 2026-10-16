@@ -11,9 +11,9 @@ Beslutningsstøtte for turnusansvarlige som må bemanne én enkelt vakt på nytt
 regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, og KI
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Planlagt stack er React/TypeScript med Vite, Python/FastAPI og SQLite via
-SQLAlchemy. KI-leverandøren er OpenRouter med `anthropic/claude-haiku-5.5`.
-Ingen applikasjonskode finnes ennå; `scripts/modelltest_openrouter.py` er et
-isolert modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+SQLAlchemy. KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
+Haiku 5.5). Ingen applikasjonskode finnes ennå; `scripts/modelltest_*.py` er
+isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
@@ -46,13 +46,12 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Lovgrunnlag (aml. kap. 10), emnekrav, kilder og forkastede alternativer:
   `addendum.md` i samme mappe. Les den før du foreslår harde regler.
 - Hvorfor noe ble valgt bort: `.memlog.md` i samme mappe.
-- Modelltest: `docs/modelltest-openrouter.md` beskriver kjøring og vurdering;
-  resultater og begrensninger dokumenteres i `docs/ki-logg/2026-10-15-modelltest-haiku.md`.
-  Sammenligning med Luna og Gemma (Mistral ikke testet, HTTP 429):
-  `docs/ki-logg/2026-10-15-modellsammenligning.md` har resultat, konklusjon og hva som gjenstår.
-  Avsluttende beslutningstest Haiku mot Luna (forhåndsregistrert, 1 020 kall):
-  `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`. Anbefaler Luna med vilkår om
-  429-håndtering; gruppas modellvalg gjenstår. Standardmodellen er fortsatt Haiku.
+- Modellvalget: `docs/modelltest-openrouter.md` beskriver testverktøyene. Loggene i
+  `docs/ki-logg/` i rekkefølge: Haiku alene (`2026-10-15-modelltest-haiku.md`),
+  sammenligning med Luna, Mistral og Gemma (`2026-10-15-modellsammenligning.md`),
+  beslutningstest Haiku mot Luna (`2026-10-16-beslutningstest-haiku-luna.md`) og
+  robusthetstest av Luna med fasittest mot PRD §4.5 (`2026-10-16-robusthet-luna.md`).
+  Luna er valgt. Kravene fra robusthetstesten står i AD-7 i arkitekturen.
 - Hold `_bmad/`, `.claude/skills/` og `.agents/skills/` utenfor søk i prosjektkoden —
   det er BMAD-rammeverket og utgjør 446 av 455 sporede filer.
 
@@ -68,6 +67,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   `--live --model <modell> --prompt A|B` gjør 255 betalte kall per kjøring (tak USD 0,25);
   `--analyse` regenererer tabellene i `docs/ki-logg/beslutningstest/` uten nettverk.
   Testene dekkes av samme `unittest`-kommando.
+- Robusthets- og fasittesten: `python scripts/modelltest_robusthet.py --live --politikk takt`
+  (218 kall, ca. 25 min) og `python scripts/modelltest_prd_fasit.py --live` (145 kall).
+  Uten `--live` er begge tørrkjøring.
 - TODO — appen er ikke implementert. Når `package.json` og Python-prosjektfilen
   finnes, fyll inn faktiske kommandoer for installasjon, kjøring og test av appen.
 - TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som
@@ -91,6 +93,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - `.agents/`-kopien har CRLF i arbeidstreet, `.claude/`-kopien har LF. Sammenlign dem
   med linjeskift ignorert — `diff <(tr -d '\r' < a) <(tr -d '\r' < b)` — ellers ser
   alle 214 identiske filer ut som endret.
+- Gruppens OpenRouter-konto har en grense på 20 Luna-kall per kalenderminutt
+  (`limit_source: openrouter_new_account`). Kjør ikke flere live-tester samtidig, og
+  regn med 429 uten begrenseren i AD-7. Haiku hadde ikke denne grensen.
 
 <!-- /bmad:context -->
 
