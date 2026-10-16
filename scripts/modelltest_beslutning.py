@@ -240,6 +240,48 @@ def run(args):
     return 1 if report["summary"]["formatfeil"] or report["summary"]["tekniske_avvik"] else 0
 
 
+def single_call(key, payload):
+    """One request without retry. 429 bodies keep only the limit metadata, never the prompt."""
+    request = base.Request(base.BASE + "chat/completions", data=json.dumps(payload).encode("utf-8"),
+                           headers={"Content-Type": "application/json", "Authorization": "Bearer " + key})
+    start = time.monotonic()
+    try:
+        with base.build_opener(base.NoRedirect).open(request, timeout=45) as response:
+            body = json.load(response)
+        outcome = {"status": 200, "provider": body.get("provider")}
+    except base.HTTPError as error:
+        outcome = {"status": error.code}
+        if error.code == 429:
+            try:
+                meta = (json.load(error).get("error") or {}).get("metadata") or {}
+                outcome["limit"] = {k: meta.get(k) for k in ["provider_name", "limit_source"]}
+            except ValueError:
+                pass
+    except (base.URLError, TimeoutError, OSError):
+        outcome = {"status": "nettverksfeil"}
+    outcome["seconds"] = round(time.monotonic() - start, 3)
+    return outcome
+
+
+def burst(args):
+    """Supplementary: N simultaneous explanation calls, like one shift with N candidates."""
+    from concurrent.futures import ThreadPoolExecutor
+    key, model = base.configuration(args.model)
+    expls = [c for c in load_cases() if c["kind"] == "forklaring"]
+    payloads = [payload_for(expls[i % len(expls)], model, "B") for i in range(args.samtidig)]
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    with ThreadPoolExecutor(max_workers=args.samtidig) as pool:
+        outcomes = list(pool.map(lambda p: single_call(key, p), payloads))
+    report = {"started_utc": stamp, "model": model, "samtidige_kall": args.samtidig,
+              "script_sha256": sha256(__file__), "outcomes": outcomes,
+              "summary": dict(Counter(str(o["status"]) for o in outcomes))}
+    REPORTS.mkdir(parents=True, exist_ok=True)
+    output = REPORTS / f"samtidig-{CANDIDATES[model]}-{stamp}.json"
+    base.write_report(output, report, key)
+    print(f"{model}: {report['summary']}. Rapport: {output.relative_to(ROOT)}")
+    return 0
+
+
 # --- Analysis: offline and deterministic from the saved reports. ---
 
 def latest_reports():
@@ -427,9 +469,13 @@ def main():
     parser.add_argument("--max-kostnad", type=float, default=0.25, help="Stopp når kjøringen har kostet mer (USD).")
     parser.add_argument("--retry-429", type=int, default=0, metavar="N")
     parser.add_argument("--retry-wait", type=float, default=30.0)
+    parser.add_argument("--samtidig", type=int, default=0, metavar="N",
+                        help="Tilleggsmåling: N samtidige forklaringskall uten nye forsøk (krever --live).")
     args = parser.parse_args()
     if args.analyse:
         return analyse()
+    if args.samtidig and args.live and args.model:
+        return burst(args)
     if args.model is None and args.live:
         parser.error("--model må oppgis for live-kjøring.")
     return run(args)

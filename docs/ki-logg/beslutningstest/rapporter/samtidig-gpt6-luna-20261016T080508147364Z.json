@@ -1,0 +1,89 @@
+{
+  "started_utc": "20261016T080508147364Z",
+  "model": "openai/gpt-6-luna",
+  "samtidige_kall": 10,
+  "script_sha256": "68e82f48aa5ce263830a1ed1e888a95c8f8b1ee5b3afe6b080eb9e3f897e3cf8",
+  "outcomes": [
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.469
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.469
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.61
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.469
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.375
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.36
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.344
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.313
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.313
+    },
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.234
+    }
+  ],
+  "summary": {
+    "429": 9,
+    "200": 1
+  }
+}

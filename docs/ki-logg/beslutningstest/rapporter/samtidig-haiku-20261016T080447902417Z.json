@@ -1,0 +1,61 @@
+{
+  "started_utc": "20261016T080447902417Z",
+  "model": "anthropic/claude-haiku-5.5",
+  "samtidige_kall": 10,
+  "script_sha256": "68e82f48aa5ce263830a1ed1e888a95c8f8b1ee5b3afe6b080eb9e3f897e3cf8",
+  "outcomes": [
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.375
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.594
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 3.063
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.672
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.453
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.969
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.25
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.484
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.562
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.297
+    }
+  ],
+  "summary": {
+    "200": 10
+  }
+}

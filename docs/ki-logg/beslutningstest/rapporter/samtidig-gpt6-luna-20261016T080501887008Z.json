@@ -1,0 +1,65 @@
+{
+  "started_utc": "20261016T080501887008Z",
+  "model": "openai/gpt-6-luna",
+  "samtidige_kall": 10,
+  "script_sha256": "68e82f48aa5ce263830a1ed1e888a95c8f8b1ee5b3afe6b080eb9e3f897e3cf8",
+  "outcomes": [
+    {
+      "status": 429,
+      "limit": {
+        "provider_name": null,
+        "limit_source": "openrouter_new_account"
+      },
+      "seconds": 0.343
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.484
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.422
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.469
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.079
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.906
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.25
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.282
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.687
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.453
+    }
+  ],
+  "summary": {
+    "429": 1,
+    "200": 9
+  }
+}

@@ -50,6 +50,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   resultater og begrensninger dokumenteres i `docs/ki-logg/2026-10-15-modelltest-haiku.md`.
   Sammenligning med Luna og Gemma (Mistral ikke testet, HTTP 429):
   `docs/ki-logg/2026-10-15-modellsammenligning.md` har resultat, konklusjon og hva som gjenstår.
+  Avsluttende beslutningstest Haiku mot Luna (forhåndsregistrert, 1 020 kall):
+  `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`. Anbefaler Luna med vilkår om
+  429-håndtering; gruppas modellvalg gjenstår. Standardmodellen er fortsatt Haiku.
 - Hold `_bmad/`, `.claude/skills/` og `.agents/skills/` utenfor søk i prosjektkoden —
   det er BMAD-rammeverket og utgjør 446 av 455 sporede filer.
 
@@ -61,6 +64,10 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   `python scripts/modelltest_openrouter.py --live` gjør 32 betalte OpenRouter-kall.
   Live krever `OPENROUTER_API_KEY` i miljøet eller lokal `.env`. Les testveiledningen
   før kjøring. Exit 0 gjelder maskinkontrollen, ikke manuell vurdering av norsk/fakta.
+- Beslutningstesten: `python scripts/modelltest_beslutning.py` er tørrkjøring;
+  `--live --model <modell> --prompt A|B` gjør 255 betalte kall per kjøring (tak USD 0,25);
+  `--analyse` regenererer tabellene i `docs/ki-logg/beslutningstest/` uten nettverk.
+  Testene dekkes av samme `unittest`-kommando.
 - TODO — appen er ikke implementert. Når `package.json` og Python-prosjektfilen
   finnes, fyll inn faktiske kommandoer for installasjon, kjøring og test av appen.
 - TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som

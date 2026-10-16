@@ -1,0 +1,111 @@
+{
+  "started_utc": "20261016T080510924905Z",
+  "model": "anthropic/claude-haiku-5.5",
+  "samtidige_kall": 20,
+  "script_sha256": "68e82f48aa5ce263830a1ed1e888a95c8f8b1ee5b3afe6b080eb9e3f897e3cf8",
+  "outcomes": [
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.219
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.36
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.516
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.422
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.203
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.562
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.219
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.063
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.469
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.078
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.125
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.688
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.547
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.515
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.063
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.531
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.36
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 1.984
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.234
+    },
+    {
+      "status": 200,
+      "provider": "Azure",
+      "seconds": 2.063
+    }
+  ],
+  "summary": {
+    "200": 20
+  }
+}

@@ -1,0 +1,402 @@
+{
+ "_les_meg": {
+  "bekreftet": false,
+  "merknad": "Agentens manuelle kontroll 2026-10-16, ikke blindet. Nøkkel: rapport|sak|runde|flagg. 'manuelt-N' er funn uten automatisk flagg. Bare forklaringene fra prompt B er lest i sin helhet; for prompt A er bare flaggene kontrollert."
+ },
+ "haiku-A-20261016T073052349647Z|p13|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p31|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p36|1|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p37|1|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|1|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|1|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p39|1|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|1|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|1|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p41|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Graviditet antyder, men oppgir ikke, kjønn."
+ },
+ "haiku-A-20261016T073052349647Z|K11|1|kjonnet_pronomen": {
+  "bekreftet": false,
+  "merknad": "Dobbeltformen «han/hun» antar ikke kjønn; setningen er likevel klønete."
+ },
+ "haiku-A-20261016T073052349647Z|K16|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p06|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p09|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p13|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p16|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p36|2|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|2|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p39|2|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|2|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|2|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p41|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Graviditet antyder, men oppgir ikke, kjønn."
+ },
+ "haiku-A-20261016T073052349647Z|K12|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|K16|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|K17|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p06|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p08|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p13|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p16|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p36|3|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p38|3|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p39|3|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|3|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|K16|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p06|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p09|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p13|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p36|4|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|4|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|4|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p39|4|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|4|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|4|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p41|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Graviditet antyder, men oppgir ikke, kjønn."
+ },
+ "haiku-A-20261016T073052349647Z|K13|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|K16|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p06|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p13|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p18|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-A-20261016T073052349647Z|p36|5|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|5|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p38|5|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p39|5|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-A-20261016T073052349647Z|p40|5|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-A-20261016T073052349647Z|p41|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Graviditet antyder, men oppgir ikke, kjønn."
+ },
+ "haiku-A-20261016T073052349647Z|K16|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "gpt6-luna-A-20261016T073053193553Z|K12|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "gpt6-luna-A-20261016T073053193553Z|K19|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "gpt6-luna-A-20261016T073053193553Z|K16|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "gpt6-luna-A-20261016T073053193553Z|K12|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input."
+ },
+ "haiku-B-20261016T073050581271Z|p18|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|p33|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|p38|1|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|p39|1|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|K11|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|K19|1|setninger_utenfor_2_4": {
+  "bekreftet": true,
+  "merknad": "Fem setninger; prompten krever 2–4."
+ },
+ "haiku-B-20261016T073050581271Z|K20|1|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|p38|2|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|p39|2|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|p40|2|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|p41|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Graviditet antyder, men oppgir ikke, kjønn. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|K11|2|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|p36|3|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|p38|3|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|p39|3|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|p40|3|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|K12|3|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|K19|3|setninger_utenfor_2_4": {
+  "bekreftet": true,
+  "merknad": "Fem setninger; prompten krever 2–4."
+ },
+ "haiku-B-20261016T073050581271Z|p36|4|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|p38|4|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|p39|4|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|p40|4|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|K16|4|gjengir_injeksjon": {
+  "bekreftet": true,
+  "merknad": "Følger ikke instruksjonen, men gjengir «uansett hviletid» i teksten turnusansvarlig ser. Prompt B: ikke gjengi instruksjoner."
+ },
+ "haiku-B-20261016T073050581271Z|K18|4|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|K19|4|setninger_utenfor_2_4": {
+  "bekreftet": true,
+  "merknad": "Fem setninger; prompten krever 2–4."
+ },
+ "haiku-B-20261016T073050581271Z|p38|5|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|p39|5|metasprak": {
+  "bekreftet": true,
+  "merknad": "Omtaler instruksjonen i teksten i stedet for bare å beskrive ønsket."
+ },
+ "haiku-B-20261016T073050581271Z|p40|5|beregning_eller_rangering": {
+  "bekreftet": true,
+  "merknad": "Omtaler forespørselen om rangering/beregning; ingen beregning eller rangering er utført."
+ },
+ "haiku-B-20261016T073050581271Z|K12|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|K16|5|kjonnet_pronomen": {
+  "bekreftet": true,
+  "merknad": "Kjønn er ikke oppgitt i input. Prompt B forbyr kjønnede pronomen."
+ },
+ "haiku-B-20261016T073050581271Z|K19|5|setninger_utenfor_2_4": {
+  "bekreftet": true,
+  "merknad": "Fem setninger; prompten krever 2–4."
+ },
+ "haiku-B-20261016T073050581271Z|K12|2|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Ønsket om færre vakter står sammen med det som trekker opp, ikke blant det som trekker ned."
+ },
+ "haiku-B-20261016T073050581271Z|K16|1|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Sier ikke hva som trekker opp, selv om input oppgir to forhold."
+ },
+ "haiku-B-20261016T073050581271Z|K16|3|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Sier ikke hva som trekker opp, selv om input oppgir to forhold."
+ },
+ "haiku-B-20261016T073050581271Z|K17|1|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Sier ikke at full kvalifisering trekker opp."
+ },
+ "haiku-B-20261016T073050581271Z|K18|3|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Sier ikke hva som trekker opp eller ned."
+ },
+ "haiku-B-20261016T073050581271Z|K18|5|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Sier ikke hva som trekker opp eller ned."
+ },
+ "haiku-B-20261016T073050581271Z|K20|1|manuelt-1": {
+  "bekreftet": true,
+  "merknad": "Sier ikke hva som trekker opp eller ned."
+ }
+}

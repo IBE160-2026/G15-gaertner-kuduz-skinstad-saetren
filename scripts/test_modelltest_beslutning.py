@@ -201,6 +201,18 @@ class AnalysisTests(unittest.TestCase):
         self.assertEqual(19, decision.percentile(values, 0.95))
         self.assertIsNone(decision.percentile([], 0.5))
 
+    def test_single_call_keeps_only_limit_metadata_on_429(self):
+        import io
+        body = json.dumps({"error": {"message": "prompt text here", "metadata": {
+            "provider_name": "OpenAI", "limit_source": "upstream", "raw": "secret"}}}).encode()
+        error = base.HTTPError("u", 429, "Too Many", {}, io.BytesIO(body))
+        with patch.object(base, "build_opener") as opener:
+            opener.return_value.open.side_effect = error
+            outcome = decision.single_call("sk-or-fake", {"model": "x"})
+        self.assertEqual(429, outcome["status"])
+        self.assertEqual({"provider_name": "OpenAI", "limit_source": "upstream"}, outcome["limit"])
+        self.assertNotIn("prompt text here", json.dumps(outcome))
+
     def test_analysis_picks_newest_completed_non_smoke_report(self):
         with tempfile.TemporaryDirectory() as folder:
             folder = Path(folder)
@@ -209,6 +221,8 @@ class AnalysisTests(unittest.TestCase):
                 (folder / f"{name}.json").write_text(json.dumps(
                     {"model": base.MODEL, "prompt_variant": "B", "smoke": smoke, "status": status,
                      "results": []}), encoding="utf-8")
+            (folder / "samtidig-haiku-1.json").write_text(json.dumps(
+                {"model": base.MODEL, "outcomes": []}), encoding="utf-8")
             with patch.object(decision, "REPORTS", folder):
                 chosen = decision.latest_reports()
         self.assertEqual("haiku-B-1", chosen[(base.MODEL, "B")][0].stem)
