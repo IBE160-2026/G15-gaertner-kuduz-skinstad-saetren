@@ -730,7 +730,7 @@ So that jeg kan ta hensyn til kostnaden i valget (FR7).
 
 ### Story 4.4: Rangering av gyldige kandidater
 
-ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06 — se PRD §4.3 og §4.4 for de fullstendige modellene, brukt i akseptansekriteriene under.
+ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06. Vektingen ble oppdatert 2026-10-15, og kompetansenærhet ble tatt ut — se PRD §4.3 og §4.4 for de fullstendige modellene, brukt i akseptansekriteriene under.
 
 As a turnusansvarlig,
 I want at de gyldige kandidatene er rangert, med nøkkeltallene synlige i hver rad,
@@ -738,7 +738,7 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 
 **Acceptance Criteria:**
 
-**Given** poengmodellen i PRD §4.4 (Kostnad 30 %, Arbeidsbelastning 30 %, Ansattpreferanse 20 %, Kompetansenærhet 20 %, hver 0–100 poeng)
+**Given** poengmodellen i PRD §4.4 (Kostnad 40 %, Arbeidsbelastning 35 %, Ansattpreferanse 25 %, hver 0–100 poeng)
 **When** Rangeringen kjører
 **Then** alle Gyldige kandidater får en vektet totalscore og rangeres synkende etter den (FR9)
 **And** Rangeringen skjer bare i `domene/regelmotor` og er deterministisk: samme input gir samme rekkefølge, også ved likhet mellom kandidater (NFR1)
@@ -756,15 +756,15 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 **When** Rangeringen kjører
 **Then** billigste Kandidat er ikke rangert øverst (FR9, SM-6)
 
-**Given** testscenarioet der ingen Gyldig kandidat er fullt kvalifisert
+**Given** to Gyldige kandidater med samme kostnad, arbeidsbelastning og Ansattpreferanse, men ulikt Kompetansenivå over Vaktens minstekrav
 **When** Rangeringen kjører
-**Then** Kandidaten nærmest full kvalifisering rangeres høyere enn de som er lenger unna, med mindre de andre Myke faktorene motsier det (FR9)
+**Then** kandidatene får samme totalscore, fordi kompetanse bare vurderes som Hard regel og ikke gir rangeringspoeng (FR2, FR9)
 
 **Given** kandidatflaten
 **When** Rangeringen vises
 **Then** rangeringstabellen har kolonnene rangeringsnummer, kandidat (navn og `meta`-undertekst), Kompetansenivå med tag, kostnad, arbeidsbelastning, preferanse med tag og en tom kolonne for ekspander-lenken fra Epic 5 (UX-DR7)
 **And** rangeringsnummeret vises i `accent`, fet og 14px (UX-DR8)
-**And** annenhver rad har `row-alt`, og kompetansenærhet vises som rekkefølge, ikke som et eget merke (UX-DR7)
+**And** annenhver rad har `row-alt` (UX-DR7)
 **And** den alfabetiske listen fra story 2.1 er erstattet av tabellen
 
 ### Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten
