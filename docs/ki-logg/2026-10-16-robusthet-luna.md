@@ -59,7 +59,7 @@ pause mellom hvert scenario. Totalt 420 kall, kostnadstak USD 0,10.
 
 ## Godkjenningskriterier (fastsatt før kjøring)
 
-Løsningen godkjennes hvis alle fire holder med politikken i begge runder:
+Løsningen godkjennes hvis alle fire holder med politikken i begge runder, og G5 under holder:
 
 - **G1 Brukbare svar:** minst 99 % av forklarings- og preferansekallene gir et brukbart
   svar (høyst 3 av 340).
@@ -73,10 +73,42 @@ testen ikke truffet grensen, og resultatet er svakere bevis.
 
 Holder ikke kriteriene, avsluttes arbeidet etter steg 1, slik brukeren har bedt om.
 
+## Del 2: den gjeldende preferansekontrakten
+
+Lagt til før kjøringen, etter at `git fetch` viste at `origin/main` har to nyere commits
+(`a67760d`, `6db2d0f`, Kimsk81, 15. oktober). PRD §4.5 bruker nå **fem
+preferansenivåer** (100/75/50/25/0) og 15 tekster med fasit. SM-7 krever at alle 15
+tolkes riktig. Beslutningstesten brukte den eldre modellen med fire kategorier, der
+betinget tilgjengelighet («kan hvis det trengs») var `ingen_registrert`. I den nye
+modellen gir slik tekst 75 eller 25 poeng. Den delen av beslutningstesten som gjelder
+tolkning, er derfor målt mot en kontrakt som er erstattet.
+
+En pålitelig løsning må derfor også klare den nye kontrakten. Testen:
+
+- [`scripts/modelltest_prd_fasit.py`](../../scripts/modelltest_prd_fasit.py) med
+  [`modelltest_prd_fasit.json`](../../scripts/modelltest_prd_fasit.json): de 15
+  PRD-tekstene kopiert ordrett, pluss 14 tilleggstekster fra beslutningstesten med
+  fasit satt etter den nye modellen.
+- Kategorier: `onsker_flere` (100), `positiv_ved_behov` (75), `noytral` (50),
+  `foretrekker_a_slippe` (25), `vil_unnga` (0) og `uklar` (50, vises som «ingen
+  registrert preferanse»). `uklar` er agentens forslag, fordi PRD ikke sier hva tekst
+  uten holdning til ekstravakter skal gi.
+- Prompten bruker bare definisjonene fra PRD, ikke de 15 tekstene som eksempler, og
+  inkluderer reglene fra beslutningstesten om helseopplysninger og kjønn.
+- 29 tekster × 5 runder mot Luna, gjennom retry-politikken over.
+
+**Kriterium G5 (fastsatt før kjøring):** alle 15 PRD-tekster riktig i alle 5 runder
+(75 av 75). Tolkningen lagres én gang, så hver runde kan være den som lagres.
+Tilleggstekstene rapporteres, men inngår ikke i kriteriet.
+
+Prompten og de 15 tekstene var kjent for agenten da prompten ble skrevet. Det er en
+mulig skjevhet, som motvirkes ved at prompten bare inneholder PRD-definisjonene.
+
 ## Kjøring
 
 ```powershell
 $env:PYTHONIOENCODING="utf-8"
 python -B scripts/modelltest_robusthet.py          # tørrkjøring
 python -B scripts/modelltest_robusthet.py --live   # 420 kall, ca. 15 minutter
+python -B scripts/modelltest_prd_fasit.py --live   # 145 kall, del 2
 ```

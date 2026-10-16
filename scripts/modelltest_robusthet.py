@@ -80,8 +80,11 @@ def retry_wait(result, attempt, policy, rng):
 
 
 def call_with_policy(key, payload, case, policy, gate, rng, send=request_once,
-                     sleep=time.sleep, clock=time.monotonic):
-    """Returns ok, ubrukelig (answer unusable) or feilet (gave up), with every attempt."""
+                     sleep=time.sleep, clock=time.monotonic, validate=None):
+    """Returns ok, ubrukelig (answer unusable) or feilet (gave up), with every attempt.
+
+    validate(content) -> bool overrides the default schema check for other answer formats.
+    """
     attempts = []
     with gate:
         start = clock()
@@ -89,10 +92,12 @@ def call_with_policy(key, payload, case, policy, gate, rng, send=request_once,
             result = send(key, payload)
             attempts.append({k: result.get(k) for k in ["status", "seconds", "headers", "limit_source"]})
             if result["status"] == 200:
-                answer, errors = base.check_format(case, result["content"])
-                usable = not errors and result.get("finish_reason") == "stop"
+                valid = (validate(result["content"]) if validate
+                         else not base.check_format(case, result["content"])[1])
+                usable = valid and result.get("finish_reason") == "stop"
                 return {"utfall": "ok" if usable else "ubrukelig", "forsok": attempts,
-                        "sekunder": round(clock() - start, 3), "usage": result.get("usage")}
+                        "sekunder": round(clock() - start, 3), "usage": result.get("usage"),
+                        "content": result["content"]}
             if result["status"] not in RETRYABLE or attempt == len(policy["backoff_s"]):
                 break
             wait = retry_wait(result, attempt, policy, rng)

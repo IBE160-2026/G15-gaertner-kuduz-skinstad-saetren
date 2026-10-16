@@ -85,6 +85,13 @@ class PolicyTests(unittest.TestCase):
         outcome, _ = run([dict(GOOD, finish_reason="length")])
         self.assertEqual("ubrukelig", outcome["utfall"])
 
+    def test_custom_validator_decides_usability_and_content_is_returned(self):
+        clock = FakeClock()
+        outcome = robust.call_with_policy("k", {}, CASE, robust.POLICY, threading.BoundedSemaphore(1),
+                                          random.Random(1), send=lambda k, p: dict(GOOD, content="x"),
+                                          sleep=clock.sleep, clock=clock.clock, validate=lambda c: c == "x")
+        self.assertEqual(("ok", "x"), (outcome["utfall"], outcome["content"]))
+
     def test_baseline_never_retries(self):
         outcome, _ = run([limited(), GOOD], robust.BASELINE)
         self.assertEqual("feilet", outcome["utfall"])
