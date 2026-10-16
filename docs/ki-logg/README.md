@@ -51,6 +51,13 @@ gruppemedlem KI-generert kode manuelt, mangler linja.
 echo "$(git log --format='%(trailers:key=Co-Authored-By,valueonly)' | grep -c .) av $(git log --format=%h | wc -l)"
 ```
 
+**Oversikt per leveranse** — med merge-commit viser første forelder én linje per
+flettet branch. Detaljene, inkludert forhåndsregistreringene, ligger under hver merge.
+
+```bash
+git log --first-parent --oneline main
+```
+
 **Utvikling over tid** — aktivitet per måned. Kombinert med churn viser den om
 omarbeidet avtok utover i prosjektet.
 

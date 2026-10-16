@@ -229,6 +229,43 @@ Retry-politikken var et utsatt valg i arkitekturen (ARCHITECTURE-SPINE § Deferr
 Med Luna er den et krav og føres inn i arkitekturen. Klientbibliotek er fortsatt ikke
 valgt.
 
+## Del 3: tekst uten holdning er nøytral
+
+Brukeren avklarte kategorien `uklar` etter fasittesten, ordrett:
+
+> en tekst uten holdning til ekstravakter skal være nøytral. Ved en nøytral holdning er man åpen for å ta på seg vakter. Man har ikke uttrykt hverken at man ønsker det eller ikke ønsker det på det gitte tidspunktet, da er man åpen. Gjør nødvendige tiltak for å fikse dette punktet.
+
+Tiltak:
+
+- Regelen er lagt inn i PRD §4.5 og i briefen, med en linje i hver beslutningslogg.
+- `modelltest_prd_fasit.json` versjon 2: kategorien `uklar` er fjernet. x10, x11 og x12
+  har fasit `noytral`. Versjon 1 finnes i `d33755a`.
+- Prompten i `modelltest_prd_fasit.py`: `noytral` omfatter nå også tekst uten tydelig
+  holdning, motstridende ønsker og innhold som ikke er en preferanse. Personen regnes som
+  åpen.
+
+Den nye kjøringen ble gjort 10:38 UTC uten forhåndsregistrering, fordi fasiten nå er
+brukerens regel og ikke agentens. Rapporten
+[`prd-fasit-gpt6-luna-20261016T103811924349Z.json`](robusthetstest/prd-fasit-gpt6-luna-20261016T103811924349Z.json)
+har `git_head` lik `11a8a27`, men data og skript er nyere enn den commiten. Hva som ble
+brukt, identifiseres ved `data_sha256` (`1658d28a…`) og `script_sha256` (`74318dae…`).
+De gjelder filene i commiten som legger til denne delen, slik de lå i arbeidstreet ved
+kjøringen: skriptet med LF og datafilen med CRLF. Git lagrer begge med LF, og linjeskift
+påvirker hashen. En sammenligning må derfor bruke de samme linjeskiftene.
+
+| Måling | Resultat |
+|---|---|
+| PRD-tekstene (G5) | **75 av 75** riktige, poengavvik 0 |
+| x10–x12 (JSON, instruks, bare tidspunkt) | `noytral` i 15 av 15 |
+| Tilleggstekster totalt | 65 av 70. x14 «mer fritid» ble `noytral` (fasit `vil_unnga`) i alle 5 |
+| Brudd i begrunnelsene (injeksjon, kjønn, metaspråk, helse) | 0 |
+| Leveranse | 145 av 145, ingen 429, USD 0,009 |
+
+x14 er den eneste teksten der Luna og fasiten er uenige. Luna leser «mer fritid» som en
+tekst uten tydelig holdning til ekstravakter, mens fasiten leser den som et ønske om
+færre vakter. Avviket gir 50 poeng i stedet for 0. Det er et tolkningsspørsmål for
+story 5.1 og påvirker ikke G5.
+
 ## Kjøring
 
 ```powershell

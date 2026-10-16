@@ -16,7 +16,7 @@ def answer(category, reason="Personen beskriver ønsket."):
 class DataTests(unittest.TestCase):
     def test_points_follow_prd_five_levels(self):
         self.assertEqual({"onsker_flere": 100, "positiv_ved_behov": 75, "noytral": 50,
-                          "foretrekker_a_slippe": 25, "vil_unnga": 0, "uklar": 50}, CATEGORIES)
+                          "foretrekker_a_slippe": 25, "vil_unnga": 0}, CATEGORIES)
 
     def test_fifteen_prd_texts_three_per_level(self):
         prd_cases = [c for c in CASES if c["gruppe"] == "prd"]
@@ -40,9 +40,16 @@ class ScoringTests(unittest.TestCase):
         self.assertEqual(["openai"], payload["provider"]["only"])
         self.assertEqual(prd.PROMPT, payload["messages"][0]["content"])
 
+    def test_text_without_stance_is_neutral(self):
+        for case_id in ("x10", "x11", "x12"):
+            self.assertEqual("noytral", next(c for c in CASES if c["id"] == case_id)["fasit"])
+        self.assertNotIn("- uklar:", prd.PROMPT)  # the category is gone; the word may describe text
+        self.assertIn("regnes som åpen", prd.PROMPT)
+
     def test_parse_rejects_wrong_shape_and_unknown_category(self):
         self.assertIsNone(prd.parse(CATEGORIES, "ikke json"))
         self.assertIsNone(prd.parse(CATEGORIES, answer("flere")))
+        self.assertIsNone(prd.parse(CATEGORIES, answer("uklar")))
         self.assertIsNone(prd.parse(CATEGORIES, json.dumps({"kategori": "noytral"})))
         self.assertEqual("noytral", prd.parse(CATEGORIES, answer("noytral"))["kategori"])
 

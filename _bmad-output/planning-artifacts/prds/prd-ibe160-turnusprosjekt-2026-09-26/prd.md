@@ -211,7 +211,7 @@ Systemet kan bruke en språkmodell til å tolke tekstbaserte Ansattpreferanser o
 | 25 | Foretrekker å slippe, men er åpen ved behov |
 | 0 | Tydelig ønske om å unngå ekstravakter |
 
-Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler.
+Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. En tekst som ikke uttrykker noen tydelig holdning til flere vakter eller ekstravakter, for eksempel bare ønsker om tidspunkt, tolkes som nøytral (50 poeng): personen har verken bedt om eller avslått ekstravakter og regnes som åpen. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler.
 
 **Definerte preferansetekster med fasit:**
 

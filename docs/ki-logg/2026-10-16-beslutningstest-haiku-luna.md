@@ -337,3 +337,7 @@ Den viste også at PRD på `main` har fått fem preferansenivåer etter at denne
 designet. Preferansedelen her er derfor målt mot en eldre kontrakt. Luna besto
 fasittesten mot den nye kontrakten (75 av 75). Standardmodellen er nå endret i
 dokumentasjonen, og vilkårene i [Anbefaling](#anbefaling) er ført inn som AD-7.
+
+Brukeren besluttet samme dag at den blindede gjennomgangen ikke skal gjøres, fordi
+vurderingene fra testene er gode nok kvalitetsmessig. `blindet-vurdering.md` og
+`blindnokkel.json` er beholdt som dokumentasjon, men er ikke brukt.

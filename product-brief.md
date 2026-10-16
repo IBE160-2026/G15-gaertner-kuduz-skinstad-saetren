@@ -2,7 +2,7 @@
 title: "Product Brief: IBE160 Turnusprosjekt"
 status: draft
 created: 2026-09-15
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 # Product Brief: IBE160 Turnusprosjekt
@@ -66,7 +66,7 @@ Preferansefaktoren teller 25 % av totalscoren og bruker fem faste poengnivåer:
 | 25 | Foretrekker å slippe, men er åpen ved behov |
 | 0 | Tydelig ønske om å unngå ekstravakter |
 
-Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler. De 15 definerte eksempeltekstene med forventet tolkning står i PRD §4.5.
+Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. En tekst som ikke uttrykker noen tydelig holdning til flere vakter eller ekstravakter, for eksempel bare ønsker om tidspunkt, tolkes som nøytral (50 poeng): personen har verken bedt om eller avslått ekstravakter og regnes som åpen. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler. De 15 definerte eksempeltekstene med forventet tolkning står i PRD §4.5.
 
 ## Hva gjør dette annerledes
 
