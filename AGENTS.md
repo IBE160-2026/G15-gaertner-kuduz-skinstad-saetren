@@ -52,6 +52,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   beslutningstest Haiku mot Luna (`2026-10-16-beslutningstest-haiku-luna.md`) og
   robusthetstest av Luna med fasittest mot PRD §4.5 (`2026-10-16-robusthet-luna.md`).
   Luna er valgt. Kravene fra robusthetstesten står i AD-7 i arkitekturen.
+- Når et gruppemedlem spør hvordan de får lagt inn API-nøkkelen eller kjører live
+  mot Luna: følg skillen `api-nokkel-oppsett` (`.claude/skills/` og `.agents/skills/`).
+  Les aldri `.env`.
 - Hold `_bmad/`, `.claude/skills/` og `.agents/skills/` utenfor søk i prosjektkoden —
   det er BMAD-rammeverket og utgjør 446 av 455 sporede filer.
 
