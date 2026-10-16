@@ -1,6 +1,6 @@
 # Robusthetstest: pålitelig drift med GPT-6 Luna, 16. oktober 2026
 
-**Status: iterasjon 1 kjørt og strøket; iterasjon 2 og fasittest forhåndsregistrert.**
+**Status: fullført. Steg 1 er godkjent med fire designkrav** (se [Vurdering](#vurdering-av-steg-1-godkjent-med-fire-designkrav)). Iterasjon 1 strøk, mens iterasjon 2 og fasittesten besto.
 
 Dette er agentens egenrapportering. Et gruppemedlem må gjennomgå vurderingen.
 
@@ -156,6 +156,78 @@ ganger, etter S1–S5 én gang.
 Steg 1 godkjennes hvis H1–H3 og G5 holder. Fasittesten (G5) bruker samme
 `TAKT`-politikk, fordi den forhåndsregistrerte politikken ville gitt leveringsfeil som
 blandes sammen med tolkningsfeil. Fasit og kriterium for G5 er uendret.
+
+## Resultat, iterasjon 2 og fasittest
+
+Iterasjon 2 ble kjørt 09:01–09:25 UTC, med 218 kall og en kostnad på USD 0,021. Rapport:
+[`robusthet-takt-20261016T090108739060Z.json`](robusthetstest/robusthet-takt-20261016T090108739060Z.json).
+
+| Scenario | Levert | 429 | Siste svar etter at vakten ble åpnet | Minimum ved 18/min |
+|---|---|---|---|---|
+| S1 én vakt (10) | 10/10 | 0 | 5,0 s | – |
+| S2 to vakter (20) | 20/20 | 0 | 62,4 s | ≈ 60 s for kall 19–20 |
+| S3 fem vakter (50) | 50/50 | 0 | 112,3 s | ≈ 2 min |
+| S4 topp (60) | 60/60 | 0 | 182,4 s | ≈ 3 min |
+| S5 30 preferanser | 30/30 | 0 | 65,1 s | ≈ 60 s |
+| S6 lat lasting, kjøring 1 (24) | 24/24 | 0 | 4,4 s | – |
+| S6 lat lasting, kjøring 2 (24) | 24/24 | 0 | 7,8 s | – |
+
+- **H1** består: 218 av 218 svar var brukbare.
+- **H2** består: 10 av 10 på 5,0 s.
+- **H3** består: alle svar i S6 kom innen 7,8 s.
+- **H4:** alle svar ble levert. Ventetiden ved toppene fulgte minimumet ved 18 kall
+  per minutt. Klientbegrenseren holdt kontoen helt fri for 429.
+
+Fasittesten ble kjørt 09:26 UTC, med 145 kall og en kostnad på USD 0,009. Rapport:
+[`prd-fasit-gpt6-luna-20261016T092622556987Z.json`](robusthetstest/prd-fasit-gpt6-luna-20261016T092622556987Z.json).
+
+- **G5** består: alle 15 PRD-tekster var riktige i alle 5 rundene (75 av 75), med
+  poengavvik 0.
+- **Tilleggstekstene:** 65 av 70 var riktige. Alle 5 feilene var x14, «Jeg vil gjerne ha
+  mer fritid fremover», som ble `uklar` (50) i stedet for `vil_unnga` (0). Det er den
+  samme forsiktige tolkningen som i beslutningstesten.
+- Ingen fulgte injeksjoner, ingen kjønnede pronomen og ingen gjentatte
+  helseopplysninger.
+- To begrunnelser omtalte x10 som «et JSON-utdrag». Det beskriver innholdet og omtaler
+  ikke en instruks.
+- Alle 145 svar ble levert, uten 429.
+
+## Vurdering av steg 1: godkjent, med fire designkrav
+
+*Agentens vurdering. Gruppa tar beslutningen.*
+
+Ja, gruppa kan bygge en løsning med Luna som er til å stole på, og uten mye arbeid.
+Testen viser at to enkle tiltak gjør at alle kall kommer frem:
+
+1. **Begrens takten på klientsiden.** Én felles begrenser i `adaptere/ki` slipper
+   gjennom høyst 18 kall per 60 s og høyst 5 samtidige. Ved 429 venter den til
+   `X-RateLimit-Reset`, ellers 2, 4 og 8 s. Hvert kall har et budsjett på 90 s, og
+   deretter gir det `avveining_feilet` (AD-4). Prototypen er om lag 60 linjer med 15
+   enhetstester.
+2. **Generer lukkede forklaringer først når de åpnes.** PRD på `main` viser inntil fem
+   kandidater, og UX-DR12 viser bare toppkandidatens forklaring som åpen. Da blir
+   normal bruk ett kall per vakt, pluss ett per rad som åpnes. S6 viser at det holder
+   seg innen 8 s.
+3. **Tolk preferanser i bakgrunnen eller ved innlasting av testdata.** Da kø-tiden ikke
+   merkes. Første tolkning av 30 ansatte tar om lag 2 minutter, og tolkningen lagres
+   (story 5.1).
+4. **Vis ventetilstand per rad (story 5.5).** Ved topper kan en forklaring ligge i kø i
+   opptil et par minutter.
+
+Forbehold:
+
+- Grensen på 20 kall per minutt gjelder denne kontoen. Den kan heves med forbrukshistorikk,
+  men det er ikke dokumentert. En ny konto til sensor (ÅB-8) får trolig samme grense, så
+  løsningen må tåle den uansett. Begrenseren gjør det.
+- Viser appen alle fem forklaringene straks, tåler den 3 vakter per minutt før det
+  oppstår kø.
+- Haiku fikk ikke denne grensen. Velger gruppa likevel Haiku senere, er begrenseren
+  fortsatt nyttig, men ikke nødvendig.
+- Testen er kjørt fra én konto på én formiddag.
+
+Retry-politikken var et utsatt valg i arkitekturen (ARCHITECTURE-SPINE § Deferred).
+Med Luna er den et krav og føres inn i arkitekturen. Klientbibliotek er fortsatt ikke
+valgt.
 
 ## Kjøring
 
