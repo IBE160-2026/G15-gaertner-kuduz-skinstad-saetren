@@ -27,6 +27,10 @@ POLICY = {"navn": "anbefalt", "samtidige": 5, "budsjett_s": 25.0,
           "backoff_s": [1.0, 2.0, 4.0, 8.0], "retry_after_maks_s": 10.0}
 BASELINE = {"navn": "ingen", "samtidige": 1000, "budsjett_s": 0.0, "backoff_s": [],
             "retry_after_maks_s": 0.0}
+# Iteration 2, after the first run showed a fixed 20-per-minute window: stay below it
+# on the client, wait for X-RateLimit-Reset on 429, and allow a longer budget.
+TAKT = {"navn": "takt", "samtidige": 5, "budsjett_s": 90.0, "backoff_s": [2.0, 4.0, 8.0],
+        "retry_after_maks_s": 65.0, "per_minutt": 18, "vent_til_reset": True}
 RETRYABLE = {429, 500, 502, 503, 504, "nettverksfeil"}
 HEADER_PREFIXES = ("x-ratelimit", "retry-after")
 
@@ -37,7 +41,34 @@ SCENARIOS = {
     "S3_fem_vakter_5s_mellom": [(5 * i, "forklaring", 10) for i in range(5)],
     "S4_tre_vakter_gjenapnet": [(0, "forklaring", 10)] * 3 + [(3, "forklaring", 10)] * 3,
     "S5_tolk_30_preferanser": [(0, "preferanse", 30)],
+    # PRD on main: at most five candidates; UX: only the top explanation is expanded, so the
+    # others can be generated when opened. Eight shifts 10 s apart, two rows opened after 3 s.
+    "S6_sensor_lat_lasting": [w for i in range(8) for w in ((10 * i, "forklaring", 1),
+                                                            (10 * i + 3, "forklaring", 2))],
 }
+FIRST_PLAN = ["S1_en_vakt", "S2_to_vakter_samtidig", "S3_fem_vakter_5s_mellom",
+              "S4_tre_vakter_gjenapnet", "S5_tolk_30_preferanser"]
+
+
+class MinuteLimiter:
+    """At most n request starts in any 60 s window, so no fixed minute gets more than n."""
+
+    def __init__(self, n, clock=time.monotonic, sleep=time.sleep):
+        self.n, self.clock, self.sleep = n, clock, sleep
+        self.starts, self.lock = [], threading.Lock()
+
+    def acquire(self):
+        waited = 0.0
+        while True:
+            with self.lock:
+                now = self.clock()
+                self.starts = [t for t in self.starts if now - t < 60.0]
+                if len(self.starts) < self.n:
+                    self.starts.append(now)
+                    return waited
+                wait = 60.0 - (now - self.starts[0]) + 0.05
+            self.sleep(wait)
+            waited += wait
 
 
 def request_once(key, payload):
@@ -69,7 +100,10 @@ def request_once(key, payload):
     return result
 
 
-def retry_wait(result, attempt, policy, rng):
+def retry_wait(result, attempt, policy, rng, wall=time.time):
+    reset = result.get("headers", {}).get("x-ratelimit-reset")
+    if policy.get("vent_til_reset") and reset and reset.isdigit():
+        return min(max(0.5, int(reset) / 1000 - wall() + 0.5), policy["retry_after_maks_s"])
     header = result.get("headers", {}).get("retry-after")
     try:
         if header is not None:
@@ -80,7 +114,7 @@ def retry_wait(result, attempt, policy, rng):
 
 
 def call_with_policy(key, payload, case, policy, gate, rng, send=request_once,
-                     sleep=time.sleep, clock=time.monotonic, validate=None):
+                     sleep=time.sleep, clock=time.monotonic, validate=None, limiter=None, wall=time.time):
     """Returns ok, ubrukelig (answer unusable) or feilet (gave up), with every attempt.
 
     validate(content) -> bool overrides the default schema check for other answer formats.
@@ -89,6 +123,8 @@ def call_with_policy(key, payload, case, policy, gate, rng, send=request_once,
     with gate:
         start = clock()
         for attempt in range(len(policy["backoff_s"]) + 1):
+            if limiter:
+                limiter.acquire()
             result = send(key, payload)
             attempts.append({k: result.get(k) for k in ["status", "seconds", "headers", "limit_source"]})
             if result["status"] == 200:
@@ -100,7 +136,7 @@ def call_with_policy(key, payload, case, policy, gate, rng, send=request_once,
                         "content": result["content"]}
             if result["status"] not in RETRYABLE or attempt == len(policy["backoff_s"]):
                 break
-            wait = retry_wait(result, attempt, policy, rng)
+            wait = retry_wait(result, attempt, policy, rng, wall)
             if clock() - start + wait > policy["budsjett_s"]:
                 break
             sleep(wait)
@@ -109,6 +145,7 @@ def call_with_policy(key, payload, case, policy, gate, rng, send=request_once,
 
 def run_scenario(key, waves, policy, rng, cases):
     gate = threading.BoundedSemaphore(policy["samtidige"])
+    limiter = MinuteLimiter(policy["per_minutt"]) if policy.get("per_minutt") else None
     by_kind = {kind: [c for c in cases if c["kind"] == kind] for kind in ("preferanse", "forklaring")}
     jobs = []
     for index, (offset, kind, count) in enumerate(waves):
@@ -120,7 +157,7 @@ def run_scenario(key, waves, policy, rng, cases):
     def job(item):
         index, offset, case, payload = item
         time.sleep(max(0.0, t0 + offset - time.monotonic()))
-        outcome = call_with_policy(key, payload, case, policy, gate, rng)
+        outcome = call_with_policy(key, payload, case, policy, gate, rng, limiter=limiter)
         outcome.update({"bolge": index, "sak": case["id"],
                         "ferdig_etter_bolgestart_s": round(time.monotonic() - t0 - offset, 3)})
         return outcome
@@ -158,9 +195,14 @@ def main():
     parser.add_argument("--runder", type=int, default=2, help="Gjentakelser av S1–S5 med anbefalt politikk.")
     parser.add_argument("--pause", type=float, default=60.0, help="Sekunder mellom scenarioer.")
     parser.add_argument("--max-kostnad", type=float, default=0.10)
+    parser.add_argument("--politikk", choices=["anbefalt", "takt"], default="anbefalt",
+                        help="anbefalt = første kjøring; takt = iterasjon 2 med klientbegrenser.")
     args = parser.parse_args()
-    plan = [("S2_to_vakter_samtidig", BASELINE), ("S4_tre_vakter_gjenapnet", BASELINE)]
-    plan += [(name, POLICY) for _ in range(args.runder) for name in SCENARIOS]
+    if args.politikk == "anbefalt":
+        plan = [("S2_to_vakter_samtidig", BASELINE), ("S4_tre_vakter_gjenapnet", BASELINE)]
+        plan += [(name, POLICY) for _ in range(args.runder) for name in FIRST_PLAN]
+    else:
+        plan = [(name, TAKT) for name in FIRST_PLAN] + [("S6_sensor_lat_lasting", TAKT)] * args.runder
     calls = sum(n for name, _ in plan for _, _, n in SCENARIOS[name])
     if not args.live:
         print(f"Tørrkjøring: {len(plan)} scenariokjøringer, {calls} kall mot {MODEL}, ingen nettverk.")
@@ -170,8 +212,9 @@ def main():
     rng = random.Random(20261016)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     OUT.mkdir(parents=True, exist_ok=True)
-    output = OUT / f"robusthet-{stamp}.json"
-    report = {"started_utc": stamp, "model": MODEL, "policy": POLICY, "baseline": BASELINE,
+    output = OUT / f"robusthet-{args.politikk}-{stamp}.json"
+    report = {"started_utc": stamp, "model": MODEL, "policy": POLICY if args.politikk == "anbefalt" else TAKT,
+              "baseline": BASELINE if args.politikk == "anbefalt" else None,
               "scenarios": SCENARIOS, "script_sha256": hashlib.sha256(open(__file__, "rb").read()).hexdigest(),
               "git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python": sys.version.split()[0], "runs": [], "status": "in-progress"}

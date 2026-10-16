@@ -1,6 +1,6 @@
 # Robusthetstest: pålitelig drift med GPT-6 Luna, 16. oktober 2026
 
-**Status: forhåndsregistrert, ikke kjørt.**
+**Status: iterasjon 1 kjørt og strøket; iterasjon 2 og fasittest forhåndsregistrert.**
 
 Dette er agentens egenrapportering. Et gruppemedlem må gjennomgå vurderingen.
 
@@ -104,11 +104,65 @@ Tilleggstekstene rapporteres, men inngår ikke i kriteriet.
 Prompten og de 15 tekstene var kjent for agenten da prompten ble skrevet. Det er en
 mulig skjevhet, som motvirkes ved at prompten bare inneholder PRD-definisjonene.
 
+## Resultat, iterasjon 1: politikken stryker
+
+Kjørt 08:39–08:58 UTC, 420 kall, USD 0,031. Rapport:
+[`robusthet-20261016T083911000032Z.json`](robusthetstest/robusthet-20261016T083911000032Z.json).
+
+| Scenario | Grunnlinje | Politikk, runde 1 | Politikk, runde 2 |
+|---|---|---|---|
+| S1 én vakt (10) | – | 10/10, 4,8 s | 10/10, 4,5 s |
+| S2 to vakter (20) | 20/20, 4,5 s | 20/20, 9,8 s | 20/20, 10,2 s |
+| S3 fem vakter (50) | – | **40/50**, siste vakt 52,8 s | **43/50**, 57,9 s |
+| S4 topp (60) | **20/60** | **49/60**, 80,3 s | **45/60**, 100,6 s |
+| S5 30 preferanser | – | **20/30**, 47,4 s | **20/30**, 44,3 s |
+
+G1 (63 feilet av 340, krav ≤ 3), G3 og G4 stryker. G2 består. Grunnlinjen traff grensen
+(40 × 429 på S4), så målingen gjelder.
+
+**Årsak:** 429-svarene hadde `X-RateLimit-Limit: 20`, `X-RateLimit-Remaining: 0` og
+`X-RateLimit-Reset` lik neste hele minutt (for eksempel 08:41:00). Grensen er altså
+**20 Luna-kall per kalenderminutt** for kontoen (`limit_source:
+openrouter_new_account`). Ett svar hadde grense 50, men det ble ikke gjentatt. Politikken
+ventet høyst rundt 25 s, mens grensen kan kreve inntil 60 s. Ingen klientpolitikk kan
+få mer enn 20 kall per minutt gjennom. Det som kan løses, er at kallene kommer frem.
+
+## Iterasjon 2: takt (fastsatt før kjøring, etter iterasjon 1)
+
+Denne iterasjonen er **ikke** med i forhåndsregistreringen. Den er utformet etter at
+resultatet over var kjent. Kriteriene under er committet før den kjøres.
+
+Endringer i `TAKT` i `modelltest_robusthet.py`:
+
+- Klientbegrenser: høyst 18 kallstarter i ethvert 60-sekunders vindu, slik at ingen
+  kalenderminutt får mer enn 18 (`MinuteLimiter`).
+- Ved 429: vent til `X-RateLimit-Reset` + 0,5 s (maks 65 s). Ellers 2, 4 og 8 s.
+- Tidsbudsjett: 90 s per kall, deretter `avveining_feilet`. Fortsatt høyst 5 samtidige.
+
+Nytt scenario S6, etter PRD på `main` (inntil fem kandidater) og UX-DR12 (bare
+toppkandidatens forklaring er åpen): 8 vakter med 10 s mellomrom. For hver vakt hentes
+toppforklaringen straks, og to til åpnes etter 3 s. Totalt 24 kall på 73 s. Kjøres to
+ganger, etter S1–S5 én gang.
+
+**Kriterier for iterasjon 2:**
+
+- **H1 Levering:** minst 99 % brukbare svar over alle kall (høyst 2 av 218).
+- **H2 Én vakt:** S1 gir 10 av 10 innen 15 s.
+- **H3 Realistisk bruk (S6):** hver forklaring er ferdig innen 15 s etter at raden ble
+  åpnet, i begge kjøringene.
+- **H4 Topper (S2–S5):** alle leveres. Ventetiden rapporteres og sammenlignes med
+  minimum ved 18 kall per minutt. Den har ingen terskel, men vises som degradert drift.
+
+Steg 1 godkjennes hvis H1–H3 og G5 holder. Fasittesten (G5) bruker samme
+`TAKT`-politikk, fordi den forhåndsregistrerte politikken ville gitt leveringsfeil som
+blandes sammen med tolkningsfeil. Fasit og kriterium for G5 er uendret.
+
 ## Kjøring
 
 ```powershell
 $env:PYTHONIOENCODING="utf-8"
 python -B scripts/modelltest_robusthet.py          # tørrkjøring
 python -B scripts/modelltest_robusthet.py --live   # 420 kall, ca. 15 minutter
+python -B scripts/modelltest_robusthet.py --live --politikk takt   # iterasjon 2, 218 kall
 python -B scripts/modelltest_prd_fasit.py --live   # 145 kall, del 2
 ```

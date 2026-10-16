@@ -1,7 +1,7 @@
 """Fasittest: tolker Luna de 15 preferansetekstene i PRD §4.5 med fem nivåer?
 
 Se docs/ki-logg/2026-10-16-robusthet-luna.md. Kallene går gjennom retry-politikken i
-modelltest_robusthet, slik appen ville gjort. Uten --live er dette en tørrkjøring.
+modelltest_robusthet (takt: klientbegrenser og venting til reset), slik appen ville gjort. Uten --live er dette en tørrkjøring.
 """
 
 import argparse
@@ -119,14 +119,16 @@ def main():
         print(f"Tørrkjøring: {len(cases)} tekster x {args.repeat} runder mot {args.model}, ingen nettverk.")
         return 0
     key, model = base.configuration(args.model)
-    gate = threading.BoundedSemaphore(robust.POLICY["samtidige"])
+    gate = threading.BoundedSemaphore(robust.TAKT["samtidige"])
+    limiter = robust.MinuteLimiter(robust.TAKT["per_minutt"])
     rng = random.Random(20261016)
     jobs = [(case, repeat) for repeat in range(1, args.repeat + 1) for case in cases]
 
     def job(item):
         case, repeat = item
-        outcome = robust.call_with_policy(key, payload_for(case, model, categories), case, robust.POLICY,
-                                          gate, rng, validate=lambda c: parse(categories, c) is not None)
+        outcome = robust.call_with_policy(key, payload_for(case, model, categories), case, robust.TAKT,
+                                          gate, rng, validate=lambda c: parse(categories, c) is not None,
+                                          limiter=limiter)
         return dict(outcome, sak=case["id"], runde=repeat)
 
     with ThreadPoolExecutor(max_workers=10) as pool:
@@ -136,7 +138,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     output = OUT / f"prd-fasit-{MODELS[model]}-{stamp}.json"
     report = {"started_utc": stamp, "model": model, "repeat": args.repeat, "prompt": PROMPT,
-              "policy": robust.POLICY, "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+              "policy": robust.TAKT, "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "data_sha256": hashlib.sha256(DATA.read_bytes()).hexdigest(),
               "git_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python": sys.version.split()[0], "summary": summary, "rows": rows, "results": results}

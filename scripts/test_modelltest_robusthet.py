@@ -119,6 +119,57 @@ class PolicyTests(unittest.TestCase):
         self.assertEqual(robust.POLICY["samtidige"], peak[0])
 
 
+class TaktTests(unittest.TestCase):
+    def test_limiter_allows_n_starts_per_minute_then_waits(self):
+        clock = FakeClock()
+        limiter = robust.MinuteLimiter(3, clock=clock.clock, sleep=clock.sleep)
+        for _ in range(3):
+            self.assertEqual(0.0, limiter.acquire())
+        waited = limiter.acquire()
+        self.assertAlmostEqual(60.05, waited)
+        self.assertEqual(1, len(limiter.starts))  # the three old starts have expired
+
+    def test_limiter_never_exceeds_n_in_any_sixty_seconds(self):
+        clock = FakeClock()
+        limiter = robust.MinuteLimiter(18, clock=clock.clock, sleep=clock.sleep)
+        starts = []
+        for i in range(100):
+            limiter.acquire()
+            starts.append(clock.now)
+            clock.now += 0.3
+        for t in starts:
+            self.assertLessEqual(sum(t <= s < t + 60 for s in starts), 18)
+
+    def test_takt_waits_until_rate_limit_reset(self):
+        clock = FakeClock()
+        sequence = iter([limited({"x-ratelimit-reset": "1000042000"}), GOOD])
+        outcome = robust.call_with_policy("k", {}, CASE, robust.TAKT, threading.BoundedSemaphore(1),
+                                          random.Random(1), send=lambda k, p: next(sequence),
+                                          sleep=clock.sleep, clock=clock.clock, wall=lambda: 1000000.0)
+        self.assertEqual("ok", outcome["utfall"])
+        self.assertEqual([42.5], clock.waits)
+
+    def test_reset_wait_is_capped(self):
+        wait = robust.retry_wait(limited({"x-ratelimit-reset": "9999999999999"}), 0, robust.TAKT,
+                                 random.Random(1), wall=lambda: 0.0)
+        self.assertEqual(robust.TAKT["retry_after_maks_s"], wait)
+
+    def test_limiter_is_used_before_every_attempt(self):
+        calls = []
+
+        class Spy:
+            def acquire(self):
+                calls.append(1)
+                return 0.0
+
+        clock = FakeClock()
+        sequence = iter([limited(), GOOD])
+        robust.call_with_policy("k", {}, CASE, robust.TAKT, threading.BoundedSemaphore(1), random.Random(1),
+                                send=lambda k, p: next(sequence), sleep=clock.sleep, clock=clock.clock,
+                                limiter=Spy())
+        self.assertEqual(2, len(calls))
+
+
 class ReportTests(unittest.TestCase):
     def test_summary_counts_outcomes_and_wave_time(self):
         outcomes = [
@@ -139,7 +190,8 @@ class ReportTests(unittest.TestCase):
     def test_scenarios_cover_the_planned_load(self):
         counts = {name: sum(n for _, _, n in waves) for name, waves in robust.SCENARIOS.items()}
         self.assertEqual({"S1_en_vakt": 10, "S2_to_vakter_samtidig": 20, "S3_fem_vakter_5s_mellom": 50,
-                          "S4_tre_vakter_gjenapnet": 60, "S5_tolk_30_preferanser": 30}, counts)
+                          "S4_tre_vakter_gjenapnet": 60, "S5_tolk_30_preferanser": 30,
+                          "S6_sensor_lat_lasting": 24}, counts)
 
 
 if __name__ == "__main__":
