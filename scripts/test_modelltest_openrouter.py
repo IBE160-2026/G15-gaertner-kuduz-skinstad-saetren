@@ -62,6 +62,9 @@ class ResponseChecks(unittest.TestCase):
         gemma = probe.payload_for(case, "google/gemma-4-31b-it:free")
         self.assertEqual({"type": "json_object"}, gemma["response_format"])
         self.assertEqual(["google-ai-studio"], gemma["provider"]["only"])
+        paid_gemma = probe.payload_for(case, "google/gemma-4-31b-it")
+        self.assertEqual({"type": "json_object"}, paid_gemma["response_format"])
+        self.assertEqual(["deepinfra/fp8"], paid_gemma["provider"]["only"])
         for model, provider in [("openai/gpt-6-luna", "openai"), ("mistralai/mistral-small-2603", "mistral")]:
             payload = probe.payload_for(case, model)
             self.assertTrue(payload["response_format"]["json_schema"]["strict"])

@@ -20,6 +20,8 @@ MODEL = "anthropic/claude-haiku-5.5"
 MODELS = {
     MODEL: {"slug": "haiku", "provider": None, "strict": True},
     "google/gemma-4-31b-it:free": {"slug": "gemma4-31b-free", "provider": "google-ai-studio", "strict": False},
+    # Paid fallback when the free pool is rate-limited; endpoint tag pins DeepInfra's fp8 variant.
+    "google/gemma-4-31b-it": {"slug": "gemma4-31b-deepinfra", "provider": "deepinfra/fp8", "strict": False},
     "openai/gpt-6-luna": {"slug": "gpt6-luna", "provider": "openai", "strict": True},
     "mistralai/mistral-small-2603": {"slug": "mistral-small-4", "provider": "mistral", "strict": True},
 }
