@@ -1,0 +1,61 @@
+{
+  "started_utc": "20261016T080505173330Z",
+  "model": "openai/gpt-6-luna",
+  "samtidige_kall": 10,
+  "script_sha256": "68e82f48aa5ce263830a1ed1e888a95c8f8b1ee5b3afe6b080eb9e3f897e3cf8",
+  "outcomes": [
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.375
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.453
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.515
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.344
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.266
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.172
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.062
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.328
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.578
+    },
+    {
+      "status": 200,
+      "provider": "OpenAI",
+      "seconds": 2.094
+    }
+  ],
+  "summary": {
+    "200": 10
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "started_utc": "20261015T190316118438Z",
+  "model": "anthropic/claude-haiku-5.5",
+  "repeat": 2,
+  "script_sha256": "216edf296d85e5015bbd0e5b9cdb07099a315fe400c5f7c05da7099caf823d25",
+  "git_head": "2b06245041b499e84027bb9058267afdccec93cc",
+  "python": "3.12.5",
+  "results": [],
+  "status": "failed",
+  "error": "Nettverksfeil eller tidsavbrudd mot OpenRouter."
+}

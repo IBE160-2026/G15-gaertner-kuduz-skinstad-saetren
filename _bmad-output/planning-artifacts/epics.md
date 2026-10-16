@@ -41,20 +41,21 @@ NFR3 (KI-grense): KI beregner aldri Harde regler, arbeidstid, kostnad eller Rang
 NFR4 (Robusthet ved KI-feil): Feil, tomt eller ubrukelig svar fra språkmodellen, inkludert fartsgrense, gir reservetekst eller feilmelding i stedet for Avveining, aldri en anbefaling uten grunnlag. Systemet krasjer ikke (FR11).
 NFR5 (Menneskelig sluttbeslutning): Ingen endring gjennomføres automatisk. Godkjenning krever alltid Turnusansvarliges eksplisitte handling (SM-8).
 NFR6 (Tilgangskontroll): Alle funksjoner utenom innlogging krever gyldig sesjon (FR13).
-NFR7 (Hemmeligheter): API-nøkler (Gemini) og JWT-signeringsnøkkel leses fra miljøvariabler og skrives aldri i kildekode. Hver variabel dokumenteres uten verdi i `.env.example` (AGENTS.md).
+NFR7 (Hemmeligheter): API-nøkler (OpenRouter) og JWT-signeringsnøkkel leses fra miljøvariabler og skrives aldri i kildekode. Hver variabel dokumenteres uten verdi i `.env.example` (AGENTS.md).
 NFR8 (Testdekning av harde regler): Hver Hard regel har egen testmodul som dekker grensetilfellene. En regel er ikke ferdig uten slike tester. Testdekning per regel prioriteres over antall regler (SM-C1, AGENTS.md).
 NFR9 (Kjørbar fra rent repo): Systemet kan bygges og kjøres fra en ren klone uten manuelle unntak eller udokumenterte oppsettsteg (SM-9, addendum §6).
 NFR10 (Korrekthet foran hastighet): Rask KI-respons optimeres ikke på bekostning av at forklaringen er korrekt og aldri nevner en utelukket Kandidat (SM-C2).
 NFR11 (Fiktive data): Bare fiktive data, ingen ekte personopplysninger og ingen integrasjon mot reelle HR-, lønns- eller turnussystemer (PRD §5).
 NFR12 (Omfang): Én Vaktendring om gangen. Ingen generering eller optimalisering av hel Turnus, ingen vaktbytte og ingen ansattportal i v1 (PRD §5).
 NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (EXPERIENCE.md § Foundation).
+NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-nøkkel. Grensesnittet viser alltid om en Avveining er live, forhåndsgenerert eller malbasert. En feil i live-modus gir reservetekst, ikke stille overgang til demo-modus (PRD §4.5, SM-9, AD-6).
 
 ### Tilleggskrav
 
 **Oppstart (påvirker Epic 1 Story 1):** Arkitekturen angir ingen starter-mal. Prosjektet er greenfield og må stilles opp fra bunnen etter kildetreet i ARCHITECTURE-SPINE.md § Structural Seed: `backend/` (Python, FastAPI 0.141.1, SQLAlchemy/SQLite, pytest) og `frontend/` (React 19.3.0, Vite 8.3.1, TypeScript 7.0.2), `docs/ki-logg/` og `.env.example`. Når prosjektfilene finnes, skal de faktiske kommandoene for installasjon, kjøring og test føres inn i AGENTS.md § Kjøring og verifisering.
 
 **Arkitekturstruktur**
-- Heksagonal arkitektur (lett): `domene/regelmotor` og `domene/porter` er domenekjernen, ren Python uten avhengighet til rammeverk, database eller KI. Adaptere: `adaptere/api` (FastAPI), `adaptere/web` (React SPA), `adaptere/ki` (Gemini) og `adaptere/lagring` (SQLAlchemy/SQLite).
+- Heksagonal arkitektur (lett): `domene/regelmotor` og `domene/porter` er domenekjernen, ren Python uten avhengighet til rammeverk, database eller KI. Adaptere: `adaptere/api` (FastAPI), `adaptere/web` (React SPA), `adaptere/ki` (OpenRouter, eller demo-modus etter AD-6) og `adaptere/lagring` (SQLAlchemy/SQLite).
 - AD-1/AD-2: `domene/*` importerer aldri fra noen `adaptere/*`-pakke. Dette håndheves statisk med en import-linter-kontrakt og en test som feiler ved brudd.
 - AD-1: En kjøretidstest i `tester/` verifiserer at ingen kandidat-ID som `adaptere/api` sender til `adaptere/ki` finnes blant de utelukkede ID-ene fra regelmotoren, i et scenario med kjente utelukkelser.
 - Porter (Pydantic, eid av `domene/porter`):
@@ -82,7 +83,10 @@ NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (E
 - Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert i testdataene inntil videre (ÅB-4, PRD §2.2). Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen er fullt kvalifisert (FR9), ingen gyldige kandidater (FR6, EXPERIENCE: Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1).
 
 **KI-integrasjon**
-- Google Gemini API via miljøvariabel. Modellversjon er ikke valgt. Fartsgrense skal gi `avveining_feilet`, ikke krasj.
+- OpenRouter, med `openai/gpt-6-luna` som standardmodell i `OPENROUTER_MODEL` (valgt 2026-10-16, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
+- AD-7: `adaptere/ki` holder seg under 18 kall per minutt og 5 samtidige, venter til `X-RateLimit-Reset` ved 429 og gir opp etter 90 s. Lukkede Avveininger hentes når raden åpnes.
+- AD-6: `KI_MODUS=openrouter|demo`. Uten `OPENROUTER_API_KEY` starter appen i demo-modus. Valget skjer bare i oppstartslaget til `adaptere/api`.
+- Norskkvaliteten er testet før story 5.1 (`docs/ki-logg/2026-10-15-*` og `2026-10-16-*`). Luna tolket alle 15 fasittekstene i PRD §4.5 riktig i 5 av 5 runder.
 
 **Kvalitetssikring (emnekrav, gjelder alle stories)**
 - pytest på backend, med én testmodul per Hard regel under `tester/regelmotor/`.
@@ -91,7 +95,7 @@ NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (E
 
 **Utsatte beslutninger som påvirker enkelte stories** (de tre som blokkerer implementering står under § Åpne beslutninger)
 - JWT-utløpstid, migreringsverktøy, SQLAlchemy-versjon og ID-format.
-- Gemini-modell og retry/backoff-policy.
+- Retry/backoff-policy og klientbibliotek mot OpenRouter.
 - Eksakte feilkoder og responsskjema per endepunkt.
 - Transport for progressiv lasting av Avveining (streaming, polling eller separate kall).
 - Om Avveiningen skal låses ved Godkjenning.
@@ -99,7 +103,7 @@ NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (E
 
 ### Åpne beslutninger
 
-> **ÅPNE BESLUTNINGER.** Opprinnelig satt opp 2026-09-29. Stories som er merket med en blokkerende ÅB-ID, kan skrives og estimeres, men ikke implementeres før gruppa har tatt beslutningen og ført den inn her. **Oppdatering 2026-10-06:** ÅB-1, ÅB-2 og ÅB-3 — de tre som blokkerte Epic 4 og deler av Epic 5 — er nå løst. ÅB-4 til ÅB-7 er fortsatt åpne, men blokkerer ikke (midlertidige tolkninger er i bruk, se status per rad).
+> **ÅPNE BESLUTNINGER.** Opprinnelig satt opp 2026-09-29. Stories som er merket med en blokkerende ÅB-ID, kan skrives og estimeres, men ikke implementeres før gruppa har tatt beslutningen og ført den inn her. **Oppdatering 2026-10-06:** ÅB-1, ÅB-2 og ÅB-3 — de tre som blokkerte Epic 4 og deler av Epic 5 — er nå løst. ÅB-4 til ÅB-7 er fortsatt åpne, men blokkerer ikke (midlertidige tolkninger er i bruk, se status per rad). **Oppdatering 2026-10-14:** ÅB-8 (nøkkel til sensor) er lagt til. Den blokkerer bare leveringen av nøkkel i story 5.8.
 
 | ID | Beslutning | Kilde | Blokkerer | Status |
 |---|---|---|---|---|
@@ -110,6 +114,7 @@ NFR13 (Språk): Brukergrensesnittet er bare på norsk bokmål, uten i18n i v1 (E
 | **ÅB-5** | Hvordan 11-timersregelen regnes: hvile før og etter vakten hver for seg, eller et rullerende vindu på 24 timer. | aml. § 10-8 (1), addendum §2 | Ingenting. Midlertidig tolkning: hvile før og etter vakten må hver være minst 11 timer (story 2.3). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_11_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
 | **ÅB-6** | Hvilket vindu 35-timersregelen gjelder for: kalenderuke (man–søn) eller et rullerende vindu på 7 dager. | aml. § 10-8 (2), addendum §2 | Ingenting. Midlertidig tolkning: kalenderuke (story 2.4). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_35_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
 | **ÅB-7** | Responsiv tilpasning: breakpoints og stablingsmønster for nettbrett og mobil. Bare én fast desktopbredde (1180px) er vist i mockupene. | DESIGN.md, EXPERIENCE.md § Responsive & Platform, arkitektur § Deferred | Ingenting. Midlertidig løsning: forslaget i EXPERIENCE.md (story 4.6). Velger gruppa noe annet, må story 4.6 skrives om. | Åpen, blokkerer ikke |
+| **ÅB-8** | Hvilken nøkkel sensor bruker for live KI: (1) den felles utviklingsnøkkelen, hvis det som er igjen av kreditt holder, eller (2) en egen sensornøkkel med kredittgrense. Avgjøres nær innlevering, når modellen er valgt etter modelltesten og gruppa kjenner det faktiske forbruket. Velges (1), må utviklingsnøkkelen byttes ut etter sensur, og utviklingsbruken på den stoppes etter innlevering. Forbruket per nøkkel kan leses i OpenRouters aktivitetsoversikt. | Faglærers tilbakemelding pkt. 3, PRD §8 | Bare den delen av story 5.8 som gjelder levering av nøkkel. Demo-modus (5.7) og README-oppsettet blokkeres ikke. | Åpen, blokkerer ikke |
 
 ### UX-designkrav
 
@@ -139,6 +144,7 @@ UX-DR23: Mikrotekst og tone. All brukertekst ligger i en norsk tekstliste i fron
 UX-DR24: Tilgjengelighetsgulv. Kontrasten skal være tilstrekkelig for tekst og fargekodede statuser. Alle knapper, ekspander-lenker og skjemafelt skal kunne nås og aktiveres med tastatur (tab/enter), og HTML-en skal være semantisk. Det finnes ikke noe utvidet WCAG- eller ARIA-program.
 UX-DR25: Responsiv tilpasning [ASSUMPTION, må bekreftes]. Desktop viser full tabell. Nettbrett beholder radform, men mindre kritiske kolonner flyttes inn i raden. Mobil viser stablede kort med rangering, navn og kostnad øverst og arbeidsbelastning og Avveining under, uten horisontal scroll.
 UX-DR26: Bevisst utelatt. Det finnes ingen SMS eller automatisk varsling til valgt Kandidat etter godkjenning, ingen tastatursnarveier utover tab/enter, ingen swipe- eller dra-mønstre og ingen PWA-forpliktelse i v1.
+UX-DR27: Merking av KI-kilde. Hvert forklaringspanel har en kildelinje i `meta`: «KI-generert · <modellnavn>» (live), «Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>» eller «Satt sammen fra beregnede tall, ikke KI-generert» (mal). I demo-modus viser appbaren også en nøytral tag, «Demo-modus». Ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand (NFR14, AD-6).
 
 ### FR-dekningskart
 
@@ -179,8 +185,8 @@ De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastnings
 **FR-er som dekkes:** FR7, FR8, FR9
 
 ### Epic 5: KI-forklaring av avveininger
-Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avveining, med reservetekst hvis modellen feiler og kjøretidstest for lekkasje. Tolkingen (FR10) kan startes parallelt med Epic 4. Forklaringen (FR11) krever `RangertKandidat` fra Epic 4.
-**FR-er som dekkes:** FR10, FR11
+Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avveining, med reservetekst hvis modellen feiler og kjøretidstest for lekkasje. Tolkingen (FR10) kan startes parallelt med Epic 4. Forklaringen (FR11) krever `RangertKandidat` fra Epic 4. Epicet leverer også demo-modus uten nøkkel og oppsettet som lar sensor kjøre live KI (NFR14, AD-6).
+**FR-er som dekkes:** FR10, FR11 + NFR14
 
 ## Epic 1: Innlogging og vaktoversikt
 
@@ -813,7 +819,7 @@ So that jeg kan finne en erstatter også når jeg ikke sitter ved PC-en.
 
 ## Epic 5: KI-forklaring av avveininger
 
-Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avveining, med reservetekst hvis modellen feiler og kjøretidstest for lekkasje. KI beregner aldri Harde regler, arbeidstid, kostnad eller Rangering (NFR3). `adaptere/ki` kalles bare fra `adaptere/api` og ser bare det portene definerer (AD-1).
+Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avveining, med reservetekst hvis modellen feiler og kjøretidstest for lekkasje. KI beregner aldri Harde regler, arbeidstid, kostnad eller Rangering (NFR3). `adaptere/ki` kalles bare fra `adaptere/api` og ser bare det portene definerer (AD-1). Epicet leverer også demo-modus uten nøkkel og oppsettet som lar sensor kjøre live KI (NFR14, AD-6).
 
 > ✅ **Epicet er ikke lenger blokkert.** Story 5.1 kan implementeres parallelt med Epic 4. Story 5.2 til 5.6 bygger på `RangertKandidat` fra story 4.4 — ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06, så Epic 4 kan ferdigstilles og levere den porten.
 
@@ -827,7 +833,7 @@ So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
 
 **Given** en Ansatt med forhåndsdefinert preferansetekst (ÅB-4)
 **When** tolkningen kjøres
-**Then** `adaptere/ki` sender teksten til Gemini og returnerer en `TolketPreferanse` validert mot Pydantic-modellen i `domene/porter` (AD-1)
+**Then** `adaptere/ki` sender teksten til språkmodellen via OpenRouter, med JSON-skjema for strukturert output, og returnerer en `TolketPreferanse` validert mot Pydantic-modellen i `domene/porter` (AD-1)
 **And** bare `adaptere/ki` konstruerer `TolketPreferanse`
 
 **Given** en tolket preferanse
@@ -836,13 +842,13 @@ So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
 **And** tolkningen kjøres bare én gang per Ansatt og preferansetekst, og kjøres på nytt bare når teksten endres
 **And** Rangeringen kaller aldri KI live, men leser alltid den lagrede verdien (AD-1, NFR1)
 
-**Given** at Gemini svarer med feil, tomt eller ugyldig svar under tolkning
+**Given** at språkmodellen svarer med feil, tomt eller ugyldig svar under tolkning
 **When** tolkningen kjøres
 **Then** ingen `TolketPreferanse` lagres for Ansatten, preferansen regnes som «Ingen registrert», og systemet krasjer ikke (NFR4)
 
 **Given** konfigurasjonen
 **When** storien er ferdig
-**Then** API-nøkkelen og modellnavnet for Gemini leses fra miljøvariabler og er dokumentert uten verdi i `.env.example` (NFR7)
+**Then** `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` og `KI_MODUS` leses fra miljøvariabler og er dokumentert uten verdi i `.env.example` (NFR7)
 **And** testene bruker en falsk KI-adapter og krever verken nettverk eller API-nøkkel
 
 **Given** kandidatlisten
@@ -896,6 +902,7 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 **Given** Godkjenning-flaten
 **When** kandidatkortet vises
 **Then** Avveiningen for valgt Kandidat vises i forklaringspanelet (UX-DR12, UX-DR17)
+**And** hvert forklaringspanel, både i tabellen og på Godkjenning, viser kildelinjen «KI-generert · <modellnavn>» i live-modus (UX-DR27)
 
 **Given** en Avveining
 **When** den er generert
@@ -911,11 +918,16 @@ So that jeg aldri får en anbefaling uten grunnlag, og aldri står fast (FR11, N
 
 **Acceptance Criteria:**
 
-**Given** at Gemini svarer med feil, tidsavbrudd, fartsgrense, tomt svar eller et svar som ikke kan brukes
+**Given** at språkmodellen svarer med feil, tidsavbrudd, fartsgrense (429), tom kreditt (402), tomt svar eller et svar som ikke kan brukes
 **When** Avveiningen hentes
 **Then** API-et svarer med 200 og `status: "avveining_feilet"` for den Kandidaten, ikke en HTTP-feil (AD-4)
 **And** forklaringspanelet viser en forhåndsdefinert reservetekst fra frontendens tekstliste i stedet for Avveiningen (UX-DR14, UX-DR23)
 **And** resten av raden, Rangeringen og godkjenningen fungerer som normalt
+
+**Given** at OpenRouter svarer 429
+**When** `adaptere/ki` henter en Avveining eller tolker en preferanse
+**Then** adapteren venter til `X-RateLimit-Reset` og prøver igjen, og gir `avveining_feilet` først når 90 s er brukt (AD-7)
+**And** en felles begrenser holder adapteren under 18 kall per minutt og 5 samtidige
 
 **Given** en Avveining som nevner navnet på en Ansatt som er utelukket av en Hard regel
 **When** svaret valideres i `adaptere/ki`
@@ -939,6 +951,7 @@ So that jeg kan begynne å vurdere kandidatene uten å vente på KI (UX-DR13).
 **When** kandidatflaten lastes
 **Then** alle rader med nøkkeltall vises med en gang, uten å vente på noen Avveining [ASSUMPTION, UX-DR13]
 **And** hver Avveining lastes inn i sin rad etter hvert, med en lastetilstand som er ulik både reserveteksten og tomtilstanden
+**And** lukkede Avveininger hentes først når raden åpnes, slik at vanlig bruk gir ett KI-kall per vakt (AD-7)
 
 **Given** at transporten for progressiv lasting er en utsatt beslutning (arkitektur § Deferred)
 **When** storien implementeres
@@ -967,6 +980,86 @@ So that jeg kan stole på at de harde reglene alltid gjelder (NFR2, SM-2).
 **When** testkommandoen kjøres
 **Then** både kontrakten og kjøretidstesten kjøres, og en av dem feiler hvis grensen brytes (AD-1, AD-2)
 
+**Given** begge KI-adapterne (`OpenRouterKiAdapter` med falsk HTTP-klient, og `DemoKiAdapter`)
+**When** kjøretidstesten kjøres
+**Then** invarianten holder for begge (AD-6)
+
 **Given** kvalitetssikringen i emnet
 **When** storien er ferdig
 **Then** testen og hva den beviser, er beskrevet i KI-loggen, slik at den kan brukes som dokumentasjon av kvalitetssikring
+
+### Story 5.7: Demo-modus uten API-nøkkel
+
+> Lagt til 2026-10-14 (sprint-change-proposal-2026-10-14.md). Bygger på story 5.1 og 5.3.
+
+As a sensor eller ny utvikler,
+I want at appen kan kjøres og vise hele flyten uten API-nøkkel,
+So that jeg kan vurdere Turnushjelperen uten gruppens tjenester (NFR14, SM-9).
+
+**Acceptance Criteria:**
+
+**Given** at `OPENROUTER_API_KEY` mangler eller `KI_MODUS=demo`
+**When** backend starter
+**Then** oppstartslaget kobler inn `DemoKiAdapter` og logger at appen kjører i demo-modus, uten krasj (AD-6)
+**And** valget skjer bare i oppstartslaget til `adaptere/api` (AD-2)
+
+**Given** demo-modus
+**When** preferanser tolkes
+**Then** forhåndsgenererte `TolketPreferanse`-verdier fra testdataene brukes, og ukjent tekst gir «Ingen registrert»
+
+**Given** demo-modus og en `RangertKandidat`
+**When** Avveiningen hentes
+**Then** en forhåndsgenerert Avveining brukes hvis (vakt, kandidat, hash av `RangertKandidat`) finnes i testdataene, med `ki_kilde: "forhandsgenerert"`
+**And** ellers lages en maltekst utelukkende fra feltene i `RangertKandidat`, med `ki_kilde: "mal"`
+
+**Given** de forhåndsgenererte svarene
+**When** de lages
+**Then** de genereres med `OpenRouterKiAdapter` og samme prompt som live-modus, via en dokumentert kommando
+**And** modell, dato og kommando logges i `docs/ki-logg/`
+**And** vakt #4127 dekkes, så demoflyten viser forhåndsgenererte Avveininger fra start til slutt
+
+**Given** live-modus og en feil fra OpenRouter
+**When** Avveiningen hentes
+**Then** svaret er `avveining_feilet` (story 5.4), ikke en overgang til demo-modus
+
+**Given** demo-modus
+**When** en flate etter innlogging vises
+**Then** appbaren viser «Demo-modus», og hvert forklaringspanel viser sin kildelinje (UX-DR27)
+
+**Given** testene
+**When** de kjøres
+**Then** de dekker valg av modus, oppslag, at endret hash gir maltekst, og at begge adapterne holder invarianten i story 5.6
+
+### Story 5.8: Sensor kan kjøre live KI
+
+> Lagt til 2026-10-14 (sprint-change-proposal-2026-10-14.md). Bygger på story 5.7. Delen om levering av nøkkel avhenger av ÅB-8.
+
+As a sensor,
+I want en nøkkel med kreditt og en README som forklarer hvordan jeg bruker den,
+So that jeg kan se live KI-forklaringer uten egen konto og uten å spørre gruppa.
+
+**Acceptance Criteria:**
+
+**Given** utviklingsfasen
+**When** gruppa bruker live KI
+**Then** gruppa bruker én felles utviklingsnøkkel med kredittgrense, og ingen nøkler ligger i repoet
+
+**Given** at ÅB-8 er avgjort før innlevering
+**When** innleveringen forberedes
+**Then** sensor får enten utviklingsnøkkelen eller en egen sensornøkkel, med den kreditten gruppa har vurdert som nok
+**And** nøkkelen står i innleveringsteksten, aldri i repoet, i git-historikken eller i en committet `.env`
+**And** historikken er sjekket for nøkler før innlevering, og sjekken er notert
+
+**Given** README
+**When** sensor følger den
+**Then** README forklarer: kopier `.env.example` til `.env`, lim inn nøkkelen fra innleveringen, og start appen
+**And** README forklarer at appen uten nøkkel starter i demo-modus, og hvordan man ser hvilken modus som er aktiv
+**And** README sier hva sensor ser hvis kreditten er brukt opp: reservetekst, ikke krasj
+
+**Given** innleveringsfristen
+**When** gruppa gjør sluttkontroll
+**Then** én person installerer fra en ren klone kun etter README, kjører flyten både med nøkkelen sensor skal få og i demo-modus, og noterer resultatet
+
+**Given** at sensuren er ferdig
+**When** gruppa rydder opp
+**Then** nøkkelen sensor fikk, slettes eller byttes ut i OpenRouter, og den ansvarlige personen er navngitt i innleveringen

@@ -1,0 +1,219 @@
+{
+  "haiku A": {
+    "rapport": "docs/ki-logg/beslutningstest/rapporter/haiku-A-20261016T073052349647Z.json",
+    "model": "anthropic/claude-haiku-5.5",
+    "prompt": "A",
+    "kall": 255,
+    "fullfort": 255,
+    "http_429": 0,
+    "formatfeil": 0,
+    "tekniske_avvik": 0,
+    "leverandorer": {
+      "Azure": 255
+    },
+    "pref_totalt": 205,
+    "pref_streng": 160,
+    "pref_akseptabel": 179,
+    "pref_feil": 26,
+    "poengavvik_snitt": 6.34,
+    "alvorlige_feil": 0,
+    "injeksjon_fulgt": 0,
+    "saker_flertallsfeil": [
+      "p06",
+      "p07",
+      "p10",
+      "p11",
+      "p13"
+    ],
+    "saker_stabile": 40,
+    "saker": 41,
+    "feil_per_gruppe": {
+      "betinget": 10,
+      "negasjon": 16
+    },
+    "forkl_totalt": 50,
+    "forkl_med_bekreftet_brudd": 8,
+    "forkl_flagg": {
+      "kjonnet_pronomen": 9
+    },
+    "forkl_bekreftet": {
+      "kjonnet_pronomen": 8
+    },
+    "pref_flagg": {
+      "kjonnet_pronomen": 21,
+      "metasprak": 17,
+      "beregning_eller_rangering": 10
+    },
+    "pref_bekreftet": {
+      "kjonnet_pronomen": 21,
+      "metasprak": 17,
+      "beregning_eller_rangering": 10
+    },
+    "ukontrollerte_flagg": 0,
+    "median_s_pref": 1.688,
+    "p95_s_pref": 2.344,
+    "median_s_forkl": 2.016,
+    "p95_s_forkl": 2.719,
+    "kostnad_totalt": 0.0286915,
+    "kostnad_per_pref": 9.918536585365853e-05,
+    "kostnad_per_forkl": 0.00016717,
+    "tegn_snitt_forkl": 349
+  },
+  "gpt6-luna A": {
+    "rapport": "docs/ki-logg/beslutningstest/rapporter/gpt6-luna-A-20261016T073053193553Z.json",
+    "model": "openai/gpt-6-luna",
+    "prompt": "A",
+    "kall": 255,
+    "fullfort": 255,
+    "http_429": 21,
+    "formatfeil": 0,
+    "tekniske_avvik": 0,
+    "leverandorer": {
+      "OpenAI": 255
+    },
+    "pref_totalt": 205,
+    "pref_streng": 180,
+    "pref_akseptabel": 189,
+    "pref_feil": 16,
+    "poengavvik_snitt": 2.44,
+    "alvorlige_feil": 0,
+    "injeksjon_fulgt": 0,
+    "saker_flertallsfeil": [
+      "p16",
+      "p20",
+      "p26"
+    ],
+    "saker_stabile": 37,
+    "saker": 41,
+    "feil_per_gruppe": {
+      "betinget": 1,
+      "blandet": 5,
+      "indirekte": 8,
+      "negasjon": 2
+    },
+    "forkl_totalt": 50,
+    "forkl_med_bekreftet_brudd": 4,
+    "forkl_flagg": {
+      "kjonnet_pronomen": 4
+    },
+    "forkl_bekreftet": {
+      "kjonnet_pronomen": 4
+    },
+    "pref_flagg": {},
+    "pref_bekreftet": {},
+    "ukontrollerte_flagg": 0,
+    "median_s_pref": 1.5,
+    "p95_s_pref": 2.063,
+    "median_s_forkl": 1.891,
+    "p95_s_forkl": 2.656,
+    "kostnad_totalt": 0.013816,
+    "kostnad_per_pref": 4.4602439024390244e-05,
+    "kostnad_per_forkl": 9.345e-05,
+    "tegn_snitt_forkl": 330
+  },
+  "haiku B": {
+    "rapport": "docs/ki-logg/beslutningstest/rapporter/haiku-B-20261016T073050581271Z.json",
+    "model": "anthropic/claude-haiku-5.5",
+    "prompt": "B",
+    "kall": 255,
+    "fullfort": 255,
+    "http_429": 0,
+    "formatfeil": 0,
+    "tekniske_avvik": 0,
+    "leverandorer": {
+      "Azure": 255
+    },
+    "pref_totalt": 205,
+    "pref_streng": 175,
+    "pref_akseptabel": 190,
+    "pref_feil": 15,
+    "poengavvik_snitt": 6.1,
+    "alvorlige_feil": 0,
+    "injeksjon_fulgt": 0,
+    "saker_flertallsfeil": [
+      "p07",
+      "p09",
+      "p10"
+    ],
+    "saker_stabile": 41,
+    "saker": 41,
+    "feil_per_gruppe": {
+      "negasjon": 15
+    },
+    "forkl_totalt": 50,
+    "forkl_med_bekreftet_brudd": 18,
+    "forkl_flagg": {
+      "kjonnet_pronomen": 7,
+      "setninger_utenfor_2_4": 4,
+      "gjengir_injeksjon": 1
+    },
+    "forkl_bekreftet": {
+      "kjonnet_pronomen": 7,
+      "manuelt-1": 7,
+      "setninger_utenfor_2_4": 4,
+      "gjengir_injeksjon": 1
+    },
+    "pref_flagg": {
+      "kjonnet_pronomen": 3,
+      "beregning_eller_rangering": 9,
+      "metasprak": 7
+    },
+    "pref_bekreftet": {
+      "kjonnet_pronomen": 3,
+      "beregning_eller_rangering": 9,
+      "metasprak": 7
+    },
+    "ukontrollerte_flagg": 0,
+    "median_s_pref": 1.672,
+    "p95_s_pref": 2.422,
+    "median_s_forkl": 2.0,
+    "p95_s_forkl": 2.843,
+    "kostnad_totalt": 0.033403,
+    "kostnad_per_pref": 0.0001177,
+    "kostnad_per_forkl": 0.00018549,
+    "tegn_snitt_forkl": 379
+  },
+  "gpt6-luna B": {
+    "rapport": "docs/ki-logg/beslutningstest/rapporter/gpt6-luna-B-20261016T073051444305Z.json",
+    "model": "openai/gpt-6-luna",
+    "prompt": "B",
+    "kall": 255,
+    "fullfort": 255,
+    "http_429": 22,
+    "formatfeil": 0,
+    "tekniske_avvik": 0,
+    "leverandorer": {
+      "OpenAI": 255
+    },
+    "pref_totalt": 205,
+    "pref_streng": 193,
+    "pref_akseptabel": 200,
+    "pref_feil": 5,
+    "poengavvik_snitt": 2.44,
+    "alvorlige_feil": 0,
+    "injeksjon_fulgt": 0,
+    "saker_flertallsfeil": [
+      "p20"
+    ],
+    "saker_stabile": 40,
+    "saker": 41,
+    "feil_per_gruppe": {
+      "indirekte": 5
+    },
+    "forkl_totalt": 50,
+    "forkl_med_bekreftet_brudd": 0,
+    "forkl_flagg": {},
+    "forkl_bekreftet": {},
+    "pref_flagg": {},
+    "pref_bekreftet": {},
+    "ukontrollerte_flagg": 0,
+    "median_s_pref": 1.562,
+    "p95_s_pref": 2.421,
+    "median_s_forkl": 2.25,
+    "p95_s_forkl": 3.265,
+    "kostnad_totalt": 0.016865,
+    "kostnad_per_pref": 5.689756097560976e-05,
+    "kostnad_per_forkl": 0.00010402,
+    "tegn_snitt_forkl": 352
+  }
+}

@@ -2,7 +2,7 @@
 title: "EXPERIENCE: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-09-26
+updated: 2026-10-14
 sources:
   - _bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md
   - _bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/.memlog.md
@@ -47,6 +47,7 @@ Mikrotekst. Merkevarestemme og estetisk holdning ligger i `DESIGN.md.Brand & Sty
 | "Turnushjelperen anbefaler, den bestemmer aldri selv." | Språk som antyder at systemet har valgt eller utført noe automatisk |
 | "Avvik fra anbefalt rangering" (nøytralt, informativt) | "Du har valgt feil kandidat" / noe som antyder at avvik fra rangeringen er galt |
 | Korte, presise, tallbaserte setninger ("21 kandidater utelukket av harde regler") | Utropstegn, oppmuntrende språk, gamification ("Bra jobbet!") |
+| "Satt sammen fra beregnede tall, ikke KI-generert" (kilden sagt rett ut) | Å presentere forhåndsgenerert tekst eller maltekst som om den var et live KI-svar |
 
 Gjennomgående prinsipp: systemet beskriver tilstand og begrunner tall — det formaner aldri og feirer aldri. Dette følger direkte av at Turnushjelperen er beslutningsstøtte, ikke beslutningstaker (PRD §1, §4.6).
 
@@ -56,9 +57,9 @@ Atferd. Visuelle spesifikasjoner ligger i `DESIGN.md.Components`.
 
 | Komponent | Bruk | Atferdsregler |
 |---|---|---|
-| Appbar | Alle flater | Viser innlogget bruker + avdeling når autentisert; viser "Ikke innlogget" på Logg inn-flaten. Statisk på tvers av navigasjon — endrer seg kun ved innlogging/utlogging, ikke per handling. |
+| Appbar | Alle flater | Viser innlogget bruker + avdeling når autentisert; viser "Ikke innlogget" på Logg inn-flaten. Statisk på tvers av navigasjon — endrer seg kun ved innlogging/utlogging, ikke per handling. I demo-modus (ingen API-nøkkel, arkitekturens AD-6) vises en nøytral tag "Demo-modus" til venstre for innlogget bruker — statisk så lenge appen kjører. |
 | Rangeringstabell | Kandidatrangering | Én rad per gyldig kandidat, sortert etter rangering. Rad kan ekspanderes/kollapses uavhengig av andre rader. Når ingen kandidat har full kvalifisering for vakttypen, rangeres kandidaten med Kompetansenivå nærmest full kvalifisering høyere enn de som er lenger unna (FR-9) — vises som normal rangeringsrekkefølge, ikke et eget merke. |
-| Forklaringsrad/-panel (Avveining) | Kandidatrangering, Godkjenning | Topprangerte/anbefalte kandidats Avveining (KI-begrunnelse) er **utvidet som standard** ved sideinnlasting; øvrige er kollapset bak "Vis begrunnelse ▾". Nevner aldri en kandidat utelukket av en Hard regel (testbar invariant, FR-11). |
+| Forklaringsrad/-panel (Avveining) | Kandidatrangering, Godkjenning | Topprangerte/anbefalte kandidats Avveining (KI-begrunnelse) er **utvidet som standard** ved sideinnlasting; øvrige er kollapset bak "Vis begrunnelse ▾". Nevner aldri en kandidat utelukket av en Hard regel (testbar invariant, FR-11). Hvert panel har en kildelinje nederst i `meta`: "KI-generert · <modellnavn>" (live), "Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>" eller "Satt sammen fra beregnede tall, ikke KI-generert" (mal). Kildelinjen vises i alle moduser, ikke bare i demo-modus (PRD §4.5). |
 | Arbeidsbelastningslinje | Kandidatrangering, Godkjenning | Fylles proporsjonalt med gjeldende timer denne perioden. Bytter visuell tilstand fra normal til "høy belastning" ved ~90 %+ terskel — ingen eget tekstlig varsel, kun fargeendring i linjen. |
 | Kostnadsindikator | Kandidatrangering, Godkjenning | Viser "Ordinær" eller "Overtid" per kandidat, alltid sammen med kr/t. Aldri et tredje "feil"-signal. |
 | Ekskludert-boks | Kandidatrangering | Skjuler ikke at 20+ ansatte finnes — oppsummerer antall og fordeling per Hard regel (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen; FR-2–FR-5), med "Vis full liste ▾" for detaljer på forespørsel. |
@@ -79,6 +80,7 @@ Atferd. Visuelle spesifikasjoner ligger i `DESIGN.md.Components`.
 | Avvik fra anbefalt rangering | Godkjenning | Nøytral informasjonsboks, ikke en advarsel eller blokkerende validering — avvik er en gyldig arbeidsflyt (FR-12). |
 | Godkjenning ikke gjennomført | Godkjenning | Eksplisitt statuslinje ("ikke gjennomført — venter på eksplisitt godkjenning") vises helt til bekreftelse er gitt. |
 | Avveining feilet/tom/ubrukelig | Kandidatrangering, Godkjenning | Forhåndsdefinert reservetekst eller feilmelding i stedet for Avveiningen — aldri en anbefaling uten gyldig grunnlag, og systemet fortsetter å fungere (FR-11). **[ASSUMPTION]** eksakt reservetekst er ikke definert i noen kilde — dekkes ikke av mockupene, må besluttes separat. |
+| Demo-modus (ingen API-nøkkel) | Alle flater etter innlogging | Appbaren viser taggen "Demo-modus"; Avveininger vises med kildelinjen "forhåndsgenerert" eller "mal". Flyten fungerer ellers som i live-modus. Dette er en normaltilstand, ikke en feil — derfor ingen `warn`- eller `danger`-farge (AD-6, PRD §4.5). |
 | Ikke innlogget / utløpt sesjon | Alle flater unntatt Logg inn | Ingen tilgang til §4.1–§4.6-funksjonalitet; sendes til Logg inn (FR-13). |
 | Vellykket godkjenning gjennomført | Godkjenning → Vaktvalg | Kort bekreftelsesmelding øverst (f.eks. "Erstatning bekreftet — Jonas Bakke er satt opp på Vakt #4127"), deretter tilbake til vaktvalg-oversikten. Vakten vises ikke lenger under "Krever handling". |
 

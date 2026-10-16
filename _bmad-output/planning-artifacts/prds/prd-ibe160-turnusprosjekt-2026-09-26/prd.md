@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-15
+updated: 2026-10-16
 ---
 
 # PRD: Turnushjelperen
@@ -211,7 +211,7 @@ Systemet kan bruke en språkmodell til å tolke tekstbaserte Ansattpreferanser o
 | 25 | Foretrekker å slippe, men er åpen ved behov |
 | 0 | Tydelig ønske om å unngå ekstravakter |
 
-Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler.
+Manglende registrert preferanse gir 50 poeng, men vises som «ingen registrert preferanse», ikke som et uttrykkelig nøytralt ønske. En tekst som ikke uttrykker noen tydelig holdning til flere vakter eller ekstravakter, for eksempel bare ønsker om tidspunkt, tolkes som nøytral (50 poeng): personen har verken bedt om eller avslått ekstravakter og regnes som åpen. Skillet mellom 25 og 0 poeng er om personen åpner for ekstravakter ved behov. Preferanser påvirker bare rangeringen av gyldige kandidater og utelukker ingen automatisk; de overstyrer aldri harde regler.
 
 **Definerte preferansetekster med fasit:**
 
@@ -243,6 +243,7 @@ Systemet kan generere en KI-basert forklaring for hver Kandidat i Rangeringen: h
 
 **Feature-spesifikke NFR-er:**
 - Grensen mellom deterministisk lag (§4.2–§4.4) og KI-laget er en hard systemgrense: KI mottar allerede filtrerte og beregnede data, og kan ikke endre dem.
+- **Kjørbar uten gruppens API-nøkkel:** Systemet kan kjøres i en demo-modus uten nøkkel til språkmodellen. Tolkede preferanser og Avveininger kommer da fra modellsvar som er generert på forhånd og lagret i testdataene, eller fra en mal bygd utelukkende av de beregnede tallene. Brukergrensesnittet viser alltid om en Avveining er live, forhåndsgenerert eller malbasert. En feil i live-modus gir reservetekst (FR-11), ikke stille overgang til demo-modus.
 
 ### 4.6 Godkjenning av erstatter
 
@@ -317,7 +318,7 @@ Turnushjelperen v1 skal **ikke**:
 - **SM-6**: Minst ett scenario demonstrerer at den billigste Kandidaten ikke nødvendigvis rangeres høyest. Validerer FR-9.
 - **SM-7**: KI tolker alle 15 definerte preferansetekster i §4.5 til forventet kategori og bruker tolkningen i forklaringen. Manglende registrert preferanse gir 50 poeng og vises som «ingen registrert preferanse». Validerer FR-10, FR-11.
 - **SM-8**: Turnusansvarlig er alltid den som tar den endelige beslutningen (Godkjenning kreves). Validerer FR-12.
-- **SM-9** *(teknisk kvalitet)*: Systemet kan bygges og kjøres fra et rent klonet repo, uten manuelle unntak eller udokumenterte oppsettsteg. Validerer hele leveransen (§4); addendum §6 peker på dette som et teknisk kvalitetskriterium som bør videreføres i PRD/spec.
+- **SM-9** *(teknisk kvalitet)*: Systemet kan bygges og kjøres fra et rent klonet repo, uten manuelle unntak eller udokumenterte oppsettsteg, og uten gruppens API-nøkkel (demo-modus, §4.5). Validerer hele leveransen (§4); addendum §6 peker på dette som et teknisk kvalitetskriterium som bør videreføres i PRD/spec.
 
 **Motmetrikker (skal ikke optimeres)**
 - **SM-C1**: Antall implementerte Harde regler skal ikke maksimeres på bekostning av testdekning per regel — addendums anbefaling («fire regler som beviselig fungerer er verdt mer enn tolv som er halvveis») veier tyngre enn regelmengde. Motvirker en eventuell trang til å utvide §4.2 uten tilsvarende testarbeid.
@@ -327,7 +328,9 @@ Turnushjelperen v1 skal **ikke**:
 
 1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres. Faglærers tilbakemelding på product brief (2026-10-06) vurderer KI/regelmotor-skillet som en styrke, men bekrefter ikke eksplisitt dette spørsmålet — fortsatt åpent.
 2. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
-3. **Fra faglærers tilbakemelding (2026-10-06):** sensor må kunne kjøre og teste appen uten gruppens Gemini API-nøkkel. Krever en mock-/testmodus for KI-laget (forhåndstolkede preferanser, ferdige Avveining-eksempler i testdataene, eller en tydelig dokumentert mock-modus). Ikke løst i denne PRD-en ennå — behandles i egen omgang; påvirker trolig FR-10/FR-11 og arkitekturens `adaptere/ki`.
+
+**Løst (2026-10-14):**
+- Kjøring uten gruppens nøkkel (faglærers tilbakemelding 2026-10-06, punkt 3; tidligere åpent spørsmål 3). KI-leverandøren er OpenRouter med `openai/gpt-6-luna` som standardmodell, satt i en miljøvariabel (endret fra `anthropic/claude-haiku-5.5` 2026-10-16 etter modelltest, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Dette erstatter Google Gemini, som ble valgt i arkitektursteget 2026-09-29 (arkitekturens AD-6). Sensor får en OpenRouter-nøkkel med kreditt, levert i innleveringen og aldri i repoet. Om det blir den felles utviklingsnøkkelen eller en egen sensornøkkel, og hvor mye kreditt den får, avgjøres nær innlevering ut fra faktisk forbruk (epics ÅB-8). Uten nøkkel starter appen i demo-modus (§4.5). Se `sprint-change-proposal-2026-10-14.md`.
 
 **Løst (2026-10-06):**
 - Innbyrdes vekting mellom Myke faktorer i Rangeringen — se §4.4. Oppdatert 2026-10-15: kompetansenærhet er tatt ut. Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %. Kompetanse vurderes bare som Hard regel (FR-2).

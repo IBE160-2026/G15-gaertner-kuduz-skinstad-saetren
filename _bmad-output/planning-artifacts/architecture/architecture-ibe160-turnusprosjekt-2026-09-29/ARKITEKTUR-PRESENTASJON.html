@@ -254,7 +254,7 @@
       <p class="lede">
         Tenk strømuttak: uttaket (porten) har en fast form, og bryr seg ikke om det er en lampe eller en
         støvsuger (adapteren) som plugges inn. Domenekjernen er «veggen» — ren Python, ingen avhengighet
-        til FastAPI, React, SQLite eller Gemini. Adapterne kobler kjernen til omverdenen og avhenger av
+        til FastAPI, React, SQLite eller språkmodellen. Adapterne kobler kjernen til omverdenen og avhenger av
         den, aldri omvendt.
       </p>
       <div class="diagram-wrap">
@@ -287,7 +287,7 @@
           <!-- KI -->
           <rect x="90" y="420" width="220" height="56" rx="10" fill="#ffffff" stroke="#274b6d" stroke-width="2"/>
           <text x="200" y="444" text-anchor="middle" font-size="14" font-weight="600" fill="#21283a">adaptere/ki</text>
-          <text x="200" y="462" text-anchor="middle" font-size="11.5" fill="#5c6478">Gemini</text>
+          <text x="200" y="462" text-anchor="middle" font-size="11.5" fill="#5c6478">OpenRouter / demo</text>
 
           <!-- Lagring -->
           <rect x="590" y="420" width="220" height="56" rx="10" fill="#ffffff" stroke="#274b6d" stroke-width="2"/>
@@ -343,7 +343,7 @@
           <!-- KI box left -->
           <rect x="30" y="60" width="230" height="260" rx="12" fill="#ffffff" stroke="#274b6d" stroke-width="2"/>
           <text x="145" y="90" text-anchor="middle" font-size="15" font-weight="700" fill="#21283a">adaptere/ki</text>
-          <text x="145" y="108" text-anchor="middle" font-size="11.5" fill="#5c6478">Gemini</text>
+          <text x="145" y="108" text-anchor="middle" font-size="11.5" fill="#5c6478">OpenRouter / demo</text>
           <rect x="52" y="130" width="186" height="50" rx="8" fill="#e4f2ee" stroke="#3f8f7a"/>
           <text x="145" y="151" text-anchor="middle" font-size="12" font-weight="600" fill="#1f5f4d">Tolker</text>
           <text x="145" y="167" text-anchor="middle" font-size="10.5" fill="#1f5f4d">tekst → TolketPreferanse</text>
@@ -498,8 +498,8 @@
         </div>
         <div class="card">
           <div class="pill">KI</div>
-          <h3>Google Gemini</h3>
-          <p>Reell gratis-tier uten betalingskort på valgtidspunktet — utslagsgivende for et studentprosjekt uten budsjett.</p>
+          <h3>OpenRouter + GPT-6 Luna</h3>
+          <p>Gemini ble byttet ut 2026-10-14 og Haiku 5.5 2026-10-16, etter modelltest. Lav pris og strukturert output, og takten holdes under fartsgrensen (AD-7). Modellen er en miljøvariabel, og demo-modus gjør at appen kan kjøres uten nøkkel.</p>
         </div>
       </div>
       <div class="boundary-callout" style="border-left-color: var(--primary); background: var(--primary-soft); margin-top:26px;">
@@ -614,7 +614,7 @@
         <div class="card">
           <h3>Implementasjonsdetaljer — avgjøres underveis</h3>
           <ul class="clean" style="margin:0;">
-            <li>Gemini modellversjon og retry/backoff ved fartsgrense</li>
+            <li>Klientbibliotek mot OpenRouter (takt og nye forsøk er bestemt i AD-7)</li>
             <li>JWT utløpstid</li>
             <li>SQLite migreringsverktøy, ID-format (int/UUID)</li>
             <li>Feilkode-verdier og fullt responsskjema per endepunkt</li>
