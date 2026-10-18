@@ -181,7 +181,7 @@ Turnusansvarlig velger en gyldig kandidat og godkjenner i to steg. Vakten blir b
 **FR-er som dekkes:** FR12
 
 ### Epic 4: Rangering etter kostnad, arbeidsbelastning og ansattpreferanser
-De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle tre åpne beslutninger (ÅB-1 vekting, ÅB-2 kostnadsmodell, ÅB-3 arbeidsbelastningsterskel) er løst 2026-10-06 — se PRD §4.3, §4.4.
+De gyldige kandidatene rangeres etter kostnad, arbeidsbelastning og ansattpreferanser. Tabellen viser kandidatens kompetanse, kostnad, arbeidsbelastning og preferanse. Avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle tre åpne beslutninger (ÅB-1 vekting, ÅB-2 kostnadsmodell, ÅB-3 arbeidsbelastningsterskel) er løst 2026-10-06 — se PRD §4.3, §4.4.
 **FR-er som dekkes:** FR7, FR8, FR9
 
 ### Epic 5: KI-forklaring av avveininger
@@ -652,7 +652,7 @@ So that vaktendringen blir gjennomført, men bare når jeg har bestemt det (FR12
 
 ## Epic 4: Rangering etter kostnad, arbeidsbelastning og ansattpreferanser
 
-De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle beregninger er deterministiske og ligger i `domene/regelmotor`, uten KI (NFR1, NFR3).
+De gyldige kandidatene rangeres etter kostnad, arbeidsbelastning og ansattpreferanser. Tabellen viser kandidatens kompetanse, kostnad, arbeidsbelastning og preferanse. Avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle beregninger er deterministiske og ligger i `domene/regelmotor`, uten KI (NFR1, NFR3).
 
 > ✅ **Epicet er ikke lenger blokkert.** ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06 — se PRD §4.3, §4.4 og § Åpne beslutninger.
 
