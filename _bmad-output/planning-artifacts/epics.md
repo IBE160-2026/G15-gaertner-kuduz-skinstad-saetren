@@ -180,7 +180,7 @@ Etter vaktvalg ser turnusansvarlig hvem som faktisk kan ta vakten. De fire harde
 Turnusansvarlig velger en gyldig kandidat og godkjenner i to steg. Vakten blir bemannet gjennom én eneste skrivevei, og bekreftelsen vises på vaktoversikten. Ikke blokkert.
 **FR-er som dekkes:** FR12
 
-### Epic 4: Rangering etter kostnad, arbeidsbelastning og kompetanse
+### Epic 4: Rangering etter kostnad, arbeidsbelastning og ansattpreferanser
 De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle tre åpne beslutninger (ÅB-1 vekting, ÅB-2 kostnadsmodell, ÅB-3 arbeidsbelastningsterskel) er løst 2026-10-06 — se PRD §4.3, §4.4.
 **FR-er som dekkes:** FR7, FR8, FR9
 
@@ -650,7 +650,7 @@ So that vaktendringen blir gjennomført, men bare når jeg har bestemt det (FR12
 **Then** det finnes ingen kodevei der en Godkjenning gjennomføres automatisk eller uten at turnusansvarlig trykker «Godkjenn erstatning» (FR12, NFR5)
 **And** ingen SMS eller annen varsling sendes til den valgte Kandidaten (UX-DR26)
 
-## Epic 4: Rangering etter kostnad, arbeidsbelastning og kompetanse
+## Epic 4: Rangering etter kostnad, arbeidsbelastning og ansattpreferanser
 
 De gyldige kandidatene rangeres. Tabellen viser kostnadstype, arbeidsbelastningslinje og kompetansenærhet, og avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle beregninger er deterministiske og ligger i `domene/regelmotor`, uten KI (NFR1, NFR3).
 

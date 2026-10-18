@@ -2,7 +2,7 @@
 title: "Product Brief: IBE160 Turnusprosjekt"
 status: draft
 created: 2026-09-15
-updated: 2026-10-16
+updated: 2026-10-18
 ---
 
 # Product Brief: IBE160 Turnusprosjekt
@@ -128,6 +128,7 @@ Førsteversjonen skal demonstrere håndtering av én turnusendring om gangen i e
 - presentere en rangert kandidatliste med begrunnelse
 - kreve menneskelig godkjenning før en endring anses som valgt
 - tilby enkel innlogging for turnusansvarlig, slik at løsningen ikke er åpen for alle
+- starte i demo-modus uten API-nøkkel, med forhåndstolkede preferanser og forhåndsgenererte forklaringer eller maltekst, slik at sensor kan prøve hele kjerneflyten uten betalte tjenester (PRD §4.5 og arkitektur AD-6)
 
 **Ikke inkludert (out of scope)**
 
