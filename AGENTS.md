@@ -12,8 +12,8 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Planlagt stack er React/TypeScript med Vite, Python/FastAPI og SQLite via
 SQLAlchemy. KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Ingen applikasjonskode finnes ennå; `scripts/modelltest_*.py` er
-isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+Haiku 5.5). Appen har et skjelett fra story 1.1 i `backend/` og `frontend/`, men
+ingen domenelogikk ennå; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
@@ -73,8 +73,15 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Robusthets- og fasittesten: `python scripts/modelltest_robusthet.py --live --politikk takt`
   (218 kall, ca. 25 min) og `python scripts/modelltest_prd_fasit.py --live` (145 kall).
   Uten `--live` er begge tørrkjøring.
-- TODO — appen er ikke implementert. Når `package.json` og Python-prosjektfilen
-  finnes, fyll inn faktiske kommandoer for installasjon, kjøring og test av appen.
+- Backend (Python 3.12 eller nyere), fra `backend/`. På macOS/Linux er stien
+  `.venv/bin/python` i stedet for `.venv\Scripts\python`:
+  - Installasjon: `python -m venv .venv` og deretter
+    `.venv\Scripts\python -m pip install -r requirements-dev.txt`.
+  - Kjøring: `.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload`. Svarer
+    på `http://127.0.0.1:8000/api/helse`.
+  - Test: `.venv\Scripts\python -m pytest`.
+- Frontend (Node 20.19 eller nyere), fra `frontend/`: `npm install`, deretter
+  `npm run dev` (http://localhost:5173). `npm run build` typesjekker og bygger.
 - TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som
   de lokale kommandoene ikke dekker.
 - Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering

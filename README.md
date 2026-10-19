@@ -25,7 +25,32 @@ Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
   og [robusthetstest av Luna](docs/ki-logg/2026-10-16-robusthet-luna.md), 16. oktober.
 
 [Testveiledningen](docs/modelltest-openrouter.md) beskriver de isolerte Python-testene.
-Selve appen er ennå ikke implementert.
+
+## Kjøre appen
+
+Appen er foreløpig et skjelett: en backend med helsesjekk og en tom frontend.
+Du trenger Python 3.12 eller nyere og Node 20.19 eller nyere. Kommandoene under er
+for Windows. På macOS/Linux bytter du `.venv\Scripts\python` med `.venv/bin/python`.
+
+Backend, fra mappa `backend/`:
+
+```
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements-dev.txt
+.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload
+```
+
+Helsesjekken svarer på http://127.0.0.1:8000/api/helse. Testene kjøres med
+`.venv\Scripts\python -m pytest`.
+
+Frontend, fra mappa `frontend/` i en egen terminal:
+
+```
+npm install
+npm run dev
+```
+
+Åpne http://localhost:5173.
 
 ## Vurderingsgrunnlag
 
