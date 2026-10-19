@@ -20,14 +20,14 @@ Dette dokumentet deler kravene fra PRD, UX-kontrakten (DESIGN.md + EXPERIENCE.md
 ### Funksjonelle krav
 
 FR1: Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus som må bemannes på nytt. Ved valg vises Vaktens tidspunkt og kompetansekrav, og valget starter filtrering og Rangering (FR2–FR9) uten ytterligere handling.
-FR2: Systemet utelukker en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav. 100 % av slike Kandidater filtreres bort i definerte testscenarioer. Blant Gyldige kandidater brukes Kompetansenivå videre som Myk faktor (FR9).
+FR2: Systemet utelukker en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav. 100 % av slike Kandidater filtreres bort i definerte testscenarioer. Kompetansenivå påvirker bare filtreringen og gir ingen poeng i Rangeringen (FR9).
 FR3: Systemet utelukker en Kandidat som allerede har en Vakt som overlapper i tid med Vakten som skal bemannes. 100 % filtreres bort i definerte testscenarioer.
 FR4: Systemet utelukker en Kandidat som ville fått mindre enn 11 timer sammenhengende hvile per 24 timer ved å ta Vakten. 100 % filtreres bort i testscenarioer, og samme Kandidat + Vakt gir samme resultat hver gang.
 FR5: Systemet utelukker en Kandidat som ville fått mindre enn 35 timer sammenhengende fri per 7 dager ved å ta Vakten. 100 % filtreres bort i testscenarioer.
 FR6: Når ingen Kandidater er gyldige, viser systemet en eksplisitt melding i stedet for en tom liste. Meldingen er tekstlig og visuelt forskjellig fra laste- og feiltilstand.
 FR7: Systemet beregner en forenklet kostnad per Gyldig kandidat (ordinær sats vs. overtidssats). Samme Kandidat + Vakt gir samme kostnad hver gang, og beregningen er uavhengig av KI. Full lønnskostnad med tillegg, avgifter og tariff er utenfor omfang.
 FR8: Systemet viser hvor mye hver Gyldig kandidat allerede er satt opp til å arbeide i perioden, konsistent med Kandidatens øvrige Vakter i Turnusen.
-FR9: Systemet rangerer alle Gyldige kandidater etter et definert sett Myke faktorer (kostnad, arbeidsbelastning, Ansattpreferanse, kompetansenærhet). Minst ett scenario viser at billigste Kandidat ikke rangeres høyest. Når ingen er fullt kvalifisert, rangeres den nærmest full kvalifisering høyere, med mindre andre Myke faktorer motsier det. Samme input gir samme rekkefølge hver gang.
+FR9: Systemet rangerer alle Gyldige kandidater etter et definert sett Myke faktorer (kostnad 40 %, arbeidsbelastning 35 %, Ansattpreferanse 25 %, PRD §4.4). Kompetanse vurderes bare som Hard regel (FR2) og gir ingen rangeringspoeng. Minst ett scenario viser at billigste Kandidat ikke rangeres høyest. Samme input gir samme rekkefølge hver gang.
 FR10: Systemet bruker en språkmodell til å tolke tekstbaserte Ansattpreferanser til strukturert input for Rangeringen. Språkmodellen utfører ikke selve rangeringsberegningen.
 FR11: Systemet genererer en KI-forklaring (Avveining) per Kandidat i Rangeringen: hvorfor Kandidaten kan ta Vakten, hva som trekker opp og ned, kostnadsvurdering og relevante Ansattpreferanser. Forklaringen nevner aldri en utelukket Kandidat. Ved feil, tomt eller ubrukelig svar vises en forhåndsdefinert reservetekst eller feilmelding, og systemet fortsetter uten å krasje.
 FR12: Turnusansvarlig kan velge en hvilken som helst Gyldig kandidat, ikke nødvendigvis den øverste, og gi eksplisitt Godkjenning. Ingen endring i Turnusen anses gjennomført før Godkjenning er gitt, og systemet kan ikke gjennomføre Godkjenning automatisk.
@@ -80,7 +80,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Avveining lagres ikke. Den regenereres hver gang en Rangering vises.
 - Alle Vakt-tidspunkt lagres og beregnes i `Europe/Oslo` med sommertid, ikke fast UTC-offset. Dette er avgjørende for 11- og 35-timersregelen rundt sommertidsovergangene.
 - Primærnøkler tildeles av `adaptere/lagring`. ID-formatet er ikke fastsatt.
-- Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert i testdataene inntil videre (ÅB-4, PRD §2.2). Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen er fullt kvalifisert (FR9), ingen gyldige kandidater (FR6, EXPERIENCE: Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1).
+- Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert i testdataene inntil videre (ÅB-4, PRD §2.2). Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen gyldige kandidater (FR6, EXPERIENCE: Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1).
 
 **KI-integrasjon**
 - OpenRouter, med `openai/gpt-6-luna` som standardmodell i `OPENROUTER_MODEL` (valgt 2026-10-16, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
@@ -124,7 +124,7 @@ UX-DR3: Brødsmulesti ligger fast under appbar på alle skjermer etter innloggin
 UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord» uten kontosperring [ASSUMPTION]. Det finnes ingen registrering og ingen passordgjenoppretting.
 UX-DR5: Vaktvalg-flate etter `mockups/key-vaktvalg.html`. Seksjonen «Krever handling» (`section-label`) ligger øverst. Hver vakt som mangler bemanning, vises i en `alert-box` med 4px venstrekant i `danger` og sirkulært «!»-ikon. Boksen har overskriften «Vakt #<nr> — <vakttype>, <avdeling>» og en linje med dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når (for eksempel «Silje Amundsen meldt fra sykemeldt kl. 06:14»). Primærknappen «Velg vakt — finn erstatter →» er eneste vei inn i kandidatrangeringen for vakten. Under står seksjonen «Øvrige vakter denne perioden — bemannet» som tabell med kolonnene Vakt (#nr i `accent`, fet), Dato, Tid (tidsrom og varighet, med vakttype som undertekst), Ansatt (navn, med stilling og ansiennitet som `meta`) og Status (tag «Bemannet»). En fotnote nederst til høyre viser når Turnusen sist ble oppdatert og antall ansatte i avdelingen. Mockupens «Se detaljer»-lenke og grønne «Bemannet»-tag er ikke tatt med (se story 1.5).
 UX-DR6: Tilstanden «Ingen vakter krever handling» på Vaktvalg. Seksjonen skjules, eller den viser nøytral tekst («Ingen vakter krever handling nå»), aldri en tom «!»-boks [ASSUMPTION].
-UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, arbeidsbelastning, preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenærhet vises som vanlig rekkefølge, ikke som et eget merke.
+UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, arbeidsbelastning, preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenivå vises som informasjon og påvirker ikke rekkefølgen (FR9).
 UX-DR8: Rangeringsnummer (`rank-badge`) i `accent`, fet og 14px.
 UX-DR9: Arbeidsbelastningslinje på 110×7px, fylt proporsjonalt. Fyllet er `accent` under terskelen (~90 %) og `warn` ved og over terskelen. Den er aldri rød, og det finnes ingen tekstlig advarsel, bare fargeskifte. Brukes i både rangering og godkjenning.
 UX-DR10: Kostnadsindikator. «Ordinær» i `ok` eller «Overtid» i `warn`, alltid med kr/t under i `meta`. Aldri rød, og aldri et tredje «feil»-signal.
@@ -227,6 +227,8 @@ So that alle i gruppa bygger på samme struktur og systemet kan kjøres fra en r
 As a turnusansvarlig,
 I want at systemet inneholder en fiktiv turnus for én avdeling med 20–30 ansatte og deres vakter,
 So that jeg har en realistisk turnus å finne erstattere i, uten ekte personopplysninger (NFR11).
+
+> **Endret 2026-10-19:** Story 1.2 eier feltet for individuell timelønn på Ansatt. Story 4.3 bruker feltet og legger ikke til egne satsfelt. Grunnen er at migreringsverktøy ikke er valgt, så en ny kolonne senere ville krevd migrering eller ny database. Se readiness-funnet i `implementation-artifacts/sprint-status.yaml`.
 
 **Acceptance Criteria:**
 
@@ -707,6 +709,8 @@ So that jeg ser med et blikk hvem som nærmer seg for mye (FR8).
 
 ÅB-2 er løst 2026-10-06 — se PRD §4.3 for kostnadsmodellen brukt i akseptansekriteriene under.
 
+> **Endret 2026-10-19:** Timelønnen lagres i story 1.2, ikke her. Storien legger ikke til satsfelt i lagringen.
+
 As a turnusansvarlig,
 I want å se om vakten blir ordinær sats eller overtid for hver kandidat, og hva det koster per time,
 So that jeg kan ta hensyn til kostnaden i valget (FR7).
@@ -717,7 +721,7 @@ So that jeg kan ta hensyn til kostnaden i valget (FR7).
 **When** kostnaden beregnes for en Gyldig kandidat
 **Then** domenekjernen sammenligner Kandidatens planlagte timer denne uken (inkl. denne Vakten) mot 36-timersterskelen, og beregner beløpet: timer til og med 36 t til ordinær sats, timer utover til 150 % sats (FR7)
 **And** beregningen er uavhengig av KI (NFR3)
-**And** satsfeltene som trengs, legges til i lagringen i denne storien, og testdataene får fiktive satser (NFR11)
+**And** beregningen bruker den individuelle timelønnen fra story 1.2, og overtidssatsen (150 %) regnes ut og lagres ikke (NFR11)
 
 **Given** kandidatlisten
 **When** kostnaden vises

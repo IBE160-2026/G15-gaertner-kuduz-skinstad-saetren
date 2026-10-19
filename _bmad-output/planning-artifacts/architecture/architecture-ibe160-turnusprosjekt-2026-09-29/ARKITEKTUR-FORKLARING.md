@@ -12,7 +12,7 @@ Dette dokumentet er *ikke* spesifikasjonen. Den finnes i `ARCHITECTURE-SPINE.md`
 
 ## 1. Hva arkitekturen skal løse
 
-Turnushjelperen løser ett konkret problem: en vakt mister bemanning, og den turnusansvarlige må finne en erstatter uten å sjekke 20–30 ansatte manuelt mot kompetansekrav, kolliderende vakter og hviletidsregler. Løsningen er ikke bare "vis hvem som er ledig" — det kunne enhver kalender gjøre. Den er heller ikke "la en språkmodell foreslå noen" — det ville vært et gjettverk uten grunnlag. Poenget er kombinasjonen: harde regler filtrerer bort det som er *ulovlig eller umulig*, en enkel og reproduserbar modell rangerer det som er *igjen* etter kostnad, arbeidsbelastning og kompetansenærhet, og KI gjør det hele forståelig — ved å tolke fritekst-preferanser og forklare avveiningene i klartekst. Systemet anbefaler. Det bestemmer aldri selv, og det kan aldri anbefale noen en hard regel har utelukket.
+Turnushjelperen løser ett konkret problem: en vakt mister bemanning, og den turnusansvarlige må finne en erstatter uten å sjekke 20–30 ansatte manuelt mot kompetansekrav, kolliderende vakter og hviletidsregler. Løsningen er ikke bare "vis hvem som er ledig" — det kunne enhver kalender gjøre. Den er heller ikke "la en språkmodell foreslå noen" — det ville vært et gjettverk uten grunnlag. Poenget er kombinasjonen: harde regler filtrerer bort det som er *ulovlig eller umulig*, en enkel og reproduserbar modell rangerer det som er *igjen* etter kostnad, arbeidsbelastning og ansattpreferanser, og KI gjør det hele forståelig — ved å tolke fritekst-preferanser og forklare avveiningene i klartekst. Systemet anbefaler. Det bestemmer aldri selv, og det kan aldri anbefale noen en hard regel har utelukket.
 
 Hele arkitekturen er bygget for å gjøre nettopp den siste setningen sann — ikke som en påstand i dokumentasjonen, men som noe som faktisk kan testes og bevises.
 
@@ -74,7 +74,6 @@ Ingen av disse valgene er trepilarer i seg selv — de er pragmatiske, begrunned
 
 Spinen har en egen Deferred-liste med ti punkter — ting som *bevisst* ikke er avgjort ennå. Det er ikke slurv, det er en prioritering: disse valgene påvirker ikke om systemet kan begynne å bygges, og å avgjøre dem for tidlig ville bare vært gjetting uten nok informasjon. Noen eksempler:
 
-- **Vekting mellom myke faktorer** (kostnad, arbeidsbelastning, preferanse, kompetansenærhet) — gruppa er enig om at kompetansenærhet skal telle tungt når ingen er fullt kvalifisert, men den fulle vektingen avgjøres når regelmotoren faktisk skal skrives, med ekte testscenarioer å vurdere den mot.
 - **Klientbibliotek mot OpenRouter** — standardmodell, takt og nye forsøk er bestemt (GPT-6 Luna, AD-7), og norskkvaliteten er testet (`docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Om adapteren bruker OpenAI-SDK-et eller en ren HTTP-klient, avgjøres når den bygges.
 - **Nøyaktig JWT-utløpstid, migreringsverktøy for databasen, feilkode-verdier** — dette er implementasjonsdetaljer som ikke endrer arkitekturen uansett hvilken vei de avgjøres. De kan bestemmes av den som skriver koden, når koden skrives.
 - **Hosting/driftsmiljø** — kun lokal kjøring er bestemt for nå. Dette er et v1-prosjekt for et kurs, ikke noe som skal driftes i produksjon ennå.

@@ -1,0 +1,98 @@
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created, ready for development
+#   - in-progress: Developer actively working on implementation
+#   - review: Implementation complete, ready for review
+#   - done: Story completed
+
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when its first story starts (via build's sprint sync)
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates the next story after the previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; the status view surfaces open ones
+generated: 10-19-2026 18:07
+last_updated: 10-19-2026 18:08
+project: IBE160 Programmering med KI
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+development_status:
+  epic-1: in-progress
+  1-1-prosjektoppsett-som-kjører-fra-en-ren-klone: review
+  1-2-fiktiv-turnus-med-ansatte-og-vakter: backlog
+  1-3-innlogging-for-turnusansvarlig: backlog
+  1-4-beskyttede-flater-og-utløpt-sesjon: backlog
+  1-5-vaktoversikt-med-krever-handling: backlog
+  1-6-velge-vakten-som-skal-bemannes: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-gyldige-kandidater-filtrert-på-kompetanse-minstekrav: backlog
+  2-2-filtrere-bort-kandidater-med-kolliderende-vakt: backlog
+  2-3-filtrere-på-11-timersregelen-daglig-hvile: backlog
+  2-4-filtrere-på-35-timersregelen-ukentlig-fri: backlog
+  2-5-ekskludert-boks-med-oppsummering-av-utelukkelser: backlog
+  2-6-tydelig-melding-når-ingen-kandidater-er-gyldige: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-velge-kandidat-og-se-godkjenningsflaten: backlog
+  3-2-gjennomføre-godkjenning-og-bemanne-vakten: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-timer-i-perioden-per-kandidat: backlog
+  4-2-arbeidsbelastningslinje-med-terskel: backlog
+  4-3-forenklet-kostnad-per-kandidat: backlog
+  4-4-rangering-av-gyldige-kandidater: backlog
+  4-5-avviksnotat-og-nøkkeltall-på-godkjenningsflaten: backlog
+  4-6-rangeringstabellen-på-smalere-skjermer: backlog
+  epic-4-retrospective: optional
+
+  epic-5: backlog
+  5-1-tolke-tekstbaserte-ansattpreferanser-med-ki: backlog
+  5-2-rangeringen-bruker-tolkede-preferanser: backlog
+  5-3-avveining-per-kandidat: backlog
+  5-4-reservetekst-når-ki-forklaringen-feiler: backlog
+  5-5-rader-vises-før-forklaringene-er-ferdige: backlog
+  5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: backlog
+  5-7-demo-modus-uten-api-nøkkel: backlog
+  5-8-sensor-kan-kjøre-live-ki: backlog
+  epic-5-retrospective: optional
+action_items:
+  - epic: 4
+    action: "Readiness 2026-10-19: Fjern kompetanse som myk faktor i FR2/FR9-oppsummeringen
+      og UX-DR7 i epics.md og i ARCHITECTURE-SPINE.md:193, i tråd med PRD §4.4 og
+      ÅB-1 (oppdatert 2026-10-15). Før story 4.4."
+    owner: "gruppa"
+    status: done
+  - epic: 1
+    action: "Readiness 2026-10-19: Avklar om individuell timelønn lagres i story 1.2
+      (testdata) eller story 4.3 (satsfelt), og rett den andre storien. Før story
+      1.2."
+    owner: "gruppa"
+    status: done
+  - epic: 4
+    action: "Readiness 2026-10-19: Avklar om arbeidsbelastning i RangertKandidat er
+      timer i perioden (story 4.1, FR8) eller denne uken (story 4.2/4.3, ÅB-3). Før
+      story 4.1."
+    owner: "gruppa"
+    status: open

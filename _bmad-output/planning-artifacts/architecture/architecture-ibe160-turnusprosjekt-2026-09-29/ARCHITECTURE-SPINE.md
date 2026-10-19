@@ -151,7 +151,7 @@ erDiagram
     GODKJENNING }o--|| KANDIDAT : gjelder
 ```
 
-Gyldig kandidat, Hard regel og Kompetansenivå er ikke egne entiteter her — Gyldig kandidat er en beregnet tilstand på Kandidat (filtrert av Hard regel, se AD-1), og Kompetansenivå er et attributt på Ansatt/Kandidat som både inngår i filtreringen (Hard regel) og i Rangeringen (Myk faktor), jf. PRD §3. Tolket preferanse (se AD-1) er heller ikke egen entitet i dette diagrammet, men lagres av `adaptere/lagring` knyttet til Ansatt — den er inputet Rangering leser, ikke et resultat av den.
+Gyldig kandidat, Hard regel og Kompetansenivå er ikke egne entiteter her — Gyldig kandidat er en beregnet tilstand på Kandidat (filtrert av Hard regel, se AD-1), og Kompetansenivå er et attributt på Ansatt/Kandidat som bare inngår i filtreringen (Hard regel) og ikke gir poeng i Rangeringen, jf. PRD §3 og §4.4. Tolket preferanse (se AD-1) er heller ikke egen entitet i dette diagrammet, men lagres av `adaptere/lagring` knyttet til Ansatt — den er inputet Rangering leser, ikke et resultat av den.
 
 Avveining er **ikke** en varig lagret entitet til tross for at diagrammet viser den koblet til Rangering — den genereres av `adaptere/ki` hver gang en Rangering vises, og persisteres ikke separat. Kun selve Godkjenningen (hvem, hvilken Vakt, når) lagres varig i `adaptere/lagring`; en tidligere vist Avveining kan derfor i prinsippet avvike noe fra en senere regenerert Avveining for samme Kandidat dersom underliggende data (f.eks. arbeidsbelastning) har endret seg mellom to visninger — se Deferred for hvorvidt dette bør låses fast ved Godkjenning.
 
@@ -190,7 +190,7 @@ turnushjelperen/
 
 ## Deferred
 
-- **Vekting mellom Myke faktorer i Rangeringen** (PRD §8, spørsmål 2) — gruppen har bekreftet at kompetansenærhet skal telle tungt når ingen Kandidat er fullt kvalifisert, men fullstendig vekting for øvrig er ikke avklart. Avklares av gruppen før implementasjon av `domene/regelmotor`.
+- ~~**Vekting mellom Myke faktorer i Rangeringen**~~ (PRD §8, spørsmål 2) — **løst 2026-10-06, oppdatert 2026-10-15.** Kostnad 40 %, arbeidsbelastning 35 %, Ansattpreferanse 25 %. Kompetanse vurderes bare som Hard regel og gir ingen rangeringspoeng. Se PRD §4.4 og ÅB-1 i epics.md.
 - **Konkret detaljnivå i kostnadsmodellen** (PRD §8, spørsmål 3; FR-7) — nøyaktige satser og betingelser som skiller ordinær kostnad fra overtidskostnad er ikke fastsatt.
 - **Ordlyd for «ingen gyldige kandidater», «innlogging feilet» og «beregner rangering»** (EXPERIENCE.md § State Patterns, merket `[ASSUMPTION]`) — atferden er spesifisert (skal skille seg tydelig fra feil/lastetilstand), men eksakt tekst er åpen.
 - **Responsive breakpoints** (DESIGN.md/EXPERIENCE.md § Responsive & Platform, merket `[ASSUMPTION]`) — kun én fast desktop-bredde (1180px) er vist i mockupene; stablingsmønster for mobil/nettbrett er foreslått, ikke bekreftet.
