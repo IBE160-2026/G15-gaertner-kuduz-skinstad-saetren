@@ -37,6 +37,10 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   kvalitetssikret. Emnet vurderer denne dokumentasjonen.
 - En hard regel i regelmotoren er ikke ferdig før den har tester som dekker
   grensetilfellene. Testene er det sterkeste beviset på kvalitetssikring.
+- `bmad-build` kjøres med underagenter: én samler epic-konteksten, og egne agenter
+  gjennomgår koden uten å ha sett implementeringen. Det koster mer enn å gjøre alt i
+  én økt, men gir en uavhengig gjennomgang. Valgt av Kuduz 2026-10-24 før story 1.2.
+  Ikke drøftet i gruppa ennå — er dere uenige, endre dette punktet.
 
 ## Hvor ting ligger
 
