@@ -109,6 +109,14 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 <!-- /bmad:context -->
 
+## Sesjonslogg
+
+- Bruk `sesjonslogg` før sluttoppsummeringen når en arbeidsøkt har endret tilstand.
+- For denne skillen er `.claude/skills/sesjonslogg/SKILL.md` autoritativ.
+  `.agents/skills/sesjonslogg/SKILL.md` inneholder bare metadata og en henvisning,
+  som et unntak fra speilingsregelen over. Ved endret navn eller bruksområde må
+  metadataene i henvisningsfilen også oppdateres.
+
 ## Sensorveiledning og vurderingsgrunnlag
 
 - Les `docs/emne/sensorveiledning-del-1.md` før planlegging,
