@@ -27,3 +27,32 @@ Kvalitetssikring: innholdsfunnsfilen parses som JSON og inneholder seks pluss fi
 - Avklar briefens lovlighetsløfte, tilgjengelighetsforutsetninger og preferansenes gyldighetsperiode (A1–A3).
 - Avklar like faktorverdier og poeng, feil i live-preferansetolkning og datadekning for hvilekontroll (E1–E4).
 - Styrk belegg og akseptkriterier for brukerproblem, forståelse og positive regelkontroller (A4–A6).
+
+## 2026-10-26 kl. 21:49 — Kimsk81
+
+### Oppgave
+Brukeren godkjente den konkrete planen med «start deep-recon». Fortsettelsen fullfører kildeundersøkelsen som reviewen ventet på.
+
+### Plan
+- Opprette et deterministisk navngitt research-område, rapportutkast og memlog med den godkjente planen.
+- La tre researchere undersøke regler/tilgjengelighet, eksisterende verktøy og rangering/brukernytte med primærkilder. Researcherne fikk avgrensede oppdragsbriefer og ingen prosjektfiler som eksternt bevis.
+- Kontrollere sentrale regel- og forskningspåstander med egne verifikatorer, følge opp Planday-friskheten i én målrettet andre runde, og gjennomføre semantisk kildeaudit og redaksjonell struktur-/språkkontroll.
+- Lagre anbefalinger, kildeutdrag, ferskhetskart og en selvstendig HTML-visning uten å vedta produktendringer.
+
+### Resultat
+[Researchrapporten](../../../_bmad-output/planning-artifacts/research/domain-turnushjelperen-produktbrief-2026-10-26/research.md) er fullført med [HTML-visning](../../../_bmad-output/planning-artifacts/research/domain-turnushjelperen-produktbrief-2026-10-26/research-briefing.html). Samme mappe har seks research-/verifikasjonsdigester, en semantisk audit, `.memlog.md`, `claims.json`, `staleness.json` og verktøyets escaped kildetabell. Rapporten refererer 18 kilder. Tre av ti registrerte nøkkelpåstander er uavhengig bekreftet; sju beholdes som uverifisert i strengere forstand, blant annet aktuelle leverandørfunksjoner og overføring av metode/studier. Dette er ikke en kvalitetsprosent for produktet.
+
+Kildene støtter å beholde skoleprototypens omfang og presisere løftene: 11/35 er hovedregler med unntak, 36 timer og faktor 1,5 er scenarioforutsetninger, tilgjengelighet er ikke det samme som modellgyldighet, og eksisterende verktøy dokumenterer allerede forslag/forklaringer. Ingen empirisk gevinst i norsk bemanning er dokumentert. Vektene 40/35/25 er ikke eksternt validert. Ingen konkret tariff- eller full betalingsrett er avgjort.
+
+Et eget syntetisk regneeksempel ble verifisert direkte med JavaScript: A/B har totalscore 52,5/47,5; når C tilkommer, får A/B/C 52,5/83,5/35. Den nye kandidaten er sist, men min–maks-skalaen endrer A/B-rekkefølgen. Dette bryter ikke determinismen; det er en modelloppførsel gruppen bør ta stilling til og teste. Eksisterende oppfølgingspunkt om rangering er utvidet med dette, uten nytt duplikatpunkt.
+
+Kildeaudit åpnet alle 18 referanser og fant ingen vesentlig feilattribusjon. Etiketten over originalstudiene ble presisert: korrekt gjengivelse er ikke uavhengig replikasjon. Nullfunn og CheckList-retningstester er gjengitt med eksplisitte begrensninger. Redaksjonell kontroll flyttet anbefalingstabellen frem, fjernet gjentatt hentedato fra tabellen og presiserte to formuleringer. Planday-kilden fra 22. juli ligger utenfor tremånedersvinduet; andre runde ga ikke ferskere uavhengig bekreftelse. Fristen 22. oktober er ført som allerede forfalt; neste daterte funksjonsfrist er Quinyx 6. november. Regulatoriske påstander må kontrolleres ved ny anvendelse, og udaterte kilder har ingen oppdiktet publiseringsdato.
+
+Maskinkontroller: `citations` bestod med alle 18 henvisninger og ingen manglende/ubrukte kilder. `tally` ga 3 verified og 7 unverified; `staleness` ga forventet exit 1 for én for gammel funksjonsbeskrivelse. HTML-kontroll avdekket først skadet norsk tekst ved stdout-overføring; eksplisitt UTF-8 rettet feilen. Sluttkontroll: null manglende Markdown-linjer i HTML, null manglende ankermål, 18 kildeankre, null eksterne ressurser og ingen erstatningstegn. `git diff --check` bestod. HTML er ikke visuelt kontrollert i nettleser. Ingen app-tester, live modellkall eller brukerprøver ble kjørt.
+
+Vurderingsmatrisen lenker nå til ferdig research og [KI-loggen](../../../docs/ki-logg/2026-10-26-productbrief-review-research.md). Reviewrapportens ventestatus er erstattet med den gjennomførte undersøkelsen. Brief, PRD, arkitektur, vekter og implementasjonsstatus er uendret. Tidligere punkt om bevis fra story 1.1 er ikke løst av denne dokumentgjennomgangen. Rapportene og matrisen ligger i arbeidstreet; bare sesjonslogg og issues inngår i loggcommiten. Ingen push.
+
+Neste dokumentsteg etter BMADs hjelpekatalog er å behandle aksepterte presiseringer med `bmad-product-brief` i en ny kontekst, deretter eventuelle konkrete PRD-presiseringer med `bmad-prd`. Det er en anbefaling, ikke en automatisk igangsatt endring av godkjent plan eller krav.
+
+### Åpne punkter
+- De tre eksisterende reviewgruppene i `issues.md` gjenstår: begreper/forutsetninger, grensevilkår/modelloppførsel og lokal validering/testbevis. Ingen av dem er løst bare ved ekstern research.
