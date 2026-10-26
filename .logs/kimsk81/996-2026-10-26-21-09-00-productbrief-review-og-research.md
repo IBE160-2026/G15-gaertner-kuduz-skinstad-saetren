@@ -31,7 +31,7 @@ Kvalitetssikring: innholdsfunnsfilen parses som JSON og inneholder seks pluss fi
 ## 2026-10-26 kl. 21:49 — Kimsk81
 
 ### Oppgave
-Brukeren godkjente den konkrete planen med «start deep-recon». Fortsettelsen fullfører kildeundersøkelsen som reviewen ventet på.
+Brukeren godkjente den konkrete planen med «start deep-recon». Fortsettelsen fullfører kildeundersøkelsen som reviewen ventet på. Etter leveransen ba brukeren: «Commit og push det vi har gjort»; publiseringen er dokumentert nederst i resultatet.
 
 ### Plan
 - Opprette et deterministisk navngitt research-område, rapportutkast og memlog med den godkjente planen.
@@ -50,9 +50,15 @@ Kildeaudit åpnet alle 18 referanser og fant ingen vesentlig feilattribusjon. Et
 
 Maskinkontroller: `citations` bestod med alle 18 henvisninger og ingen manglende/ubrukte kilder. `tally` ga 3 verified og 7 unverified; `staleness` ga forventet exit 1 for én for gammel funksjonsbeskrivelse. HTML-kontroll avdekket først skadet norsk tekst ved stdout-overføring; eksplisitt UTF-8 rettet feilen. Sluttkontroll: null manglende Markdown-linjer i HTML, null manglende ankermål, 18 kildeankre, null eksterne ressurser og ingen erstatningstegn. `git diff --check` bestod. HTML er ikke visuelt kontrollert i nettleser. Ingen app-tester, live modellkall eller brukerprøver ble kjørt.
 
-Vurderingsmatrisen lenker nå til ferdig research og [KI-loggen](../../../docs/ki-logg/2026-10-26-productbrief-review-research.md). Reviewrapportens ventestatus er erstattet med den gjennomførte undersøkelsen. Brief, PRD, arkitektur, vekter og implementasjonsstatus er uendret. Tidligere punkt om bevis fra story 1.1 er ikke løst av denne dokumentgjennomgangen. Rapportene og matrisen ligger i arbeidstreet; bare sesjonslogg og issues inngår i loggcommiten. Ingen push.
+Vurderingsmatrisen lenker nå til ferdig research og [KI-loggen](../../../docs/ki-logg/2026-10-26-productbrief-review-research.md). Reviewrapportens ventestatus er erstattet med den gjennomførte undersøkelsen. Brief, PRD, arkitektur, vekter og implementasjonsstatus er uendret. Tidligere punkt om bevis fra story 1.1 er ikke løst av denne dokumentgjennomgangen. Ved researchleveransen lå rapportene og matrisen i arbeidstreet; bare sesjonslogg og issues inngikk i loggcommiten, og ingenting var pushet da.
 
 Neste dokumentsteg etter BMADs hjelpekatalog er å behandle aksepterte presiseringer med `bmad-product-brief` i en ny kontekst, deretter eventuelle konkrete PRD-presiseringer med `bmad-prd`. Det er en anbefaling, ikke en automatisk igangsatt endring av godkjent plan eller krav.
+
+#### Commit og push etter brukerens bestilling
+
+Etter `git fetch origin` var `main` null commits bak og fem loggcommits foran `origin/main`. De 17 filene fra dokumentarbeidet ble committet som `21453f4` — «Dokumenter review og kildeundersøkelse av produktbriefen». Commit-brødteksten forklarer hvorfor den tidligere vurderingsmatrisen oppdateres, og dokumenterer rettingen av generert HTML og presiseringen etter kildekontroll. Fire JSON-filer ble parset på nytt; arbeids- og staged diffkontroll bestod. Ingen apptester ble kjørt for denne dokumentasjonscommiten.
+
+`git push origin main` lyktes og flyttet GitHub-grenen fra `5b2c1ec` til `21453f4`, inkludert de fem tidligere lokale loggcommittene. Den allerede stagede `docs/ki-logg/modelltest-resultater/gpt6-luna-smoke-20261016T204001529213Z.json` var fra før dette dokumentarbeidet og ble holdt utenfor med eksplisitt path-begrenset commit; den forblir staget. Ingen andre arbeidsendringer gjensto. Denne loggoppdateringen committes separat og pushes som del av samme bestilling. `issues.md` er kontrollert og har ingen nye eller løste produktpunkter fra publiseringen.
 
 ### Åpne punkter
 - De tre eksisterende reviewgruppene i `issues.md` gjenstår: begreper/forutsetninger, grensevilkår/modelloppførsel og lokal validering/testbevis. Ingen av dem er løst bare ved ekstern research.
