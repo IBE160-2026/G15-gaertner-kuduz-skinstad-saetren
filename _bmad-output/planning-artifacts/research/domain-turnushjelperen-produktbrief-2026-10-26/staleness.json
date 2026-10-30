@@ -1,0 +1,65 @@
+{
+  "today": "2026-10-26",
+  "claims": [
+    {
+      "ref": 15,
+      "status": "unverified",
+      "class": "study",
+      "pub_date": "2021-05",
+      "claim": "Originalresultater er korrekt kildekontrollert; ulike studier er ikke hverandres replikasjoner. Norsk bemanningseffekt ikke verifisert.",
+      "recheck": null,
+      "stale": null
+    },
+    {
+      "ref": 14,
+      "status": "unverified",
+      "class": "method",
+      "pub_date": "2023-03-09",
+      "claim": "Originale normaliseringseksempler lest; anvendelsesvalget er ikke uavhengig validert.",
+      "recheck": null,
+      "stale": null
+    },
+    {
+      "ref": 13,
+      "status": "unverified",
+      "class": "method",
+      "pub_date": "2024-06-24",
+      "claim": "Metodeinnhold kontrollert; eldre britisk manual er ikke fullt uavhengig publisist. Bemanningsvekter ikke validert.",
+      "recheck": null,
+      "stale": null
+    },
+    {
+      "ref": 7,
+      "status": "unverified",
+      "class": "feature",
+      "pub_date": "2026-07-22",
+      "claim": "Tilbudsbeskrivelsen er lest; aktuell funksjon/utrulling og uavhengig kontotest ikke verifisert.",
+      "recheck": "2026-10-22",
+      "stale": true
+    },
+    {
+      "ref": 11,
+      "status": "unverified",
+      "class": "feature",
+      "pub_date": "2026-08-06",
+      "claim": "Quinyx hjelpetekst lest; faktisk funksjon ikke uavhengig kontrollert.",
+      "recheck": "2026-11-06",
+      "stale": false
+    },
+    {
+      "ref": 17,
+      "status": "unverified",
+      "class": "method",
+      "pub_date": "2020-07",
+      "claim": "CheckList tilbyr funksjonstester utover samlet klassifikasjonsscore. Kilde Ribeiro mfl.",
+      "recheck": null,
+      "stale": null
+    }
+  ],
+  "stale_count": 1,
+  "earliest_recheck": "2026-10-22",
+  "no_window_classes": [
+    "method",
+    "study"
+  ]
+}

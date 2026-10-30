@@ -113,6 +113,32 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 <!-- /bmad:context -->
 
+## Sesjonslogg
+
+- Bruk `sesjonslogg` før sluttoppsummeringen for hver fullført oppgave som endrer
+  kode, dokumentasjon, konfigurasjon eller annen tilstand, inkludert commit og push.
+  Oppgavens størrelse avgjør ikke om den skal logges.
+- Logg også undersøkelser uten tilstandsendringer når de gir viktige funn,
+  beslutninger eller oppfølgingspunkter for prosjektet. Rene faktaspørsmål uten
+  endringer eller noe å ta vare på trenger ikke logg. Denne avgrensningen gjelder
+  også dersom skillbeskrivelsen bare nevner tilstandsendringer.
+- I lengre oppgaver: opprett eller oppdater loggen ved første vesentlige milepæl,
+  og oppdater den ved senere milepæler, slik at utført arbeid er dokumentert dersom
+  økten avbrytes.
+- Før sluttsvaret: kontroller at loggen beskriver oppgaven, faktisk fremgangsmåte,
+  resultat og kvalitetssikring, og at nye og løste oppfølgingspunkter er ført i
+  `.logs/<bruker>/issues.md`. Skriv «Ingen.» ved ingen åpne punkter. Sesjonsloggen
+  erstatter ikke kravene til KI-dokumentasjon i `docs/ki-logg/`.
+- Commit loggfilene etter skillens fremgangsmåte. Push bare når brukeren har bedt
+  om det; en lokal commit deler ikke loggen med gruppa.
+- Et uttrykkelig forbud fra brukeren mot filendringer eller commits går foran
+  loggkravet. Hvis det eller en teknisk hindring stopper logging eller commit,
+  opplys konkret om hva som ikke ble lagret eller committet i sluttsvaret.
+- For denne skillen er `.claude/skills/sesjonslogg/SKILL.md` autoritativ.
+  `.agents/skills/sesjonslogg/SKILL.md` inneholder bare metadata og en henvisning,
+  som et unntak fra speilingsregelen over. Ved endret navn eller bruksområde må
+  metadataene i henvisningsfilen også oppdateres.
+
 ## Sensorveiledning og vurderingsgrunnlag
 
 - Les `docs/emne/sensorveiledning-del-1.md` før planlegging,

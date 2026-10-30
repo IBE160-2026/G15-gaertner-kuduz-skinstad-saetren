@@ -1,0 +1,77 @@
+{
+    "claims":  [
+                   {
+                       "ref":  15,
+                       "status":  "unverified",
+                       "class":  "study",
+                       "pub_date":  "2021-05",
+                       "claim":  "Originalresultater er korrekt kildekontrollert; ulike studier er ikke hverandres replikasjoner. Norsk bemanningseffekt ikke verifisert."
+                   },
+                   {
+                       "ref":  14,
+                       "status":  "unverified",
+                       "class":  "method",
+                       "pub_date":  "2023-03-09",
+                       "claim":  "Originale normaliseringseksempler lest; anvendelsesvalget er ikke uavhengig validert."
+                   },
+                   {
+                       "ref":  13,
+                       "status":  "unverified",
+                       "class":  "method",
+                       "pub_date":  "2024-06-24",
+                       "claim":  "Metodeinnhold kontrollert; eldre britisk manual er ikke fullt uavhengig publisist. Bemanningsvekter ikke validert."
+                   },
+                   {
+                       "ref":  7,
+                       "status":  "unverified",
+                       "class":  "feature",
+                       "pub_date":  "2026-07-22",
+                       "claim":  "Tilbudsbeskrivelsen er lest; aktuell funksjon/utrulling og uavhengig kontotest ikke verifisert."
+                   },
+                   {
+                       "ref":  11,
+                       "status":  "unverified",
+                       "class":  "feature",
+                       "pub_date":  "2026-08-06",
+                       "claim":  "Quinyx hjelpetekst lest; faktisk funksjon ikke uavhengig kontrollert."
+                   },
+                   {
+                       "ref":  17,
+                       "status":  "unverified",
+                       "class":  "method",
+                       "pub_date":  "2020-07",
+                       "claim":  "CheckList tilbyr funksjonstester utover samlet klassifikasjonsscore. Kilde Ribeiro mfl."
+                   }
+               ],
+    "omitted_unknown_pub_date":  [
+                                     {
+                                         "ref":  4,
+                                         "status":  "verified",
+                                         "class":  "regulatory",
+                                         "pub_date":  "unknown",
+                                         "claim":  "Ordningsavhengig 36-timersgrense bekreftet mot lovtekst og NSF."
+                                     },
+                                     {
+                                         "ref":  5,
+                                         "status":  "verified",
+                                         "class":  "regulatory",
+                                         "pub_date":  "unknown",
+                                         "claim":  "Minst40prosent overtidstillegg bekreftet mot lovtekst og Virke; merarbeidsbetaling ikke fullt vurdert."
+                                     },
+                                     {
+                                         "ref":  12,
+                                         "status":  "unverified",
+                                         "class":  "feature",
+                                         "pub_date":  "unknown",
+                                         "claim":  "Gat produktside beskriver soknad paa ledige vakter og tilgjengelighetsregistrering. Kun leverandorbeskrivelse."
+                                     },
+                                     {
+                                         "ref":  1,
+                                         "status":  "verified",
+                                         "class":  "regulatory",
+                                         "pub_date":  "unknown",
+                                         "claim":  "Hovedregel 11/35 og avtaleunntak bekreftet mot lovtekst og uavhengig NSF/Negotia-veiledning; ikke komplett unntakskatalog."
+                                     }
+                                 ],
+    "note":  "Ukjent publiseringsdato er ikke erstattet med hentetdato. Regulatoriske claims kontrolleres ved hver anvendelse."
+}

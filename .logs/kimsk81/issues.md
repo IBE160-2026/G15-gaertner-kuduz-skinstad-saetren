@@ -1,0 +1,7 @@
+# Åpne punkter
+
+- [ ] 2026-10-26 [BMAD-status og neste steg](998-2026-10-26-20-55-18-bmad-status-og-neste-steg.md) — Følg opp de fire åpne handlingene i [sprintstatus](../../../_bmad-output/implementation-artifacts/sprint-status.yaml): periode/uke før story 4.1, ren klone på macOS/Linux, Python 3.12 og gruppens beslutning om versjonslåser.
+- [ ] 2026-10-26 [BMAD-status og neste steg](998-2026-10-26-20-55-18-bmad-status-og-neste-steg.md) — Oppdater vurderingsmatrisen med faktiske bevis fra story 1.1 ved neste milepæl.
+- [ ] 2026-10-26 [Vurdering og research av produktbriefen](996-2026-10-26-21-09-00-productbrief-review-og-research.md) — Avklar briefens løfte om «lovlig og mulig», kandidatgrunnlagets tilgjengelighet og preferansenes gyldighetsperiode (review A1–A3).
+- [ ] 2026-10-26 [Vurdering og research av produktbriefen](996-2026-10-26-21-09-00-productbrief-review-og-research.md) — Avklar like faktorverdier, like totalscorer, feil i live-preferansetolkning og nødvendig datadekning ved periodens kanter (review E1–E4). Researchen viser også at kandidatrelativ normalisering kan snu A/B når en tredje kandidat tilkommer; avklar og test tilsiktet oppførsel før story 4.1.
+- [ ] 2026-10-26 [Vurdering og research av produktbriefen](996-2026-10-26-21-09-00-productbrief-review-og-research.md) — Styrk nyttebevis og akseptkriterier med problemvalidering, oppgavebasert forståelsestest og positive regelkontroller (review A4–A6).
