@@ -38,7 +38,7 @@ Prosjektets overordnede problemstilling er derfor:
 
 Brukeren tar utgangspunkt i en eksisterende turnus og velger vakten som må bemannes på nytt, i en web-app.
 
-Løsningen identifiserer først hvilke ansatte som faktisk kan vurderes. Kandidater som ikke oppfyller definerte absolutte krav, blir utelukket. Deretter rangeres de gyldige kandidatene deterministisk etter kostnad, arbeidsbelastning og ansattpreferanser. Faktorene får 0–100 poeng og vektes med henholdsvis 40 %, 35 % og 25 %, i samsvar med PRD §4.4. Kompetanse vurderes bare som et hardt minstekrav for vakten og gir ingen rangeringspoeng.
+Løsningen identifiserer først hvilke ansatte som faktisk kan vurderes. Kandidater som ikke oppfyller definerte absolutte krav, blir utelukket. Deretter rangeres de gyldige kandidatene deterministisk etter kostnad, arbeidsbelastning og ansattpreferanser. Faktorene får 0–100 poeng og vektes med henholdsvis 40 %, 35 % og 25 %, i samsvar med PRD §4.4. Arbeidsbelastningen består av antall planlagte timer (20 %) og ubekvem arbeidstid på kveld, helg og natt de siste fire ukene (15 %). Kompetanse vurderes bare som et hardt minstekrav for vakten og gir ingen rangeringspoeng.
 
 **Eksempel på kompetanse som hardt krav:** Hvis en vakt på legevakten krever legekompetanse, kan en sykepleier ikke overta denne vakten. Sykepleieren utelukkes selv om vedkommende er tilgjengelig, har lavere kostnad eller ønsker flere vakter. Kompetansenærhet gir ikke unntak fra vaktens kompetansekrav; det er ikke tilstrekkelig å være nær kvalifisert.
 
