@@ -334,7 +334,7 @@ So that jeg straks ser hva som må håndteres.
 **When** den vises under «Krever handling»
 **Then** den står i en varselboks med 4px venstrekant i `danger` og sirkulært «!»-ikon (UX-DR5)
 **And** overskriften er «Vakt #<nr> — <vakttype>, <avdeling>», for eksempel «Vakt #4127 — Dagvakt, Kirurgisk sengepost»
-**And** linjen under viser dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når, for eksempel «Lørdag 27.09.2026 · 07:00–15:00 (8 t) · Mangler bemanning — Silje Amundsen meldt fra sykemeldt kl. 06:14»
+**And** linjen under viser dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når, for eksempel «Søndag 27.09.2026 · 07:00–15:00 (8 t) · Mangler bemanning — Silje Amundsen meldt fra sykemeldt kl. 06:14»
 **And** boksen har primærknappen «Velg vakt — finn erstatter →» (UX-DR5, UX-DR22)
 
 **Given** de bemannede vaktene i perioden
