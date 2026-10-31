@@ -23,7 +23,7 @@ Mithad ba om å rette mockupene så ukedagene stemmer med 2026-kalenderen. Førs
   - Et søk etter ukedag + dato for 27.–29.09 finner ingen feil igjen.
   - `git merge-tree` mot `origin/ab-3-ulempbelastning` og mot `story-1.2-fiktiv-turnus` gir ingen konflikt.
 - Vakttidene i mockupene (15–23 og 23–07) er bevisst ikke endret. De venter på at gruppa avgjør vakttidene i PR #4.
-- Ikke pushet.
+- Pushet til `origin/main` (`951fdd5..f05ec63`) etter at Mithad ba om det.
 
 ### Åpne punkter
 
