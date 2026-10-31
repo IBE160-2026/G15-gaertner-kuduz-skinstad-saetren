@@ -182,7 +182,7 @@ turnushjelperen/
 | --- | --- | --- |
 | §4.1 Vaktvalg (FR-1) | `adaptere/api`, `adaptere/web` | Design Paradigm, IA i EXPERIENCE.md |
 | §4.2 Regelmotor / harde regler (FR-2–FR-6) | `domene/regelmotor` | AD-1, AD-2, Testing-raden i Consistency Conventions |
-| §4.3 Kostnad og arbeidsbelastning (FR-7–FR-8) | `domene/regelmotor` | AD-1, AD-2 (reproduserbart, uavhengig av KI) |
+| §4.3 Kostnad og arbeidsbelastning (FR-7–FR-8, FR-14) | `domene/regelmotor` | AD-1, AD-2 (reproduserbart, uavhengig av KI) |
 | §4.4 Rangering (FR-9) | `domene/regelmotor` | AD-1, AD-2 |
 | §4.5 KI-tolkning av preferanser og Avveining (FR-10–FR-11) | `adaptere/ki` (begge retninger), `domene/regelmotor` (konsumerer `TolketPreferanse`) | AD-1 (den harde systemgrensen og de to portene), AD-6 (KI-modus), AD-7 (takt og nye forsøk), config-raden i Consistency Conventions (OpenRouter-nøkkel) |
 | §4.6 Godkjenning av erstatter (FR-12) | `adaptere/api`, `adaptere/lagring` | AD-4 (feilform), AD-5 (skjemaeierskap), State-raden (ingen mutasjon uten Godkjenning) |
@@ -190,7 +190,7 @@ turnushjelperen/
 
 ## Deferred
 
-- ~~**Vekting mellom Myke faktorer i Rangeringen**~~ (PRD §8, spørsmål 2) — **løst 2026-10-06, oppdatert 2026-10-15.** Kostnad 40 %, arbeidsbelastning 35 %, Ansattpreferanse 25 %. Kompetanse vurderes bare som Hard regel og gir ingen rangeringspoeng. Se PRD §4.4 og ÅB-1 i epics.md.
+- ~~**Vekting mellom Myke faktorer i Rangeringen**~~ (PRD §8, spørsmål 2) — **løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30.** Kostnad 40 %, arbeidsbelastning 35 % (Timebelastning 20 %, Ulempebelastning 15 %), Ansattpreferanse 25 %. Kompetanse vurderes bare som Hard regel og gir ingen rangeringspoeng. Vektene og taket for Ulempescore (300) er navngitte parametere i `domene/regelmotor`, ikke miljøvariabler. Se PRD §4.3, §4.4 og ÅB-1/ÅB-3 i epics.md.
 - **Konkret detaljnivå i kostnadsmodellen** (PRD §8, spørsmål 3; FR-7) — nøyaktige satser og betingelser som skiller ordinær kostnad fra overtidskostnad er ikke fastsatt.
 - **Ordlyd for «ingen gyldige kandidater», «innlogging feilet» og «beregner rangering»** (EXPERIENCE.md § State Patterns, merket `[ASSUMPTION]`) — atferden er spesifisert (skal skille seg tydelig fra feil/lastetilstand), men eksakt tekst er åpen.
 - **Responsive breakpoints** (DESIGN.md/EXPERIENCE.md § Responsive & Platform, merket `[ASSUMPTION]`) — kun én fast desktop-bredde (1180px) er vist i mockupene; stablingsmønster for mobil/nettbrett er foreslått, ikke bekreftet.

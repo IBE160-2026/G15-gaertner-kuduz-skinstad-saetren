@@ -202,9 +202,10 @@ Ingen pille-former, ingen store radiuser. Skarpheten er bevisst — den signalis
 ## Components
 
 - **Appbar** — `{colors.bg-header}` bakgrunn, hvit tekst. Venstre: produktnavn (`brand`-typografi). Høyre: innlogget bruker + avdeling, eller "Ikke innlogget" på innloggingssiden. Atferd (hva som vises pre-/post-innlogging) er spesifisert i EXPERIENCE.md § Component Patterns, ikke her — denne raden er kun visuell.
-- **Rangeringstabell** — Kolonner: rangeringsnummer, kandidat (navn + `meta`), Kompetansenivå (+ tag), kostnad (fargekodet), arbeidsbelastning (tall + linje), preferanse (tag), ekspander-lenke. `row-alt` på annenhver rad. Se `mockups/direction-a-fagsystem.html`.
+- **Rangeringstabell** — Kolonner: rangeringsnummer, kandidat (navn + `meta`), Kompetansenivå (+ tag), kostnad (fargekodet), timebelastning (tall + linje), ulempe (poeng + fordeling), preferanse (tag), ekspander-lenke. Ulempekolonnen er lagt til 2026-10-30 og finnes ikke i mockupene. `row-alt` på annenhver rad. Se `mockups/direction-a-fagsystem.html`.
 - **Rangeringsnummer (`rank-badge`)** — `{colors.accent}`, fet, 14px — det første tallet blikket skal lande på i raden.
-- **Arbeidsbelastningslinje** — 110×7px linje. Fylles med `{colors.accent}` under terskelen (~90 %), bytter til `{colors.warn}` ved og over terskelen. Aldri rødt.
+- **Arbeidsbelastningslinje** — 110×7px linje. Viser bare timebelastningen. Fylles med `{colors.accent}` under terskelen (~90 %), bytter til `{colors.warn}` ved og over terskelen. Aldri rødt.
+- **Ulempeindikator** (lagt til 2026-10-30) — Ren tekst, ingen linje: samlet poengsum i `body` (f.eks. «136 p»), fordeling i `meta` under (f.eks. «kveld 22 t · helg 21 t · natt 29 t»). Ingen terskel og ingen fargeskifte, aldri `warn` eller `danger`. Ulempe er informasjon om sammensetningen, ikke et varsel.
 - **Kostnadsindikator** — Tekst "Ordinær" i `{colors.ok}` eller "Overtid" i `{colors.warn}`, med kr/t under i `meta`.
 - **Tag** — `{colors.tag-bg}` bakgrunn, `{rounded.sm}`, nøytral informasjon (kompetansenivå-tekst, preferanse som "Ønsker flere vakter", "Fleksibel", "Ingen registrert").
 - **Forklaringsrad/-panel (`explain-panel`)** — Utvides under kandidatraden (tabell) eller som eget panel i kandidatkortet (godkjenning). Lyseblå bakgrunn (`#f2f6f9`) skiller den fra resten av tabellen/kortet. "▲ Trekker opp" i `{colors.ok}`, "▼ Trekker ned" i `{colors.danger}`. Atferd (hvilket panel er utvidet som standard) er spesifisert i EXPERIENCE.md § Component Patterns, ikke her.

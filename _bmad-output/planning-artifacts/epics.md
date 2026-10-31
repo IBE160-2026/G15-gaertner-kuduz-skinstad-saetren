@@ -19,23 +19,24 @@ Dette dokumentet deler kravene fra PRD, UX-kontrakten (DESIGN.md + EXPERIENCE.md
 
 ### Funksjonelle krav
 
-FR1: Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus som må bemannes på nytt. Ved valg vises Vaktens tidspunkt og kompetansekrav, og valget starter filtrering og Rangering (FR2–FR9) uten ytterligere handling.
+FR1: Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus som må bemannes på nytt. Ved valg vises Vaktens tidspunkt og kompetansekrav, og valget starter filtrering og Rangering (FR2–FR9, FR14) uten ytterligere handling.
 FR2: Systemet utelukker en Kandidat hvis Kandidatens Kompetansenivå er under Vaktens definerte minstekrav. 100 % av slike Kandidater filtreres bort i definerte testscenarioer. Kompetansenivå påvirker bare filtreringen og gir ingen poeng i Rangeringen (FR9).
 FR3: Systemet utelukker en Kandidat som allerede har en Vakt som overlapper i tid med Vakten som skal bemannes. 100 % filtreres bort i definerte testscenarioer.
 FR4: Systemet utelukker en Kandidat som ville fått mindre enn 11 timer sammenhengende hvile per 24 timer ved å ta Vakten. 100 % filtreres bort i testscenarioer, og samme Kandidat + Vakt gir samme resultat hver gang.
 FR5: Systemet utelukker en Kandidat som ville fått mindre enn 35 timer sammenhengende fri per 7 dager ved å ta Vakten. 100 % filtreres bort i testscenarioer.
 FR6: Når ingen Kandidater er gyldige, viser systemet en eksplisitt melding i stedet for en tom liste. Meldingen er tekstlig og visuelt forskjellig fra laste- og feiltilstand.
 FR7: Systemet beregner en forenklet kostnad per Gyldig kandidat (ordinær sats vs. overtidssats). Samme Kandidat + Vakt gir samme kostnad hver gang, og beregningen er uavhengig av KI. Full lønnskostnad med tillegg, avgifter og tariff er utenfor omfang.
-FR8: Systemet viser hvor mye hver Gyldig kandidat allerede er satt opp til å arbeide i perioden, konsistent med Kandidatens øvrige Vakter i Turnusen.
-FR9: Systemet rangerer alle Gyldige kandidater etter et definert sett Myke faktorer (kostnad 40 %, arbeidsbelastning 35 %, Ansattpreferanse 25 %, PRD §4.4). Kompetanse vurderes bare som Hard regel (FR2) og gir ingen rangeringspoeng. Minst ett scenario viser at billigste Kandidat ikke rangeres høyest. Samme input gir samme rekkefølge hver gang.
+FR8: Systemet viser Timebelastningen for hver Gyldig kandidat: planlagte timer i kalenderuken Vakten starter i, uten Vakten, som andel av 36 timer, konsistent med Kandidatens øvrige Vakter i Turnusen. 90 %-grensen er bare en visuell indikator.
+FR9: Systemet rangerer alle Gyldige kandidater etter et definert sett Myke faktorer (kostnad 40 %, arbeidsbelastning 35 % fordelt på Timebelastning 20 % og Ulempebelastning 15 %, Ansattpreferanse 25 %, PRD §4.4). Kompetanse vurderes bare som Hard regel (FR2) og gir ingen rangeringspoeng. Minst ett scenario viser at billigste Kandidat ikke rangeres høyest. Samme input gir samme rekkefølge hver gang.
 FR10: Systemet bruker en språkmodell til å tolke tekstbaserte Ansattpreferanser til strukturert input for Rangeringen. Språkmodellen utfører ikke selve rangeringsberegningen.
 FR11: Systemet genererer en KI-forklaring (Avveining) per Kandidat i Rangeringen: hvorfor Kandidaten kan ta Vakten, hva som trekker opp og ned, kostnadsvurdering og relevante Ansattpreferanser. Forklaringen nevner aldri en utelukket Kandidat. Ved feil, tomt eller ubrukelig svar vises en forhåndsdefinert reservetekst eller feilmelding, og systemet fortsetter uten å krasje.
 FR12: Turnusansvarlig kan velge en hvilken som helst Gyldig kandidat, ikke nødvendigvis den øverste, og gi eksplisitt Godkjenning. Ingen endring i Turnusen anses gjennomført før Godkjenning er gitt, og systemet kan ikke gjennomføre Godkjenning automatisk.
 FR13: Turnusansvarlig kan logge inn med brukernavn og passord. Ingen funksjonalitet i FR1–FR12 er tilgjengelig uten gyldig innlogging. Flere roller, tilgangsnivåer og SSO er utenfor omfang.
+FR14: Systemet beregner Ulempepoeng for hver Gyldig kandidat ut fra Kandidatens Vakter i de 28 døgnene før Vaktens start (hverdag 06–18 = 0, hverdag 18–22 = 1, helg 06–22 = 2, natt 22–06 = 3 poeng per time, hver time telles én gang). Poengene regnes om til Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)), med konfigurerbart tak på 300. Ulempebelastningen vises separat fra Timebelastningen, med poengsum og fordeling på kveld, helg og natt. Samme input gir samme resultat hver gang, og beregningen er uavhengig av KI (PRD §4.3, lagt til 2026-10-30).
 
 ### Ikke-funksjonelle krav
 
-NFR1 (Reproduserbarhet): Harde regler, kostnad, arbeidsbelastning og Rangering er deterministiske: samme strukturerte input gir samme resultat hver gang (SM-5).
+NFR1 (Reproduserbarhet): Harde regler, kostnad, Timebelastning, Ulempebelastning og Rangering er deterministiske: samme strukturerte input gir samme resultat hver gang (SM-5).
 NFR2 (Lekkasje-invariant): En Kandidat utelukket av en Hard regel kan aldri forekomme i Rangeringen eller nevnes i KI-forklaringen. Dette er en testbar invariant (SM-2, PRD §4.2).
 NFR3 (KI-grense): KI beregner aldri Harde regler, arbeidstid, kostnad eller Rangering. KI mottar allerede filtrerte og beregnede data og kan ikke endre dem (PRD §4.5, §5).
 NFR4 (Robusthet ved KI-feil): Feil, tomt eller ubrukelig svar fra språkmodellen, inkludert fartsgrense, gir reservetekst eller feilmelding i stedet for Avveining, aldri en anbefaling uten grunnlag. Systemet krasjer ikke (FR11).
@@ -60,7 +61,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - AD-1: En kjøretidstest i `tester/` verifiserer at ingen kandidat-ID som `adaptere/api` sender til `adaptere/ki` finnes blant de utelukkede ID-ene fra regelmotoren, i et scenario med kjente utelukkelser.
 - Porter (Pydantic, eid av `domene/porter`):
   - `TolketPreferanse` konstrueres bare av `adaptere/ki`.
-  - `RangertKandidat` konstrueres bare av `domene/regelmotor`. Minimumsfelt: kandidat-referanse (id/navn), Kompetansenivå, kostnadstype + beløp, arbeidsbelastning (timer + prosent av terskel), rangeringsplass og tilhørende `TolketPreferanse`.
+  - `RangertKandidat` konstrueres bare av `domene/regelmotor`. Minimumsfelt: kandidat-referanse (id/navn), Kompetansenivå, kostnadstype + beløp, Timebelastning (timer + prosent av terskel), Ulempebelastning (Ulempepoeng, Ulempescore og timer fordelt på kveld, helg og natt), rangeringsplass og tilhørende `TolketPreferanse`.
   - `UtelukkelsesOppsummering` konstrueres bare av `domene/regelmotor` og gir antall per Hard regel til Ekskludert-boksen.
 - KI-adapteren har to ensrettede roller som begge orkestreres av `adaptere/api`: tolk (tekst → `TolketPreferanse`) før Rangering, og forklar (`RangertKandidat` → Avveining) etter Rangering. Domenekjernen kaller aldri KI.
 - Preferansetolkning skjer én gang per Ansatt/preferansetekst og caches/persisteres av `adaptere/lagring`. Regelmotoren får alltid en lagret, allerede tolket verdi, aldri et live KI-kall under Rangering.
@@ -80,7 +81,8 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Avveining lagres ikke. Den regenereres hver gang en Rangering vises.
 - Alle Vakt-tidspunkt lagres og beregnes i `Europe/Oslo` med sommertid, ikke fast UTC-offset. Dette er avgjørende for 11- og 35-timersregelen rundt sommertidsovergangene.
 - Primærnøkler tildeles av `adaptere/lagring`. ID-formatet er ikke fastsatt.
-- Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert i testdataene inntil videre (ÅB-4, PRD §2.2). Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen gyldige kandidater (FR6, EXPERIENCE: Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1).
+- Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert i testdataene inntil videre (ÅB-4, PRD §2.2). Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen gyldige kandidater (FR6, EXPERIENCE: Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1). Testdataene må også ha vakthistorikk fire uker før turnusperioden og et scenario der Ulempebelastningen endrer rekkefølgen (FR14, story 1.2).
+- Rangeringsparametere: vektene (PRD §4.4) og taket for Ulempescore (300) ligger samlet som navngitte parametere i `domene/regelmotor`. De sendes inn som argumenter, slik at testene kan variere dem. De er ikke miljøvariabler, fordi samme input da kunne gitt ulikt resultat på ulike maskiner (NFR1).
 
 **KI-integrasjon**
 - OpenRouter, med `openai/gpt-6-luna` som standardmodell i `OPENROUTER_MODEL` (valgt 2026-10-16, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
@@ -103,13 +105,13 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 
 ### Åpne beslutninger
 
-> **ÅPNE BESLUTNINGER.** Opprinnelig satt opp 2026-09-29. Stories som er merket med en blokkerende ÅB-ID, kan skrives og estimeres, men ikke implementeres før gruppa har tatt beslutningen og ført den inn her. **Oppdatering 2026-10-06:** ÅB-1, ÅB-2 og ÅB-3 — de tre som blokkerte Epic 4 og deler av Epic 5 — er nå løst. ÅB-4 til ÅB-7 er fortsatt åpne, men blokkerer ikke (midlertidige tolkninger er i bruk, se status per rad). **Oppdatering 2026-10-14:** ÅB-8 (nøkkel til sensor) er lagt til. Den blokkerer bare leveringen av nøkkel i story 5.8.
+> **ÅPNE BESLUTNINGER.** Opprinnelig satt opp 2026-09-29. Stories som er merket med en blokkerende ÅB-ID, kan skrives og estimeres, men ikke implementeres før gruppa har tatt beslutningen og ført den inn her. **Oppdatering 2026-10-06:** ÅB-1, ÅB-2 og ÅB-3 — de tre som blokkerte Epic 4 og deler av Epic 5 — er nå løst. ÅB-4 til ÅB-7 er fortsatt åpne, men blokkerer ikke (midlertidige tolkninger er i bruk, se status per rad). **Oppdatering 2026-10-14:** ÅB-8 (nøkkel til sensor) er lagt til. Den blokkerer bare leveringen av nøkkel i story 5.8. **Oppdatering 2026-10-30:** ÅB-3 er utvidet med Ulempebelastning (FR14, story 4.7), og arbeidsbelastningens 35 % i ÅB-1 er delt i Timebelastning 20 % og Ulempebelastning 15 %.
 
 | ID | Beslutning | Kilde | Blokkerer | Status |
 |---|---|---|---|---|
-| **ÅB-1** | ~~Innbyrdes vekting mellom Myke faktorer i Rangeringen~~ — **løst 2026-10-06, oppdatert 2026-10-15.** Poengbasert modell (0–100 poeng per faktor, vektet sum): Kostnad 40 %, Arbeidsbelastning 35 %, Ansattpreferanse 25 %. Kompetanse vurderes bare som et hardt minstekrav og gir ingen rangeringspoeng. Se PRD §4.4 for full tabell og poengsettingsregler. | Product brief og PRD §4.4 (oppdatert) | FR9 og alle stories som implementerer Rangering | **Løst 2026-10-06, oppdatert 2026-10-15** |
+| **ÅB-1** | ~~Innbyrdes vekting mellom Myke faktorer i Rangeringen~~ — **løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30.** Poengbasert modell (0–100 poeng per faktor, vektet sum): Kostnad 40 %, Arbeidsbelastning 35 %, Ansattpreferanse 25 %. Arbeidsbelastningen er delt i Timebelastning 20 % og Ulempebelastning 15 % (2026-10-30, se ÅB-3). Kompetanse vurderes bare som et hardt minstekrav og gir ingen rangeringspoeng. Se PRD §4.4 for full tabell og poengsettingsregler. | Product brief og PRD §4.4 (oppdatert) | FR9 og alle stories som implementerer Rangering | **Løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30** |
 | **ÅB-2** | ~~Kostnadsmodellen: hvilke satser og betingelser som skiller ordinær sats fra overtidssats~~ — **løst 2026-10-06.** Individuell timelønn per Ansatt. Ordinær terskel 36 t/uke (addendum §2). Timer utover: 150 % sats. Se PRD §4.3. | PRD §4.3 (oppdatert) | FR7 og stories som implementerer kostnadsberegning | **Løst 2026-10-06** |
-| **ÅB-3** | ~~Terskelen for arbeidsbelastning: hva «~90 %» er prosent av~~ — **løst 2026-10-06.** Gjenbruker ÅB-2s 36-timers normaluke: planlagte timer denne uken (uten vurdert Vakt) ÷ 36, «høy belastning» ved ~90 % (ca. 32–33 t). Se PRD §4.3, FR-8. | PRD §4.3 (oppdatert) | FR8, feltet «prosent av terskel» i `RangertKandidat` og UX-DR9 | **Løst 2026-10-06** |
+| **ÅB-3** | ~~Terskelen for arbeidsbelastning: hva «~90 %» er prosent av~~ — **løst 2026-10-06, utvidet 2026-10-30.** Gjenbruker ÅB-2s 36-timers normaluke: planlagte timer denne uken (uten vurdert Vakt) ÷ 36, «høy belastning» ved ~90 % (ca. 32–33 t). Se PRD §4.3, FR-8. **Utvidet 2026-10-30:** «Denne uken» er kalenderuken Vakten starter i. Arbeidsbelastningen består nå av Timebelastning (FR8, 20 %) og Ulempebelastning (FR14, 15 %). Ulempemodellen gir 0/1/2/3 poeng per time for hverdag dag, hverdag kveld, helg og natt, med 28 døgn bakover fra Vaktens start og fast skala med konfigurerbart tak på 300. 90 %-grensen beholdes som visuell indikator for Timebelastning. Se PRD §4.3, §4.4. | PRD §4.3, §4.4 (oppdatert) | FR8, FR14, feltene for Timebelastning og Ulempebelastning i `RangertKandidat`, UX-DR9 og UX-DR28, story 4.7 | **Løst 2026-10-06, utvidet 2026-10-30** |
 | **ÅB-4** | Om turnusansvarlig skal kunne redigere Ansattpreferanser i appen. | PRD §2.2 | Ingenting. Midlertidig beslutning: preferansene er **forhåndsdefinert i testdataene** i v1 inntil videre, og ingen story bygger et redigeringsskjema. | Åpen, blokkerer ikke |
 | **ÅB-5** | Hvordan 11-timersregelen regnes: hvile før og etter vakten hver for seg, eller et rullerende vindu på 24 timer. | aml. § 10-8 (1), addendum §2 | Ingenting. Midlertidig tolkning: hvile før og etter vakten må hver være minst 11 timer (story 2.3). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_11_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
 | **ÅB-6** | Hvilket vindu 35-timersregelen gjelder for: kalenderuke (man–søn) eller et rullerende vindu på 7 dager. | aml. § 10-8 (2), addendum §2 | Ingenting. Midlertidig tolkning: kalenderuke (story 2.4). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_35_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
@@ -124,9 +126,9 @@ UX-DR3: Brødsmulesti ligger fast under appbar på alle skjermer etter innloggin
 UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord» uten kontosperring [ASSUMPTION]. Det finnes ingen registrering og ingen passordgjenoppretting.
 UX-DR5: Vaktvalg-flate etter `mockups/key-vaktvalg.html`. Seksjonen «Krever handling» (`section-label`) ligger øverst. Hver vakt som mangler bemanning, vises i en `alert-box` med 4px venstrekant i `danger` og sirkulært «!»-ikon. Boksen har overskriften «Vakt #<nr> — <vakttype>, <avdeling>» og en linje med dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når (for eksempel «Silje Amundsen meldt fra sykemeldt kl. 06:14»). Primærknappen «Velg vakt — finn erstatter →» er eneste vei inn i kandidatrangeringen for vakten. Under står seksjonen «Øvrige vakter denne perioden — bemannet» som tabell med kolonnene Vakt (#nr i `accent`, fet), Dato, Tid (tidsrom og varighet, med vakttype som undertekst), Ansatt (navn, med stilling og ansiennitet som `meta`) og Status (tag «Bemannet»). En fotnote nederst til høyre viser når Turnusen sist ble oppdatert og antall ansatte i avdelingen. Mockupens «Se detaljer»-lenke og grønne «Bemannet»-tag er ikke tatt med (se story 1.5).
 UX-DR6: Tilstanden «Ingen vakter krever handling» på Vaktvalg. Seksjonen skjules, eller den viser nøytral tekst («Ingen vakter krever handling nå»), aldri en tom «!»-boks [ASSUMPTION].
-UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, arbeidsbelastning, preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenivå vises som informasjon og påvirker ikke rekkefølgen (FR9).
+UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, timebelastning, ulempe (UX-DR28), preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenivå vises som informasjon og påvirker ikke rekkefølgen (FR9).
 UX-DR8: Rangeringsnummer (`rank-badge`) i `accent`, fet og 14px.
-UX-DR9: Arbeidsbelastningslinje på 110×7px, fylt proporsjonalt. Fyllet er `accent` under terskelen (~90 %) og `warn` ved og over terskelen. Den er aldri rød, og det finnes ingen tekstlig advarsel, bare fargeskifte. Brukes i både rangering og godkjenning.
+UX-DR9: Arbeidsbelastningslinje på 110×7px, fylt proporsjonalt. Linjen viser bare Timebelastningen (FR8). Ulempebelastningen vises i egen kolonne (UX-DR28). Fyllet er `accent` under terskelen (~90 %) og `warn` ved og over terskelen. Den er aldri rød, og det finnes ingen tekstlig advarsel, bare fargeskifte. Brukes i både rangering og godkjenning.
 UX-DR10: Kostnadsindikator. «Ordinær» i `ok` eller «Overtid» i `warn`, alltid med kr/t under i `meta`. Aldri rød, og aldri et tredje «feil»-signal.
 UX-DR11: Tag. Bakgrunn `tag-bg`, kant `border` og radius `sm`. Den viser nøytral informasjon: kompetansenivå og preferanse, for eksempel «Ønsker flere vakter», «Fleksibel» eller «Ingen registrert».
 UX-DR12: Forklaringspanel (Avveining). Panelet har bakgrunn `#f2f6f9` og viser «▲ Trekker opp» i `ok` og «▼ Trekker ned» i `danger`. Den topprangerte Kandidatens panel er utvidet ved sideinnlasting, og de øvrige er kollapset bak «Vis begrunnelse ▾» / «Skjul begrunnelse ▴». Radene ekspanderes uavhengig, så å åpne én lukker ingen annen. Panelet brukes både i tabellen og i kandidatkortet på Godkjenning.
@@ -134,17 +136,18 @@ UX-DR13: Tilstanden «Beregner rangering». Radene vises med en gang regelmotore
 UX-DR14: Tilstanden «Avveining feilet/tom/ubrukelig». En forhåndsdefinert reservetekst vises i forklaringspanelet i stedet for Avveining, og resten av raden og siden fungerer som normalt. Eksakt tekst er ikke fastsatt.
 UX-DR15: Ekskludert-boks. Boksen har stiplet kant og bakgrunn `#f7f9fb`. Den oppsummerer antall og årsak per Hard regel (for eksempel «9 under kompetanse-minstekrav · 7 kolliderende vakt») og har «Vis full liste ▾» for detaljer på forespørsel. Den skjuler ikke at 20+ ansatte finnes.
 UX-DR16: Tomtilstand «Ingen gyldige kandidater» (`empty-state`). Boksen har sirkulært «!»-ikon i `danger`-toner og forklarende tekst: «Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.» Den skal være visuelt og tekstlig forskjellig fra laste- og feiltilstand. Handlingsforslagene i mockupen («del opp vakten» o.l.) er illustrative og skal ikke implementeres som funksjoner.
-UX-DR17: Godkjenning-flate. Egen flate med egen URL, ikke en dialog. Kandidatkortet viser navn (`heading`), Kompetansenivå, kostnadsindikator, arbeidsbelastningslinje og forklaringspanel.
-UX-DR18: Avviksnotat. Notatet vises bare når valgt Kandidat ≠ topprangert. Det gir en side-om-side-sammenligning av kostnad, Kompetansenivå og arbeidsbelastning mellom valgt og topprangert Kandidat. Stilen er nøytral (stiplet kant, «Avvik fra anbefalt rangering», «Turnushjelperen anbefaler, den bestemmer aldri selv.»), og notatet blokkerer ikke godkjenningen.
+UX-DR17: Godkjenning-flate. Egen flate med egen URL, ikke en dialog. Kandidatkortet viser navn (`heading`), Kompetansenivå, kostnadsindikator, arbeidsbelastningslinje, ulempeindikator (UX-DR28) og forklaringspanel.
+UX-DR18: Avviksnotat. Notatet vises bare når valgt Kandidat ≠ topprangert. Det gir en side-om-side-sammenligning av kostnad, Kompetansenivå, Timebelastning og Ulempebelastning mellom valgt og topprangert Kandidat. Stilen er nøytral (stiplet kant, «Avvik fra anbefalt rangering», «Turnushjelperen anbefaler, den bestemmer aldri selv.»), og notatet blokkerer ikke godkjenningen.
 UX-DR19: Bekreftelsesboks med to-stegs godkjenning. Boksen viser hvem som settes inn i hvilken vakt, med «Avbryt» (sekundær) og «Godkjenn erstatning» (primær). Statuslinjen «Ikke gjennomført — venter på eksplisitt godkjenning» vises til brukeren bekrefter. «Avbryt» fører tilbake uten tilstandsendring.
 UX-DR20: Vellykket godkjenning. En kort bekreftelse vises øverst på Vaktvalg (for eksempel «Erstatning bekreftet — Jonas Bakke er satt opp på Vakt #4127»), og vakten vises ikke lenger under «Krever handling».
 UX-DR21: Utløpt eller manglende sesjon. Alle flater unntatt Logg inn sender brukeren til Logg inn.
 UX-DR22: Knapper. `button-primary` (fylt `accent`, hvit tekst) brukes for hovedhandlingen per skjerm, og `button-secondary` (hvit med kant) for avbryt. Det finnes ingen tertiær- eller ghost-variant.
 UX-DR23: Mikrotekst og tone. All brukertekst ligger i en norsk tekstliste i frontend, slått opp på API-ets `kode`/`status`. Teksten skal være kort, presis og tallbasert, uten utropstegn, formaning, feiring eller gamification, og uten språk som antyder at systemet har valgt eller utført noe.
 UX-DR24: Tilgjengelighetsgulv. Kontrasten skal være tilstrekkelig for tekst og fargekodede statuser. Alle knapper, ekspander-lenker og skjemafelt skal kunne nås og aktiveres med tastatur (tab/enter), og HTML-en skal være semantisk. Det finnes ikke noe utvidet WCAG- eller ARIA-program.
-UX-DR25: Responsiv tilpasning [ASSUMPTION, må bekreftes]. Desktop viser full tabell. Nettbrett beholder radform, men mindre kritiske kolonner flyttes inn i raden. Mobil viser stablede kort med rangering, navn og kostnad øverst og arbeidsbelastning og Avveining under, uten horisontal scroll.
+UX-DR25: Responsiv tilpasning [ASSUMPTION, må bekreftes]. Desktop viser full tabell. Nettbrett beholder radform, men mindre kritiske kolonner flyttes inn i raden. Mobil viser stablede kort med rangering, navn og kostnad øverst og arbeidsbelastning (timebelastningslinje og ulempeindikator) og Avveining under, uten horisontal scroll.
 UX-DR26: Bevisst utelatt. Det finnes ingen SMS eller automatisk varsling til valgt Kandidat etter godkjenning, ingen tastatursnarveier utover tab/enter, ingen swipe- eller dra-mønstre og ingen PWA-forpliktelse i v1.
 UX-DR27: Merking av KI-kilde. Hvert forklaringspanel har en kildelinje i `meta`: «KI-generert · <modellnavn>» (live), «Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>» eller «Satt sammen fra beregnede tall, ikke KI-generert» (mal). I demo-modus viser appbaren også en nøytral tag, «Demo-modus». Ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand (NFR14, AD-6).
+UX-DR28: Ulempeindikator (lagt til 2026-10-30). Egen kolonne i rangeringstabellen, rett etter timebelastning, med overskriften «Ulempe». Samlet poengsum står i `body`, for eksempel «136 p», og fordelingen står under i `meta`, for eksempel «kveld 22 t · helg 21 t · natt 29 t». Fordelingen bruker samme prioritet som poengene (natt > helg > kveld), så en nattetime i helgen vises som natt. En Kandidat uten Vakter i måleperioden viser «0 p», ikke tom. Indikatoren har ingen terskel, ingen linje og ingen fargeskifte, og bruker aldri `warn` eller `danger`. Den brukes i rangeringstabellen, kandidatkortet på Godkjenning og avviksnotatet (FR14).
 
 ### FR-dekningskart
 
@@ -155,8 +158,9 @@ FR4: Epic 2 - Filtrere på 11-timersregelen
 FR5: Epic 2 - Filtrere på 35-timersregelen
 FR6: Epic 2 - Eksplisitt melding når ingen kandidater er gyldige
 FR7: Epic 4 - Forenklet kostnad per kandidat (kostnadsmodell løst, ÅB-2)
-FR8: Epic 4 - Arbeidsbelastning per kandidat (terskel løst, ÅB-3)
+FR8: Epic 4 - Timebelastning per kandidat (terskel løst, ÅB-3)
 FR9: Epic 4 - Rangering av gyldige kandidater (vekting løst, ÅB-1)
+FR14: Epic 4 - Ulempebelastning per kandidat (ÅB-3 utvidet 2026-10-30, story 4.7)
 FR10: Epic 5 - KI-tolkning av tekstbaserte ansattpreferanser
 FR11: Epic 5 - KI-forklaring (Avveining) per kandidat, med reservetekst ved feil
 FR12: Epic 3 - To-stegs godkjenning av valgt kandidat
@@ -181,8 +185,8 @@ Turnusansvarlig velger en gyldig kandidat og godkjenner i to steg. Vakten blir b
 **FR-er som dekkes:** FR12
 
 ### Epic 4: Rangering etter kostnad, arbeidsbelastning og ansattpreferanser
-De gyldige kandidatene rangeres etter kostnad, arbeidsbelastning og ansattpreferanser. Tabellen viser kandidatens kompetanse, kostnad, arbeidsbelastning og preferanse. Avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle tre åpne beslutninger (ÅB-1 vekting, ÅB-2 kostnadsmodell, ÅB-3 arbeidsbelastningsterskel) er løst 2026-10-06 — se PRD §4.3, §4.4.
-**FR-er som dekkes:** FR7, FR8, FR9
+De gyldige kandidatene rangeres etter kostnad, arbeidsbelastning og ansattpreferanser. Arbeidsbelastningen består av timebelastning og ulempebelastning, som vises hver for seg. Tabellen viser kandidatens kompetanse, kostnad, timebelastning, ulempebelastning og preferanse. Avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle tre åpne beslutninger (ÅB-1 vekting, ÅB-2 kostnadsmodell, ÅB-3 arbeidsbelastningsterskel) er løst 2026-10-06. ÅB-3 ble utvidet med ulempebelastning 2026-10-30 — se PRD §4.3, §4.4.
+**FR-er som dekkes:** FR7, FR8, FR9, FR14
 
 ### Epic 5: KI-forklaring av avveininger
 Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avveining, med reservetekst hvis modellen feiler og kjøretidstest for lekkasje. Tolkingen (FR10) kan startes parallelt med Epic 4. Forklaringen (FR11) krever `RangertKandidat` fra Epic 4. Epicet leverer også demo-modus uten nøkkel og oppsettet som lar sensor kjøre live KI (NFR14, AD-6).
@@ -230,11 +234,14 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 > **Endret 2026-10-19:** Story 1.2 eier feltet for individuell timelønn på Ansatt. Story 4.3 bruker feltet og legger ikke til egne satsfelt. Grunnen er at migreringsverktøy ikke er valgt, så en ny kolonne senere ville krevd migrering eller ny database. Se readiness-funnet i `implementation-artifacts/sprint-status.yaml`.
 
+> **Endret 2026-10-30 (ÅB-3 utvidet, FR14):** Story 1.2 eier også periodefeltene på Turnus og vakthistorikken som Ulempebelastningen i **story 4.7** trenger. Begrunnelsen er den samme som for timelønnen: migreringsverktøy er ikke valgt, så nye felt eller en annen datadekning senere ville krevd migrering eller ny database. Ulempen beregnes fra vaktenes start- og sluttidspunkt, så Vakt får ingen nye felt. Story 4.7 kan ikke ferdigstilles før historikken finnes.
+
 **Acceptance Criteria:**
 
 **Given** en tom database
 **When** utvikleren kjører den dokumenterte kommandoen for testdata
 **Then** databasen inneholder én Turnus for én avdeling med 20–30 Ansatte og deres Vakter over en periode (i mockupen Kirurgisk sengepost, uke 39–40 2026)
+**And** Turnusen har periodestart og periodeslutt (i mockupen mandag 21.09.2026 til søndag 04.10.2026), slik at Vaktvalg kan skille Vaktene i perioden fra historikken (story 1.5)
 **And** Turnusen har et tidspunkt for sist oppdatert
 **And** kommandoen kan kjøres flere ganger uten å lage duplikater
 
@@ -257,6 +264,15 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 **Then** minst én Vakt (#4127) mangler bemanning og har gyldige kandidater etter planen
 **And** minst én Vakt (#4189, nattevakt) mangler bemanning og er satt opp slik at alle Ansatte vil bli utelukket av Harde regler
 **And** minst én gyldig Kandidat i et testscenario har nok planlagte timer denne uken til at Vakten ville gitt overtid (over 36 t/uke, PRD §4.3), slik at kostnadsmodellens overtidssats faktisk testes
+
+**Given** testdataene
+**When** de lastes
+**Then** hver Ansatt har tildelte Vakter fra minst 28 døgn før periodestart (i mockupen fra og med mandag 24.08.2026) fram til periodestart, i tillegg til Vaktene i perioden, slik at måleperioden for Ulempebelastningen er dekket for alle Vakter i perioden (FR14, story 4.7)
+**And** historikkvaktene har de samme feltene som andre Vakter, er tildelt en Ansatt og har aldri markeringen «mangler bemanning»
+**And** vakttidene er faste per vakttype: dag 07:00–15:00, kveld 15:00–22:30 og natt 22:00–07:30 [ASSUMPTION]. Ulempepoengene avhenger av disse tidene (PRD §4.3).
+**And** de Ansatte har ulike turnusprofiler, fra bare dagvakter på hverdager til natt-tung turnus, slik at Ulempepoengene sprer seg omtrent fra 0 til over 250 over fire uker
+**And** minst ett testscenario har to Gyldige kandidater for samme Vakt som er nesten like på kostnad, Timebelastning og preferanse, men der den ene har klart høyere Ulempebelastning (FR9, story 4.4)
+**And** historikken lages av den samme dokumenterte kommandoen og blir lik hver gang
 
 ### Story 1.3: Innlogging for turnusansvarlig
 
@@ -344,6 +360,10 @@ So that jeg straks ser hva som må håndteres.
 **And** annenhver rad har `row-alt`
 **And** statusen «Bemannet» vises som nøytral tag, uten `ok`-farge. Mockupen bruker grønn her, men DESIGN.md reserverer `ok` for ordinær sats, og spine-dokumentet vinner ved konflikt (EXPERIENCE.md § Information Architecture)
 **And** mockupens «Se detaljer»-lenke tas ikke med, fordi ingen FR beskriver en detaljvisning for en bemannet vakt
+
+**Given** vakthistorikken før Turnusens periodestart (story 1.2)
+**When** Vaktvalg vises
+**Then** bare Vakter innenfor Turnusens periode vises, og historikken vises ikke (lagt til 2026-10-30, FR14)
 
 **Given** Vaktvalg-flaten
 **When** den vises
@@ -654,21 +674,25 @@ So that vaktendringen blir gjennomført, men bare når jeg har bestemt det (FR12
 
 ## Epic 4: Rangering etter kostnad, arbeidsbelastning og ansattpreferanser
 
-De gyldige kandidatene rangeres etter kostnad, arbeidsbelastning og ansattpreferanser. Tabellen viser kandidatens kompetanse, kostnad, arbeidsbelastning og preferanse. Avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle beregninger er deterministiske og ligger i `domene/regelmotor`, uten KI (NFR1, NFR3).
+De gyldige kandidatene rangeres etter kostnad, arbeidsbelastning og ansattpreferanser. Arbeidsbelastningen består av timebelastning (story 4.1–4.2) og ulempebelastning (story 4.7), som vises hver for seg. Tabellen viser kandidatens kompetanse, kostnad, timebelastning, ulempebelastning og preferanse. Avviksnotatet vises når turnusansvarlig velger en annen enn nr. 1. Alle beregninger er deterministiske og ligger i `domene/regelmotor`, uten KI (NFR1, NFR3).
 
-> ✅ **Epicet er ikke lenger blokkert.** ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06 — se PRD §4.3, §4.4 og § Åpne beslutninger.
+> ✅ **Epicet er ikke lenger blokkert.** ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06 — se PRD §4.3, §4.4 og § Åpne beslutninger. ÅB-3 ble utvidet med ulempebelastning 2026-10-30.
+
+> **Rekkefølge og avhengigheter (2026-10-30):** Story 4.7 bygger på vakthistorikken fra story 1.2. Story 4.4 bruker Ulempescoren fra 4.7 og kan ikke ferdigstilles før 4.7 er ferdig. Story 4.5 og 4.6 viser ulempeindikatoren fra 4.7. Anbefalt rekkefølge: 4.1 → 4.2 → 4.3 → 4.7 → 4.4 → 4.5 → 4.6. Nummeret 4.7 er valgt for å unngå omnummerering av storyene og nøklene i `sprint-status.yaml`.
 
 ### Story 4.1: Timer i perioden per kandidat
 
+> **Presisert 2026-10-30:** «Perioden» i denne storien er kalenderuken (mandag–søndag, `Europe/Oslo`) som Vakten starter i, samme uke som FR8 og kostnadsberegningen i story 4.3 bruker. Tittelen er beholdt fordi den inngår i nøkkelen i `sprint-status.yaml`. Presiseringen lukker readiness-handlingen om periode eller uke.
+
 As a turnusansvarlig,
-I want å se hvor mange timer hver gyldig kandidat allerede er satt opp på i perioden,
+I want å se hvor mange timer hver gyldig kandidat allerede er satt opp på i uken,
 So that jeg ser hvem som allerede har mye å gjøre (FR8).
 
 **Acceptance Criteria:**
 
 **Given** kandidatlisten
 **When** den vises
-**Then** hver Gyldig kandidat har en kolonne med antall timer Kandidaten er satt opp på i Turnusens periode, uten Vakten som skal bemannes
+**Then** hver Gyldig kandidat har en kolonne med antall timer Kandidaten er satt opp på i kalenderuken Vakten starter i, uten Vakten som skal bemannes
 
 **Given** Kandidatens øvrige Vakter i Turnusen
 **When** timene beregnes
@@ -683,14 +707,16 @@ So that jeg ser hvem som allerede har mye å gjøre (FR8).
 
 ÅB-3 er løst 2026-10-06 — se PRD §4.3, FR-8 for terskelen brukt i akseptansekriteriene under.
 
+> **Presisert 2026-10-30:** Linjen viser bare Timebelastningen. Ulempebelastningen vises i egen kolonne (story 4.7, UX-DR28) og påvirker ikke linjen. 90 %-grensen er en visuell indikator og gir ingen poeng i Rangeringen.
+
 As a turnusansvarlig,
-I want en linje som viser arbeidsbelastningen i forhold til en terskel,
+I want en linje som viser timebelastningen i forhold til en terskel,
 So that jeg ser med et blikk hvem som nærmer seg for mye (FR8).
 
 **Acceptance Criteria:**
 
-**Given** terskelen i PRD §4.3 (planlagte timer denne uken, uten vurdert Vakt, ÷ 36 timer)
-**When** arbeidsbelastningen beregnes
+**Given** terskelen i PRD §4.3 (planlagte timer i kalenderuken Vakten starter i, uten vurdert Vakt, ÷ 36 timer)
+**When** timebelastningen beregnes
 **Then** domenekjernen regner ut prosent av terskel deterministisk (NFR1)
 
 **Given** en Kandidat under terskelgrensen (~90 %)
@@ -736,20 +762,23 @@ So that jeg kan ta hensyn til kostnaden i valget (FR7).
 
 ÅB-1 (vekting), ÅB-2 (kostnadsmodell) og ÅB-3 (arbeidsbelastningsterskel) er alle løst 2026-10-06. Vektingen ble oppdatert 2026-10-15, og kompetansenærhet ble tatt ut — se PRD §4.3 og §4.4 for de fullstendige modellene, brukt i akseptansekriteriene under.
 
+> **Avhengighet (2026-10-30):** Arbeidsbelastningen er delt i Timebelastning 20 % og Ulempebelastning 15 %. Storien bruker Ulempescoren fra **story 4.7** og kan ikke ferdigstilles før 4.7 er ferdig. Scenarioet for Ulempebelastning krever testdataene fra **story 1.2**.
+
 As a turnusansvarlig,
 I want at de gyldige kandidatene er rangert, med nøkkeltallene synlige i hver rad,
 So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3).
 
 **Acceptance Criteria:**
 
-**Given** poengmodellen i PRD §4.4 (Kostnad 40 %, Arbeidsbelastning 35 %, Ansattpreferanse 25 %, hver 0–100 poeng)
+**Given** poengmodellen i PRD §4.4 (Kostnad 40 %, Timebelastning 20 %, Ulempebelastning 15 %, Ansattpreferanse 25 %, hver 0–100 poeng)
 **When** Rangeringen kjører
-**Then** alle Gyldige kandidater får en vektet totalscore og rangeres synkende etter den (FR9)
+**Then** alle Gyldige kandidater får totalscore = 0,40 × kostnadspoeng + 0,20 × timebelastningspoeng + 0,15 × Ulempescore + 0,25 × preferansepoeng, og rangeres synkende etter den (FR9)
+**And** vektene hentes fra de navngitte rangeringsparameterne i `domene/regelmotor`, sammen med taket for Ulempescore
 **And** Rangeringen skjer bare i `domene/regelmotor` og er deterministisk: samme input gir samme rekkefølge, også ved likhet mellom kandidater (NFR1)
 
 **Given** porten `RangertKandidat` i `domene/porter`
 **When** Rangeringen produserer resultatet
-**Then** hver `RangertKandidat` har minst kandidat-referanse, Kompetansenivå, kostnadstype og beløp, arbeidsbelastning (timer og prosent av terskel), rangeringsplass og eventuell `TolketPreferanse` (AD-1)
+**Then** hver `RangertKandidat` har minst kandidat-referanse, Kompetansenivå, kostnadstype og beløp, Timebelastning (timer og prosent av terskel), Ulempebelastning (Ulempepoeng, Ulempescore og timer fordelt på kveld, helg og natt), rangeringsplass og eventuell `TolketPreferanse` (AD-1)
 **And** bare `domene/regelmotor` konstruerer `RangertKandidat`
 
 **Given** at KI-tolkningen av preferanser ikke er på plass ennå (Epic 5)
@@ -760,13 +789,17 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 **When** Rangeringen kjører
 **Then** billigste Kandidat er ikke rangert øverst (FR9, SM-6)
 
-**Given** to Gyldige kandidater med samme kostnad, arbeidsbelastning og Ansattpreferanse, men ulikt Kompetansenivå over Vaktens minstekrav
+**Given** testscenarioet fra story 1.2 med to Gyldige kandidater som er nesten like på kostnad, Timebelastning og preferanse, men der den ene har klart høyere Ulempebelastning
+**When** Rangeringen kjører
+**Then** Kandidaten med lavest Ulempebelastning er rangert over den andre (FR9, FR14)
+
+**Given** to Gyldige kandidater med samme kostnad, Timebelastning, Ulempebelastning og Ansattpreferanse, men ulikt Kompetansenivå over Vaktens minstekrav
 **When** Rangeringen kjører
 **Then** kandidatene får samme totalscore, fordi kompetanse bare vurderes som Hard regel og ikke gir rangeringspoeng (FR2, FR9)
 
 **Given** kandidatflaten
 **When** Rangeringen vises
-**Then** rangeringstabellen har kolonnene rangeringsnummer, kandidat (navn og `meta`-undertekst), Kompetansenivå med tag, kostnad, arbeidsbelastning, preferanse med tag og en tom kolonne for ekspander-lenken fra Epic 5 (UX-DR7)
+**Then** rangeringstabellen har kolonnene rangeringsnummer, kandidat (navn og `meta`-undertekst), Kompetansenivå med tag, kostnad, timebelastning, ulempe (fra story 4.7, UX-DR28), preferanse med tag og en tom kolonne for ekspander-lenken fra Epic 5 (UX-DR7)
 **And** rangeringsnummeret vises i `accent`, fet og 14px (UX-DR8)
 **And** annenhver rad har `row-alt` (UX-DR7)
 **And** den alfabetiske listen fra story 2.1 er erstattet av tabellen
@@ -774,6 +807,8 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 ### Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten
 
 ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06. Storien bygger på Rangeringen i 4.4 og nøkkeltallene i 4.2 og 4.3, og kan implementeres når de er ferdige.
+
+> **Avhengighet (2026-10-30):** Storien viser også ulempeindikatoren fra **story 4.7** (UX-DR28), og krever at 4.7 er ferdig.
 
 As a turnusansvarlig,
 I want å se nøkkeltallene for valgt kandidat, og en nøytral sammenligning når jeg velger en annen enn nr. 1,
@@ -783,7 +818,7 @@ So that jeg tar et bevisst valg når jeg avviker fra anbefalingen (FR12).
 
 **Given** Godkjenning-flaten
 **When** kandidatkortet vises
-**Then** det viser kostnadsindikator og arbeidsbelastningslinje i tillegg til navn og Kompetansenivå (UX-DR17)
+**Then** det viser kostnadsindikator, arbeidsbelastningslinje (Timebelastning) og ulempeindikator med poengsum og fordeling (UX-DR28), i tillegg til navn og Kompetansenivå (UX-DR17)
 
 **Given** at valgt Kandidat er den topprangerte
 **When** Godkjenning-flaten vises
@@ -791,13 +826,15 @@ So that jeg tar et bevisst valg når jeg avviker fra anbefalingen (FR12).
 
 **Given** at valgt Kandidat ikke er den topprangerte
 **When** Godkjenning-flaten vises
-**Then** avviksnotatet «Avvik fra anbefalt rangering» vises med stiplet kant, med kostnad, Kompetansenivå og arbeidsbelastning side om side for valgt og topprangert Kandidat (UX-DR18)
+**Then** avviksnotatet «Avvik fra anbefalt rangering» vises med stiplet kant, med kostnad, Kompetansenivå, Timebelastning og Ulempebelastning side om side for valgt og topprangert Kandidat (UX-DR18)
 **And** notatet inneholder «Turnushjelperen anbefaler, den bestemmer aldri selv.»
 **And** notatet blokkerer ikke godkjenningen, og teksten antyder ikke at valget er feil (UX-DR23)
 
 ### Story 4.6: Rangeringstabellen på smalere skjermer
 
 > **Åpen beslutning ÅB-7 (blokkerer ikke). Midlertidig løsning:** Breakpoints og stablingsmønster er ikke besluttet. Storien bygger på forslaget i EXPERIENCE.md § Responsive & Platform.
+
+> **Avhengighet (2026-10-30):** Tabellen har fått ulempekolonnen fra **story 4.7** (UX-DR28), som også må vises på smalere skjermer. Storien krever at 4.4 og 4.7 er ferdige.
 
 As a turnusansvarlig,
 I want å kunne bruke Turnushjelperen på nettbrett og mobil,
@@ -815,11 +852,69 @@ So that jeg kan finne en erstatter også når jeg ikke sitter ved PC-en.
 
 **Given** en mobilbredde
 **When** kandidatflaten vises
-**Then** hver kandidat vises som et stablet kort med rangering, navn og kostnad øverst og arbeidsbelastning under, uten horisontal scroll (UX-DR25)
+**Then** hver kandidat vises som et stablet kort med rangering, navn og kostnad øverst og arbeidsbelastning (timebelastningslinje og ulempeindikator med fordeling) under, uten horisontal scroll (UX-DR25, UX-DR28)
 
 **Given** alle flatene (Logg inn, Vaktvalg, kandidatflaten og Godkjenning)
 **When** de vises på mobilbredde
 **Then** de kan brukes uten horisontal scroll
+
+### Story 4.7: Ulempebelastning per kandidat
+
+> **Lagt til 2026-10-30 (ÅB-3 utvidet, FR14).** Ny funksjonalitet: arbeidsbelastningen får en del for ubekvem arbeidstid i tillegg til timene. Se PRD §4.3 (Ulempemodell) og §4.4.
+>
+> **Avhengigheter:**
+> - **Bygger på story 1.2:** vakthistorikk fra minst 28 døgn før periodestart, faste vakttider og turnusprofiler med spredning. Datamodellen får ingen nye felt i denne storien. Alt beregnes fra vaktenes start- og sluttidspunkt.
+> - **Brukes av story 4.4:** Ulempescoren inngår i totalscoren med 15 %. 4.4 kan ikke ferdigstilles før denne storien er ferdig.
+> - **Brukes av story 4.5:** ulempeindikatoren vises på kandidatkortet og i avviksnotatet.
+> - **Brukes av story 4.6:** ulempekolonnen må tilpasses nettbrett og mobil.
+> - **Påvirker story 5.3 og 5.7:** feltene i `RangertKandidat` endres, så forklaringen og demo-malen kan vise til ulempe. Forhåndsgenererte Avveininger må lages etter denne storien, fordi de er nøklet på en hash av `RangertKandidat`.
+
+As a turnusansvarlig,
+I want å se hvor mye kveld, helg og natt hver gyldig kandidat har hatt de siste fire ukene,
+So that jeg ikke legger ubekvemme vakter på de samme personene igjen og igjen (FR14).
+
+**Acceptance Criteria:**
+
+**Given** Ulempemodellen i PRD §4.3 (hverdag 06–18 = 0, hverdag 18–22 = 1, helg 06–22 = 2, natt 22–06 = 3 Ulempepoeng per time)
+**When** Ulempebelastningen beregnes for en Gyldig kandidat
+**Then** domenekjernen summerer Ulempepoeng for Kandidatens Vakter i de 28 døgnene før Vaktens starttidspunkt, uten Vakten selv (FR14)
+**And** hver arbeidstime telles bare én gang, i kategorien med høyest poeng (natt > helg > kveld > dag)
+**And** tiden regnes i faktisk forløpt tid i `Europe/Oslo` med minuttoppløsning, og poengene avrundes først ved visning
+**And** en Vakt som krysser grensen for måleperioden, telles bare for delen innenfor
+**And** helligdager regnes som vanlige ukedager [ASSUMPTION, PRD §9]
+**And** beregningen skjer bare i `domene/regelmotor`, er deterministisk og bruker ikke KI (NFR1, NFR3)
+
+**Given** taket for Ulempescore i de navngitte rangeringsparameterne (standard 300 Ulempepoeng)
+**When** Ulempescoren beregnes
+**Then** Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak))
+**And** taket sendes inn som argument, slik at det kan justeres ett sted og varieres i testene, og det leses ikke fra en miljøvariabel
+**And** lik poengsum gir lik Ulempescore, uavhengig av hvilke andre Kandidater som er gyldige
+
+**Given** porten `RangertKandidat`
+**When** Ulempebelastningen er beregnet
+**Then** Ulempepoeng, Ulempescore og timer fordelt på kveld, helg og natt er tilgjengelige for Rangeringen i story 4.4 (AD-1)
+**And** fordelingen følger samme prioritet som poengene, slik at kveldstimer × 1 + helgetimer × 2 + nattetimer × 3 = Ulempepoeng
+
+**Given** kandidatlisten
+**When** den vises
+**Then** hver Gyldig kandidat har en ulempekolonne rett etter timebelastningen, med samlet poengsum i `body` (for eksempel «136 p») og fordelingen i `meta` (for eksempel «kveld 22 t · helg 21 t · natt 29 t») (UX-DR28)
+**And** kolonnen har ingen terskel, ingen linje og ingen fargeskifte. 90 %-grensen gjelder bare timebelastningslinjen (UX-DR9).
+
+**Given** en Kandidat uten Vakter i måleperioden
+**When** ulempekolonnen vises
+**Then** verdien er «0 p» og Ulempescoren 100, ikke tom
+
+**Given** testmodulen `tester/regelmotor/test_ulempebelastning.py`
+**When** storien er ferdig
+**Then** den dekker:
+- grensene 05:59/06:00, 17:59/18:00 og 21:59/22:00 på hverdag
+- natt fra fredag til lørdag, natt fra søndag til mandag, og lørdag 05:00–07:00 (natt går over til helg)
+- en kveldsvakt fredag 15:00–22:30 (kveld, deretter natt) og en kveldsvakt lørdag (helg, deretter natt)
+- nattevakt over begge sommertidsovergangene, med riktig antall faktisk forløpte timer
+- en Vakt som krysser grensen for måleperioden, og en Vakt som starter nøyaktig på grensen
+- at Vakten som vurderes, ikke telles
+- Ulempepoeng lik 0, lik taket og over taket, og et annet tak enn 300
+- to Kandidater med lik poengsum, og at resultatet er likt ved gjentatt kjøring (NFR1)
 
 ## Epic 5: KI-forklaring av avveininger
 
@@ -895,6 +990,7 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 **When** `adaptere/api` ber `adaptere/ki` om en forklaring
 **Then** `adaptere/ki` får bare data formet som porten `RangertKandidat`, og kan ikke kalle inn i domenekjernen for å hente mer (AD-1)
 **And** forklaringen inneholder hvorfor Kandidaten kan ta Vakten, hva som trekker opp, hva som trekker ned, kostnadsvurderingen og relevante preferanser (FR11)
+**And** forklaringen kan vise til Timebelastning og Ulempebelastning med fordeling på kveld, helg og natt, men bare med tallene i `RangertKandidat`. KI regner dem aldri ut selv (NFR3, story 4.7).
 
 **Given** rangeringstabellen
 **When** siden lastes
@@ -1021,6 +1117,7 @@ So that jeg kan vurdere Turnushjelperen uten gruppens tjenester (NFR14, SM-9).
 **Then** de genereres med `OpenRouterKiAdapter` og samme prompt som live-modus, via en dokumentert kommando
 **And** modell, dato og kommando logges i `docs/ki-logg/`
 **And** vakt #4127 dekkes, så demoflyten viser forhåndsgenererte Avveininger fra start til slutt
+**And** de genereres etter at story 4.7 er ferdig, fordi feltene for Ulempebelastning inngår i hashen av `RangertKandidat`. Svar generert før det, ville gitt maltekst (lagt til 2026-10-30).
 
 **Given** live-modus og en feil fra OpenRouter
 **When** Avveiningen hentes

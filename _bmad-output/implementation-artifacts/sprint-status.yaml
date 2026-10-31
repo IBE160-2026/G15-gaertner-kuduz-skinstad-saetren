@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 10-19-2026 18:47
+last_updated: 10-30-2026 10:00
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -65,6 +65,7 @@ development_status:
   4-4-rangering-av-gyldige-kandidater: backlog
   4-5-avviksnotat-og-nøkkeltall-på-godkjenningsflaten: backlog
   4-6-rangeringstabellen-på-smalere-skjermer: backlog
+  4-7-ulempebelastning-per-kandidat: backlog
   epic-4-retrospective: optional
 
   epic-5: backlog
@@ -93,7 +94,15 @@ action_items:
   - epic: 4
     action: "Readiness 2026-10-19: Avklar om arbeidsbelastning i RangertKandidat er
       timer i perioden (story 4.1, FR8) eller denne uken (story 4.2/4.3, ÅB-3). Før
-      story 4.1."
+      story 4.1. Avklart 2026-10-30: kalenderuken Vakten starter i (PRD FR-8, epics
+      story 4.1)."
+    owner: "gruppa"
+    status: done
+  - epic: 1
+    action: "ÅB-3 utvidet 2026-10-30: story 1.2 må ha periodestart/-slutt på Turnus,
+      vakthistorikk fra minst 28 døgn før periodestart, faste vakttider og turnusprofiler
+      med spredning (epics story 1.2). Koordiner med den som har branchen
+      story-1.2-fiktiv-turnus før testdataene lages. Story 4.7 avhenger av dette."
     owner: "gruppa"
     status: open
   - epic: 1
