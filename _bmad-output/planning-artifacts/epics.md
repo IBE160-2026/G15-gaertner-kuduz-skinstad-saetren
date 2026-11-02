@@ -111,7 +111,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 |---|---|---|---|---|
 | **ÅB-1** | ~~Innbyrdes vekting mellom Myke faktorer i Rangeringen~~ — **løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30.** Poengbasert modell (0–100 poeng per faktor, vektet sum): Kostnad 40 %, Arbeidsbelastning 35 %, Ansattpreferanse 25 %. Arbeidsbelastningen er delt i Timebelastning 20 % og Ulempebelastning 15 % (2026-10-30, se ÅB-3). Kompetanse vurderes bare som et hardt minstekrav og gir ingen rangeringspoeng. Se PRD §4.4 for full tabell og poengsettingsregler. | Product brief og PRD §4.4 (oppdatert) | FR9 og alle stories som implementerer Rangering | **Løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30** |
 | **ÅB-2** | ~~Kostnadsmodellen: hvilke satser og betingelser som skiller ordinær sats fra overtidssats~~ — **løst 2026-10-06.** Individuell timelønn per Ansatt. Ordinær terskel 36 t/uke (addendum §2). Timer utover: 150 % sats. Se PRD §4.3. | PRD §4.3 (oppdatert) | FR7 og stories som implementerer kostnadsberegning | **Løst 2026-10-06** |
-| **ÅB-3** | ~~Terskelen for arbeidsbelastning: hva «~90 %» er prosent av~~ — **løst 2026-10-06, utvidet 2026-10-30.** Gjenbruker ÅB-2s 36-timers normaluke: planlagte timer denne uken (uten vurdert Vakt) ÷ 36, «høy belastning» ved ~90 % (ca. 32–33 t). Se PRD §4.3, FR-8. **Utvidet 2026-10-30:** «Denne uken» er kalenderuken Vakten starter i. Arbeidsbelastningen består nå av Timebelastning (FR8, 20 %) og Ulempebelastning (FR14, 15 %). Ulempemodellen gir 0/1/2/3 poeng per time for hverdag dag, hverdag kveld, helg og natt, med 28 døgn bakover fra Vaktens start og fast skala med konfigurerbart tak på 300. 90 %-grensen beholdes som visuell indikator for Timebelastning. Se PRD §4.3, §4.4. | PRD §4.3, §4.4 (oppdatert) | FR8, FR14, feltene for Timebelastning og Ulempebelastning i `RangertKandidat`, UX-DR9 og UX-DR28, story 4.7 | **Løst 2026-10-06, utvidet 2026-10-30** |
+| **ÅB-3** | ~~Terskelen for arbeidsbelastning: hva «~90 %» er prosent av~~ — **løst 2026-10-06, utvidet 2026-10-30, godkjent av gruppa 2026-11-02.** Gjenbruker ÅB-2s 36-timers normaluke: planlagte timer denne uken (uten vurdert Vakt) ÷ 36, «høy belastning» ved ~90 % (ca. 32–33 t). Se PRD §4.3, FR-8. **Utvidet 2026-10-30:** «Denne uken» er kalenderuken Vakten starter i. Arbeidsbelastningen består nå av Timebelastning (FR8, 20 %) og Ulempebelastning (FR14, 15 %). Ulempemodellen gir 0/1/2/3 poeng per time for hverdag dag, hverdag kveld, helg og natt, med 28 døgn bakover fra Vaktens start og fast skala med konfigurerbart tak på 300. 90 %-grensen beholdes som visuell indikator for Timebelastning. Se PRD §4.3, §4.4. | PRD §4.3, §4.4 (oppdatert) | FR8, FR14, feltene for Timebelastning og Ulempebelastning i `RangertKandidat`, UX-DR9 og UX-DR28, story 4.7 | **Løst 2026-10-06, utvidet 2026-10-30, godkjent av gruppa 2026-11-02** |
 | **ÅB-4** | Om turnusansvarlig skal kunne redigere Ansattpreferanser i appen. | PRD §2.2 | Ingenting. Midlertidig beslutning: preferansene er **forhåndsdefinert i testdataene** i v1 inntil videre, og ingen story bygger et redigeringsskjema. | Åpen, blokkerer ikke |
 | **ÅB-5** | Hvordan 11-timersregelen regnes: hvile før og etter vakten hver for seg, eller et rullerende vindu på 24 timer. | aml. § 10-8 (1), addendum §2 | Ingenting. Midlertidig tolkning: hvile før og etter vakten må hver være minst 11 timer (story 2.3). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_11_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
 | **ÅB-6** | Hvilket vindu 35-timersregelen gjelder for: kalenderuke (man–søn) eller et rullerende vindu på 7 dager. | aml. § 10-8 (2), addendum §2 | Ingenting. Midlertidig tolkning: kalenderuke (story 2.4). Velger gruppa en annen tolkning, må regelen og grensetestene i `test_35_timersregelen.py` skrives om. | Åpen, blokkerer ikke |
@@ -147,7 +147,7 @@ UX-DR24: Tilgjengelighetsgulv. Kontrasten skal være tilstrekkelig for tekst og 
 UX-DR25: Responsiv tilpasning [ASSUMPTION, må bekreftes]. Desktop viser full tabell. Nettbrett beholder radform, men mindre kritiske kolonner flyttes inn i raden. Mobil viser stablede kort med rangering, navn og kostnad øverst og arbeidsbelastning (timebelastningslinje og ulempeindikator) og Avveining under, uten horisontal scroll.
 UX-DR26: Bevisst utelatt. Det finnes ingen SMS eller automatisk varsling til valgt Kandidat etter godkjenning, ingen tastatursnarveier utover tab/enter, ingen swipe- eller dra-mønstre og ingen PWA-forpliktelse i v1.
 UX-DR27: Merking av KI-kilde. Hvert forklaringspanel har en kildelinje i `meta`: «KI-generert · <modellnavn>» (live), «Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>» eller «Satt sammen fra beregnede tall, ikke KI-generert» (mal). I demo-modus viser appbaren også en nøytral tag, «Demo-modus». Ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand (NFR14, AD-6).
-UX-DR28: Ulempeindikator (lagt til 2026-10-30). Egen kolonne i rangeringstabellen, rett etter timebelastning, med overskriften «Ulempe». Samlet poengsum står i `body`, for eksempel «136 p», og fordelingen står under i `meta`, for eksempel «kveld 22 t · helg 21 t · natt 29 t». Fordelingen bruker samme prioritet som poengene (natt > helg > kveld), så en nattetime i helgen vises som natt. En Kandidat uten Vakter i måleperioden viser «0 p», ikke tom. Indikatoren har ingen terskel, ingen linje og ingen fargeskifte, og bruker aldri `warn` eller `danger`. Den brukes i rangeringstabellen, kandidatkortet på Godkjenning og avviksnotatet (FR14).
+UX-DR28: Ulempeindikator (lagt til 2026-10-30). Egen kolonne i rangeringstabellen, rett etter timebelastning, med overskriften «Ulempe». Samlet poengsum står i `body`, for eksempel «182 p», og fordelingen står under i `meta`, for eksempel «kveld 16 t · helg 32 t · natt 34 t». Fordelingen bruker samme prioritet som poengene (natt > helg > kveld), så en nattetime i helgen vises som natt. En Kandidat uten Vakter i måleperioden viser «0 p», ikke tom. Indikatoren har ingen terskel, ingen linje og ingen fargeskifte, og bruker aldri `warn` eller `danger`. Den brukes i rangeringstabellen, kandidatkortet på Godkjenning og avviksnotatet (FR14).
 
 ### FR-dekningskart
 
@@ -269,7 +269,7 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 **When** de lastes
 **Then** hver Ansatt har tildelte Vakter fra minst 28 døgn før periodestart (i mockupen fra og med mandag 24.08.2026) fram til periodestart, i tillegg til Vaktene i perioden, slik at måleperioden for Ulempebelastningen er dekket for alle Vakter i perioden (FR14, story 4.7)
 **And** historikkvaktene har de samme feltene som andre Vakter, er tildelt en Ansatt og har aldri markeringen «mangler bemanning»
-**And** vakttidene er faste per vakttype: dag 07:00–15:00, kveld 15:00–22:30 og natt 22:00–07:30 [ASSUMPTION]. Ulempepoengene avhenger av disse tidene (PRD §4.3).
+**And** vakttidene er faste per vakttype: dag 07:00–15:00, kveld 15:00–23:00 og natt 23:00–07:00, som i mockupene og story 1.5 (besluttet av gruppa 2026-11-02). Ulempepoengene avhenger av disse tidene (PRD §4.3).
 **And** de Ansatte har ulike turnusprofiler, fra bare dagvakter på hverdager til natt-tung turnus, slik at Ulempepoengene sprer seg omtrent fra 0 til over 250 over fire uker
 **And** minst ett testscenario har to Gyldige kandidater for samme Vakt som er nesten like på kostnad, Timebelastning og preferanse, men der den ene har klart høyere Ulempebelastning (FR9, story 4.4)
 **And** historikken lages av den samme dokumenterte kommandoen og blir lik hver gang
@@ -881,7 +881,7 @@ So that jeg ikke legger ubekvemme vakter på de samme personene igjen og igjen (
 **And** hver arbeidstime telles bare én gang, i kategorien med høyest poeng (natt > helg > kveld > dag)
 **And** tiden regnes i faktisk forløpt tid i `Europe/Oslo` med minuttoppløsning, og poengene avrundes først ved visning
 **And** en Vakt som krysser grensen for måleperioden, telles bare for delen innenfor
-**And** helligdager regnes som vanlige ukedager [ASSUMPTION, PRD §9]
+**And** helligdager regnes som vanlige ukedager (bekreftet av gruppa 2026-11-02, PRD §4.3)
 **And** beregningen skjer bare i `domene/regelmotor`, er deterministisk og bruker ikke KI (NFR1, NFR3)
 
 **Given** taket for Ulempescore i de navngitte rangeringsparameterne (standard 300 Ulempepoeng)
@@ -897,7 +897,7 @@ So that jeg ikke legger ubekvemme vakter på de samme personene igjen og igjen (
 
 **Given** kandidatlisten
 **When** den vises
-**Then** hver Gyldig kandidat har en ulempekolonne rett etter timebelastningen, med samlet poengsum i `body` (for eksempel «136 p») og fordelingen i `meta` (for eksempel «kveld 22 t · helg 21 t · natt 29 t») (UX-DR28)
+**Then** hver Gyldig kandidat har en ulempekolonne rett etter timebelastningen, med samlet poengsum i `body` (for eksempel «182 p») og fordelingen i `meta` (for eksempel «kveld 16 t · helg 32 t · natt 34 t») (UX-DR28)
 **And** kolonnen har ingen terskel, ingen linje og ingen fargeskifte. 90 %-grensen gjelder bare timebelastningslinjen (UX-DR9).
 
 **Given** en Kandidat uten Vakter i måleperioden
@@ -909,7 +909,7 @@ So that jeg ikke legger ubekvemme vakter på de samme personene igjen og igjen (
 **Then** den dekker:
 - grensene 05:59/06:00, 17:59/18:00 og 21:59/22:00 på hverdag
 - natt fra fredag til lørdag, natt fra søndag til mandag, og lørdag 05:00–07:00 (natt går over til helg)
-- en kveldsvakt fredag 15:00–22:30 (kveld, deretter natt) og en kveldsvakt lørdag (helg, deretter natt)
+- en kveldsvakt fredag 15:00–23:00 (kveld, deretter natt) og en kveldsvakt lørdag (helg, deretter natt)
 - nattevakt over begge sommertidsovergangene, med riktig antall faktisk forløpte timer
 - en Vakt som krysser grensen for måleperioden, og en Vakt som starter nøyaktig på grensen
 - at Vakten som vurderes, ikke telles

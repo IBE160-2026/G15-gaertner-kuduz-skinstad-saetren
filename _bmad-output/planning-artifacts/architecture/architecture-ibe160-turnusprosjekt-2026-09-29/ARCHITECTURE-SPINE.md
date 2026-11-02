@@ -190,7 +190,7 @@ turnushjelperen/
 
 ## Deferred
 
-- ~~**Vekting mellom Myke faktorer i Rangeringen**~~ (PRD §8, spørsmål 2) — **løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30.** Kostnad 40 %, arbeidsbelastning 35 % (Timebelastning 20 %, Ulempebelastning 15 %), Ansattpreferanse 25 %. Kompetanse vurderes bare som Hard regel og gir ingen rangeringspoeng. Vektene og taket for Ulempescore (300) er navngitte parametere i `domene/regelmotor`, ikke miljøvariabler. Se PRD §4.3, §4.4 og ÅB-1/ÅB-3 i epics.md.
+- ~~**Vekting mellom Myke faktorer i Rangeringen**~~ (PRD §8, spørsmål 2) — **løst 2026-10-06, oppdatert 2026-10-15 og 2026-10-30, godkjent av gruppa 2026-11-02.** Kostnad 40 %, arbeidsbelastning 35 % (Timebelastning 20 %, Ulempebelastning 15 %), Ansattpreferanse 25 %. Kompetanse vurderes bare som Hard regel og gir ingen rangeringspoeng. Vektene og taket for Ulempescore (300) er navngitte parametere i `domene/regelmotor`, ikke miljøvariabler. Se PRD §4.3, §4.4 og ÅB-1/ÅB-3 i epics.md.
 - **Konkret detaljnivå i kostnadsmodellen** (PRD §8, spørsmål 3; FR-7) — nøyaktige satser og betingelser som skiller ordinær kostnad fra overtidskostnad er ikke fastsatt.
 - **Ordlyd for «ingen gyldige kandidater», «innlogging feilet» og «beregner rangering»** (EXPERIENCE.md § State Patterns, merket `[ASSUMPTION]`) — atferden er spesifisert (skal skille seg tydelig fra feil/lastetilstand), men eksakt tekst er åpen.
 - **Responsive breakpoints** (DESIGN.md/EXPERIENCE.md § Responsive & Platform, merket `[ASSUMPTION]`) — kun én fast desktop-bredde (1180px) er vist i mockupene; stablingsmønster for mobil/nettbrett er foreslått, ikke bekreftet.

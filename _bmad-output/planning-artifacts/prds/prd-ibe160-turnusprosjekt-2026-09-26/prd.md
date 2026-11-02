@@ -151,9 +151,9 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 - Hver arbeidstime telles bare én gang, i kategorien med høyest poeng: natt > helg > kveld > dag. En nattetime i helgen gir 3 poeng og telles som natt. Fordelingen som vises, følger samme regel, slik at kveldstimer × 1 + helgetimer × 2 + nattetimer × 3 alltid er lik Ulempepoengene.
 - Tiden regnes i faktisk forløpt tid i `Europe/Oslo` med sommertid og med minuttoppløsning. En halv time kveld gir 0,5 poeng. Poengene avrundes først ved visning.
 - Måleperioden er de 28 døgnene bakover fra Vaktens starttidspunkt. Vakten som vurderes, er ikke med. En Vakt som krysser grensen for måleperioden, telles bare for delen innenfor. Perioden regnes fra Vaktens start og ikke fra dagens dato, slik at samme input alltid gir samme resultat (SM-5).
-- **[ASSUMPTION]** Helligdager regnes som vanlige ukedager i v1.
+- Helligdager regnes som vanlige ukedager i v1 (bekreftet av gruppa 2026-11-02).
 - **Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)).** Taket er foreløpig **300 Ulempepoeng**, omtrent 100 nattetimer på fire uker. Taket er én navngitt, konfigurerbar parameter i domenekjernen, sammen med vektene i §4.4. Det skal ikke være en miljøvariabel, fordi samme input da kunne gitt ulikt resultat på ulike maskiner.
-- Skalaen er fast, ikke relativ til de Gyldige kandidatene, slik at små forskjeller gir små utslag. 40 mot 42 Ulempepoeng gir 0,1 poeng forskjell i totalscoren, mens en skala relativ til kandidatene kunne gitt opptil 15. Lik Ulempebelastning gir alltid lik Ulempescore, og en ny Kandidat endrer ikke de andres score. Taket på 300 er valgt fremfor 240 og 432 ut fra regneeksempler med typiske turnuser: vanlige turnuser gir omtrent 50–190 poeng over fire uker, nattunge 250–370 (se `.memlog.md`).
+- Skalaen er fast, ikke relativ til de Gyldige kandidatene, slik at små forskjeller gir små utslag. 40 mot 42 Ulempepoeng gir 0,1 poeng forskjell i totalscoren, mens en skala relativ til kandidatene kunne gitt opptil 15. Lik Ulempebelastning gir alltid lik Ulempescore, og en ny Kandidat endrer ikke de andres score. Taket på 300 er valgt fremfor 240 og 432 ut fra regneeksempler med typiske turnuser: vanlige turnuser gir omtrent 50–180 poeng over fire uker, nattunge 250–320. Regneeksemplene bruker vakttidene dag 07–15, kveld 15–23 og natt 23–07 (story 1.2) og kan kjøres på nytt med `scripts/ulempe_regneeksempler.py`. 432 er ikke et teoretisk maksimum, fordi overtid er tillatt, og faste nattevakter (ca. 320 poeng) får bevisst Ulempescore 0.
 - Timebelastning og Ulempebelastning vises separat. Ulempebelastningen vises med samlet poengsum og fordeling på kveld-, helg- og nattetimer, uten terskel eller fargeskifte. 90 %-grensen i FR-8 gjelder bare Timebelastningen.
 
 **Funksjonelle krav:**
@@ -367,6 +367,9 @@ Turnushjelperen v1 skal **ikke**:
 1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres. Faglærers tilbakemelding på product brief (2026-10-06) vurderer KI/regelmotor-skillet som en styrke, men bekrefter ikke eksplisitt dette spørsmålet — fortsatt åpent.
 2. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
 
+**Løst (2026-11-02):**
+- Gruppa godkjente utvidelsen av ÅB-3 (vektene 20/15 og taket på 300). Vakttidene er dag 07–15, kveld 15–23 og natt 23–07, som i mockupene. Taket på 300 er regnet om med disse tidene og står seg. Helligdager regnes som vanlige ukedager i v1.
+
 **Løst (2026-10-30):**
 - Arbeidsbelastning utvidet med ubekvem arbeidstid (utvider ÅB-3). Arbeidsbelastningens 35 % er delt i Timebelastning 20 % og Ulempebelastning 15 %. Kostnad 40 % og Ansattpreferanse 25 % er uendret. Ulempebelastningen beregnes etter Ulempemodellen i §4.3 over de 28 døgnene før Vaktens start, på fast skala med konfigurerbart tak (300 Ulempepoeng), og vises separat med fordeling på kveld, helg og natt (FR-14). 90 %-grensen beholdes som visuell indikator for Timebelastning. «Denne uken» i FR-8 er presisert til kalenderuken Vakten starter i. Se §4.3, §4.4 og epics story 4.7.
 
@@ -384,5 +387,5 @@ Turnushjelperen v1 skal **ikke**:
 
 - Fra §2.3 (UJ-1): Persona-navnet «Kari» er oppdiktet for å gjøre brukerreisen konkret — representerer ingen reell bruker, i tråd med at Turnusen er fiktiv.
 - Fra §4.2/§8: Regelutvalget (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen) er bekreftet av bruker; maks arbeidstid per døgn/uke og overtidsgrenser er bevisst utelatt fra v1 — revurderes bare hvis gruppen ønsker et bredere regelsett.
-- Fra §4.3 (Ulempemodell): Helligdager regnes som vanlige ukedager i v1. Taket på 300 Ulempepoeng bygger på regneeksempler med antatte, typiske vakttider og turnusprofiler, ikke på en kilde, og kan justeres i én parameter.
+- Fra §4.3 (Ulempemodell): Taket på 300 Ulempepoeng bygger på regneeksempler med antatte, typiske turnusprofiler, ikke på en kilde, og kan justeres i én parameter. Helligdager som vanlige ukedager var en antakelse til gruppa bekreftet det 2026-11-02.
 - Fra §7 (SM-9): Antakelse om at «kjører fra et rent klonet repo» er det addendum mener med teknisk kvalitetskriterium fra emnekravet — ikke eksplisitt bekreftet av gruppen, men utledet direkte fra addendum §6.

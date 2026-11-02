@@ -95,14 +95,16 @@ action_items:
     action: "Readiness 2026-10-19: Avklar om arbeidsbelastning i RangertKandidat er
       timer i perioden (story 4.1, FR8) eller denne uken (story 4.2/4.3, ÅB-3). Før
       story 4.1. Avklart 2026-10-30: kalenderuken Vakten starter i (PRD FR-8, epics
-      story 4.1)."
+      story 4.1). Godkjent av gruppa 2026-11-02 sammen med resten av ÅB-3."
     owner: "gruppa"
     status: done
   - epic: 1
     action: "ÅB-3 utvidet 2026-10-30: story 1.2 må ha periodestart/-slutt på Turnus,
       vakthistorikk fra minst 28 døgn før periodestart, faste vakttider og turnusprofiler
       med spredning (epics story 1.2). Koordiner med den som har branchen
-      story-1.2-fiktiv-turnus før testdataene lages. Story 4.7 avhenger av dette."
+      story-1.2-fiktiv-turnus før testdataene lages. Story 4.7 avhenger av dette.
+      Oppdatert 2026-11-02: gruppa valgte vakttidene 07–15, 15–23 og 23–07. Spesifikasjonen
+      for story 1.2 (22:00–07:30) og fasiten for #4127 og #4189 må rettes."
     owner: "gruppa"
     status: open
   - epic: 1
