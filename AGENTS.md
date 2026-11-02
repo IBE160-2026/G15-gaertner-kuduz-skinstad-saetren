@@ -109,6 +109,29 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 <!-- /bmad:context -->
 
+## Gruppevedtak og avklaringspunkter
+
+- Prosjektets beslutningsreferat ligger i
+  [docs/beslutninger/avklaringspunkter.md](docs/beslutninger/avklaringspunkter.md).
+  Les relevante punkter før planlegging, implementering eller kvalitetssikring
+  som berører dokumentets temaer, særlig seeddata, vakttyper, tidsberegning,
+  hvilekontroll, rangering, ulempbelastning, KI-kontrakter og UX.
+
+- Bruk referatet sammen med produktbrief, PRD, arkitektur og aktuelle stories.
+  Skill mellom vedtatte beslutninger, anbefalinger, åpne spørsmål og kontroller
+  som gjenstår. Et vedtak om å utføre en kontroll betyr ikke at kontrollen er utført.
+
+- Ved motstrid mellom referatet og andre styrende filer: oppgi beslutnings-ID,
+  berørte filer og hva som avviker. Foreslå en konkret løsning og be om avklaring
+  før arbeid som avhenger av konflikten. Fortsett arbeid som ikke berøres.
+
+- Henvis til relevante beslutnings-ID-er (AV-, K-, OP- og KS-) i stories,
+  PR-er og dokumentasjon når de begrunner arbeidet. Ikke kopier hele referatet.
+
+- Referatet erstatter ikke eksisterende agentinstruksjoner, loggregler,
+  tester eller godkjenningskrav. Ikke marker punkter som løst eller stories
+  som ferdige uten dokumentert grunnlag.
+
 ## Sesjonslogg
 
 - Bruk `sesjonslogg` før sluttoppsummeringen for hver fullført oppgave som endrer
