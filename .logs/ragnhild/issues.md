@@ -1,0 +1,7 @@
+# Åpne punkter
+
+- [x] 2026-10-30 [ab-3-ulempebelastning](999-2026-10-30-13-19-34-ab-3-ulempebelastning.md) — Samordne vakttidene i mockupene (kveld 15–23, natt 23–07) med story 1.2 (kveld 15–22:30, natt 22–07:30) når testdata og vakttider er endelig fastsatt. Story 1.2 gjelder foreløpig. (løst 2026-11-02: gruppa valgte mockup-tidene, story 1.2 rettet i `1a7ad04`)
+- [x] 2026-10-30 [ab-3-ulempebelastning](999-2026-10-30-13-19-34-ab-3-ulempebelastning.md) — Gi Mithad Kuduz beskjed om de nye kravene til story 1.2 (periodefelt på Turnus, historikk fra 24.08.2026, vakttider, turnusprofiler) før testdataene lages (løst 2026-11-02: Mithad gjennomgikk PR #4 som eier av story 1.2 30.10)
+- [x] 2026-10-30 [ab-3-ulempebelastning](999-2026-10-30-13-19-34-ab-3-ulempebelastning.md) — Gruppa bekrefter at helligdager regnes som vanlige ukedager i v1 (PRD §9, story 4.7) (løst 2026-11-02: bekreftet av gruppa)
+- [x] 2026-10-30 [ab-3-ulempebelastning](999-2026-10-30-13-19-34-ab-3-ulempebelastning.md) — Avgjøre om ÅB-3-dokumentendringene også skal ha en KI-logg i `docs/ki-logg/` (løst 2026-11-02: `docs/ki-logg/2026-11-02-ab-3-ulempebelastning.md`)
+- [ ] 2026-11-02 [ab-3-ulempebelastning](999-2026-10-30-13-19-34-ab-3-ulempebelastning.md) — Mithads spesifikasjon for story 1.2 (`story-1.2-fiktiv-turnus`) bruker fortsatt 15:00–22:30 og 22:00–07:30. Den og fasiten for #4127 og #4189 må rettes til 15–23 og 23–07. Mithad følger opp i sin branch; lukkes når det er merget til `main`.
