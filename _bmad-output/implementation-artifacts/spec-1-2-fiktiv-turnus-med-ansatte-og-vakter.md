@@ -40,6 +40,7 @@ context:
 - (2026-10-30) Turnus har `periode_start` og `periode_slutt` som halvåpent intervall [21.09.2026 00:00, 05.10.2026 00:00). En Vakt hører til perioden når den starter innenfor.
 - (2026-10-30) 1.2 bygges på `main`. Historikk fra 24.08 og ulempescenarioet fra PR #4 legges til seedingen når PR #4 er merget.
 - (2026-10-30) De 24 utelukkede på #4189 fordeles 13 kolliderende, 8 elleve-timer og 3 kompetanse.
+- (2026-11-02, besluttet av gruppa) Fjerde vakttype: mellomvakt 10:00–18:00 (`mellom`). Den bruker Kompetansenivået for dag og har ingen egen nøkkel i kompetansen.
 
 ## I/O & Edge-Case Matrix
 
@@ -67,7 +68,7 @@ context:
 - `AGENTS.md` -- «Kjøring og verifisering», punktet om backend. Innledningen sier «ingen domenelogikk ennå».
 - `docs/ki-logg/2026-10-19-prosjektoppsett.md` -- mal for KI-loggen.
 - Harde regler (epics.md, story 2.1–2.4) som testhjelperne implementerer:
-  - **Kompetanse:** nivået for vakttypen mangler eller er under minstenivået.
+  - **Kompetanse:** nivået for vakttypen mangler eller er under minstenivået. For `mellom` slås nivået for `dag` opp.
   - **Kolliderende vakt:** overlapp ≥ 1 min på halvåpne `[start, slutt)`.
   - **Elleve-timer:** nærmeste ikke-overlappende vakt før eller etter gir under 11 t hvile i reell tid. Overlappende vakter hører bare til kollisjonsregelen.
   - **Trettifem-timer:** med vakten lagt til mangler en berørt kalenderuke (man.–søn.) 35 t sammenhengende fri. Fritiden regnes fra unionen av vaktene.
@@ -83,7 +84,7 @@ context:
 - [ ] `backend/adaptere/lagring/modeller.py` -- TypeDecoratoren `OsloTid` avviser naive `datetime`.
   - `TurnusRad`: `avdeling`, `periode_start`, `periode_slutt`, `sist_oppdatert`.
   - `AnsattRad`: navn, stilling, ansiennitet, timelønn, `kompetanse` som JSON `{"dag"|"kveld"|"natt": nivå}` og valgfri `preferanse`.
-  - `VaktRad`: `turnus_id`, `vaktnummer`, `vakttype`, `start`, `slutt`, `minstenivå`, `tildelt_ansatt_id`, `mangler_bemanning`, `satt_opp_ansatt_id`, `meldt_fra` og `meldt_fra_grunn`.
+  - `VaktRad`: `turnus_id`, `vaktnummer`, `vakttype` (`dag`, `mellom`, `kveld` eller `natt`), `start`, `slutt`, `minstenivå`, `tildelt_ansatt_id`, `mangler_bemanning`, `satt_opp_ansatt_id`, `meldt_fra` og `meldt_fra_grunn`.
 - [ ] `backend/adaptere/lagring/testdata.py` -- Ansatte med faste ID-er 1–25 og Vakter som faste data, uten tilfeldighet.
   - `FASIT`: vaktnummer → ansattnavn → regel eller «gyldig».
   - `fyll_testdata(session)` og `__main__`, som skriver radtallene.
@@ -104,7 +105,7 @@ context:
 
 ## Design Notes
 
-**Bemanning:** omtrent 13 på jobb per døgn, for eksempel 6 dag, 4 kveld og 3 natt. Det gir omtrent 180 Vakter. Vaktnumrene ligger i serien #4100–#4299. Mockupens vakter beholder nummer, Ansatt og dato:
+**Bemanning:** omtrent 13 på jobb per døgn, for eksempel 5 dag, 2 mellom, 3 kveld og 3 natt, med færre i helgen. Mellomvakter gir naturlige utelukkelser: søndag 27.09 kolliderer med #4127, og mandag 28.09 og tirsdag 29.09 gir 4 t og 2,5 t hvile rundt #4189. Fordelingene under står seg. Det gir omtrent 180 Vakter. Vaktnumrene ligger i serien #4100–#4299. Mockupens vakter beholder nummer, Ansatt og dato:
 - #4128: kveld 27.09, Per Halvorsen.
 - #4130: dag 28.09, Mette Solberg.
 - #4131: natt 28.09, Thomas Nygård.
