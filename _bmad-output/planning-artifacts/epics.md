@@ -271,7 +271,7 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 **And** historikkvaktene har de samme feltene som andre Vakter, er tildelt en Ansatt og har aldri markeringen «mangler bemanning»
 **And** vakttidene er faste per vakttype: dag 07:00–15:00, mellom 10:00–18:00, kveld 15:00–23:00 og natt 23:00–07:00. Dag, kveld og natt er som i mockupene og story 1.5. Alle tidene er besluttet av gruppa 2026-11-02. Ulempepoengene avhenger av disse tidene (PRD §4.3).
 **And** de Ansatte har ulike turnusprofiler, fra bare dagvakter på hverdager til natt-tung turnus, slik at Ulempepoengene sprer seg omtrent fra 0 til over 250 over fire uker
-**And** minst ett testscenario har to Gyldige kandidater for samme Vakt som er nesten like på kostnad, Timebelastning og preferanse, men der den ene har klart høyere Ulempebelastning (FR9, story 4.4)
+**And** minst ett testscenario har to Gyldige kandidater for samme Vakt med identisk kostnad, Timebelastning og preferansepoeng, men ulik Ulempebelastning. Forventet forskjell i totalscore er beregnet på forhånd og dokumentert (AV-12) (FR9, story 4.4)
 **And** historikken lages av den samme dokumenterte kommandoen og blir lik hver gang
 
 ### Story 1.3: Innlogging for turnusansvarlig
