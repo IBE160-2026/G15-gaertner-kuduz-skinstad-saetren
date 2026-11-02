@@ -36,10 +36,10 @@ context:
 - Sist oppdatert er 27.09.2026 06:20.
 - 24 kandidater vurderes per vakt, fordi den som var satt opp ikke regnes med.
 - Timelønnen er kr 350–420. Overtid er timer over 36 per kalenderuke, til 150 %. Overtidssatsen lagres ikke.
-- (2026-10-30) Vakttidene følger PR #4: dag 07:00–15:00, kveld 15:00–22:30, natt 22:00–07:30. Vaktskiftene overlapper, og overlapp er kolliderende vakt.
+- (2026-11-02, besluttet av gruppa, erstatter PR #4-tidene fra 2026-10-30) Alle vakter er 8 timer: dag 07:00–15:00, mellom 10:00–18:00, kveld 15:00–23:00 og natt 23:00–07:00. Vakter som møtes i et skift, kolliderer ikke, fordi vaktene er halvåpne intervaller.
 - (2026-10-30) Turnus har `periode_start` og `periode_slutt` som halvåpent intervall [21.09.2026 00:00, 05.10.2026 00:00). En Vakt hører til perioden når den starter innenfor.
 - (2026-10-30) 1.2 bygges på `main`. Historikk fra 24.08 og ulempescenarioet fra PR #4 legges til seedingen når PR #4 er merget.
-- (2026-10-30) De 24 utelukkede på #4189 fordeles 13 kolliderende, 8 elleve-timer og 3 kompetanse.
+- (2026-11-02, erstatter 13 · 8 · 3) De 24 utelukkede på #4189 fordeles 2 kolliderende, 18 elleve-timer, 3 kompetanse og 1 trettifem-timer.
 - (2026-11-02, besluttet av gruppa) Fjerde vakttype: mellomvakt 10:00–18:00 (`mellom`). Den bruker Kompetansenivået for dag og har ingen egen nøkkel i kompetansen.
 
 ## I/O & Edge-Case Matrix
@@ -49,7 +49,7 @@ context:
 | Første kjøring | Ingen databasefil | 1 Turnus, 25 Ansatte, Vakter i hele perioden, bare de tre tabellene | N/A |
 | Ny kjøring | Fylt database | Samme radtall, ingen duplikater | N/A |
 | #4127 | Dagvakt 27.09 07–15, krav 3 | Mangler bemanning. Silje satt opp, meldte fra 27.09 06:14. Minst 3 gyldige ifølge fasiten | N/A |
-| #4189 | Natt 28.09 22:00–29.09 07:30 | Mangler bemanning. Alle 24 utelukkes, og hver grunn stemmer med dataene | N/A |
+| #4189 | Natt 28.09 23:00–29.09 07:00 | Mangler bemanning. Alle 24 utelukkes, og hver grunn stemmer med dataene | N/A |
 | Overtid | Gyldig kandidat på #4127 | Timer i uke 39 + 8 > 36 | N/A |
 | Billigste ikke øverst | Gyldige på #4127 | Billigste har høyest belastning eller dårligst preferanse | N/A |
 | Ansatt-felt | Hvilken som helst Ansatt | Navn, stilling, ansiennitet, timelønn, minst ett nivå | N/A |
@@ -105,23 +105,23 @@ context:
 
 ## Design Notes
 
-**Bemanning:** omtrent 13 på jobb per døgn, for eksempel 5 dag, 2 mellom, 3 kveld og 3 natt, med færre i helgen. Mellomvakter gir naturlige utelukkelser: søndag 27.09 kolliderer med #4127, og mandag 28.09 og tirsdag 29.09 gir 4 t og 2,5 t hvile rundt #4189. Fordelingene under står seg. Det gir omtrent 180 Vakter. Vaktnumrene ligger i serien #4100–#4299. Mockupens vakter beholder nummer, Ansatt og dato:
+**Bemanning:** omtrent 13 på jobb per døgn, for eksempel 5 dag, 2 mellom, 3 kveld og 3 natt, med færre i helgen. Mellomvakter gir naturlige utelukkelser: søndag 27.09 kolliderer med #4127, og mandag 28.09 og tirsdag 29.09 gir 5 t og 3 t hvile rundt #4189. Det gir omtrent 180 Vakter. Vaktnumrene ligger i serien #4100–#4299. Mockupens vakter beholder nummer, Ansatt og dato:
 - #4128: kveld 27.09, Per Halvorsen.
 - #4130: dag 28.09, Mette Solberg.
 - #4131: natt 28.09, Thomas Nygård.
 - #4135: dag 29.09, Jonas Bakke.
 - #4136: kveld 29.09, Ingrid Dahl.
 
-Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av dag neste morgen, fordi det gir 8,5 t hvile.
+Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av dag neste morgen, fordi det gir 8 t hvile.
 
 **Gyldige på #4127** (timer i uke 39 uten #4127, bare dagvakter på hverdager):
 
 | Ansatt | Nivå dag | Kr/t | Timer | Kostnad | Preferanse (PRD nr.) | På #4189 |
 |---|---|---|---|---|---|---|
-| Jonas Bakke | 3 | 370 | 16 | ordinær | 4 (75) | kolliderer (#4135) |
+| Jonas Bakke | 3 | 370 | 16 | ordinær | 4 (75) | elleve-timer (#4135, 0 t) |
 | Thomas Nygård | 3 | 350 | 24 | ordinær, billigst | 13 (0) | kolliderer (#4131) |
-| Mette Solberg | 4 | 395 | 24 | ordinær | 10 (25) | elleve-timer (#4130) |
-| Ingrid Dahl | 4 | 385 | 32 | overtid, 89 % | 1 (100) | elleve-timer (#4136) |
+| Mette Solberg | 4 | 395 | 24 | ordinær | 10 (25) | elleve-timer (#4130, 8 t) |
+| Ingrid Dahl | 4 | 385 | 32 | overtid, 89 % | 1 (100) | elleve-timer (#4136, 8 t) |
 
 - De fire har ingen vakt som slutter etter 26.09 20:00, og ingen som starter før 28.09 02:00.
 - Rekkefølgen blir Jonas, Thomas, Mette, Ingrid. Det gjelder med vektene på `main` (40/35/25) og med vektene i PR #4 (40/20/15/25), både med og uten preferanser.
@@ -129,14 +129,21 @@ Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av
 - Thomas står på 2/4 i mockupen, men det strider mot FR-2, så han får nivå 3.
 
 **Utelukket på #4127 (20):**
-- 7 kolliderende: 4 på dag 27.09 og 3 på natt 26.09 22:00–27.09 07:30.
-- 4 elleve-timer: kveld 26.09, som gir 8,5 t hvile; kveld 27.09 med Per, som gir 0 t; og natt 27.09, som gir 7 t.
+- 7 kolliderende: dag og mellom 27.09, for eksempel 5 + 2.
+- 4 elleve-timer:
+  - natt 26.09 23:00–27.09 07:00, som berører #4127 uten å kollidere (0 t hvile)
+  - kveld 26.09 (8 t)
+  - kveld 27.09 med Per (0 t)
+  - natt 27.09 23:00 (8 t)
 - 8 kompetanse og 1 trettifem-timer.
 
 **Utelukket på #4189 (24):**
-- 13 kolliderende: natt 28.09, kveld 28.09 og dag 29.09.
-- 8 elleve-timer: dag 28.09 og kveld 29.09.
+- 2 kolliderende: natt 28.09, blant dem Thomas.
+- 18 elleve-timer:
+  - dag, mellom og kveld 28.09 (8 t, 5 t og 0 t hvile)
+  - dag, mellom og kveld 29.09 (0 t, 3 t og 8 t)
 - 3 kompetanse. Silje Amundsen er en av dem, fordi hun mangler nivå for natt.
+- 1 trettifem-timer: med #4189 lagt til mangler uke 40 35 t sammenhengende fri.
 - Satt opp var Eirik Moen, som meldte fra 26.09 21:40 med grunnen «sykemeldt». Silje har samme grunn.
 
 **Ellers:**
