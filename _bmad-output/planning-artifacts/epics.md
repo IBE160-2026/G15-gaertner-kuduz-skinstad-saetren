@@ -245,7 +245,7 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 **Given** en Vakt i testdataene
 **When** den leses
-**Then** den har vaktnummer, vakttype (dag, kveld eller natt), start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
+**Then** den har vaktnummer, vakttype (dag, mellom, kveld eller natt; mellomvakten bruker Kompetansenivået for dag), start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
 **And** en Vakt som mangler bemanning, har hvem som var satt opp og tidspunktet det ble meldt fra (UX-DR5)
 
 **Given** en Ansatt i testdataene
