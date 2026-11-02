@@ -7,3 +7,4 @@
 - [x] 2026-10-30 [gjennomgang-pr-4](997-2026-10-30-19-02-25-gjennomgang-pr-4.md) — Tilbakemelding på PR #4: vakttider, «136 p», målbare krav til 1.2, ÅB-3 som foreslått og KI-logg. (løst 2026-10-30, kommentar postet)
 - [ ] 2026-10-30 [gjennomgang-pr-4](997-2026-10-30-19-02-25-gjennomgang-pr-4.md) — Følg opp svaret på PR #4, særlig avgjørelsen om vakttider.
 - [ ] 2026-10-30 [gjennomgang-pr-4](997-2026-10-30-19-02-25-gjennomgang-pr-4.md) — Avgjør om gjennomgangen av PR #4 skal lagres i repoet.
+- [ ] 2026-11-02 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — PR #4 linje 272 må få med mellomvakten. Kommentaren til Ragnhild er ikke postet.
