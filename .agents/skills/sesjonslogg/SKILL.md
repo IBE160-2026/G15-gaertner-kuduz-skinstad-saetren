@@ -1,6 +1,6 @@
 ---
 name: sesjonslogg
-description: Logg arbeidssesjoner som endret tilstand før sluttoppsummeringen, også commit, push og konfigurasjonsendringer. Bruk også ved «logg sesjonen», «logg dette», «oppdater loggen», «skriv sesjonslogg» og spørsmål om tidligere arbeid.
+description: Logg arbeidssesjoner som endret tilstand før sluttoppsummeringen, også commit og konfigurasjonsendringer, men ikke rene pull, fetch eller push. Bruk også ved «logg sesjonen», «logg dette», «oppdater loggen», «skriv sesjonslogg» og spørsmål om tidligere arbeid.
 ---
 
 # Sesjonslogg
