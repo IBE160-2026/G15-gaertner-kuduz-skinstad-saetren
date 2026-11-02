@@ -13,3 +13,6 @@
 - [x] 2026-11-02 [sesjonslogg-uten-git-synk](995-2026-11-02-23-32-40-sesjonslogg-uten-git-synk.md) — PR #4 er merget. Historikken fra 24.08 og ulempescenarioet skal inn i 1.2 nå eller i en oppfølging. (løst 2026-11-02, ac41b98: historikk og ulempescenario er tatt inn i spesifikasjonen)
 - [ ] 2026-11-02 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — Gruppa melder eventuelle endringer i spesifikasjonen før implementeringen starter.
 - [ ] 2026-11-02 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — Implementer story 1.2 med bmad-build (gjenopptas i steg 3).
+- [ ] 2026-11-02 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — OP-04: gjennomgå agentpraksis og underagenter før neste bmad-build. Implementeringen av 1.2 venter på det.
+- [ ] 2026-11-02 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — Meld motstrid til gruppa: skillendringen etter Bård mot AV-08, «28 døgn» i PRD §4.3 og story 4.7 mot AV-09, AV-05 som mangler i PRD, og «nesten like» i story 4.4 mot AV-12.
+- [ ] 2026-11-02 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — KS-04: kontroller datadekning ved periodegrensene (ingen vakter etter natten 04.10–05.10).
