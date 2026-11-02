@@ -252,7 +252,7 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 **Given** en Vakt i testdataene
 **When** den leses
-**Then** den har vaktnummer, vakttype (dag 07:00–15:00, mellom 10:00–18:00, kveld 15:00–23:00 eller natt 23:00–07:00; mellomvakten bruker Kompetansenivået for dag), start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
+**Then** den har vaktnummer, vakttype (dag, mellom, kveld eller natt; mellomvakten bruker Kompetansenivået for dag), start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
 **And** en Vakt som mangler bemanning, har hvem som var satt opp og tidspunktet det ble meldt fra (UX-DR5)
 
 **Given** en Ansatt i testdataene
@@ -269,7 +269,7 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 **When** de lastes
 **Then** hver Ansatt har tildelte Vakter fra minst 28 døgn før periodestart (i mockupen fra og med mandag 24.08.2026) fram til periodestart, i tillegg til Vaktene i perioden, slik at måleperioden for Ulempebelastningen er dekket for alle Vakter i perioden (FR14, story 4.7)
 **And** historikkvaktene har de samme feltene som andre Vakter, er tildelt en Ansatt og har aldri markeringen «mangler bemanning»
-**And** vakttidene er faste per vakttype: dag 07:00–15:00, kveld 15:00–23:00 og natt 23:00–07:00, som i mockupene og story 1.5 (besluttet av gruppa 2026-11-02). Ulempepoengene avhenger av disse tidene (PRD §4.3).
+**And** vakttidene er faste per vakttype: dag 07:00–15:00, mellom 10:00–18:00, kveld 15:00–23:00 og natt 23:00–07:00. Dag, kveld og natt er som i mockupene og story 1.5. Alle tidene er besluttet av gruppa 2026-11-02. Ulempepoengene avhenger av disse tidene (PRD §4.3).
 **And** de Ansatte har ulike turnusprofiler, fra bare dagvakter på hverdager til natt-tung turnus, slik at Ulempepoengene sprer seg omtrent fra 0 til over 250 over fire uker
 **And** minst ett testscenario har to Gyldige kandidater for samme Vakt som er nesten like på kostnad, Timebelastning og preferanse, men der den ene har klart høyere Ulempebelastning (FR9, story 4.4)
 **And** historikken lages av den samme dokumenterte kommandoen og blir lik hver gang
