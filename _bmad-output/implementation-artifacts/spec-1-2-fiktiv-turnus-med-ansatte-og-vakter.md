@@ -38,7 +38,8 @@ context:
 - Timelønnen er kr 350–420. Overtid er timer over 36 per kalenderuke, til 150 %. Overtidssatsen lagres ikke.
 - (2026-11-02, besluttet av gruppa, erstatter PR #4-tidene fra 2026-10-30) Alle vakter er 8 timer: dag 07:00–15:00, mellom 10:00–18:00, kveld 15:00–23:00 og natt 23:00–07:00. Vakter som møtes i et skift, kolliderer ikke, fordi vaktene er halvåpne intervaller.
 - (2026-10-30) Turnus har `periode_start` og `periode_slutt` som halvåpent intervall [21.09.2026 00:00, 05.10.2026 00:00). En Vakt hører til perioden når den starter innenfor.
-- (2026-10-30) 1.2 bygges på `main`. Historikk fra 24.08 og ulempescenarioet fra PR #4 legges til seedingen når PR #4 er merget.
+- (2026-11-02, erstatter «legges til når PR #4 er merget») PR #4 er merget. Vakthistorikk 24.08–20.09 for alle Ansatte, turnusprofiler og ulempescenarioet er med i denne storien. Ulempepoeng måles mot vinduet til #4127 (30.08 07:00–27.09 07:00).
+- (2026-11-02) Ulempescenarioet ligger på #4127: Mette Solberg gjøres nesten lik Jonas Bakke på kostnad, timer og preferanse, men med klart høyere Ulempebelastning.
 - (2026-11-02, erstatter 13 · 8 · 3) De 24 utelukkede på #4189 fordeles 2 kolliderende, 18 elleve-timer, 3 kompetanse og 1 trettifem-timer.
 - (2026-11-02, besluttet av gruppa) Fjerde vakttype: mellomvakt 10:00–18:00 (`mellom`). Den bruker Kompetansenivået for dag og har ingen egen nøkkel i kompetansen.
 
@@ -54,6 +55,9 @@ context:
 | Billigste ikke øverst | Gyldige på #4127 | Billigste har høyest belastning eller dårligst preferanse | N/A |
 | Ansatt-felt | Hvilken som helst Ansatt | Navn, stilling, ansiennitet, timelønn, minst ett nivå | N/A |
 | Tidssone | Vakt lest tilbake | `tzinfo` er Europe/Oslo og klokkeslettet er uendret | N/A |
+| Historikk | Vakter med start før 21.09 | Hver Ansatt har tildelte Vakter fra 24.08. Ingen mangler bemanning, og alle starter før periodestart | N/A |
+| Ulempespredning | Ulempepoeng for hver Ansatt i vinduet til #4127 | Laveste ≤ 10, høyeste > 250 | N/A |
+| Ulempescenario | Jonas og Mette på #4127 | Like timer og preferanse, timelønn ulik med høyst kr 10, Mettes Ulempepoeng minst 100 høyere | N/A |
 
 </frozen-after-approval>
 
@@ -67,6 +71,8 @@ context:
 - `.gitignore` mangler `*.db`. `.env.example` i roten har bare OpenRouter-variablene.
 - `AGENTS.md` -- «Kjøring og verifisering», punktet om backend. Innledningen sier «ingen domenelogikk ennå».
 - `docs/ki-logg/2026-10-19-prosjektoppsett.md` -- mal for KI-loggen.
+- `scripts/ulempe_regneeksempler.py` -- regner Ulempepoeng etter PRD §4.3 med gruppas vakttider. Er referanse for testhjelperen for ulempe, og røres ikke.
+- Ulempemodellen (PRD §4.3) som testhjelperen implementerer: per time 0 for hverdag 06–18, 1 for hverdag 18–22, 2 for helg 06–22 og 3 for natt 22–06. Hver time telles én gang med høyeste kategori, med minuttoppløsning, i de 28 døgnene før vaktens start.
 - Harde regler (epics.md, story 2.1–2.4) som testhjelperne implementerer:
   - **Kompetanse:** nivået for vakttypen mangler eller er under minstenivået. For `mellom` slås nivået for `dag` opp.
   - **Kolliderende vakt:** overlapp ≥ 1 min på halvåpne `[start, slutt)`.
@@ -85,17 +91,19 @@ context:
   - `TurnusRad`: `avdeling`, `periode_start`, `periode_slutt`, `sist_oppdatert`.
   - `AnsattRad`: navn, stilling, ansiennitet, timelønn, `kompetanse` som JSON `{"dag"|"kveld"|"natt": nivå}` og valgfri `preferanse`.
   - `VaktRad`: `turnus_id`, `vaktnummer`, `vakttype` (`dag`, `mellom`, `kveld` eller `natt`), `start`, `slutt`, `minstenivå`, `tildelt_ansatt_id`, `mangler_bemanning`, `satt_opp_ansatt_id`, `meldt_fra` og `meldt_fra_grunn`.
-- [ ] `backend/adaptere/lagring/testdata.py` -- Ansatte med faste ID-er 1–25 og Vakter som faste data, uten tilfeldighet.
+- [ ] `backend/adaptere/lagring/testdata.py` -- Ansatte med faste ID-er 1–25, uten tilfeldighet.
+  - Vaktene i perioden er faste data.
+  - Historikken 24.08–20.09 lages av faste ukemønstre per turnusprofil. Den får vaktnumre i serien #3000–#3999.
   - `FASIT`: vaktnummer → ansattnavn → regel eller «gyldig».
   - `fyll_testdata(session)` og `__main__`, som skriver radtallene.
-- [ ] `backend/tester/lagring/__init__.py` og `test_testdata.py` -- tester matrisen mot en database i `tmp_path`. Hjelpefunksjonene for de fire reglene ligger bare i testen.
+- [ ] `backend/tester/lagring/__init__.py` og `test_testdata.py` -- tester matrisen mot en database i `tmp_path`. Hjelpefunksjonene for de fire reglene og for Ulempepoeng ligger bare i testen.
 - [ ] `.env.example`, `.gitignore` (`*.db`), `AGENTS.md`, `README.md` -- dokumenter variabelen og kommandoen. I AGENTS.md: slett databasefilen når skjemaet endres.
 - [ ] `docs/ki-logg/<dato>-testdata.md` -- KI-logg etter malen.
 
 **Acceptance Criteria:**
 - Given hele testpakken, when `pytest` kjøres, then består alle testene, også `test_helse`.
 - Given fasiten, when testen sjekker en utelukket Ansatt, then bryter vedkommende nøyaktig regelen fasiten oppgir og ingen annen, og hver gyldig Ansatt bryter ingen.
-- Given alle tildelte Vakter, when reglene kjøres per Ansatt, then har ingen Ansatt overlapp, hvile under 11 t eller en kalenderuke uten 35 t sammenhengende fri.
+- Given alle tildelte Vakter, også historikken, when reglene kjøres per Ansatt, then har ingen Ansatt overlapp, hvile under 11 t eller en kalenderuke uten 35 t sammenhengende fri.
 
 ## Implementation Notes
 
@@ -105,7 +113,7 @@ context:
 
 ## Design Notes
 
-**Bemanning:** omtrent 13 på jobb per døgn, for eksempel 5 dag, 2 mellom, 3 kveld og 3 natt, med færre i helgen. Mellomvakter gir naturlige utelukkelser: søndag 27.09 kolliderer med #4127, og mandag 28.09 og tirsdag 29.09 gir 5 t og 3 t hvile rundt #4189. Det gir omtrent 180 Vakter. Vaktnumrene ligger i serien #4100–#4299. Mockupens vakter beholder nummer, Ansatt og dato:
+**Bemanning:** omtrent 13 på jobb per døgn, for eksempel 5 dag, 2 mellom, 3 kveld og 3 natt, med færre i helgen. Mellomvakter gir naturlige utelukkelser: søndag 27.09 kolliderer med #4127, og mandag 28.09 og tirsdag 29.09 gir 5 t og 3 t hvile rundt #4189. Det gir omtrent 180 Vakter i perioden, i serien #4100–#4299, og omtrent 350 i historikken. Mockupens vakter beholder nummer, Ansatt og dato:
 - #4128: kveld 27.09, Per Halvorsen.
 - #4130: dag 28.09, Mette Solberg.
 - #4131: natt 28.09, Thomas Nygård.
@@ -116,15 +124,18 @@ Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av
 
 **Gyldige på #4127** (timer i uke 39 uten #4127, bare dagvakter på hverdager):
 
-| Ansatt | Nivå dag | Kr/t | Timer | Kostnad | Preferanse (PRD nr.) | På #4189 |
-|---|---|---|---|---|---|---|
-| Jonas Bakke | 3 | 370 | 16 | ordinær | 4 (75) | elleve-timer (#4135, 0 t) |
-| Thomas Nygård | 3 | 350 | 24 | ordinær, billigst | 13 (0) | kolliderer (#4131) |
-| Mette Solberg | 4 | 395 | 24 | ordinær | 10 (25) | elleve-timer (#4130, 8 t) |
-| Ingrid Dahl | 4 | 385 | 32 | overtid, 89 % | 1 (100) | elleve-timer (#4136, 8 t) |
+| Ansatt | Nivå dag | Kr/t | Timer | Kostnad | Preferanse (PRD nr.) | Ulempepoeng (mål) | På #4189 |
+|---|---|---|---|---|---|---|---|
+| Jonas Bakke | 3 | 370 | 16 | ordinær | 4 (75) | ca. 40 | elleve-timer (#4135, 0 t) |
+| Mette Solberg | 4 | 365 | 16 | ordinær | 5 (75) | ca. 180 | elleve-timer (#4130, 8 t) |
+| Thomas Nygård | 3 | 350 | 24 | ordinær, billigst | 13 (0) | ca. 120 | kolliderer (#4131) |
+| Ingrid Dahl | 4 | 385 | 32 | overtid, 89 % | 1 (100) | ca. 60 | elleve-timer (#4136, 8 t) |
 
 - De fire har ingen vakt som slutter etter 26.09 20:00, og ingen som starter før 28.09 02:00.
-- Rekkefølgen blir Jonas, Thomas, Mette, Ingrid. Det gjelder med vektene på `main` (40/35/25) og med vektene i PR #4 (40/20/15/25), både med og uten preferanser.
+- Med vektene 40/20/15/25 blir totalscoren Jonas 85,7, Mette 80,2, Thomas 59,0 og Ingrid 37,0.
+  - Uten ulempe ville Mette ligget over Jonas, fordi hun er kr 5 billigere. Ulempen snur rekkefølgen, og det er scenarioet i story 4.4.
+  - Med nøytral preferanse for alle (Epic 5 ikke på plass) blir rekkefølgen Jonas 79,4, Mette 73,9, Thomas 71,5 og Ingrid 24,5. Thomas er fortsatt ikke øverst.
+  - Tallene er mål for designet. Testene i 1.2 sjekker egenskapene i matrisen, ikke totalscoren.
 - Ingrid skal vises med høy belastning. Story 4.2 setter grensen så 32 t regnes som høy.
 - Thomas står på 2/4 i mockupen, men det strider mot FR-2, så han får nivå 3.
 
@@ -151,7 +162,16 @@ Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av
 - Preferansetekstene hentes ordrett fra PRD-tabellen. Noen Ansatte har ingen.
 - Minstenivået er 3 for #4127 og #4189.
 - Ingen bryter flere regler på samme vakt. Det er bevisst, for at fasiten skal bli entydig.
-- Parene for story 4.4 og 5.2 er enhetstestdata i domenet.
+- Paret «like unntatt kompetanse» (story 4.4) og paret for story 5.2 er enhetstestdata i domenet. Ulempeparet er Jonas og Mette i seeden.
+
+**Turnusprofiler** (Ulempepoeng i vinduet til #4127):
+- bare dag på hverdager: ca. 0
+- dag og mellom med hver tredje helg: ca. 50–80
+- tredelt: ca. 120–180
+- kveldstung: ca. 150
+- natt-tung: over 250
+
+Profilene velges så fasiten for #4127 og #4189 står seg. Historikken slutter 20.09 og påvirker bare elleve- og trettifem-timersregelen i begynnelsen av uke 39. Testen regner alle reglene over hele datasettet.
 
 ## Verification
 
