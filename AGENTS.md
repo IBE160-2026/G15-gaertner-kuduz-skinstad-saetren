@@ -77,6 +77,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Robusthets- og fasittesten: `python scripts/modelltest_robusthet.py --live --politikk takt`
   (218 kall, ca. 25 min) og `python scripts/modelltest_prd_fasit.py --live` (145 kall).
   Uten `--live` er begge tørrkjøring.
+- Regneeksemplene bak taket på 300 Ulempepoeng (PRD §4.3):
+  `python scripts/ulempe_regneeksempler.py`, uten nettverk. `--vakttider 2026-10-30`
+  gjenskaper tallene fra før gruppa valgte vakttidene 2026-11-02.
 - Backend (Python 3.12 eller nyere), fra `backend/`. På macOS/Linux er stien
   `.venv/bin/python` i stedet for `.venv\Scripts\python`:
   - Installasjon: `python -m venv .venv` og deretter
