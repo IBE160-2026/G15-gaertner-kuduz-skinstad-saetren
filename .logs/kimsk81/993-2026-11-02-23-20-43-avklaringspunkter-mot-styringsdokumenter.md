@@ -26,5 +26,11 @@ Funn kontrollert mot konkrete tekststeder:
 
 Ingen kravdokumenter, agentinstruksjoner eller beslutningsstatuser er endret. Eksisterende samlepunkter i issues.md er beholdt åpne fordi de også inneholder uavklarte spørsmål; delavklaringer er tilføyd og ett nytt samordningspunkt er registrert. Dokumentkontrollen har ikke verifisert implementasjon eller oppfylt en produktmilepæl; vurderingsmatrisen er ikke oppdatert.
 
+Oppfølging kl. 23:31: Brukeren godkjente det foreslåtte tillegget i AGENTS.md og ba om commit og push av tillegget og beslutningsfilen med mappestruktur. Tillegget ble lagt utenfor den genererte kontekstblokken; CLAUDE.md importerer allerede AGENTS.md. Commit `07dc80a` inneholder AGENTS.md og det uendrede referatet i `docs/beslutninger/avklaringspunkter.md`. Git sporer mappen gjennom filen.
+
+Ved fetch viste det seg at PR #4 allerede var merget på origin/main (`7eabb81`). Den ble flettet inn uten konflikter i `5d376bc`, og push til origin/main lyktes. Pushen inkluderte også de eksisterende lokale sesjonsloggcommittene. Den tidligere dokumentanalysen over gjelder uttrykkelig tilstanden før denne synkroniseringen; ny PRD og Story 4.7 er nå hentet inn. Ingen full ny konsistenskontroll er utført.
+
+Kvalitetssikring: kontrollert at godkjent tekst og riktig lenke er bevart etter merge, at referatet er sporet, og at arbeidstreet var rent. Diffkontrollen rapporterte bare referatets sju tilsiktede Markdown-linjeskift med doble sluttmellomrom. Ingen kode er skrevet i denne oppgaven; kjøretidstester er ikke relevante. Eksisterende samordningspunkt i issues.md er oppdatert med endret grunnlag, uten å lukke uverifiserte punkter.
+
 ### Åpne punkter
-- Samordne referatets vedtatte rangeringsmodell og vakttyper med lokale kravfiler; finn grunnlaget for Story 4.7 og presiser åttetimersordlyd, hvilestatus, eksisterende kontrollkrav og faktisk dokumentsti. Kontroller relevante filer i PR #4 før konkrete kravendringer. Se nytt punkt i issues.md; øvrige åpne spørsmål videreføres der.
+- Kontroller gjenstående avvik mot de oppdaterte kravfilene fra PR #4 før samordningspunktet i issues.md lukkes. Øvrige åpne spørsmål videreføres der.
