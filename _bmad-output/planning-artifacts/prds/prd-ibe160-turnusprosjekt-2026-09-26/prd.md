@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-30
+updated: 2026-11-03
 ---
 
 # PRD: Turnushjelperen
@@ -150,7 +150,7 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 
 - Hver arbeidstime telles bare én gang, i kategorien med høyest poeng: natt > helg > kveld > dag. En nattetime i helgen gir 3 poeng og telles som natt. Fordelingen som vises, følger samme regel, slik at kveldstimer × 1 + helgetimer × 2 + nattetimer × 3 alltid er lik Ulempepoengene.
 - Tiden regnes i faktisk forløpt tid i `Europe/Oslo` med sommertid og med minuttoppløsning. En halv time kveld gir 0,5 poeng. Poengene avrundes først ved visning.
-- Måleperioden er de 28 døgnene bakover fra Vaktens starttidspunkt. Vakten som vurderes, er ikke med. En Vakt som krysser grensen for måleperioden, telles bare for delen innenfor. Perioden regnes fra Vaktens start og ikke fra dagens dato, slik at samme input alltid gir samme resultat (SM-5).
+- Måleperioden er de 672 faktiske timene bakover fra Vaktens starttidspunkt, som halvåpent intervall [start − 672 t, start). Over et sommertidsskifte er det ikke det samme som 28 kalenderdøgn (gruppevedtak AV-09, 2026-11-02). Vakten som vurderes, er ikke med. En Vakt som krysser grensen for måleperioden, telles bare for delen innenfor. Perioden regnes fra Vaktens start og ikke fra dagens dato, slik at samme input alltid gir samme resultat (SM-5).
 - Helligdager regnes som vanlige ukedager i v1 (bekreftet av gruppa 2026-11-02).
 - **Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)).** Taket er foreløpig **300 Ulempepoeng**, omtrent 100 nattetimer på fire uker. Taket er én navngitt, konfigurerbar parameter i domenekjernen, sammen med vektene i §4.4. Det skal ikke være en miljøvariabel, fordi samme input da kunne gitt ulikt resultat på ulike maskiner.
 - Skalaen er fast, ikke relativ til de Gyldige kandidatene, slik at små forskjeller gir små utslag. 40 mot 42 Ulempepoeng gir 0,1 poeng forskjell i totalscoren, mens en skala relativ til kandidatene kunne gitt opptil 15. Lik Ulempebelastning gir alltid lik Ulempescore, og en ny Kandidat endrer ikke de andres score. Taket på 300 er valgt fremfor 240 og 432 ut fra regneeksempler med typiske turnuser: vanlige turnuser gir omtrent 50–180 poeng over fire uker, nattunge 250–320. Regneeksemplene bruker vakttidene dag 07–15, kveld 15–23 og natt 23–07 (story 1.2) og kan kjøres på nytt med `scripts/ulempe_regneeksempler.py`. 432 er ikke et teoretisk maksimum, fordi overtid er tillatt, og faste nattevakter (ca. 320 poeng) får bevisst Ulempescore 0.
@@ -183,7 +183,7 @@ Systemet kan vise hvor mye hver Gyldig kandidat allerede er satt opp til å arbe
 
 #### FR-14: Beregne og vise ulempebelastning per kandidat
 
-Systemet kan beregne Ulempepoeng for hver Gyldig kandidat etter Ulempemodellen over, ut fra Kandidatens Vakter i de 28 døgnene før Vaktens start, og regne dem om til en Ulempescore på fast skala. Ulempebelastningen vises separat fra Timebelastningen, med samlet poengsum og fordeling på kveld-, helg- og nattetimer. *Lagt til 2026-10-30. Nummeret er valgt for å unngå omnummerering.*
+Systemet kan beregne Ulempepoeng for hver Gyldig kandidat etter Ulempemodellen over, ut fra Kandidatens Vakter i de 672 faktiske timene før Vaktens start, og regne dem om til en Ulempescore på fast skala. Ulempebelastningen vises separat fra Timebelastningen, med samlet poengsum og fordeling på kveld-, helg- og nattetimer. *Lagt til 2026-10-30. Nummeret er valgt for å unngå omnummerering.*
 
 **Konsekvenser (testbare):**
 - Samme Kandidat og samme Vakt gir samme Ulempepoeng og Ulempescore hver gang (reproduserbart).
@@ -371,7 +371,7 @@ Turnushjelperen v1 skal **ikke**:
 - Gruppa godkjente utvidelsen av ÅB-3 (vektene 20/15 og taket på 300). Vakttidene er dag 07–15, kveld 15–23 og natt 23–07, som i mockupene. Taket på 300 er regnet om med disse tidene og står seg. Helligdager regnes som vanlige ukedager i v1.
 
 **Løst (2026-10-30):**
-- Arbeidsbelastning utvidet med ubekvem arbeidstid (utvider ÅB-3). Arbeidsbelastningens 35 % er delt i Timebelastning 20 % og Ulempebelastning 15 %. Kostnad 40 % og Ansattpreferanse 25 % er uendret. Ulempebelastningen beregnes etter Ulempemodellen i §4.3 over de 28 døgnene før Vaktens start, på fast skala med konfigurerbart tak (300 Ulempepoeng), og vises separat med fordeling på kveld, helg og natt (FR-14). 90 %-grensen beholdes som visuell indikator for Timebelastning. «Denne uken» i FR-8 er presisert til kalenderuken Vakten starter i. Se §4.3, §4.4 og epics story 4.7.
+- Arbeidsbelastning utvidet med ubekvem arbeidstid (utvider ÅB-3). Arbeidsbelastningens 35 % er delt i Timebelastning 20 % og Ulempebelastning 15 %. Kostnad 40 % og Ansattpreferanse 25 % er uendret. Ulempebelastningen beregnes etter Ulempemodellen i §4.3 over de 672 faktiske timene før Vaktens start, på fast skala med konfigurerbart tak (300 Ulempepoeng), og vises separat med fordeling på kveld, helg og natt (FR-14). 90 %-grensen beholdes som visuell indikator for Timebelastning. «Denne uken» i FR-8 er presisert til kalenderuken Vakten starter i. Se §4.3, §4.4 og epics story 4.7.
 
 **Løst (2026-10-14):**
 - Kjøring uten gruppens nøkkel (faglærers tilbakemelding 2026-10-06, punkt 3; tidligere åpent spørsmål 3). KI-leverandøren er OpenRouter med `openai/gpt-6-luna` som standardmodell, satt i en miljøvariabel (endret fra `anthropic/claude-haiku-5.5` 2026-10-16 etter modelltest, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Dette erstatter Google Gemini, som ble valgt i arkitektursteget 2026-09-29 (arkitekturens AD-6). Sensor får en OpenRouter-nøkkel med kreditt, levert i innleveringen og aldri i repoet. Om det blir den felles utviklingsnøkkelen eller en egen sensornøkkel, og hvor mye kreditt den får, avgjøres nær innlevering ut fra faktisk forbruk (epics ÅB-8). Uten nøkkel starter appen i demo-modus (§4.5). Se `sprint-change-proposal-2026-10-14.md`.
