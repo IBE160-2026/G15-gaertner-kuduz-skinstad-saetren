@@ -113,6 +113,7 @@ context:
 ## Implementation Notes
 
 - 2026-11-03: `bmad-build` kjøres med underagenter (AGENTS.md på branchen), etter valg av Kuduz, selv om gjennomgangen i OP-04 ikke er gjort. KI-loggen og PR-en skal opplyse om avviket.
+- 2026-11-03: KS-04 er kontrollert etter at implementeringen var ferdig. For #4127 og #4189 dekker dataene ulempevinduet på 672 t, nabovaktene ±11 t og hele kalenderuka, og det er låst i `test_datadekning_ved_periodegrensene_ks04`. Begrensningen, ingen vakter etter 05.10, er lagt fram for gruppa. Merknaden i designnotatene om at KS-04 ikke er kontrollert, er dermed utdatert.
 
 ## Spec Change Log
 

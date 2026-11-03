@@ -585,6 +585,23 @@ def test_historikken(data: Data) -> None:
         assert egne and min(v.start for v in egne) < forste_uke.slutt, a.navn
 
 
+@pytest.mark.parametrize("vaktnummer", [4127, 4189])
+def test_datadekning_ved_periodegrensene_ks04(data: Data, vaktnummer: int) -> None:
+    """KS-04: dataene dekker ulempevinduet, nabovaktene og hele kalenderuka
+    for vaktene som skal bemannes. Dataene går fra 24.08 til periodeslutt."""
+    data_fra = tid(2026, 8, 24, 0).astimezone(UTC)
+    data_til = data.turnus.periode_slutt.astimezone(UTC)
+    maal = intervall(data.vakt(vaktnummer))
+    assert data_fra <= maal.start - timedelta(hours=672)
+    assert data_fra <= maal.start - timedelta(hours=11)
+    assert maal.slutt + timedelta(hours=11) <= data_til
+    for uke in berorte_uker(maal):
+        assert data_fra <= uke.start and uke.slutt <= data_til
+    startdager = {v.start.date() for v in data.vakter}
+    forste = date(2026, 8, 24)
+    assert startdager == {forste + timedelta(days=i) for i in range(42)}
+
+
 def test_ingen_ansatt_bryter_reglene_i_egen_turnus(data: Data) -> None:
     """Alle tildelte Vakter, også historikken: ingen overlapp, minst 11 t hvile
     mellom vaktene og minst 35 t sammenhengende fri i hver kalenderuke."""

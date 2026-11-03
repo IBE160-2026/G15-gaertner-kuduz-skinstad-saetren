@@ -23,7 +23,7 @@ Oppdatert 2026-10-16 etter valg av KI-modell (GPT-6 Luna) og robusthetstest. Len
 [Spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-1-2-fiktiv-turnus-med-ansatte-og-vakter.md) følger gruppevedtakene AV-02, AV-03, AV-07, AV-09, AV-10 og AV-12 i [avklaringspunktene](../beslutninger/avklaringspunkter.md). Lagringen i `backend/adaptere/lagring/` har tre tabeller og fiktive testdata: 25 ansatte og 506 faste vakter, inkludert historikk fra 24.08. Det finnes også en forhåndsberegnet fasit for #4127 og #4189.
 
 Bevis per kriterium:
-- **Kriterium 3:** 32 tester i `backend/tester/lagring/test_testdata.py`, 33 med `test_helse`, og alle består. Testene sjekker:
+- **Kriterium 3:** 34 tester i `backend/tester/lagring/test_testdata.py`, 35 med `test_helse`, og alle består. Testene sjekker:
   - at hver kandidat bryter nøyaktig regelen fasiten oppgir
   - at ingen ansatt bryter de fire reglene i egen turnus
   - Ulempepoeng for ulempescenarioet
@@ -36,7 +36,7 @@ Bevis per kriterium:
 
 Ikke dokumentert ennå:
 - gjennomgang i gruppa av PR-en
-- KS-04, datadekning ved periodegrensene
+- at gruppa godtar resultatet av KS-04. Datadekningen er kontrollert og låst med en test for #4127 og #4189. Begrensningen er at det ikke finnes vakter etter 05.10.
 - test fra en ren klone på macOS eller Linux (OP-05)
 - gjennomgangen av agentoppsettet i OP-04. `bmad-build` er kjørt med underagenter uten den, og avviket står i KI-loggen.
 
