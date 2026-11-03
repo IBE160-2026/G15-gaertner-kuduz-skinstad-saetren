@@ -28,7 +28,7 @@ Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
 
 ## Kjøre appen
 
-Appen er foreløpig et skjelett: en backend med helsesjekk og en tom frontend.
+Appen er foreløpig et skjelett: en backend med helsesjekk og testdata og en tom frontend.
 Du trenger Python 3.12 eller nyere og Node 20.19 eller nyere. Kommandoene under er
 for Windows. På macOS/Linux bytter du `.venv\Scripts\python` med `.venv/bin/python`.
 
@@ -42,6 +42,12 @@ python -m venv .venv
 
 Helsesjekken svarer på http://127.0.0.1:8000/api/helse. Testene kjøres med
 `.venv\Scripts\python -m pytest`.
+
+Fiktive testdata (Kirurgisk sengepost, uke 39–40 2026, 25 ansatte) legges inn med
+`.venv\Scripts\python -m adaptere.lagring.testdata`, også fra `backend/`. Kommandoen
+tømmer og fyller tabellene på nytt og kan kjøres flere ganger. Databasen havner i
+`backend/turnushjelperen.db`, med mindre miljøvariabelen `TURNUSHJELPEREN_DB` peker et
+annet sted. Slett filen hvis skjemaet er endret.
 
 Frontend, fra mappa `frontend/` i en egen terminal:
 

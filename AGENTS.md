@@ -12,7 +12,8 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Planlagt stack er React/TypeScript med Vite, Python/FastAPI og SQLite via
 SQLAlchemy. KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Appen har et skjelett fra story 1.1 i `backend/` og `frontend/`, men
+Haiku 5.5). Appen har et skjelett fra story 1.1 i `backend/` og `frontend/` og
+lagring med fiktive testdata fra story 1.2 i `backend/adaptere/lagring/`, men
 ingen domenelogikk ennå; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
@@ -87,6 +88,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   - Kjøring: `.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload`. Svarer
     på `http://127.0.0.1:8000/api/helse`.
   - Test: `.venv\Scripts\python -m pytest`.
+  - Testdata: `.venv\Scripts\python -m adaptere.lagring.testdata` tømmer og fyller
+    tabellene `turnus`, `vakt` og `ansatt` i én transaksjon og kan kjøres flere ganger.
+    Databasen er `backend/turnushjelperen.db` (gitignorert), eller stien i
+    `TURNUSHJELPEREN_DB`. Det finnes ikke noe migreringsverktøy: endres skjemaet i
+    `adaptere/lagring/modeller.py`, slett databasefilen og kjør kommandoen på nytt.
 - Frontend (Node 20.19 eller nyere), fra `frontend/`: `npm install`, deretter
   `npm run dev` (http://localhost:5173). `npm run build` typesjekker og bygger.
 - TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som

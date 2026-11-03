@@ -18,6 +18,28 @@ Oppdatert 2026-10-16 etter valg av KI-modell (GPT-6 Luna) og robusthetstest. Len
 
 [Review av produktbriefen](../../_bmad-output/planning-artifacts/reviews/product-brief-2026-10-26.md) dokumenterer fire review-linser, kontroll mot PRD/arkitektur, ti innholdsfunn og redaksjonelle forslag. [Kildeundersøkelsen](../../_bmad-output/planning-artifacts/research/domain-turnushjelperen-produktbrief-2026-10-26/research.md) følger opp regler, eksisterende verktøy og rangering/brukerforståelse med 18 refererte kilder, kildekontroll og et etterprøvbart regneeksempel. Dette er prosess- og kvalitetssikringsbevis for kriterium 1 og 3, og peker på manglende forståelsestest under kriterium 4. Forslagene er ikke gjennomført; undersøkelsen gir ikke bevis for implementert funksjonalitet, validert brukernytte eller full juridisk etterlevelse. [KI-loggen](../ki-logg/2026-10-26-productbrief-review-research.md) beskriver prompt, leveranse, presiseringer og kontroll.
 
+## Story 1.2 implementert 2026-11-03 (i branch, ikke merget)
+
+[Spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-1-2-fiktiv-turnus-med-ansatte-og-vakter.md) følger gruppevedtakene AV-02, AV-03, AV-07, AV-09, AV-10 og AV-12 i [avklaringspunktene](../beslutninger/avklaringspunkter.md). Lagringen i `backend/adaptere/lagring/` har tre tabeller og fiktive testdata: 25 ansatte og 506 faste vakter, inkludert historikk fra 24.08. Det finnes også en forhåndsberegnet fasit for #4127 og #4189.
+
+Bevis per kriterium:
+- **Kriterium 3:** 32 tester i `backend/tester/lagring/test_testdata.py`, 33 med `test_helse`, og alle består. Testene sjekker:
+  - at hver kandidat bryter nøyaktig regelen fasiten oppgir
+  - at ingen ansatt bryter de fire reglene i egen turnus
+  - Ulempepoeng for ulempescenarioet
+  - inputene til rangeringsfasiten
+  - at databasen avviser ugyldige rader
+
+  Tre uavhengige gjennomgangsagenter fant 32 funn. Alle er vurdert i spesifikasjonens Review Triage Log: 12 er rettet og 14 avvist med begrunnelse.
+- **Kriterium 1:** [KI-loggen](../ki-logg/2026-11-03-testdata.md) har prompten, leveransen, rettelsene og kladdeskriptene som dataene ble laget med.
+- **Kriterium 6:** testdatakommandoen er dokumentert i README og AGENTS.md.
+
+Ikke dokumentert ennå:
+- gjennomgang i gruppa av PR-en
+- KS-04, datadekning ved periodegrensene
+- test fra en ren klone på macOS eller Linux (OP-05)
+- gjennomgangen av agentoppsettet i OP-04. `bmad-build` er kjørt med underagenter uten den, og avviket står i KI-loggen.
+
 ## Rutine ved milepæler
 
 1. Sammenhold levert funksjonalitet med godkjent proposal og gjeldende plan.

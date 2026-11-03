@@ -2,12 +2,14 @@
 title: 'Story 1.2: Fiktiv turnus med ansatte og vakter'
 type: 'feature'
 created: '2026-10-24'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: 'b7b57643bcd45c3e77bf0e0ecefe4d1c8c1bb3ce'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
   - '{project-root}/_bmad-output/implementation-artifacts/epic-1-context.md'
   - '{project-root}/AGENTS.md'
+  - '{project-root}/docs/beslutninger/avklaringspunkter.md'
 ---
 
 <frozen-after-approval reason="human-owned intent — do not modify unless human renegotiates">
@@ -86,22 +88,22 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/requirements.txt` -- legg til `sqlalchemy==2.1.6` og `tzdata==2026.5`. tzdata trengs fordi Windows mangler IANA-databasen.
-- [ ] `backend/adaptere/lagring/database.py` -- `lag_engine(sti=None)`:
+- [x] `backend/requirements.txt` -- legg til `sqlalchemy==2.1.6` og `tzdata==2026.5`. tzdata trengs fordi Windows mangler IANA-databasen.
+- [x] `backend/adaptere/lagring/database.py` -- `lag_engine(sti=None)`:
   - leser `TURNUSHJELPEREN_DB`. En relativ sti tolkes fra arbeidsmappen.
   - Uten variabel brukes `turnushjelperen.db` i `backend/`, uavhengig av arbeidsmappe.
   - I tillegg sessionmaker og `opprett_skjema(engine)`.
-- [ ] `backend/adaptere/lagring/modeller.py` -- TypeDecoratoren `OsloTid` avviser naive `datetime`.
+- [x] `backend/adaptere/lagring/modeller.py` -- TypeDecoratoren `OsloTid` avviser naive `datetime`.
   - `TurnusRad`: `avdeling`, `periode_start`, `periode_slutt`, `sist_oppdatert`.
   - `AnsattRad`: navn, stilling, ansiennitet, timelønn, `kompetanse` som JSON `{"dag"|"kveld"|"natt": nivå}` og valgfri `preferanse`.
   - `VaktRad`: `turnus_id`, `vaktnummer`, `vakttype` (`dag`, `mellom`, `kveld` eller `natt`), `start`, `slutt`, `minstenivå`, `tildelt_ansatt_id`, `mangler_bemanning`, `satt_opp_ansatt_id`, `meldt_fra` og `meldt_fra_grunn`.
-- [ ] `backend/adaptere/lagring/testdata.py` -- Ansatte med faste ID-er 1–25, uten tilfeldighet.
+- [x] `backend/adaptere/lagring/testdata.py` -- Ansatte med faste ID-er 1–25, uten tilfeldighet.
   - Både vaktene i perioden og historikken 24.08–20.09 er faste, eksplisitte data, uten generator (AV-10). Historikken får vaktnumre i serien #3000–#3999.
   - `FASIT`: vaktnummer → ansattnavn → regel eller «gyldig». For #4127 også forventet rekkefølge og uavrundet totalscore fra designnotatene (AV-07).
   - `fyll_testdata(session)` og `__main__`, som skriver radtallene.
-- [ ] `backend/tester/lagring/__init__.py` og `test_testdata.py` -- tester matrisen mot en database i `tmp_path`. Hjelpefunksjonene for de fire reglene og for Ulempepoeng ligger bare i testen.
-- [ ] `.env.example`, `.gitignore` (`*.db`), `AGENTS.md`, `README.md` -- dokumenter variabelen og kommandoen. I AGENTS.md: slett databasefilen når skjemaet endres.
-- [ ] `docs/ki-logg/<dato>-testdata.md` -- KI-logg etter malen.
+- [x] `backend/tester/lagring/__init__.py` og `test_testdata.py` -- tester matrisen mot en database i `tmp_path`. Hjelpefunksjonene for de fire reglene og for Ulempepoeng ligger bare i testen.
+- [x] `.env.example`, `.gitignore` (`*.db`), `AGENTS.md`, `README.md` -- dokumenter variabelen og kommandoen. I AGENTS.md: slett databasefilen når skjemaet endres.
+- [x] `docs/ki-logg/<dato>-testdata.md` -- KI-logg etter malen.
 
 **Acceptance Criteria:**
 - Given hele testpakken, when `pytest` kjøres, then består alle testene, også `test_helse`.
@@ -110,9 +112,42 @@ context:
 
 ## Implementation Notes
 
+- 2026-11-03: `bmad-build` kjøres med underagenter (AGENTS.md på branchen), etter valg av Kuduz, selv om gjennomgangen i OP-04 ikke er gjort. KI-loggen og PR-en skal opplyse om avviket.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+Runde 1, 2026-11-03: tre lag (blind-hunter, edge-case-hunter, verification-gap). Duplikater er slått sammen per rad, og laget står i kolonnen «Lag».
+
+| # | Lag | Funn | Vurdering | Begrunnelse | Rute |
+|---|---|---|---|---|---|
+| 1 | verification-gap | Kommandotesten sjekker ikke at radene er lagret | medium | Testen ser bare på stdout og at filen finnes. Uten `.begin()` i `main()` ville testen fortsatt bestått med tom database. | patch |
+| 2 | verification-gap, blind | Ingen test av fremmednøkler, CHECK-regler og `TypeError` i `OsloTid` | medium | `grep` finner ingen negativ test. Fjernes `PRAGMA` eller en CHECK, består alle testene. | patch |
+| 3 | verification-gap, blind | `sprint-status.yaml` sier `in-progress` mens spesifikasjonen sier `in-review` | false | Steg 5 setter story-nøkkelen til `review`. Arbeidsflyten er ikke ferdig. | avvist |
+| 4 | edge-case, blind | `OsloTid` godtar tid uten tidssone ved lesing | low | Bare mulig ved skriving utenom ORM-en, og ORM-en avviser naive verdier. Rettelsen er en ny vakt i koden. | avvist |
+| 5 | edge-case, blind | Strenger med lokal offset sorteres feil i SQL over sommertidsskifte | low | Ingen vakter krysser 25.10 nå, men `data`-fixturen og senere stories sorterer på `start` i SQL. Rettelsen er å lagre i UTC. | patch |
+| 6 | edge-case, blind | Fraværsfeltene er ikke sikret med CHECK | low | Testen sjekker seed-dataene. Det finnes ingen annen skriver i v1. Rettelsen er en ny begrensning. | avvist |
+| 7 | edge-case | `slutt > start` er ikke sikret | low | Alle vakter lages av `tidsrom()`, og testen sjekker 8 t. Rettelsen er en ny vakt i koden. | avvist |
+| 8 | edge-case | `kompetanse` valideres ikke ved skriving | low | `test_ansattfeltene` sjekker nøkler og nivåer i seeden. Rettelsen er en ny validator. | avvist |
+| 9 | edge-case | Tom streng som eksplisitt `sti` | low | Ingen kaller sender tom streng. Tom miljøvariabel er allerede håndtert. | avvist |
+| 10 | edge-case | `~` og `%VAR%` i stien utvides ikke | low | Ikke dokumentert som støttet. Rettelsen legger til oppførsel. | avvist |
+| 11 | edge-case, blind | Manglende overmappe for databasen gir feil ved oppkobling | low | Gjelder relative stier som `data/x.db`. Rettelsen er én linje (`mkdir`). | patch |
+| 12 | edge-case, blind | URL bygget med f-streng tåler ikke `#`, `?` og `%` | low | Mulig i Windows-mapper. Rettelsen er en direkte erstatning med `URL.create`. | patch |
+| 13 | edge-case | Gammelt skjema gir rå traceback | low | AGENTS.md og README sier at filen skal slettes. Rettelsen er ny feilhåndtering. | avvist |
+| 14 | edge-case | Nattevakt over sommertidsskifte blir 7 eller 9 t | low | Ingen vakter krysser et skifte, og det er dokumentert i KI-loggen. | avvist |
+| 15 | edge-case | `_vaktrad` gir `KeyError` hvis dataene ikke henger sammen | low | Dataene er faste, og testene dekker begge vaktene. Rettelsen er en ny vakt i koden. | avvist |
+| 16 | edge-case | Preferanse nr. 0 tolkes som ingen preferanse | false | Numrene er 1–15, og det finnes ingen 0. | avvist |
+| 17 | edge-case, blind | Formen på `FASIT` avviker fra beskrivelsen i spesifikasjonen | low | Spesifikasjonen krever både utfall og rangering. Nøstingen er dokumentert i KI-loggen. Rettelsen ville vært å endre spesifikasjonen. | avvist |
+| 18 | blind | Nummerserien i KI-loggen sier #4100–#4266 | low | Siste vakt er #4265 (`testdata.py:670`). | patch |
+| 19 | blind | Antall tester i KI-loggen er uklart | low | 26 tester i `test_testdata.py`, 27 med `test_helse`. | patch |
+| 20 | blind | Kladdeskriptene som laget dataene, er ikke tatt vare på | medium | KI-loggen viser til skript utenfor repoet. Grunnlaget for AV-07 og AV-10 kan ikke etterprøves. | patch |
+| 21 | blind | `VAKTTYPER` gjentas som liste i CHECK | low | De to kan gli fra hverandre når en vakttype legges til. Rettelsen er direkte. | patch |
+| 22 | blind | `KOMPETANSENIVAER` er ubrukt | low | Ufarlig, og trolig nyttig i UI senere. Rettelsen er å slette den. | avvist |
+| 23 | blind | JSON-kolonnen lagrer ikke endringer på stedet | low | Ingen kode endrer `kompetanse` i v1. | avvist |
+| 24 | blind | Vurderingsmatrisen er ikke oppdatert | low | AGENTS.md krever det ved milepæler. Gjøres når storien ferdigstilles. | patch |
+| 25 | blind | KI-loggen mangler prompten fra mennesket | medium | Bare orkestratorens prompt er med, og emnet vurderer samspillet mellom menneske og KI. | patch |
+| 26 | blind | Typehint på fixturene stemmer ikke med `yield` | low | De skal være `Iterator[...]`. Rettelsen er direkte. | patch |
 
 ## Design Notes
 
