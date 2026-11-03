@@ -76,7 +76,7 @@ context:
 - `AGENTS.md` -- «Kjøring og verifisering», punktet om backend. Innledningen sier «ingen domenelogikk ennå».
 - `docs/ki-logg/2026-10-19-prosjektoppsett.md` -- mal for KI-loggen.
 - `scripts/ulempe_regneeksempler.py` -- regner Ulempepoeng etter PRD §4.3 med gruppas vakttider. Er referanse for testhjelperen for ulempe, og røres ikke.
-- Ulempemodellen (PRD §4.3) som testhjelperen implementerer: per time 0 for hverdag 06–18, 1 for hverdag 18–22, 2 for helg 06–22 og 3 for natt 22–06. Hver time telles én gang med høyeste kategori, med minuttoppløsning. Vinduet er de 672 faktiske timene før vaktens start (AV-09). PRD §4.3 og story 4.7 sier fortsatt «28 døgn». Avviket må meldes til gruppa.
+- Ulempemodellen (PRD §4.3) som testhjelperen implementerer: per time 0 for hverdag 06–18, 1 for hverdag 18–22, 2 for helg 06–22 og 3 for natt 22–06. Hver time telles én gang med høyeste kategori, med minuttoppløsning. Vinduet er de 672 faktiske timene før vaktens start (AV-09), som i PRD §4.3 og story 4.7.
 - Harde regler (epics.md, story 2.1–2.4) som testhjelperne implementerer:
   - **Kompetanse:** nivået for vakttypen mangler eller er under minstenivået. For `mellom` slås nivået for `dag` opp.
   - **Kolliderende vakt:** overlapp ≥ 1 min på halvåpne `[start, slutt)`.
