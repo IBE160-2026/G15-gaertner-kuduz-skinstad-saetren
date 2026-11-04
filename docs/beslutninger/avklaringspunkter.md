@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** `IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf` (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-02  
+> **Sist oppdatert:** 2026-11-04 (OP-04, KS-02 og KS-04, se §11)  
 > **Foreslått plassering:** `docs/avklaringspunkter.md` (kontroller mot faktisk repostruktur før innlegging)
 
 ## 1. Formål, status og leseveiledning
@@ -57,16 +57,16 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-01 | Avgrensninger i v1 | Vedtatt | Ingen omfattende tariff-, fraværs-, stillingsprosent-, helligdags- eller juridisk modell. | Ikke bestemt |
 | OP-02 | UX og mobil | Vedtatt | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. | Ikke bestemt |
 | OP-03 | KI-feil ved preferansetolkning | Prioritering vedtatt; løsning åpen | Avklar før Story 5.1/5.2 er `done`. | Ikke bestemt |
-| OP-04 | Agentoppsett/underagenter | Prinsipp vedtatt; kontroll åpen | Behold oppsett uendret; gjennomgå før neste `bmad-build`. | Ikke bestemt |
+| OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
 | OP-05 | Ren klone/plattformtesting | Åpent | Testomfang/tidspunkt ikke avtalt; Codex-forslag ikke vedtatt. | Ikke bestemt |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
 | OP-07 | PR #4 | Vedtatt | Ragnhild Sætren ansvarlig for oppfølging og retting av PR #4. | Ragnhild Sætren |
 | OP-08 | Story 1.2 | Vedtatt | Mithad Kuduz ansvarlig for oppdatering av Story 1.2. | Mithad Kuduz |
 | OP-09 | Frist PR-review | Åpent | Ingen frist avtalt. | Ikke bestemt (PR-ansvar: Ragnhild) |
 | KS-01 | Åpne punkter ved merge | Vedtatt | K-01/K-02/K-04/K-06 kan være åpne etter merge; øvrige godkjenningskrav gjelder. | Ikke bestemt |
-| KS-02 | Kontroller rangeringsformel | Kontroll vedtatt; ikke utført | Verifiser mot PRD og Story 4.7 før testfasit godkjennes. | Ikke bestemt |
+| KS-02 | Kontroller rangeringsformel | Utført for fasiten i Story 1.2 (2026-11-04) | Fasiten for #4127 er kontrollert og godkjent med PR #5 (§11). Gjelder ny fasit på nytt. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 | KS-03 | Kontroller tidskategorier | Kontroll vedtatt; ikke utført | Kontroller fire vakttyper før implementasjon av Story 4.7 og ferdigstilling av fasit. | Ikke bestemt |
-| KS-04 | Kontroller datadekning | Kontroll vedtatt; ikke utført | Kontroller historikk, nabovakter og berørte uker før Story 1.2 er `done`. | Ikke bestemt |
+| KS-04 | Kontroller datadekning | Utført 2026-11-04 | Dekket for #4127 og #4189 og låst med test; begrensningen etter 05.10 er godtatt (§11). | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -171,6 +171,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Berørte områder:** Beslutningsfil, PR #4, Story 1.2, prosjektstyring (referanser); eksisterende logger beholdes.
 - **Ansvarlig/frist:** Ikke bestemt for selve beslutningsdokumentet.
 - **Status:** Vedtatt.
+- **Oppdatering 2026-11-04:** Regelen om underagenter i `AGENTS.md` (PR #5) er godkjent under OP-04. Dermed er det et vedtatt unntak fra «behold `AGENTS.md` uendret». Loggreglene er ikke endret. Se §11.
 
 ### AV-09 – Målevindu på 672 faktiske timer
 
@@ -296,6 +297,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Status:** Prinsipp vedtatt; gjennomgang gjenstår.
 - **Beslutning:** Behold agentoppsett og prosjektinstruksjoner **uendret**. Gjennomgå agentpraksis, eventuelle underagenter og bevaring av reviewfunn **før neste `bmad-build`**; ikke endre oppsett automatisk.
 - **Ansvarlig:** Ikke bestemt. **Frist:** Før neste `bmad-build`; ingen kalenderdato.
+- **Oppdatering 2026-11-04 – Vedtatt:** Agentoppsettet er gjennomgått og godkjent av Johannes W. Gaertner på vegne av gruppa, sammen med PR #5. `bmad-build` kjøres med underagenter: én samler epic-konteksten, og egne agenter gjennomgår koden uten å ha sett implementeringen. Regelen står i `AGENTS.md`. Reviewfunnene bevares i spesifikasjonens Review Triage Log. Se §11.
 
 ### OP-05 – Ren klone og plattformtesting
 
@@ -347,6 +349,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Beslutning:** Kontroller eksisterende rangeringsformel mot **PRD og Story 4.7** før relevant testfasit godkjennes. Motstrid legges frem for gruppen før endringer.
 - **Konsekvens:** 100 ulempoeng → 5 totalpoeng er bare et betinget eksempel frem til omregningen er verifisert. Ikke endre AV-11/AV-12 for å få kode og fasit til å stemme.
 - **Ansvarlig:** Ikke bestemt. **Frist:** Før godkjenning av relevant testfasit.
+- **Oppdatering 2026-11-04 – Utført for Story 1.2:** I spesifikasjonen for Story 1.2 står det at rangeringsfasiten for #4127 er kontrollert mot PRD §4.4 etter KS-02. Totalscorene er regnet for hånd på nytt med min–maks (AV-05) og vektene 40/20/15/25, og de stemmer: Jonas 85,65, Mette 78,65, Thomas 59,0 og Ingrid 37,0. Fasiten er godkjent med PR #5. Kontrollen gjelder bare denne fasiten. Ny eller endret fasit, blant annet i Story 4.4 og 4.7, må kontrolleres på nytt. Se §11.
 
 ### KS-03 – Verifiser tidskategorier for alle fire vakttyper
 
@@ -361,6 +364,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Beslutning:** Før Story 1.2 er `done`, kontroller at seeddata dekker **nødvendig historikk**, **relevante nabovakter før og etter** og **komplette berørte kalenderuker** for vedtatte beregninger og hvilekontroller. Mangler forelegges gruppen.
 - **Konsekvens:** 672 timer historikk for ulempe er ikke nødvendigvis nok for hvilekontroll; det kan også trenges etterfølgende planlagte vakter. Kontrollen gjelder relevante demonstrasjonsscenarioer og introduserer ingen turnusgenerator. Story 4.7 trenger ikke være ferdig bare fordi Story 1.2 skal bli `done`.
 - **Ansvarlig:** Ikke bestemt. **Frist:** Før Story 1.2 markeres `done`.
+- **Oppdatering 2026-11-04 – Utført:** Mithad Kuduz har kontrollert datadekningen i PR #5 (commit `d00d557`). Den er låst med `test_datadekning_ved_periodegrensene_ks04` i `backend/tester/lagring/test_testdata.py`, for #4127 og #4189. Kjent begrensning: det finnes ingen vakter etter natten 04.–05.10, så en vakt helt sist i perioden får ikke full kontroll av hvilen etterpå. Begrensningen er godtatt av Johannes W. Gaertner på vegne av gruppa. Se §11.
 
 ## 7. Samlede konsekvenser for prosjektfiler og funksjoner
 
@@ -403,9 +407,9 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Oppgave | Grunnlag | Når | Ansvar |
 |---|---|---|---|
 | Etabler og test reproduserbare seeddata/historikk og avtalte scenarioer. | AV-07, AV-10 | Før Story 1.2 er `done` i samsvar med prosjektets øvrige kriterier. | Mithad: Story 1.2-oppdatering; implementeringsansvar ellers ikke bestemt |
-| Kontroller datadekning for historikk, nabovakter og kalenderuker. | KS-04 | **Før Story 1.2 er `done`.** | Ikke særskilt fordelt |
+| Kontroller datadekning for historikk, nabovakter og kalenderuker. | KS-04 | **Før Story 1.2 er `done`.** Utført 2026-11-04 (§11). | Ikke særskilt fordelt |
 | Kontroller tidskategorier for fire vakttyper. | KS-03 | **Før implementasjon av Story 4.7** og ferdigstilling av tilhørende fasit. | Ikke bestemt |
-| Verifiser rangeringsformelen mot PRD/Story 4.7. | KS-02 | **Før godkjenning av relevant testfasit.** | Ikke bestemt |
+| Verifiser rangeringsformelen mot PRD/Story 4.7. | KS-02 | **Før godkjenning av relevant testfasit.** Utført for fasiten i Story 1.2 2026-11-04 (§11); ny fasit kontrolleres på nytt. | Ikke bestemt |
 | Implementer/test ulempmodell etter vedtakene uten å endre dem. | AV-01, AV-09, AV-11/12 | Som del av Story 4.7 i v1, etter gjeldende story-kriterier. | Ikke bestemt |
 | Avklar relevant KI-feilhåndtering ved preferansetolkning. | OP-03 | **Før Story 5.1 og 5.2 er `done`.** | Ikke bestemt |
 
@@ -414,7 +418,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Oppgave | Grunnlag | Status/avgrensning |
 |---|---|---|
 | Kontrollér om eksisterende logging dekker sporbarhet og begrunnelse for tak 300. | K-05 | Kontroll åpen; ingen loggendringer vedtatt. |
-| Gjennomgå agentpraksis/underagenter og bevar reviewfunn. | OP-04 | Før neste `bmad-build`; agentinstrukser beholdes. |
+| Gjennomgå agentpraksis/underagenter og bevar reviewfunn. | OP-04 | Gjennomført og godkjent 2026-11-04; regelen om underagenter står i `AGENTS.md` (§11). |
 | Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. |
 | Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | Åpent; ingen nye testkrav vedtatt. |
 | Fastsett eventuell bindende arbeidsrekkefølge. | OP-06 | Codex-rekkefølgen er kun et forslag. |
@@ -443,12 +447,29 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 ```
 
 > Dette er kun et **forslag** til fremtidig referanse. AV-08 og OP-04 innebærer at eksisterende agentinstruksjoner **foreløpig beholdes uendret**. Dersom faktisk lagringssted blir et annet, må lenken tilpasses.
+>
+> **Oppdatering 2026-11-04:** OP-04 er vedtatt, og regelen om underagenter i `AGENTS.md` er godkjent (§11).
 
 ## 10. Kilder og gyldighet
 
 - **Hovedgrunnlag:** `IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf`, oppdatert 2026-10-31, seks sider. PDF-en bygger på to Codex-analyser og var et **forslag til beslutningsgrunnlag**, ikke en registrering av vedtak.
 - **Faktiske gruppevedtak:** Formidlet fra møtet 2026-11-02 og bekreftet punkt for punkt av gruppens representant i den påfølgende samtalen. Der gruppen ikke oppga begrunnelse, ansvar eller frist, står det eksplisitt «ikke oppgitt»/«ikke bestemt».
 - **Kontrollbegrensning:** Dette dokumentet er **ikke** en gjennomgang av nåværende kildekode eller repository-innhold. Verken PR #4 eller Story 1.2 er endret gjennom utarbeidelsen av denne filen. Ingen tester, merges, commits eller pushes er utført.
+
+## 11. Oppdateringer etter møtet
+
+### 2026-11-04 – Godkjenning av PR #5 (Story 1.2)
+
+- **Hvem:** Johannes W. Gaertner, som har godkjent på vegne av gruppa.
+- **Grunnlag:** Gjennomgang av PR #5, «Story 1.2: Fiktiv turnus med ansatte og vakter». Installasjonen virket, testdata-kommandoen ga samme resultat to ganger, og `pytest` ga 35 av 35 bestått. Rangeringsfasiten for #4127 er regnet for hånd på nytt. Detaljer: `.logs/johagartnerhimolde/998-2026-11-04-09-45-04-status-og-pr-5.md`.
+- **Godkjent:**
+  - PR #5 som helhet.
+  - **OP-04:** Agentoppsettet med underagenter i `bmad-build`. Regelen i `AGENTS.md` fra PR #5 står, og AV-08 har fått en henvisning til dette unntaket.
+  - **AV-10:** Radene ble skrevet ut med kladdeskript utenfor appen, og kladdeskriptene ligger i `docs/ki-logg/2026-11-03-testdata/`. Repoet har bare de faste radene, og det oppfyller AV-10. Det er fortsatt ingen turnusgenerator i appen.
+  - **KS-04:** Kontrollen av datadekningen er godtatt, med den kjente begrensningen etter 05.10.
+  - **KS-02:** Fasiten for #4127 er godkjent etter kontrollen som er beskrevet under KS-02.
+  - **Valg spesifikasjonen ikke avgjorde:** Andre vakter har minstenivå 2, Eirik har ingen vakter i uke 40, og helgen 26.–27.09 er tynt bemannet.
+- **Ikke endret:** Ingen andre AV-, K-, OP- eller KS-punkter. Ragnhilds åpne punkt om gamle vakttider i spesifikasjonen for Story 1.2 er løst i PR #5, men lukkes i hennes egen `issues.md`.
 
 ---
 
