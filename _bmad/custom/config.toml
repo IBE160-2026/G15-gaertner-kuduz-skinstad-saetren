@@ -5,3 +5,8 @@
 #
 # [agents.bmad-agent-pm]
 # description = "Prefers short, bulleted PRDs over narrative drafts."
+
+# Installer wrote communication_language only to core/config.yaml, and
+# render_skill.py halts without it in the TOML config.
+[core]
+communication_language = "Norwegian Bokmal"
