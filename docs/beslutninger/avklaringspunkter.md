@@ -4,10 +4,10 @@
 > **Gruppe:** G15 – Prompt Patrol  
 > **Møtedato:** 2026-11-02  
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
-> **Beslutningsgrunnlag:** `IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf` (oppdatert 2026-10-31, 6 sider)  
+> **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
 > **Sist oppdatert:** 2026-11-04 (OP-04, KS-02 og KS-04, se §11)  
-> **Foreslått plassering:** `docs/avklaringspunkter.md` (kontroller mot faktisk repostruktur før innlegging)
+> **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
 
@@ -442,7 +442,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 Dersom gruppen senere ønsker å gjøre dokumentet enklere å oppdage, kan en **kort lenke** legges inn i `AGENTS.md` eller `CLAUDE.md` *etter særskilt godkjenning* – ikke kopier hele dokumentet:
 
 ```md
-Prosjektbeslutninger fra gruppemøtet 2026-11-02: se docs/avklaringspunkter.md.
+Prosjektbeslutninger fra gruppemøtet 2026-11-02: se docs/beslutninger/avklaringspunkter.md.
 Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstruksjoner, meld fra og be om avklaring.
 ```
 
@@ -452,7 +452,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 
 ## 10. Kilder og gyldighet
 
-- **Hovedgrunnlag:** `IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf`, oppdatert 2026-10-31, seks sider. PDF-en bygger på to Codex-analyser og var et **forslag til beslutningsgrunnlag**, ikke en registrering av vedtak.
+- **Hovedgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf), oppdatert 2026-10-31, seks sider. PDF-en bygger på to Codex-analyser og var et **forslag til beslutningsgrunnlag**, ikke en registrering av vedtak.
 - **Faktiske gruppevedtak:** Formidlet fra møtet 2026-11-02 og bekreftet punkt for punkt av gruppens representant i den påfølgende samtalen. Der gruppen ikke oppga begrunnelse, ansvar eller frist, står det eksplisitt «ikke oppgitt»/«ikke bestemt».
 - **Kontrollbegrensning:** Dette dokumentet er **ikke** en gjennomgang av nåværende kildekode eller repository-innhold. Verken PR #4 eller Story 1.2 er endret gjennom utarbeidelsen av denne filen. Ingen tester, merges, commits eller pushes er utført.
 
