@@ -29,8 +29,16 @@ Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
 ## Kjøre appen
 
 Appen er foreløpig et skjelett: en backend med helsesjekk og testdata og en tom frontend.
-Du trenger Python 3.12 eller nyere og Node 20.19 eller nyere. Kommandoene under er
+Du trenger Python 3.12 eller nyere og Node 20.19 eller nyere. Backend og testene er
+kjørt med Python 3.12.5 og 3.15.2 på Windows (2026-11-04). Kommandoene under er
 for Windows. På macOS/Linux bytter du `.venv\Scripts\python` med `.venv/bin/python`.
+
+På Windows er en filsti begrenset til 260 tegn, med mindre lange stier er slått på. Den
+lengste filen i repoet har en sti på 125 tegn, så stien du kloner til, bør være kortere
+enn ca. 130 tegn. Ellers kan checkout feile med «Filename too long», og `python -m venv`
+kan feile i `ensurepip`. Det gjelder også git-worktrees, for eksempel når agenter
+jobber i en egen kopi. `git config --global core.longpaths true` løser det for git. For
+Python må lange stier slås på i Windows, og det krever administratorrettigheter.
 
 Backend, fra mappa `backend/`:
 

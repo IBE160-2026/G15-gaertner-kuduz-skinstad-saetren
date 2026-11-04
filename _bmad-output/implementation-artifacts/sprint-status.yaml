@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-04-2026 10:10
+last_updated: 11-04-2026 10:35
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -117,9 +117,13 @@ action_items:
     status: open
   - epic: 1
     action: "Story 1.1 (PR #3): verifiser at backend installeres og testene kjører
-      med Python 3.12, laveste versjon README oppgir."
+      med Python 3.12, laveste versjon README oppgir.
+      Verifisert 2026-11-04 på Windows med Python 3.12.5 i en ny venv på main
+      etter story 1.2. Installasjonen og testdata-kommandoen virket, og pytest
+      ga 35 passed. Samme resultat med 3.15.2. I tillegg ga unittest for
+      scripts/ 64 OK."
     owner: "gruppa"
-    status: open
+    status: done
   - epic: 1
     action: "Story 1.1 (PR #3): gruppa godtar eller avviser at versjonene er låst
       eksakt etter Stack-tabellen (FastAPI 0.141.1, React 19.3.0, Vite 8.3.1, TypeScript
