@@ -489,7 +489,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Endret:** `.claude/skills/sesjonslogg/SKILL.md`, beskrivelsen i `.agents/skills/sesjonslogg/SKILL.md`, avsnittet Sesjonslogg i `AGENTS.md` og AV-08.
 - **Ikke endret:** KI-loggingen i `docs/ki-logg/` og de andre AV-, K-, OP- og KS-punktene.
 
-### 2026-11-06 – Automatisk kontroll av at skillene er speilet, og ny ordlyd i AV-08 (foreslått)
+### 2026-11-06 – Automatisk kontroll av speilingen, ny ordlyd i AV-08 og ny regel for branch og PR (foreslått)
 
 - **Hvem:** Foreslått av Johannes W. Gaertner. Gjelder når PR-en fra branchen `ci-skills-speiling` er godkjent av gruppa.
 - **Grunnlag:** `.agents/skills` (Codex) og `.claude/skills` (Claude Code) holdes like bare av en skriftlig regel i `AGENTS.md`. En gjennomgang 2026-11-06 viste at de var like, bortsett fra det vedtatte unntaket `sesjonslogg`. Ingen hook, CI eller test fanget opp avvik.
@@ -497,6 +497,12 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Testen `scripts/test_skills_speiling.py` og workflow-filen `.github/workflows/skills-speiling.yml` sjekker speilingen ved hver push. Dette er prosjektets første CI.
   - I `AGENTS.md` er TODO-en om CI erstattet med en beskrivelse av hva CI kjører. Tallet «214» i fallgruven om linjeskift er fjernet.
   - AV-08 får ny ordlyd i andre del (se AV-08).
+  - **Regelen for branch og PR i `AGENTS.md` (Policy):** «Utvidelser av funksjonalitet går i egen branch» erstattes av en menneskelig vurdering.
+    - Den enkelte avgjør aktivt om arbeidet skal i branch og PR, ut fra hvor stort det er og hvor mange definerende avgjørelser det inneholder.
+    - Avgrensede endringer kan gå rett på `main`. Større endringer, og avgjørelser som binder gruppa, bør gjennomgås av et annet gruppemedlem i en PR.
+    - Agenter foreslår, men oppretter ikke branch eller PR uten at brukeren har valgt det.
+    - Kvalitetssikringen må kunne spores uansett vei: PR-gjennomgangen, eller commit-meldingen og KI-loggen.
+    - **Begrunnelse:** Gruppa stoler på hverandre. En maskinell regel sendte også små endringer til PR. Sensorveiledningen godtar «branches, pull requests, issues eller tilsvarende» og beskrivelser av rettede KI-feil som spor av gjennomgang.
 - **Ikke endret:** Første del av AV-08 og de andre AV-, K-, OP- og KS-punktene.
 
 ---

@@ -19,8 +19,16 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
 
-- Utvidelser av funksjonalitet går i egen branch. Småendringer går rett på `main`
-  inntil gruppa bestemmer noe annet.
+- Branch og PR er et aktivt valg den enkelte gjør. Vurder hvor stort arbeidet er, og
+  hvor mange definerende avgjørelser det inneholder:
+  - Avgrensede endringer som er lette å etterprøve — rettelser, dokumentasjon, små
+    tillegg — kan gå rett på `main`. Vi stoler på hverandre, og den enkelte er
+    ansvarlig for kvalitetssikringen av eget arbeid.
+  - Større eller mer komplekse endringer, eller avgjørelser som binder resten av
+    gruppa (datamodell, regelmotor, arkitektur, felles oppsett), bør gå i branch med
+    PR, slik at et annet gruppemedlem ser over.
+  - Agenter kan foreslå branch eller `main` med en kort begrunnelse, men oppretter
+    ikke branch eller PR uten at brukeren har valgt det.
 - KI skal aldri beregne harde regler, arbeidstid eller kostnad — de må være
   reproduserbare. KI brukes bare til å tolke tekstbaserte preferanser og forklare
   avveininger mellom kandidater som regelmotoren allerede har godkjent.
@@ -31,8 +39,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   ettertid. Det står ikke i diffen og kan ikke rekonstrueres senere.
 - Måtte generert kode rettes, si i brødteksten hva som var galt. Det er
   dokumentasjonen av kvalitetssikring emnet ber om.
-- Går arbeidet i branch, er PR-gjennomgangen kvalitetssikringen. Den enkelte er
-  ansvarlig for gjennomgangen av eget arbeid.
+- Uansett vei skal kvalitetssikringen kunne spores: i branch er det PR-gjennomgangen,
+  rett på `main` er det commit-meldingen og, for KI-generert kode, KI-loggen.
 - Kode generert av KI logges i `docs/ki-logg/<dato>-<tema>.md`: oppgaven, prompten,
   hva modellen leverte, hva som ble rettet og hvorfor, og hvordan resultatet er
   kvalitetssikret. Emnet vurderer denne dokumentasjonen.
