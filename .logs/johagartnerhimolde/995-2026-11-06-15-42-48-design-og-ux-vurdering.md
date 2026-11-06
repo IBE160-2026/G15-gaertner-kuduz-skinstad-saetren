@@ -25,5 +25,12 @@ Brukeren ville vite om darkmode, zoom med Ctrl + scroll og tilpasning til ulike 
   - Mot `rem`: tokenene og mockupene er i px, og omregningen gir skjeve tall (10,5px = 0,65625rem). Den tette tabellen kan sprekke når brukeren har stor standardtekst, så det må testes. Gruppa trenger en regel for hva som fortsatt er px (f.eks. 1px-kanter). Ctrl-zoom virker likt med begge, så gevinsten gjelder bare skriftinnstillingen.
   - Mellomløsning: skriftstørrelser i `rem`, kanter og eventuelt avstander i px.
 - PRD FR-9 (inntil fem kandidater) og UX-DR7/FR9 i `epics.md` (alle gyldige) er motstridende. Må avklares før rangeringstabellen bygges.
-- Tilgjengelighetsgulvet (UX-DR24) bør vurderes utvidet med alternativtekst for ikoner, skjemaetiketter, 200 % zoom uten horisontal scroll og et tekstlig signal i tillegg til fargeskiftet i arbeidsbelastningslinjen (UX-DR9).
-- En enkel forståelsestest av kandidatvisningen mangler (påpekt i reviewen 2026-10-26, utsatt i OP-02).
+- Tilgjengelighet for svaksynte og skjermleser bør vurderes inn i tilgjengelighetsgulvet (UX-DR24): alternativtekst for ikoner som «!», ▲ og ▼, etiketter på skjemafelt, tabelloverskrifter skjermleseren kan lese, og at åpnet/lukket begrunnelse og statusmeldinger blir lest opp. EXPERIENCE.md § Accessibility Floor sier i dag «Ingen bekreftet skjermleser-/ARIA-innsats», og omtaler det som en bevisst avgrensning, så endringen krever et gruppevedtak. At høy belastning varsles bare med farge (UX-DR9), er akseptert av brukeren. Zoom regnes som dekket.
+- Fra første story som bygger appskallet (story 1.3 Innlogging eller 1.5 Vaktoversikt): vurder flytende bredde med `max-width` i stedet for fast 1180px. Fordeler og ulemper:
+  - For `max-width`: ingen horisontal scroll i smale vinduer, delt skjerm eller med zoom; ser ut som mockupene på brede skjermer; story 4.6 blir et tillegg (kortvisning på mobil) i stedet for en omskriving; mindre risiko for at responsivitet kuttes sent, og sensor skal prøve flere skjermstørrelser.
+  - Mot `max-width`: tabellen må tåle å krympe (lange navn, kolonner som brytes) og testes på flere bredder i hver story; mellombreddene avviker fra mockupene.
+  - For fast 1180px: lett å sammenligne med mockupene, og færre layoutvarianter tidlig.
+  - Mot fast 1180px: horisontal scroll under 1180px, også på en laptop med zoom; story 4.6 må bygge om layouten.
+
+### Oppfølging samme dag
+Brukeren ba om notat om `max-width` (lagt inn over), presiserte at tilgjengelighet for svaksynte og skjermleser er viktig, at fargevarsel for høy belastning er greit og at zoom er dekket. Forståelsestesten er strøket: gruppa tester brukernytten internt når det er mulig. Kontrollert at `[ASSUMPTION]`-merkene i UX-kravene er ført inn i akseptansekriteriene til storiene de gjelder (1.3, 1.5, 2.1, 2.4, 5.5, ÅB-7 i 4.6). Unntaket er reserveteksten i story 5.4: UX-DR14 sier at teksten ikke er fastsatt, men storien merker det ikke.
