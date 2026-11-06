@@ -14,6 +14,18 @@ Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og
 ## Planleggingsgrunnlag
 
 - [Product brief](product-brief.md) – eneste gjeldende brief for prosjektet.
+- [PRD](_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md) – krav til
+  funksjonalitet, harde regler og rangering.
+- UX: [DESIGN](_bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/DESIGN.md)
+  beskriver hvordan appen ser ut, og
+  [EXPERIENCE](_bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/EXPERIENCE.md)
+  hvordan den oppfører seg.
+- [Arkitektur](_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md)
+  – tekniske beslutninger (AD-1 og videre) som holder delene konsistente.
+- [Epics og stories](_bmad-output/planning-artifacts/epics.md) – oppdelingen av arbeidet. Fremdriften
+  står i [sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml).
+- [Beslutningsreferat](docs/beslutninger/avklaringspunkter.md) – gruppevedtak (AV-, K-, OP- og KS-punkter)
+  fra møtet 2026-11-02 og senere oppdateringer.
 
 ## Modelltest før KI-integrasjonen
 
