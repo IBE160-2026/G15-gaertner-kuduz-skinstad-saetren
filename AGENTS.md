@@ -95,8 +95,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     `adaptere/lagring/modeller.py`, slett databasefilen og kjør kommandoen på nytt.
 - Frontend (Node 20.19 eller nyere), fra `frontend/`: `npm install`, deretter
   `npm run dev` (http://localhost:5173). `npm run build` typesjekker og bygger.
-- TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som
-  de lokale kommandoene ikke dekker.
+- CI (`.github/workflows/skills-speiling.yml`) kjører bare speilingstesten for skills,
+  på hver push til alle brancher. Lokalt: `python -m unittest discover -s scripts -p
+  "test_skills*.py"`. Backend-, frontend- og modelltestene kjøres ikke i CI.
 - Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering
   ligger i `docs/ki-logg/README.md`. Ikke skriv dem på nytt.
 
@@ -107,6 +108,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - `.claude/skills/` (Claude Code) og `.agents/skills/` (Codex) er samme innhold for to
   harnesses, begge sporet med vilje slik at agentoppsettet følger repoet. Endrer du en
   skill eller en `customize.toml` i den ene, speil endringen i den andre.
+  `scripts/test_skills_speiling.py` kontrollerer dette, også i CI. Et nytt unntak må
+  inn i `POINTERS` i testen.
 - Oppsett som skal gjelde hele gruppa må ligge i sporede filer.
   `_bmad/config.user.toml`, `_bmad/custom/*.user.toml` og `.claude/settings.local.json`
   er gitignorerte og gjelder bare din maskin.
@@ -115,7 +118,7 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 - `.agents/`-kopien har CRLF i arbeidstreet, `.claude/`-kopien har LF. Sammenlign dem
   med linjeskift ignorert — `diff <(tr -d '\r' < a) <(tr -d '\r' < b)` — ellers ser
-  alle 214 identiske filer ut som endret.
+  alle de identiske filene ut som endret.
 - Gruppens OpenRouter-konto har en grense på 20 Luna-kall per kalenderminutt
   (`limit_source: openrouter_new_account`). Kjør ikke flere live-tester samtidig, og
   regn med 429 uten begrenseren i AD-7. Haiku hadde ikke denne grensen.

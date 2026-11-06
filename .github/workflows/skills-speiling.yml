@@ -1,0 +1,17 @@
+# Kontrollerer at .agents/skills (Codex) og .claude/skills (Claude Code) er like.
+# Kjører på hver push til alle brancher; resultatet vises også i PR-en for samme commit.
+name: Speiling av skills
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  skills-speiling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s scripts -p "test_skills*.py" -v
