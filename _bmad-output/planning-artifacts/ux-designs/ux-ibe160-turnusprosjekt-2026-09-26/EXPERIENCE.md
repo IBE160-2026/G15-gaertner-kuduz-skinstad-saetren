@@ -110,6 +110,8 @@ Mulig tillegg i v2 (2026-11-06): utvidet tilgjengelighet for svaksynte, med skje
 
 Responsiv web-app — samme kodebase skal fungere godt på både desktop og mobil/nettbrett (bekreftet i beslutningsloggen), ikke en separat native app. Alle fire mockup-skjermene (`mockups/`) viser imidlertid kun én fast desktop-bredde (1180px, "nettleser-vindu"-innramming) — **ingen breakpoints, stablingsmønster for tabellen, eller mobiltilpasning er faktisk besluttet eller vist noe sted.**
 
+Besluttet 2026-11-06 (AV-14): 1180px er rammens bredde, ikke produktets. Appbaren går over hele bredden, innholdet får `max-width: 1180px`, og under det ruller brede tabeller vannrett i sin egen beholder fram til story 4.6. Siden som helhet skal ikke rulle vannrett. Breakpoints og stabling under er fortsatt utsatt (OP-02).
+
 **[ASSUMPTION]** Følgende er en rimelig, men ubekreftet, tilpasning avledet fra tettheten i `DESIGN.md` og bør bekreftes med gruppen før implementasjon:
 
 | Breakpoint | Foreslått behandling |
