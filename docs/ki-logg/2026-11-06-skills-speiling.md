@@ -53,5 +53,4 @@ Ingenting i koden måtte rettes etter første kjøring. Noen valg ble tatt under
   - Ny sporet fil bare i `.claude` (`git add -N`): fanget av `test_same_files_in_both_folders`.
   - Henvisningen i `.agents/skills/sesjonslogg/SKILL.md` erstattet: fanget av `test_pointer_keeps_name_and_links_the_claude_skill`.
 - **Ressurser:** Testen bruker ingen nettverkskall, modellkall eller tokens. Repoet er offentlig, og for offentlige repoer er GitHub Actions gratis.
-- **CI på GitHub:** Ikke kjørt ennå. Pushen ble avvist fordi `gh`-tokenet manglet tilgangen `workflow`. Resultatet føres i PR-en.
-- **Ikke testet:** Workflow-filen er ikke validert lokalt. Den blir kontrollert av det første kjøret på GitHub.
+- **CI på GitHub:** Den første pushen ble avvist fordi `gh`-tokenet manglet tilgangen `workflow`. Det ble løst med `gh auth refresh -h github.com -s workflow`. Det første kjøret, [42214162167](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42214162167) på `5f6c31c`, var grønt. De 3 testene ga OK, og hele jobben tok 7 s.
