@@ -19,8 +19,16 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
 
-- Utvidelser av funksjonalitet går i egen branch. Småendringer går rett på `main`
-  inntil gruppa bestemmer noe annet.
+- Branch og PR er et aktivt valg den enkelte gjør. Vurder hvor stort arbeidet er, og
+  hvor mange definerende avgjørelser det inneholder:
+  - Avgrensede endringer som er lette å etterprøve — rettelser, dokumentasjon, små
+    tillegg — kan gå rett på `main`. Vi stoler på hverandre, og den enkelte er
+    ansvarlig for kvalitetssikringen av eget arbeid.
+  - Større eller mer komplekse endringer, eller avgjørelser som binder resten av
+    gruppa (datamodell, regelmotor, arkitektur, felles oppsett), bør gå i branch med
+    PR, slik at et annet gruppemedlem ser over.
+  - Agenter kan foreslå branch eller `main` med en kort begrunnelse, men oppretter
+    ikke branch eller PR uten at brukeren har valgt det.
 - KI skal aldri beregne harde regler, arbeidstid eller kostnad — de må være
   reproduserbare. KI brukes bare til å tolke tekstbaserte preferanser og forklare
   avveininger mellom kandidater som regelmotoren allerede har godkjent.
@@ -31,8 +39,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   ettertid. Det står ikke i diffen og kan ikke rekonstrueres senere.
 - Måtte generert kode rettes, si i brødteksten hva som var galt. Det er
   dokumentasjonen av kvalitetssikring emnet ber om.
-- Går arbeidet i branch, er PR-gjennomgangen kvalitetssikringen. Den enkelte er
-  ansvarlig for gjennomgangen av eget arbeid.
+- Uansett vei skal kvalitetssikringen kunne spores: i branch er det PR-gjennomgangen,
+  rett på `main` er det commit-meldingen og, for KI-generert kode, KI-loggen.
 - Kode generert av KI logges i `docs/ki-logg/<dato>-<tema>.md`: oppgaven, prompten,
   hva modellen leverte, hva som ble rettet og hvorfor, og hvordan resultatet er
   kvalitetssikret. Emnet vurderer denne dokumentasjonen.
@@ -95,8 +103,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     `adaptere/lagring/modeller.py`, slett databasefilen og kjør kommandoen på nytt.
 - Frontend (Node 20.19 eller nyere), fra `frontend/`: `npm install`, deretter
   `npm run dev` (http://localhost:5173). `npm run build` typesjekker og bygger.
-- TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som
-  de lokale kommandoene ikke dekker.
+- CI (`.github/workflows/skills-speiling.yml`) kjører bare speilingstesten for skills,
+  på hver push til alle brancher. Lokalt: `python -m unittest discover -s scripts -p
+  "test_skills*.py"`. Backend-, frontend- og modelltestene kjøres ikke i CI.
 - Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering
   ligger i `docs/ki-logg/README.md`. Ikke skriv dem på nytt.
 
@@ -107,6 +116,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - `.claude/skills/` (Claude Code) og `.agents/skills/` (Codex) er samme innhold for to
   harnesses, begge sporet med vilje slik at agentoppsettet følger repoet. Endrer du en
   skill eller en `customize.toml` i den ene, speil endringen i den andre.
+  `scripts/test_skills_speiling.py` kontrollerer dette, også i CI. Et nytt unntak må
+  inn i `POINTERS` i testen.
 - Oppsett som skal gjelde hele gruppa må ligge i sporede filer.
   `_bmad/config.user.toml`, `_bmad/custom/*.user.toml` og `.claude/settings.local.json`
   er gitignorerte og gjelder bare din maskin.
@@ -115,7 +126,7 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 - `.agents/`-kopien har CRLF i arbeidstreet, `.claude/`-kopien har LF. Sammenlign dem
   med linjeskift ignorert — `diff <(tr -d '\r' < a) <(tr -d '\r' < b)` — ellers ser
-  alle 214 identiske filer ut som endret.
+  alle de identiske filene ut som endret.
 - Gruppens OpenRouter-konto har en grense på 20 Luna-kall per kalenderminutt
   (`limit_source: openrouter_new_account`). Kjør ikke flere live-tester samtidig, og
   regn med 429 uten begrenseren i AD-7. Haiku hadde ikke denne grensen.
