@@ -44,5 +44,11 @@ README på GitHub lenket bare til briefen under «Planleggingsgrunnlag». Bruker
 - **Ikke pushet:** GitHub avviste branchen fordi `gh`-tokenet mangler tilgangen `workflow`. Det løses med `gh auth refresh -h github.com -s workflow`, som brukeren må kjøre selv.
 - Branchen er rebaset på `origin/main` før den er pushet, så PR-en får bare disse to commitene.
 
+**Oppfølging kl. 13:00 – CI og PR:**
+- Brukeren ga `gh` tilgangen `workflow`.
+- Det første CI-kjøret ([42214162167](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42214162167)) på `5f6c31c` var grønt. De 3 testene ga OK, og kjøret tok 7 s.
+- Resultatet er ført i KI-loggen.
+- [PR #6](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/6) er åpnet mot `main`. Beskrivelsen markerer AV-08 og regelen for branch og PR som forslag som gruppa må godkjenne.
+
 ### Åpne punkter
-- Gi `gh` tilgangen `workflow`, push `ci-skills-speiling`, sjekk at det første CI-kjøret blir grønt, og åpne PR-en. Gruppa godkjenner forslagene til AV-08 og regelen for branch og PR i PR-en.
+- Gruppa gjennomgår og godkjenner PR #6. Det er da den nye ordlyden i AV-08 og den nye regelen for branch og PR blir vedtatt.
