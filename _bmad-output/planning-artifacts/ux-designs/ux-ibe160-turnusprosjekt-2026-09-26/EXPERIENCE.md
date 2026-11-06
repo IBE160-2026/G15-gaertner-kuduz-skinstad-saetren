@@ -2,7 +2,7 @@
 title: "EXPERIENCE: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-14
+updated: 2026-11-06
 sources:
   - _bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md
   - _bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/.memlog.md
@@ -103,6 +103,8 @@ Enkel, fornuftig standard — **ikke** et utvidet WCAG-program. Dette er en bevi
 - Tilstrekkelig fargekontrast for tekst og fargekodede statuser (kostnad, arbeidsbelastning) mot bakgrunnene definert i `DESIGN.md.Colors`.
 - Full tastaturnavigerbarhet: alle knapper, ekspander-lenker og skjemafelt må kunne nås og aktiveres uten mus.
 - Ingen bekreftet skjermleser-/ARIA-innsats utover det som følger naturlig av semantisk HTML — ikke spesifisert som eget krav.
+
+Mulig tillegg i v2 (2026-11-06): utvidet tilgjengelighet for svaksynte, med skjermleserstøtte som alternativtekst for ikoner, etiketter på skjemafelt, tabelloverskrifter skjermleseren kan lese og opplesing av åpnet/lukket begrunnelse og statusmeldinger. Avgrensningen over gjelder fortsatt for v1.
 
 ## Responsive & Platform
 
