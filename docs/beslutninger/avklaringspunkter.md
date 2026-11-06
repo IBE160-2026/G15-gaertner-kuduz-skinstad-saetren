@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-04 (OP-04, KS-02 og KS-04, se §11)  
+> **Sist oppdatert:** 2026-11-06 (AV-08, sesjonslogg uten git-operasjoner, se §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -172,6 +172,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Ansvarlig/frist:** Ikke bestemt for selve beslutningsdokumentet.
 - **Status:** Vedtatt.
 - **Oppdatering 2026-11-04:** Regelen om underagenter i `AGENTS.md` (PR #5) er godkjent under OP-04. Dermed er det et vedtatt unntak fra «behold `AGENTS.md` uendret». Loggreglene er ikke endret. Se §11.
+- **Oppdatering 2026-11-06:** Nytt vedtatt unntak fra «behold loggreglene uendret»: rene git-operasjoner logges ikke i sesjonsloggen. Endringen gjelder skillen `sesjonslogg` og avsnittet Sesjonslogg i `AGENTS.md`. Se §11.
 
 ### AV-09 – Målevindu på 672 faktiske timer
 
@@ -470,6 +471,17 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - **KS-02:** Fasiten for #4127 er godkjent etter kontrollen som er beskrevet under KS-02.
   - **Valg spesifikasjonen ikke avgjorde:** Andre vakter har minstenivå 2, Eirik har ingen vakter i uke 40, og helgen 26.–27.09 er tynt bemannet.
 - **Ikke endret:** Ingen andre AV-, K-, OP- eller KS-punkter. Ragnhilds åpne punkt om gamle vakttider i spesifikasjonen for Story 1.2 er løst i PR #5, men lukkes i hennes egen `issues.md`.
+
+### 2026-11-06 – Rene git-operasjoner logges ikke i sesjonsloggen
+
+- **Hvem:** Gruppa, etter anbefaling fra faglærer. Formidlet av Johannes W. Gaertner.
+- **Grunnlag:** Faglærer: «Egne gitoperasjoner er ikke nødvendig å logge. Det ligger i git historikken uansett.» Sesjonsloggen skal dokumentere arbeidsprosessen, og det trengs ingen logg når ingenting i prosjektet endres, for eksempel når repoet oppdateres lokalt.
+- **Vedtatt:**
+  - Commit, pull, fetch, push, merge, rebase og opprettelse eller sletting av brancher logges ikke. Hører de til en større oppgave, nevnes de bare som faktum i Resultat.
+  - Avgrensningen fra 2026-11-02, som bare gjaldt pull, fetch og push, er utvidet til alle rene git-operasjoner.
+  - Logger som bare dokumenterer git-operasjoner, er fjernet. Med faglærerens uttrykkelige tillatelse for dette tilfellet ble alle loggmappene gjennomgått. Bare én fil var en ren git-logg, og den lå i Johannes' mappe. De andre filene inneholder også annet arbeid og er beholdt.
+- **Endret:** `.claude/skills/sesjonslogg/SKILL.md`, beskrivelsen i `.agents/skills/sesjonslogg/SKILL.md`, avsnittet Sesjonslogg i `AGENTS.md` og AV-08.
+- **Ikke endret:** KI-loggingen i `docs/ki-logg/` og de andre AV-, K-, OP- og KS-punktene.
 
 ---
 

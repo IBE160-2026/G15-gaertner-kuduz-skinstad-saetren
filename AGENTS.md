@@ -148,8 +148,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 ## Sesjonslogg
 
 - Bruk `sesjonslogg` før sluttoppsummeringen for hver fullført oppgave som endrer
-  kode, dokumentasjon, konfigurasjon eller annen tilstand, inkludert commit og push.
-  Oppgavens størrelse avgjør ikke om den skal logges.
+  kode, dokumentasjon, konfigurasjon eller data. Oppgavens størrelse avgjør ikke om
+  den skal logges. Rene git-operasjoner (commit, pull, fetch, push, merge, brancher)
+  logges ikke — de står i git-historikken (AV-08, oppdatert 2026-11-06).
 - Logg også undersøkelser uten tilstandsendringer når de gir viktige funn,
   beslutninger eller oppfølgingspunkter for prosjektet. Rene faktaspørsmål uten
   endringer eller noe å ta vare på trenger ikke logg. Denne avgrensningen gjelder
