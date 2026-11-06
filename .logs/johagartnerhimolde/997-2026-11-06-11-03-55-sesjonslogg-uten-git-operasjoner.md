@@ -25,7 +25,12 @@ Gruppa vedtok etter anbefaling fra faglærer at egne git-operasjoner ikke skal l
   - `git diff --check` fant bare det bevisste Markdown-linjeskiftet.
   - PyYAML finnes ikke lokalt. Frontmatter ble i stedet kontrollert ved at beskrivelsene ikke har `: ` eller ` #`, og ved at begge harnessene leste dem inn.
 - Ingen KI-logg i `docs/ki-logg/`, fordi endringen bare gjelder instruksjoner og ikke kode.
-- Ikke pushet.
+- Pushet til GitHub senere samme dag.
+
+**Oppfølging – Mithads åpne punkter:**
+- Mithad er informert, og brukeren ga tillatelse til å krysse av de relevante punktene i `.logs/mithad-kuduz/issues.md`.
+- To punkter fra Mithads økt 02.11 er lukket med henvisning til `30697b4` og AV-08: «bekreft med Bård» og «AGENTS.md strider mot skillen».
+- Punktet «Meld motstrid til gruppa …» berører også skillen mot AV-08, men omfatter flere spørsmål og er derfor ikke lukket.
 
 ### Åpne punkter
 Ingen.
