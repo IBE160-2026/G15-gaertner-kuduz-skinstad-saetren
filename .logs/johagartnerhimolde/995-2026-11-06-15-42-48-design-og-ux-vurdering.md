@@ -34,3 +34,5 @@ Brukeren ville vite om darkmode, zoom med Ctrl + scroll og tilpasning til ulike 
 
 ### Oppfølging samme dag
 Brukeren ba om notat om `max-width` (lagt inn over), presiserte at tilgjengelighet for svaksynte og skjermleser er viktig, at fargevarsel for høy belastning er greit og at zoom er dekket. Forståelsestesten er strøket: gruppa tester brukernytten internt når det er mulig. Kontrollert at `[ASSUMPTION]`-merkene i UX-kravene er ført inn i akseptansekriteriene til storiene de gjelder (1.3, 1.5, 2.1, 2.4, 5.5, ÅB-7 i 4.6). Unntaket er reserveteksten i story 5.4: UX-DR14 sier at teksten ikke er fastsatt, men storien merker det ikke.
+
+Siste oppfølging: brukeren støtter avgrensningen i EXPERIENCE.md § Accessibility Floor for v1. Lagt til et avsnitt der om at utvidet tilgjengelighet for svaksynte med skjermleserstøtte er et mulig tillegg i v2, og satt `updated` til 2026-11-06. Endringen i EXPERIENCE.md er ikke committet. Punktet om tilgjengelighet i `issues.md` er lukket. Brukeren har tatt til etterretning at reserveteksten i story 5.4 ikke er merket som antakelse; ingen endring.
