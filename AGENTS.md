@@ -13,8 +13,8 @@ forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire med
 Planlagt stack er React/TypeScript med Vite, Python/FastAPI og SQLite via
 SQLAlchemy. KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
 Haiku 5.5). Appen har et skjelett fra story 1.1 i `backend/` og `frontend/` og
-lagring med fiktive testdata fra story 1.2 i `backend/adaptere/lagring/`, men
-ingen domenelogikk ennå; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+lagring med fiktive testdata fra story 1.2 i `backend/adaptere/lagring/` og
+innlogging med designtokens og appskall fra story 1.3, men ingen domenelogikk ennå; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
@@ -83,18 +83,28 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   gjenskaper tallene fra før gruppa valgte vakttidene 2026-11-02.
 - Backend (Python 3.12 eller nyere), fra `backend/`. På macOS/Linux er stien
   `.venv/bin/python` i stedet for `.venv\Scripts\python`:
-  - Installasjon: `python -m venv .venv` og deretter
-    `.venv\Scripts\python -m pip install -r requirements-dev.txt`.
-  - Kjøring: `.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload`. Svarer
-    på `http://127.0.0.1:8000/api/helse`.
-  - Test: `.venv\Scripts\python -m pytest`.
-  - Testdata: `.venv\Scripts\python -m adaptere.lagring.testdata` tømmer og fyller
-    tabellene `turnus`, `vakt` og `ansatt` i én transaksjon og kan kjøres flere ganger.
-    Databasen er `backend/turnushjelperen.db` (gitignorert), eller stien i
-    `TURNUSHJELPEREN_DB`. Det finnes ikke noe migreringsverktøy: endres skjemaet i
-    `adaptere/lagring/modeller.py`, slett databasefilen og kjør kommandoen på nytt.
-- Frontend (Node 20.19 eller nyere), fra `frontend/`: `npm install`, deretter
-  `npm run dev` (http://localhost:5173). `npm run build` typesjekker og bygger.
+  1. Installasjon: `python -m venv .venv` og deretter
+     `.venv\Scripts\python -m pip install -r requirements-dev.txt`.
+  2. Testdata: `.venv\Scripts\python -m adaptere.lagring.testdata` tømmer og fyller
+     de fire tabellene `bruker`, `turnus`, `vakt` og `ansatt` i én transaksjon og kan
+     kjøres flere ganger. Turnusansvarlig er `kari.vestby`. Med
+     `TURNUSHJELPEREN_PASSORD` satt i terminalen er passordet personlig og skrives ikke
+     ut. Uten den lages et tilfeldig testpassord som skrives ut og gjelder til neste
+     kjøring. Den siste linjen i utskriften sier hvilken variant som gjelder. Backend
+     leser ikke `.env`. Databasen er `backend/turnushjelperen.db` (gitignorert), eller
+     stien i `TURNUSHJELPEREN_DB`. Det finnes ikke noe migreringsverktøy: endres skjemaet
+     i `adaptere/lagring/modeller.py`, slett databasefilen og kjør kommandoen på nytt.
+     Nye tabeller legges til av `create_all` uten sletting.
+  3. Kjøring: `.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload`. Svarer
+     på `http://127.0.0.1:8000/api/helse`. JWT-nøkkelen lages ved hver oppstart, så alle
+     logges ut ved omstart, også ved `--reload`. `TURNUSHJELPEREN_JWT_MINUTTER`
+     (standard 480) må være et positivt heltall, ellers starter ikke API-et.
+  - Test: `.venv\Scripts\python -m pytest`. Testene bygger appen med `lag_app` mot en
+    database i `tmp_path` og rører ikke `backend/turnushjelperen.db`.
+- Frontend (Node 20.19 eller nyere), fra `frontend/` i en egen terminal mens backend
+  kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
+  `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker og bygger.
+  Rå størrelser og fargekoder står bare i `frontend/src/stil/tokens.css` (AV-13).
 - TODO — ingen CI. Legger dere til `.github/workflows/`, noter her hva CI kjører som
   de lokale kommandoene ikke dekker.
 - Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering
@@ -110,6 +120,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Oppsett som skal gjelde hele gruppa må ligge i sporede filer.
   `_bmad/config.user.toml`, `_bmad/custom/*.user.toml` og `.claude/settings.local.json`
   er gitignorerte og gjelder bare din maskin.
+- Koden skal virke på tvers av operativsystem: `pathlib` for stier, eksplisitt
+  `encoding="utf-8"` ved lesing, skriving og underprosesser, og ingen kall eller
+  kommandoer som bare finnes på Windows. README viser både PowerShell og bash. Fysisk
+  test skjer bare på Windows, fordi verken sensor eller noen i gruppa har Mac (OP-05,
+  2026-11-07). Bash-kommandoer kontrolleres i Git Bash.
 
 ## Kjente fallgruver
 
@@ -119,6 +134,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Gruppens OpenRouter-konto har en grense på 20 Luna-kall per kalenderminutt
   (`limit_source: openrouter_new_account`). Kjør ikke flere live-tester samtidig, og
   regn med 429 uten begrenseren i AD-7. Haiku hadde ikke denne grensen.
+- I Windows PowerShell med standardpolicyen stoppes `npm` med `UnauthorizedAccess`
+  («running scripts is disabled»), fordi `npm` der er skriptet `npm.ps1`. Bruk
+  `npm.cmd install` og `npm.cmd run dev`. Funnet av Johannes 2026-11-07 ved den
+  manuelle testen av story 1.3. Det gjelder trolig flere i gruppa. README-steg 4 sier
+  det samme.
 
 <!-- /bmad:context -->
 

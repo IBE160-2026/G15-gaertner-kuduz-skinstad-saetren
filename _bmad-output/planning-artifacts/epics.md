@@ -300,9 +300,9 @@ So that Turnushjelperen ikke er åpen for alle (FR13).
 
 **Given** brukerkontoen for turnusansvarlig
 **When** den opprettes av testdatakommandoen
-**Then** passordet hentes fra en miljøvariabel som er dokumentert uten verdi i `.env.example`, og står aldri i kildekoden (NFR7)
+**Then** passordet hentes fra miljøvariabelen `TURNUSHJELPEREN_PASSORD` (personlig passord, varianten ved innlevering), eller lages tilfeldig og skrives ut når variabelen mangler (testpassord for gruppa). Variabelen er dokumentert uten verdi i `.env.example`, og passordet står aldri i kildekoden (NFR7). Utskriften og innloggingskortet sier hvilken variant som gjelder, uten å vise passordet (OP-10, 2026-11-06)
 **And** passordet lagres bare som hash, og hashingen skjer i `adaptere/lagring` (AD-3)
-**And** JWT-signeringsnøkkelen og utløpstiden leses fra miljøvariabler (utløpstiden er en utsatt beslutning og får en dokumentert standardverdi)
+**And** utløpstiden leses fra `TURNUSHJELPEREN_JWT_MINUTTER`, med 480 minutter (én vakt) som standard. JWT-signeringsnøkkelen lages tilfeldig ved hver oppstart og holdes bare i minnet, uten miljøvariabel, så alle logges ut ved omstart. Endret 2026-11-06 (OP-10): opprinnelig skulle nøkkelen leses fra miljøet, men en fast nøkkel gir bare at sesjonen overlever en omstart, og en nøkkel som aldri skrives ned, kan ikke lekke
 
 **Given** innloggingsflaten
 **When** jeg bruker bare tastatur
@@ -315,7 +315,7 @@ So that Turnushjelperen ikke er åpen for alle (FR13).
 **And** ingen komponent bruker rå størrelser utenfor tokenene, også 360px for `login-card`
 **And** appbaren går over hele bredden, innholdet har `max-width: 1180px`, og siden ruller ikke vannrett ned til 360px bredde
 
-**Avklares i spesifikasjonen (OP-10, 2026-11-06):** hvordan cookien når API-et (Vite-proxy for `/api` eller CORS med credentials), hvordan sensor får en testbruker fra en ren klone og hva som skjer når passord- eller nøkkelvariabelen mangler, bibliotek for JWT og passordhashing (eksakte versjonslåser er et åpent punkt), og ny brukertabell i skjemaet.
+**Avklart i spesifikasjonen 2026-11-06 (OP-10), se `docs/beslutninger/avklaringspunkter.md` §11:** Vite-proxy for `/api`, personlig passord fra `TURNUSHJELPEREN_PASSORD` eller et tilfeldig testpassord, ingen nøkkelvariabel (nøkkelen lages ved oppstart), PyJWT 2.15.1 og `hashlib.scrypt`, og tabellen `bruker`. Opprinnelig tekst: ~~Avklares i spesifikasjonen (OP-10, 2026-11-06): hvordan cookien når API-et (Vite-proxy for `/api` eller CORS med credentials), hvordan sensor får en testbruker fra en ren klone og hva som skjer når passord- eller nøkkelvariabelen mangler, bibliotek for JWT og passordhashing (eksakte versjonslåser er et åpent punkt), og ny brukertabell i skjemaet.~~
 
 ### Story 1.4: Beskyttede flater og utløpt sesjon
 
@@ -328,6 +328,7 @@ So that turnusdata bare kan ses av den som har tilgang (FR13, NFR6).
 **Given** at jeg ikke har gyldig JWT
 **When** jeg kaller et hvilket som helst API-endepunkt utenom innlogging og helsesjekk
 **Then** API-et avviser kallet med feilformen `{ "kode", "melding" }` (AD-4)
+**And** `GET /api/innloggingsinfo` er et bevisst unntak og forblir åpent (story 1.3, OP-10): innloggingsflaten trenger det før innlogging, og det viser bare `passord_kilde`, aldri passordet
 
 **Given** at jeg ikke har gyldig sesjon
 **When** jeg åpner en hvilken som helst flate utenom Logg inn direkte med URL
