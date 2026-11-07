@@ -223,5 +223,22 @@ Ikke kontrollert:
   `IFS= read -rsp` beholdt mellomrom først og sist, og innloggingen virket med det
   passordet. Uten `IFS=` ble mellomrommene fjernet, som gjennomgangen sa. Variant B ga et
   tilfeldig passord på 12 tegn.
-- Utskriften av «kjøring» blir feil i Git Bash på Windows (cp1252 i en pipe). Passordet
-  er bare ASCII og vises riktig.
+- ~~Utskriften av «kjøring» blir feil i Git Bash på Windows (cp1252 i en pipe). Passordet
+  er bare ASCII og vises riktig.~~ Rettet 2026-11-07, se under.
+
+**Rettelse etter den manuelle testen, 2026-11-07 (godkjent av Johannes):** når utskriften
+fra testdatakommandoen gikk gjennom en pipe på Windows, skrev Python den i cp1252. Git Bash
+leser UTF-8, så «kjøring» ble feil, og `grep` behandlet utskriften som binær. Feilen bryter
+med regelen i AGENTS.md om kode som virker på tvers av operativsystem. Underprosesstestene
+hadde skjult den, fordi de setter `PYTHONUTF8=1`.
+
+- `backend/adaptere/lagring/testdata.py`: `main()` kaller `sys.stdout.reconfigure(encoding="utf-8")`
+  først.
+- `backend/tester/lagring/test_testdata.py`: den nye testen
+  `test_utskriften_er_utf8_ogsa_uten_pythonutf8` kjører kommandoen uten `PYTHONUTF8` og
+  `PYTHONIOENCODING` og leser utskriften som UTF-8. Uten rettelsen feilet den med
+  `UnicodeDecodeError`. Med rettelsen består den. Første versjon av testen leste rå bytes
+  og feilet også med rettelsen, fordi `\r\n` fra Windows stoppet `$` i regexen. Testen
+  bruker nå `text=True`, som de andre underprosesstestene.
+- `pytest`: 112 passed både med og uten `TURNUSHJELPEREN_PASSORD`. I Git Bash viser
+  `python -m adaptere.lagring.testdata | grep Passord` nå «kjøring» riktig.

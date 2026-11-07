@@ -25,6 +25,7 @@ kode (AV-10). Klokkeslettene kommer fra `VAKTTIDER` (AV-02).
 
 import os
 import secrets
+import sys
 from datetime import date, datetime, time, timedelta
 
 from sqlalchemy import delete, func, select
@@ -893,6 +894,9 @@ def velg_passord() -> tuple[str, str]:
 
 
 def main() -> None:
+    # Gjennom en pipe på Windows ville Python ellers skrive cp1252, og «kjøring» blir
+    # feil i Git Bash. På macOS/Linux er utskriften UTF-8 fra før.
+    sys.stdout.reconfigure(encoding="utf-8")
     passord, passord_kilde = velg_passord()
     engine = lag_engine()
     opprett_skjema(engine)

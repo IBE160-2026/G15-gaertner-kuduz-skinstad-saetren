@@ -332,6 +332,19 @@ def kjor_kommandoen(db: Path, passord: str | None) -> str:
 TILFELDIG_LINJE = re.compile(r"^Passord: tilfeldig testpassord, gjelder til neste kjøring: (\S+)$", re.M)
 
 
+def test_utskriften_er_utf8_ogsa_uten_pythonutf8(tmp_path: Path) -> None:
+    # Gjennom en pipe på Windows bruker Python ellers cp1252, så «kjøring» blir feil
+    # i Git Bash. Miljøet uten PYTHONUTF8 og PYTHONIOENCODING er det brukeren har.
+    miljo = {**os.environ, MILJOVARIABEL: str(tmp_path / "utf8.db")}
+    for variabel in ("PYTHONUTF8", "PYTHONIOENCODING", PASSORD_VARIABEL):
+        miljo.pop(variabel, None)
+    utskrift = subprocess.run(
+        [sys.executable, "-m", "adaptere.lagring.testdata"],
+        cwd=BACKEND, env=miljo, capture_output=True, text=True, encoding="utf-8", check=True,
+    ).stdout
+    assert TILFELDIG_LINJE.search(utskrift) is not None
+
+
 def test_kommandoen_kan_kjores_to_ganger_mot_databasen_i_miljovariabelen(tmp_path: Path) -> None:
     db = tmp_path / "kommando.db"
     kjoringer = [kjor_kommandoen(db, "personlig-passord-i-test") for _ in range(2)]
