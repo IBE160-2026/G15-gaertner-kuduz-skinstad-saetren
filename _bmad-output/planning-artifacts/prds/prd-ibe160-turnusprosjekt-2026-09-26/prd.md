@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-11-03
+updated: 2026-11-07
 ---
 
 # PRD: Turnushjelperen
@@ -11,6 +11,8 @@ updated: 2026-11-03
 ## 0. Dokumentets formål
 
 Denne PRD-en er skrevet for prosjektgruppen selv (4 medlemmer) og bygger videre på `product-brief.md` og dens `addendum.md`. Den definerer *hva* Turnushjelperen skal gjøre og *hvorfor*, som grunnlag for arkitektur, epics/stories og den godkjente proposalen til IBE160. Krav er gruppert per funksjon med globalt nummererte FR-er; antakelser er merket `[ASSUMPTION]` inline og samlet i §9.
+
+Presiseringene av hvilekontroll, kandidatgrunnlag og rangering bygger på [gruppens beslutningsreferat](../../../../docs/beslutninger/avklaringspunkter.md) fra 2026-11-02 (AV-04, AV-05, AV-06 og K-03). Åpne oppfølgingspunkter fra referatet står fortsatt åpne i §8.
 
 ## 1. Visjon
 
@@ -89,6 +91,10 @@ Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus. Realiserer UJ-1.
 
 **Beskrivelse:** Et lite, godt testet utvalg harde regler filtrerer bort Kandidater som ikke kan ta Vakten. Utvalget følger addendumets anbefaling og er bekreftet av gruppen: kompetanse-minstekrav, kolliderende vakt, 11-timersregelen (daglig hvile) og 35-timersregelen (ukentlig fri). Maks arbeidstid per døgn/uke og overtidsgrenser er bevisst utelatt fra v1 — addendum anbefaler et lite utvalg som beviselig fungerer, fremfor et stort utvalg som bare er halvveis på plass.
 
+**Kandidatgrunnlag (AV-06):** Alle Ansatte i Turnusen vurderes, bortsett fra den Ansatte som opprinnelig var satt opp på Vakten som skal bemannes på nytt. Øvrige Ansatte antas tilgjengelige med mindre planlagte Vakter eller Harde regler utelukker dem. Dette er en fast demonstrasjonsforutsetning, ikke en garanti for faktisk tilgjengelighet; v1 har ingen separat fraværsmodell.
+
+**Avgrenset hvilekontroll (AV-04):** v1 bruker prototypemodellen i FR-4 og FR-5. Kontrollen krever relevante nabovakter og komplette berørte kalenderuker, også utenfor perioden som vises. Modellen skal ikke fremstilles som full juridisk kontroll av arbeidsmiljøloven.
+
 **Funksjonelle krav:**
 
 #### FR-2: Filtrere på kompetanse-minstekrav
@@ -109,18 +115,21 @@ Systemet kan utelukke en Kandidat som allerede har en Vakt som overlapper i tid 
 
 #### FR-4: Filtrere på 11-timersregelen (daglig hvile)
 
-Systemet kan utelukke en Kandidat som ville fått mindre enn 11 timer sammenhengende hvile per 24 timer dersom Kandidaten tar Vakten.
+Systemet skal utelukke en Kandidat dersom hvilen mellom forrige Vakts slutt og den vurderte Vaktens start, eller mellom den vurderte Vaktens slutt og neste Vakts start, ville blitt mindre enn 11 sammenhengende timer. Dette er den vedtatte prototypetolkningen av daglig hvile i v1 (AV-04).
 
 **Konsekvenser (testbare):**
 - 100 % av Kandidatene som ville brutt 11-timersregelen filtreres bort i definerte testscenarioer.
+- Hvile på nøyaktig 11 timer oppfyller denne regelen; 10 timer og 59 minutter gjør det ikke. Grensen kontrolleres både før og etter Vakten, i faktisk forløpt tid i `Europe/Oslo`, også ved sommertidsskifte.
 - Samme Kandidat og samme Vakt gir samme filtreringsresultat hver gang (reproduserbart).
 
 #### FR-5: Filtrere på 35-timersregelen (ukentlig fri)
 
-Systemet kan utelukke en Kandidat som ville fått mindre enn 35 timer sammenhengende fri per 7 dager dersom Kandidaten tar Vakten.
+Systemet skal utelukke en Kandidat dersom Kandidatens Vakter, etter at den vurderte Vakten er lagt til, ikke etterlater minst 35 timer sammenhengende fri innenfor hver berørte kalenderuke. Kalenderuken går fra mandag kl. 00:00 til neste mandag kl. 00:00 i `Europe/Oslo`. Dette er den vedtatte prototypetolkningen av ukentlig fri i v1 (AV-04).
 
 **Konsekvenser (testbare):**
 - 100 % av Kandidatene som ville brutt 35-timersregelen filtreres bort i definerte testscenarioer.
+- En lengste sammenhengende friperiode på nøyaktig 35 timer oppfyller denne regelen; 34 timer og 59 minutter gjør det ikke. Varigheten beregnes i faktisk forløpt tid, også ved sommertidsskifte.
+- Krysser Vakten ukeskiftet, kontrolleres begge ukene. Brudd i én av dem utelukker Kandidaten.
 
 #### FR-6: Vise når ingen kandidater er gyldige
 
@@ -212,6 +221,8 @@ Totalscore = 0,40 × kostnadspoeng + 0,20 × timebelastningspoeng + 0,15 × Ulem
 
 Kostnad og Timebelastning bruker en skala relativ til de Gyldige kandidatene. Ulempebelastning bruker fast skala, slik at små forskjeller i Ulempepoeng ikke gir store utslag (begrunnelse i §4.3). Vektene og taket for Ulempescore ligger samlet som navngitte parametere i domenekjernen.
 
+**Like verdier og avrunding (AV-05, K-03):** Hvis alle Gyldige kandidater har samme kostnad eller samme Timebelastning, får alle 50 poeng for den aktuelle faktoren. Dette gjelder også når bare én Kandidat er gyldig. Faktorpoeng og totalscore beregnes og sorteres uavrundet; ved identisk totalscore sorteres Kandidatene på stigende ansatt-ID. Faktorpoeng og totalscore avrundes bare ved visning, til én desimal. Lik visningsscore betyr derfor ikke nødvendigvis lik totalscore.
+
 **Funksjonelle krav:**
 
 #### FR-9: Rangere gyldige kandidater
@@ -222,6 +233,8 @@ Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbas
 - Minst ett testscenario demonstrerer at den billigste Kandidaten ikke rangeres høyest, fordi andre Myke faktorer samlet sett veier tyngre.
 - Minst ett testscenario demonstrerer at Ulempebelastningen endrer rekkefølgen mellom to Kandidater som ellers er nesten like.
 - Samme input (Kandidater, Vakt, preferanser) gir samme rangeringsrekkefølge hver gang — poengmodellen er en ren, deterministisk beregning, ikke avhengig av KI.
+- Når alle Gyldige kandidater har samme kostnad, får alle 50 kostnadspoeng. Når alle har samme Timebelastning, får alle 50 timebelastningspoeng. Begge særreglene gjelder også ved én Gyldig kandidat. Ulempescore beregnes fortsatt på sin faste skala.
+- To Kandidater med identisk uavrundet totalscore rangeres etter stigende ansatt-ID. Visningsavrunding endrer verken rekkefølgen eller hvilke inntil fem Kandidater som vises.
 
 ### 4.5 KI-forklaring av avveininger
 
@@ -232,6 +245,8 @@ Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbas
 #### FR-10: Tolke tekstbaserte ansattpreferanser
 
 Systemet kan bruke en språkmodell til å tolke tekstbaserte Ansattpreferanser og gjøre dem tilgjengelige som input til Rangeringen (§4.4).
+
+Registrerte Ansattpreferanser gjelder hele demonstrasjonsperioden (AV-06). v1 har ikke preferanser med egne gyldighetsdatoer.
 
 **Konsekvenser (testbare):**
 - Tolkede preferanser sendes som strukturert kategori til Rangeringen. Koden tildeler kategoriens faste poengsum; språkmodellen utfører ikke selve poengberegningen eller Rangeringen.
@@ -296,6 +311,12 @@ Turnusansvarlig kan velge en hvilken som helst Gyldig kandidat fra Rangeringen �
 **Konsekvenser (testbare):**
 - Ingen endring i Turnusen anses gjennomført før Godkjenning er gitt.
 - Systemet kan ikke gjennomføre en Godkjenning automatisk eller uten Turnusansvarliges eksplisitte handling.
+- Ved Godkjenning kontrollerer systemet de fire Harde reglene på nytt mot gjeldende Turnus før noe lagres. Er Kandidaten ikke lenger gyldig, lagres ingenting, og Turnusansvarlig får en melding om dette.
+- Ved vellykket Godkjenning lagres hvem som overtar hvilken Vakt og når Godkjenningen ble gitt, og Vakten bemannes med den valgte Kandidaten. Resultatet lagres varig og er synlig når Turnusen åpnes på nytt.
+- Etter lagring vises en bekreftelse på Vaktvalg, og Vakten vises blant bemannede Vakter i stedet for under «Krever handling».
+- En ny Godkjenning for samme allerede godkjente erstatning avvises, også ved dobbeltklikk. Det finnes bare én Godkjenning for Vakten.
+
+Disse konsekvensene viderefører den avklarte godkjenningsflyten i [epics, story 3.2](../../epics.md) og lagringskravet i [arkitekturens AD-5](../../architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md).
 
 ### 4.7 Innlogging
 
@@ -366,6 +387,16 @@ Turnushjelperen v1 skal **ikke**:
 
 1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres. Faglærers tilbakemelding på product brief (2026-10-06) vurderer KI/regelmotor-skillet som en styrke, men bekrefter ikke eksplisitt dette spørsmålet — fortsatt åpent.
 2. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
+3. Kostnadsgrunnlaget i FR-7/FR-9: presiser hvilken kostnadsverdi Rangeringen bruker, hvilken uke «denne uken» viser til for kostnad, og hvordan timer og kostnad fordeles når Vakten krysser ukeskiftet. Startuken er allerede fastsatt for Timebelastning (FR-8); dette avgjør ikke kostnadsfordelingen.
+4. Håndtering av registrert Ansattpreferanse som ikke kan tolkes, inkludert feilmerking og preferansepoeng (OP-03). Teknisk løsning er ikke vedtatt og skal avklares før story 5.1 og 5.2 er ferdige.
+5. Konkret kontroll av faktuelle avvik i KI-forklaringen, inkludert feil kostnad, preferanse og sammenligninger, og samordning av KI-input med den gjeldende rangeringsmodellen (K-04). En bestemt valideringsløsning er ikke vedtatt.
+6. Eksakt grense for «høy Timebelastning» (FR-8, K-02): 32,4 timer, altså 90 % av 36 timer, er et forslag, ikke et gruppevedtak. K-03 fastsetter avrunding ved visning, men avgjør ikke terskelen.
+
+**Samordnet med vedtak og eksisterende krav (2026-11-07):**
+- AV-04: Hvilekontrollen er presisert i FR-4 og FR-5 som prototypemodellen med 11 timer før/etter og 35 timer innenfor hver berørte kalenderuke.
+- AV-05 og K-03: Like faktorverdier, lik totalscore og visningsavrunding er presisert i §4.4/FR-9: 50 faktorpoeng, stigende ansatt-ID ved identisk uavrundet totalscore og én desimal ved visning.
+- AV-06: Opprinnelig Ansatt utelukkes, øvrig tilgjengelighet følger demonstrasjonsforutsetningene (§4.2), og registrerte preferanser gjelder demonstrasjonsperioden (FR-10).
+- FR-12 er samordnet med story 3.2 og AD-5 om ny regelkontroll, lagring, bekreftelse og avvisning av dobbel Godkjenning. Dette dokumenterer kravene, ikke at funksjonen er implementert.
 
 **Løst (2026-11-02):**
 - Gruppa godkjente utvidelsen av ÅB-3 (vektene 20/15 og taket på 300). Vakttidene er dag 07–15, kveld 15–23 og natt 23–07, som i mockupene. Taket på 300 er regnet om med disse tidene og står seg. Helligdager regnes som vanlige ukedager i v1.

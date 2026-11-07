@@ -18,6 +18,10 @@ Oppdatert 2026-11-07 mot dokumentert status for story 1.1–1.3 og gruppevedtake
 
 [Review av produktbriefen](../../_bmad-output/planning-artifacts/reviews/product-brief-2026-10-26.md) dokumenterer fire review-linser, kontroll mot PRD/arkitektur, ti innholdsfunn og redaksjonelle forslag. [Kildeundersøkelsen](../../_bmad-output/planning-artifacts/research/domain-turnushjelperen-produktbrief-2026-10-26/research.md) følger opp regler, eksisterende verktøy og rangering/brukerforståelse med 18 refererte kilder, kildekontroll og et etterprøvbart regneeksempel. Dette er prosess- og kvalitetssikringsbevis for kriterium 1 og 3, og peker på manglende forståelsestest under kriterium 4. Forslagene er ikke gjennomført; undersøkelsen gir ikke bevis for implementert funksjonalitet, validert brukernytte eller full juridisk etterlevelse. [KI-loggen](../ki-logg/2026-10-26-productbrief-review-research.md) beskriver prompt, leveranse, presiseringer og kontroll.
 
+## PRD samordnet med vedtak 2026-11-07
+
+[PRD-en](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md) er oppdatert med AV-04/05/06 og K-03 fra [beslutningsreferatet](../beslutninger/avklaringspunkter.md), og FR-12 er samordnet med story 3.2 og arkitekturens AD-5. [Kildeavstemmingen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/reconcile-vedtak-2026-11-07.md), [godkjenningskravene](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/reconcile-godkjenning-2026-11-07.md), [rubrikkgjennomgangen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/review-rubric-2026-11-07.md) og [den redaksjonelle gjennomgangen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/review-editorial-2026-11-07.md) dokumenterer kvalitetssikringen. Dette er prosessbevis for kriterium 1 og 3; det dokumenterer samordnede krav, ikke implementert regelmotor eller godkjenningsflyt. Kostnadsgrunnlag, KI-feilhåndtering/faktakontroll og eksakt belastningsterskel står fortsatt åpne i PRD §8; foreldet beslutningsstatus i epics gjenstår å samordne.
+
 ## Story 1.1 implementert og merget (PR #3)
 
 [KI-loggen for prosjektoppsettet](../ki-logg/2026-10-19-prosjektoppsett.md) dokumenterer appskjelettet, prompten og rettingen fra `httpx` til `httpx2` etter en advarsel fra Starlette. PR #3 ble merget etter selvgjennomgang 2026-10-19 (`af8d289`).
@@ -78,3 +82,7 @@ Bevis per kriterium:
 
 Ikke dokumentert ennå:
 - test fra en ren klone (OP-05). Fysisk test på macOS/Linux er strøket 2026-11-07. Bash-kommandoene i README er kontrollert i Git Bash på Windows.
+
+## Full kontroll av PRD og beslutningsgrunnlag 2026-11-07
+
+[Beslutningsgrunnlaget for gruppen](../beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) dokumenterer kontroll av hele PRD §§0–9 og alle 14 FR-er mot vedtak, stories, arkitektur og tidligere funn. To separate agentkontroller ble sammenholdt før forslagene ble skrevet. Underlaget har 13 produkt-/avgrensningspunkter og to dokumentasjonspunkter, med alternativer, anbefalinger og felt for gruppens faktiske svar. Det er prosessbevis for kriterium 1 og 3, ikke nye vedtak eller bevis for implementasjon. Den eksisterende PRD-teksten er uendret i denne oppgaven. Beregningseksempler, unike punkt-ID-er og lokale lenker er kontrollert. Faglærersvar om KI i produktet og kontroll mot godkjent proposal står åpne; PRD-en kan ikke på dette grunnlaget omtales som ferdig avklart.
