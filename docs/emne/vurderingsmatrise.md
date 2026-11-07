@@ -62,12 +62,11 @@ Bevis per kriterium:
 
   En mutasjonskontroll med fire endringer ga røde tester hver gang. Tre uavhengige gjennomgangsagenter fant 25 funn. Alle er vurdert i spesifikasjonens Review Triage Log (#12–#36): 13 er rettet, 1 er utsatt og 11 er avvist med begrunnelse.
 - **Kriterium 1:** [KI-loggen](../ki-logg/2026-11-06-innlogging.md) har prompten, leveransen, valgene agenten tok, rettelsene etter gjennomgangen og de manuelle testene.
-- **Kriterium 4:** manuelle tester i Chrome av innloggingsflaten, feil passord, gjeninnlasting, backend nede, fokusramme, 1600px og 360px, og 20px rotskrift. Testene er gjort av agenten.
+- **Kriterium 4:** manuelle tester i Chrome av innloggingsflaten, feil passord, gjeninnlasting, backend nede, fokusramme, 1600px og 360px, og 20px rotskrift. Testene er gjort av agenten. Johannes har logget inn bare med tastaturet (tab og enter) på et ekte tastatur, med forventet resultat (2026-11-07, KI-loggen).
 - **Kriterium 6:** README har nummererte steg for installasjon, testdata med personlig eller tilfeldig passord (PowerShell og bash), backend og frontend. Variablene er dokumentert uten verdier i [.env.example](../../.env.example).
 - **Kriterium 7:** passordet lagres bare som scrypt-hash, og JWT-nøkkelen finnes bare i minnet. Ingen hemmeligheter ligger i repoet.
 
 Ikke dokumentert ennå:
 - gjennomgang i gruppa av PR-en
-- innlogging med tab og enter på et ekte tastatur. Agentens syntetiske Enter sendte ikke skjemaet.
 - 20px standard skriftstørrelse med innstillingen i nettleseren og 360px vindusbredde. Agenten simulerte begge.
 - bash-kommandoene i README og en test fra en ren klone på macOS eller Linux (OP-05)

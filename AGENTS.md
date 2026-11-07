@@ -129,6 +129,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Gruppens OpenRouter-konto har en grense på 20 Luna-kall per kalenderminutt
   (`limit_source: openrouter_new_account`). Kjør ikke flere live-tester samtidig, og
   regn med 429 uten begrenseren i AD-7. Haiku hadde ikke denne grensen.
+- I Windows PowerShell med standardpolicyen stoppes `npm` med `UnauthorizedAccess`
+  («running scripts is disabled»), fordi `npm` der er skriptet `npm.ps1`. Bruk
+  `npm.cmd install` og `npm.cmd run dev`. Funnet av Johannes 2026-11-07 ved den
+  manuelle testen av story 1.3. Det gjelder trolig flere i gruppa. README-steg 4 sier
+  det samme.
 
 <!-- /bmad:context -->
 

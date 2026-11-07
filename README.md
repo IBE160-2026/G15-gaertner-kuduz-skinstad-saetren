@@ -152,6 +152,11 @@ npm install
 npm run dev
 ```
 
+Får du `UnauthorizedAccess` eller «running scripts is disabled on this system» i
+PowerShell, er det Windows' standardpolicy som stopper skriptet `npm.ps1`. Bruk da
+`npm.cmd install` og `npm.cmd run dev`. Det endrer ingenting på maskinen. Git Bash og
+`cmd` har ikke denne begrensningen.
+
 Åpne http://localhost:5173 og logg inn som `kari.vestby` med passordet fra steg 2.
 Utviklingsserveren sender `/api` videre til backend på http://127.0.0.1:8000, så
 backend må kjøre samtidig. Svarer den ikke, viser innloggingssiden «Får ikke kontakt
@@ -161,7 +166,8 @@ med serveren.».
 
 Fra `backend/`: `.venv\Scripts\python -m pytest`. Testene bruker egne databaser i en
 midlertidig mappe og rører ikke `backend/turnushjelperen.db`. Fra `frontend/`:
-`npm run build` typesjekker og bygger.
+`npm run build` typesjekker og bygger (`npm.cmd run build` i PowerShell hvis skript er
+blokkert, se steg 4).
 
 ## Vurderingsgrunnlag
 
