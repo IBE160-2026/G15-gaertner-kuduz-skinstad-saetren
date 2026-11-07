@@ -37,7 +37,7 @@ Bevis per kriterium:
 Ikke dokumentert ennå:
 - gjennomgang i gruppa av PR-en
 - at gruppa godtar resultatet av KS-04. Datadekningen er kontrollert og låst med en test for #4127 og #4189. Begrensningen er at det ikke finnes vakter etter 05.10.
-- test fra en ren klone på macOS eller Linux (OP-05)
+- test fra en ren klone (OP-05). Fysisk test på macOS/Linux er strøket 2026-11-07, fordi verken sensor eller noen i gruppa har Mac.
 - gjennomgangen av agentoppsettet i OP-04. `bmad-build` er kjørt med underagenter uten den, og avviket står i KI-loggen.
 
 ## Rutine ved milepæler
@@ -47,3 +47,25 @@ Ikke dokumentert ennå:
 3. Noter mangler og neste tiltak; ikke beskriv planlagt arbeid som gjennomført.
 4. Kontroller README i rent miljø og dokumenter utfallet.
 5. Bruk originalveiledningens nivåbeskrivelser til å finne svakheter; prioriter stabil kjerneflyt og etterprøvbar prosess.
+
+## Story 1.3 implementert 2026-11-07 (i branch, ikke merget)
+
+[Spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-1-3-innlogging-for-turnusansvarlig.md) besvarer OP-10 og følger AV-13 og AV-14 i [avklaringspunktene](../beslutninger/avklaringspunkter.md). Turnusansvarlig logger inn med brukernavn og passord (FR13). Sesjonen er ett JWT i en `httpOnly`-cookie, og alle feil har formen `{ kode, melding }` (AD-4). Frontend har designtokens, appbar, innloggingsflate og en foreløpig startside.
+
+Bevis per kriterium:
+- **Kriterium 3:** 111 tester i `backend/` består, både med og uten `TURNUSHJELPEREN_PASSORD` satt. Av dem er 56 i `tester/api/test_innlogging.py` og 16 i `tester/lagring/test_brukere.py`. Testene dekker hele I/O-matrisen i spesifikasjonen, blant annet:
+  - cookieattributtene og levetiden til tokenet
+  - at feil brukernavn og feil passord gir samme svar og hashes like mange ganger
+  - `alg: none`, HS512, feil nøkkel, utløpt token og slettet bruker
+  - at 422-svaret aldri gjentar passordet
+  - 404, 405 og 500
+
+  En mutasjonskontroll med fire endringer ga røde tester hver gang. Tre uavhengige gjennomgangsagenter fant 25 funn. Alle er vurdert i spesifikasjonens Review Triage Log (#12–#36): 13 er rettet, 1 er utsatt og 11 er avvist med begrunnelse.
+- **Kriterium 1:** [KI-loggen](../ki-logg/2026-11-06-innlogging.md) har prompten, leveransen, valgene agenten tok, rettelsene etter gjennomgangen og de manuelle testene.
+- **Kriterium 4:** manuelle tester i Chrome av innloggingsflaten, feil passord, gjeninnlasting, backend nede, fokusramme, 1600px og 360px, og 20px rotskrift. Testene er gjort av agenten. Johannes har logget inn bare med tastaturet (tab og enter) på et ekte tastatur, og kontrollert skriftstørrelsene Middels, Stor og Veldig stor i Chrome-innstillingene og bredden 360px og 1600px i enhetsverktøylinjen. Alt ga forventet resultat (2026-11-07, KI-loggen).
+- **Kriterium 6:** README har nummererte steg for installasjon, testdata med personlig eller tilfeldig passord (PowerShell og bash), backend og frontend. Variablene er dokumentert uten verdier i [.env.example](../../.env.example).
+- **Kriterium 7:** passordet lagres bare som scrypt-hash, og JWT-nøkkelen finnes bare i minnet. Ingen hemmeligheter ligger i repoet.
+
+Ikke dokumentert ennå:
+- gjennomgang i gruppa av PR-en
+- test fra en ren klone (OP-05). Fysisk test på macOS/Linux er strøket 2026-11-07. Bash-kommandoene i README er kontrollert i Git Bash på Windows.

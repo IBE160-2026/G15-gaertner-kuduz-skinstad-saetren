@@ -1,0 +1,71 @@
+/*
+  Designtokens etter DESIGN.md (UX-DR1), story 1.3.
+
+  AV-13: skriftstørrelser i rem (1rem = 16px) med px-verdien fra DESIGN.md i en
+  kommentar, så teksten følger nettleserens standard skriftstørrelse. Spacing,
+  kantlinjer, radius, sporing og faste bredder i px.
+  AV-14: appbaren går over hele bredden, innholdet er høyst 1180px bredt.
+
+  Dette er den eneste filen med tall som har enhet, og med fargekoder.
+*/
+
+:root {
+  /* Farger */
+  --color-bg-app: #eef1f4;
+  --color-bg-panel: #ffffff;
+  --color-bg-header: #16324a;
+  --color-border: #c7d0d9;
+  --color-text-main: #1b2733;
+  --color-text-mute: #5b6b7a;
+  --color-accent: #16324a;
+  --color-ok: #1f7a4d;
+  --color-warn: #a15a00;
+  --color-danger: #8c2f2f;
+  --color-row-alt: #f5f7f9;
+  --color-tag-bg: #e7ecf1;
+  /* Tekst på bg-header og accent: appbar og button-primary (UX-DR2, UX-DR22). */
+  --color-on-accent: #ffffff;
+
+  /* Typografi */
+  --font-family: "Segoe UI", Arial, sans-serif;
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+  --line-height-body: 1.55;
+
+  --font-size-brand: 0.90625rem; /* 14.5px */
+  --font-size-heading: 0.9375rem; /* 15px */
+  --font-size-section-label: 0.75rem; /* 12px */
+  --font-size-column-header: 0.65625rem; /* 10.5px */
+  --font-size-body: 0.78125rem; /* 12.5px */
+  --font-size-meta: 0.6875rem; /* 11px */
+
+  --letter-spacing-brand: 0.3px;
+  --letter-spacing-section-label: 0.5px;
+  --letter-spacing-column-header: 0.4px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 22px;
+  --space-6: 32px;
+  --content-padding: 22px;
+  --row-padding: 9px 12px;
+
+  /* Radius */
+  --radius-sm: 3px;
+  --radius: 4px;
+  --radius-full: 9999px;
+
+  /* Kanter og fokus */
+  --border-width: 1px;
+  --focus-width: 2px;
+  --focus-offset: 1px;
+
+  /* Faste mål */
+  --content-max-width: 1180px;
+  --login-card-width: 360px;
+  /* Margen på hver side av login-card på smale skjermer: min(360px, 100% - 2 × 16px). */
+  --login-card-margin: 16px;
+}
