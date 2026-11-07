@@ -1,0 +1,186 @@
+/*
+  Appskall og innloggingsflate (story 1.3). Alle størrelser og farger kommer fra
+  tokens.css (AV-13). Ingen skygger og ingen gradienter (DESIGN.md).
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg-app);
+  color: var(--color-text-main);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+
+input,
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-accent);
+  outline-offset: var(--focus-offset);
+}
+
+/* --- Appbar (UX-DR2) ------------------------------------------------------ */
+
+.appbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--content-padding);
+  background: var(--color-bg-header);
+  color: var(--color-on-accent);
+}
+
+.appbar-brand {
+  font-size: var(--font-size-brand);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-brand);
+}
+
+/* Plass til en «Demo-modus»-tag til venstre for brukeren (Epic 5). */
+.appbar-hoyre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* --- Innhold (AV-14) ------------------------------------------------------ */
+
+.innhold {
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding: var(--content-padding);
+}
+
+.panel {
+  background: var(--color-bg-panel);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--content-padding);
+}
+
+.overskrift {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.brodtekst {
+  margin: 0;
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--font-size-meta);
+  color: var(--color-text-mute);
+}
+
+.tag {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  background: var(--color-tag-bg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-column-header);
+  color: var(--color-text-main);
+}
+
+/* --- Logg inn (login-card) ------------------------------------------------ */
+
+.innloggingsflate {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-6);
+}
+
+.login-card {
+  width: min(var(--login-card-width), 100% - 2 * var(--login-card-margin));
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  background: var(--color-bg-panel);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.login-card-undertekst {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-mute);
+}
+
+.felt {
+  margin-bottom: var(--space-4);
+}
+
+.felt label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-column-header);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-column-header);
+  text-transform: uppercase;
+  color: var(--color-text-mute);
+}
+
+.felt input {
+  width: 100%;
+  padding: var(--row-padding);
+  background: var(--color-bg-panel);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-main);
+}
+
+.skjemafeil {
+  margin: 0 0 var(--space-3);
+  font-weight: var(--font-weight-bold);
+}
+
+.button-primary {
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+
+.rollenotat {
+  margin: var(--space-4) 0 0;
+  padding: var(--row-padding);
+  background: var(--color-tag-bg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-mute);
+}
+
+.rollenotat strong {
+  color: var(--color-text-main);
+}
+
+.passordvariant {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.registreringsnotat {
+  margin: var(--space-3) 0 0;
+  text-align: center;
+}
