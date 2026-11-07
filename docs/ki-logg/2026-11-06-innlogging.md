@@ -200,9 +200,11 @@ Begrensninger i de manuelle testene, som et gruppemedlem bør gjøre for hånd:
   med tastaturet (tab og enter) er ikke bekreftet med ekte tastetrykk. Bekreftet av
   Johannes 2026-11-07, se under.
 - **20px standard skriftstørrelse** ble simulert med `font-size: 20px` på `<html>`, ikke
-  med innstillingen i nettleseren. Virkningen på `rem` er den samme.
+  med innstillingen i nettleseren. Virkningen på `rem` er den samme. Bekreftet av
+  Johannes 2026-11-07 med innstillingen i Chrome, se under.
 - **360px bredde** ble simulert med `width: 360px` på `<body>`, fordi vinduet ikke lot
   seg gjøre smalere. Mediespørringer finnes ikke, så resultatet bør være det samme.
+  Bekreftet av Johannes 2026-11-07 med enhetsverktøylinjen i Chrome, se under.
 
 **Manuell test utført av Johannes W. Gaertner, 2026-11-07, Windows og ekte tastatur:**
 
@@ -210,6 +212,8 @@ Begrensninger i de manuelle testene, som et gruppemedlem bør gjøre for hånd:
 |---|---|
 | Testdata med tilfeldig testpassord (variant B), backend og frontend etter README | Testdataene og backend startet som forventet. `npm run dev` stoppet i PowerShell med `UnauthorizedAccess` («running scripts is disabled»), fordi Windows' standardpolicy blokkerer `npm.ps1`. Med `npm.cmd run dev` startet frontend. README-steg 4 og «Kjente fallgruver» i AGENTS.md er oppdatert. |
 | Innlogging bare med tastaturet (tab og enter) som `kari.vestby` | Forventet resultat. |
+| Skriftstørrelse i Chrome-innstillingene: Middels, Stor og Veldig stor (16px, 20px og 24px) | Siden oppfører seg som forventet. AV-13 krever 20px, og 24px er testet i tillegg. |
+| Enhetsverktøylinjen i Chrome, «Responsive» med bredde 360px og 1600px | Oppførselen er som forventet (AV-14). |
 
 Ikke kontrollert:
 
