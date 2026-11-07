@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-06 (AV-13, AV-14 og OP-10 før Story 1.3, se §2.3 og §11)  
+> **Sist oppdatert:** 2026-11-07 (OP-10 besvart i spesifikasjonen for Story 1.3 og implementert, se §2.3 og §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -74,7 +74,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 |---|---|---|---|---|
 | AV-13 | Enhet i designtokens | Vedtatt 2026-11-06 | Skriftstørrelser i `rem`; spacing, kanter, radius, sporing og faste bredder i `px`. Ingen rå størrelser i komponentene (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
 | AV-14 | Layoutbredde | Vedtatt 2026-11-06 | Appbar over hele bredden; innholdet får `max-width: 1180px`. Fast bredde på 1180px forkastes (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
-| OP-10 | Story 1.3 | Vedtatt 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Fire tekniske spørsmål avklares i spesifikasjonen (§11). | Johannes W. Gaertner |
+| OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -513,6 +513,18 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Avklares i spesifikasjonen for Story 1.3, ikke vedtatt her: (1) hvordan cookien når API-et, med Vite-proxy for `/api` eller CORS med credentials; (2) hvordan sensor får en testbruker fra en ren klone, og hva som skjer når passord- eller nøkkelvariabelen mangler; (3) bibliotek for JWT og passordhashing, sett opp mot det åpne punktet om eksakte versjonslåser; (4) ny brukertabell i skjemaet.
 - **Endret:** DESIGN.md (Typography, Layout & Spacing), EXPERIENCE.md (Responsive & Platform), UX-DR1, UX-DR4 og Story 1.3 i `epics.md`.
 - **Ikke endret:** OP-02, OP-06 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-06 – OP-10 avklart i spesifikasjonen for Story 1.3
+
+- **Hvem:** Johannes W. Gaertner, i spesifikasjonen `_bmad-output/implementation-artifacts/spec-1-3-innlogging-for-turnusansvarlig.md` (Beslutninger). Implementert på branchen `story-1.3-innlogging` 2026-11-07. KI-logg: `docs/ki-logg/2026-11-06-innlogging.md`.
+- **Svarene på de fire spørsmålene:**
+  1. Cookien når API-et gjennom Vite-proxy for `/api` til `http://127.0.0.1:8000`. Samme opphav gir `SameSite=Strict` og ingen CORS.
+  2. Testbrukeren `kari.vestby` lages av testdatakommandoen. Er `TURNUSHJELPEREN_PASSORD` satt, er passordet personlig (varianten ved innlevering, valgt av den som installerer). Mangler den, lages et tilfeldig testpassord som skrives ut og gjelder til neste kjøring (varianten når gruppa tester). Utløpstiden er 480 minutter når `TURNUSHJELPEREN_JWT_MINUTTER` mangler. En ugyldig verdi stopper API-et.
+  3. PyJWT 2.15.1, låst eksakt som de andre pakkene, med HS256. Passordhash med `hashlib.scrypt` fra standardbiblioteket og tilfeldig salt per bruker.
+  4. Tabellen `bruker` med `id`, `brukernavn` (unik), `navn`, `passord_hash`, `passord_kilde` og `turnus_id`.
+- **Avvik fra epics:** JWT-nøkkelen leses ikke fra miljøet, slik akseptansekravet i epics sa. Den lages tilfeldig (`secrets.token_bytes(32)`) ved hver oppstart og holdes bare i minnet. Begrunnelse: en fast nøkkel gir bare at sesjonen overlever en omstart, og en nøkkel som aldri skrives ned, kan ikke lekke. Konsekvens: alle logges ut når API-et starter på nytt, også ved `--reload`.
+- **Endret:** Story 1.3 i `epics.md`, `ARCHITECTURE-SPINE.md` (miljøvariablene og den utsatte beslutningen om utløpstid) og `epic-1-context.md`.
+- **Ikke endret:** Eksakte versjonslåser generelt er fortsatt ikke drøftet i gruppa; PyJWT er låst eksakt fordi de andre pakkene er det. De andre AV-, K-, OP- og KS-punktene.
 
 ---
 

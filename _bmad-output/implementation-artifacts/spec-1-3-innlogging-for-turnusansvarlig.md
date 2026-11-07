@@ -2,7 +2,8 @@
 title: 'Story 1.3: Innlogging for turnusansvarlig'
 type: 'feature'
 created: '2026-11-06'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: 'daac9ca996735878b58b0eb09dfa81def7b2eae4'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -80,21 +81,21 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/requirements.txt` -- legg til `pyjwt==2.15.1`.
-- [ ] `backend/adaptere/lagring/modeller.py` -- `BrukerRad` etter beslutningen.
-- [ ] `backend/adaptere/lagring/brukere.py` -- `hash_passord`, `verifiser_innlogging(session, brukernavn, passord)` og `hent_innlogget(session, bruker_id)` og `hent_passord_kilde(session)`. De to første returnerer en dataklasse `Innlogget(id, navn, avdeling)` eller `None`. Sammenlign med `hmac.compare_digest`, og hash mot en dummy også for ukjent bruker.
-- [ ] `backend/adaptere/lagring/testdata.py` -- slett `bruker` i `fyll_testdata`. `legg_til_turnusansvarlig(session, passord, passord_kilde)`. `main()` velger passordvariant etter beslutningen og skriver varianten og `bruker: 1`.
-- [ ] `backend/adaptere/api/sesjon.py` -- `lag_token` og `les_token` med `algorithms=["HS256"]`, les og valider utløpstiden, og sett og les cookien.
-- [ ] `backend/adaptere/api/main.py` -- `lag_app(nokkel=None, minutter=None, engine=None)`. Mangler et argument, lages nøkkelen tilfeldig, minuttene leses fra miljøet, og engine fra `lag_engine()`. `app = lag_app()`. Avhengighet for databaseøkten, `POST /api/innlogging`, `GET /api/meg`, `GET /api/innloggingsinfo` og håndterere for `RequestValidationError`, `starlette.exceptions.HTTPException` og `Exception`.
-- [ ] `backend/tester/api/__init__.py`, `test_innlogging.py`, `backend/tester/lagring/test_brukere.py` -- hele matrisen. Hver test bygger appen med `lag_app` mot en database i `tmp_path`, og ingen test rører `backend/turnushjelperen.db`. Testene dekker også cookieattributtene, at hashen ikke er passordet, ulikt salt, at et passord med feil type ikke står i svaret, at scrypt kjøres for ukjent bruker (teller via `monkeypatch`), at en ny nøkkel ikke godtar et token fra en annen, begge passordvariantene og at et tilfeldig passord virker ved innlogging. Underprosesstestene setter eller fjerner `TURNUSHJELPEREN_PASSORD` eksplisitt i miljøet de sender med. Oppdater `test_testdata.py` med fire tabeller og brukeren.
-- [ ] `frontend/vite.config.ts` -- proxy for `/api`.
-- [ ] `frontend/src/stil/tokens.css`, `frontend/src/stil/app.css` -- tokens etter DESIGN.md og AV-13, også for kantbredde, fokusramme og kortbredde. Appskall etter AV-14, `login-card`, felt og `button-primary`. Bare `tokens.css` inneholder tall med enhet.
-- [ ] `frontend/src/tekster.ts`, `frontend/src/api.ts` -- tekster etter `kode` med reservetekst og «Får ikke kontakt med serveren.», og faste UI-tekster. `loggInn`, `hentMeg` og `hentInnloggingsinfo` med `credentials: "same-origin"`. Tekstene for de tre passordvariantene. Nettverksfeil og svar som ikke er JSON, blir en egen feiltype.
-- [ ] `frontend/src/komponenter/Appbar.tsx`, `LoggInn.tsx`, `Startside.tsx`, `frontend/src/App.tsx`, `frontend/src/main.tsx` -- `hentMeg` ved oppstart. Ingen innloggingsflate vises før svaret er kommet. Ved feil vises innloggingsflaten med reserveteksten. `LoggInn` viser passordvarianten som `tag` og `meta` under rollenotatet. Bruk `<form>`, slik at enter sender skjemaet.
-- [ ] `.env.example` -- de nye variablene som valgfrie, uten verdi. Ved hver variabel står det at backend ikke leser `.env`, og at variabelen må settes i terminalen før kommandoen kjøres.
-- [ ] `README.md`, `AGENTS.md` -- nummererte steg i rekkefølge: installer, last testdata og noter passordet, start backend, og start frontend i en egen terminal. Begge passordvariantene forklares med kommandoer for PowerShell og bash, sammen med hvordan man ser hvilken variant som gjelder. README sier at alle logges ut ved omstart, og at testdataene nå har fire tabeller.
-- [ ] `docs/ki-logg/2026-11-06-innlogging.md` -- KI-logg etter `2026-11-03-testdata.md`, med de manuelle testene.
-- [ ] `_bmad-output/planning-artifacts/epics.md`, `_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md`, `docs/beslutninger/avklaringspunkter.md`, `_bmad-output/implementation-artifacts/epic-1-context.md` -- etter implementeringen. Story 1.3 og konteksten: tilfeldig nøkkel uten variabel, passordvariantene og at OP-10 er besvart. Arkitekturen: nøkkelen fjernes fra miljøvariablene på `:108`, og utløpstiden på `:199` er 480 minutter. Avklaringspunktene: OP-10 avklart, med svarene og avviket for nøkkelen. Commit-meldingen sier hvorfor eldre filer endres.
+- [x] `backend/requirements.txt` -- legg til `pyjwt==2.15.1`.
+- [x] `backend/adaptere/lagring/modeller.py` -- `BrukerRad` etter beslutningen.
+- [x] `backend/adaptere/lagring/brukere.py` -- `hash_passord`, `verifiser_innlogging(session, brukernavn, passord)` og `hent_innlogget(session, bruker_id)` og `hent_passord_kilde(session)`. De to første returnerer en dataklasse `Innlogget(id, navn, avdeling)` eller `None`. Sammenlign med `hmac.compare_digest`, og hash mot en dummy også for ukjent bruker.
+- [x] `backend/adaptere/lagring/testdata.py` -- slett `bruker` i `fyll_testdata`. `legg_til_turnusansvarlig(session, passord, passord_kilde)`. `main()` velger passordvariant etter beslutningen og skriver varianten og `bruker: 1`.
+- [x] `backend/adaptere/api/sesjon.py` -- `lag_token` og `les_token` med `algorithms=["HS256"]`, les og valider utløpstiden, og sett og les cookien.
+- [x] `backend/adaptere/api/main.py` -- `lag_app(nokkel=None, minutter=None, engine=None)`. Mangler et argument, lages nøkkelen tilfeldig, minuttene leses fra miljøet, og engine fra `lag_engine()`. `app = lag_app()`. Avhengighet for databaseøkten, `POST /api/innlogging`, `GET /api/meg`, `GET /api/innloggingsinfo` og håndterere for `RequestValidationError`, `starlette.exceptions.HTTPException` og `Exception`.
+- [x] `backend/tester/api/__init__.py`, `test_innlogging.py`, `backend/tester/lagring/test_brukere.py` -- hele matrisen. Hver test bygger appen med `lag_app` mot en database i `tmp_path`, og ingen test rører `backend/turnushjelperen.db`. Testene dekker også cookieattributtene, at hashen ikke er passordet, ulikt salt, at et passord med feil type ikke står i svaret, at scrypt kjøres for ukjent bruker (teller via `monkeypatch`), at en ny nøkkel ikke godtar et token fra en annen, begge passordvariantene og at et tilfeldig passord virker ved innlogging. Underprosesstestene setter eller fjerner `TURNUSHJELPEREN_PASSORD` eksplisitt i miljøet de sender med. Oppdater `test_testdata.py` med fire tabeller og brukeren.
+- [x] `frontend/vite.config.ts` -- proxy for `/api`.
+- [x] `frontend/src/stil/tokens.css`, `frontend/src/stil/app.css` -- tokens etter DESIGN.md og AV-13, også for kantbredde, fokusramme og kortbredde. Appskall etter AV-14, `login-card`, felt og `button-primary`. Bare `tokens.css` inneholder tall med enhet.
+- [x] `frontend/src/tekster.ts`, `frontend/src/api.ts` -- tekster etter `kode` med reservetekst og «Får ikke kontakt med serveren.», og faste UI-tekster. `loggInn`, `hentMeg` og `hentInnloggingsinfo` med `credentials: "same-origin"`. Tekstene for de tre passordvariantene. Nettverksfeil og svar som ikke er JSON, blir en egen feiltype.
+- [x] `frontend/src/komponenter/Appbar.tsx`, `LoggInn.tsx`, `Startside.tsx`, `frontend/src/App.tsx`, `frontend/src/main.tsx` -- `hentMeg` ved oppstart. Ingen innloggingsflate vises før svaret er kommet. Ved feil vises innloggingsflaten med reserveteksten. `LoggInn` viser passordvarianten som `tag` og `meta` under rollenotatet. Bruk `<form>`, slik at enter sender skjemaet.
+- [x] `.env.example` -- de nye variablene som valgfrie, uten verdi. Ved hver variabel står det at backend ikke leser `.env`, og at variabelen må settes i terminalen før kommandoen kjøres.
+- [x] `README.md`, `AGENTS.md` -- nummererte steg i rekkefølge: installer, last testdata og noter passordet, start backend, og start frontend i en egen terminal. Begge passordvariantene forklares med kommandoer for PowerShell og bash, sammen med hvordan man ser hvilken variant som gjelder. README sier at alle logges ut ved omstart, og at testdataene nå har fire tabeller.
+- [x] `docs/ki-logg/2026-11-06-innlogging.md` -- KI-logg etter `2026-11-03-testdata.md`, med de manuelle testene.
+- [x] `_bmad-output/planning-artifacts/epics.md`, `_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md`, `docs/beslutninger/avklaringspunkter.md`, `_bmad-output/implementation-artifacts/epic-1-context.md` -- etter implementeringen. Story 1.3 og konteksten: tilfeldig nøkkel uten variabel, passordvariantene og at OP-10 er besvart. Arkitekturen: nøkkelen fjernes fra miljøvariablene på `:108`, og utløpstiden på `:199` er 480 minutter. Avklaringspunktene: OP-10 avklart, med svarene og avviket for nøkkelen. Commit-meldingen sier hvorfor eldre filer endres.
 
 **Acceptance Criteria:**
 - Given hele testpakken, when `pytest` kjøres med og uten `TURNUSHJELPEREN_PASSORD` satt i terminalen, then består alle testene.
@@ -108,6 +109,8 @@ context:
 - Given `grep -rnE "[0-9.]+(px|rem)|#[0-9a-fA-F]{3,6}" frontend/src/komponenter frontend/src/stil/app.css`, when den kjøres, then gir den ingen treff.
 
 ## Implementation Notes
+
+Matriseaudit 2026-11-07 (orkestratoren, mot diffen fra `baseline_commit`): `pytest` ga 107 passed både uten og med `TURNUSHJELPEREN_PASSORD` satt, ingen hoppet over. Alle radene har en backendtest som kjørte: `tester/api/test_innlogging.py`, `tester/lagring/test_brukere.py` og `tester/lagring/test_testdata.py`. Frontenddelen av radene «Feil passord», «Passordvariant på kortet» og «API-et svarer ikke» har ingen automatisk test, fordi Never-lista utelukker tester for frontend. De er kontrollert manuelt i Chrome av implementeringsagenten (KI-loggen). Enter-tasten med ekte tastatur er ikke bekreftet. `npm run build` og grep-kontrollen ga ingen feil eller treff.
 
 ## Spec Change Log
 
@@ -130,6 +133,36 @@ Gjennomgang av spesifikasjonen før godkjenning, 2026-11-06, én uavhengig under
 | 11 | Ingen test for hashing ved ukjent bruker eller token for slettet bruker | low | tatt inn |
 
 Produktbrief-tilbakemeldingen: bare punktet om at avansert autentisering er et stretch goal er relevant, og det følges i Never-lista.
+
+Gjennomgang av koden 2026-11-07, tre uavhengige underagenter som bare fikk diffen: Blind Hunter (BH), Edge Case Hunter (ECH, fikk også spesifikasjonen) og Verification Gap (VG). Orkestratoren kontrollerte hver påstand mot koden og filene før vurderingen. Rettelse i ettertid: rad 10 over sier at vurderingsmatrisen ikke finnes, men den ligger i `docs/emne/vurderingsmatrise.md`.
+
+| # | Lag | Funn | Vurdering og belegg | Rute |
+|---|---|---|---|---|
+| 12 | VG | Tokenets levetid er ikke testet mot `minutter`. `exp - iat` kontrolleres ikke, og et token nær slutten av levetiden prøves ikke | medium. Gapfunn, kontrollert av laget: `timedelta(seconds=…)` eller fast `STANDARD_MINUTTER` i `main.py` ville latt alle testene stå grønne | patch |
+| 13 | VG, BH | Lengdegrensene i `InnloggingInn` er ikke testet | medium. Ingen test sender mer enn ca. 40 tegn, så grensen kan fjernes uten at noe blir rødt | patch |
+| 14 | BH | `brukernavn` tillater 100 tegn i API-et, men kolonnen er `String(50)` (`modeller.py:144`) | low. Direkte rettelse: samme grense begge steder | patch |
+| 15 | VG | Ingen test binder frontendens `FEILTEKSTER` til backendkodene | medium. En skrivefeil i en nøkkel gir reserveteksten ved feil passord. Never-lista utelukker frontendtester | defer |
+| 16 | VG, BH, ECH | Svært stor `TURNUSHJELPEREN_JWT_MINUTTER` (over ca. 4,2·10⁹) gir `OverflowError` ved innlogging i stedet for stopp ved oppstart | low. Kontrollert: `timedelta(minutes=10**10)` lages, og datetime-summen går forbi år 9999. Verdien er et positivt heltall, som spesifikasjonen godtar. Usannsynlig, og rettelsen er en ny grense | avvist |
+| 17 | BH | OP-10-avsnittet under story 1.3 i `epics.md:318` står fortsatt som åpent, også nøkkelvariabelen | medium. Kontrollert. Motsier akseptansekravene over og villeder den som tar 1.4 | patch |
+| 18 | BH | AD-3 i `ARCHITECTURE-SPINE.md:73` sier fortsatt «Nøyaktig utløpstid er ikke fastsatt», og nøkkelen er ikke nevnt | low. Kontrollert. Motsier den overstrøkne Deferred-linjen på `:199`. Formuleringen om `adaptere/web` er eldre enn storien og ble ikke rørt | patch |
+| 19 | BH | Det åpne `GET /api/innloggingsinfo` er ikke ført som unntak i 1.4-kravet (`epics.md:329`) eller i Tilgangskontroll i `epic-1-context.md:21` | medium. Kontrollert. Story 1.4 ville stengt endepunktet etter ordlyden | patch |
+| 20 | BH | Nøkkelavviket har ingen egen beslutnings-ID eller gruppegodkjenning | false. Det er ført under OP-10 i §2.3 og §11 med «Avvik fra epics», begrunnelse og konsekvens, slik AGENTS.md ber om. Johannes vedtok det på samme måte som AV-13 og AV-14 | avvist |
+| 21 | BH | `sprint-status.yaml` står på `in-progress` mens spesifikasjonen er `in-review` | false. Steg 5 i `bmad-build` setter storien til `review` | avvist |
+| 22 | BH | KI-loggen har plassholdere for Johannes' instruksjon og resultatene av gjennomgangen | medium. Kontrollert. Emnet vurderer loggen. Fylles inn av orkestratoren | patch |
+| 23 | BH | `ukjent_feil`-grenen i `rutefeil` er ikke testet | low. Ingen nåværende rute gir andre `HTTPException`-statuser enn 404 og 405. Usannsynlig, og rettelsen krever en testrute | avvist |
+| 24 | BH, ECH | `app = lag_app()` ved import gjør at en ugyldig `TURNUSHJELPEREN_JWT_MINUTTER` i terminalen stopper innsamlingen av API-testene | low. Feilen er høylytt og sier hva som er galt, i samme situasjon som API-et selv nekter å starte i. Rettelsen (fabrikk for uvicorn) endrer startkommandoen | avvist |
+| 25 | BH | Personlig passord blir værende i terminalmiljøet og arves av uvicorn i README variant A | low. README-steg 3 sier ikke at det skal brukes en ny terminal. Direkte rettelse: fjerne variabelen etter kommandoen | patch |
+| 26 | BH | Akseptansekriterier som ikke er bekreftet manuelt (Enter, 20px, 360px), er ikke ført som åpne | false. De ble ført i `.logs/johagartnerhimolde/issues.md` 2026-11-07 før gjennomgangen | avvist |
+| 27 | BH | `docs/emne/vurderingsmatrise.md` er ikke oppdatert for story 1.3 | medium. Kontrollert: filen finnes og har et avsnitt for 1.2. AGENTS.md ber om oppdatering ved milepæler | patch |
+| 28 | BH, ECH | Skjemaet gir ingen tilbakemelding mens det sender, og `innloggingsinfo` hentes ikke på nytt når backend kommer opp igjen | low. Gjelder bare når backend var nede da siden ble lastet. Rettelsen krever mer tilstand | avvist |
+| 29 | BH, ECH | Brukernavnet trimmes ikke, så et mellomrom fra autofyll gir «Feil brukernavn eller passord» | low. Direkte rettelse: `trim()` før sending | patch |
+| 30 | BH | `InnloggingsinfoUt.passord_kilde` har typen `str \| None` i stedet for de tre lovlige verdiene | low. CHECK-regelen hindrer andre verdier, men OpenAPI-kontrakten blir upresis. Direkte rettelse | patch |
+| 31 | BH | Setningen om testede versjoner i README er utdatert | false. Den er datert 2026-11-04 og stemmer for den datoen | avvist |
+| 32 | BH | «dokumenteres udokumentert (uten verdier)» i `ARCHITECTURE-SPINE.md:108` | low. Selvmotsigelse i en linje diffen endret. Direkte rettelse | patch |
+| 33 | ECH | `TURNUSHJELPEREN_PASSORD` over 256 tegn gir et passord som aldri kan brukes (422) | low. Usannsynlig, og rettelsen er en ny kontroll | avvist |
+| 34 | ECH | `read -rsp` i bash fjerner mellomrom først og sist i passordet, mens nettleseren sender dem | low. Direkte rettelse: `IFS= read -rsp` | patch |
+| 35 | ECH | Ny kjøring av testdata gjenbruker rowid 1, så en gammel sesjon gjelder også etter at passordet er byttet | low. Kontrollert: SQLite uten AUTOINCREMENT gir id 1 i en tom tabell. Gjelder bare den som allerede var innlogget lokalt. Rettelsen krever fingeravtrykk i tokenet eller nytt skjema | avvist |
+| 36 | ECH | Oppstartsfeil viser ikke «reserveteksten» | false. Matrisen definerer reserveteksten ved manglende kontakt som «Får ikke kontakt med serveren.», og koden viser den | avvist |
 
 ## Design Notes
 

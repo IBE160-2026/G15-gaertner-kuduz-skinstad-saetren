@@ -18,9 +18,9 @@ Turnusansvarlig logger inn med brukernavn og passord, ser avdelingens vakter i p
 ## Requirements & Constraints
 
 - **Én rolle:** bare turnusansvarlig logger inn. Ingen registrering, passordgjenoppretting, SSO, flere roller eller kontosperring.
-- **Tilgangskontroll:** alt utenom innlogging og helsesjekk krever gyldig sesjon, både i API-et (avvisning med feilformen) og i frontend (omdirigering til Logg inn, også ved direkte URL og når sesjonen har utløpt).
-- **Hemmeligheter:** passordet til testbrukeren, JWT-signeringsnøkkelen og JWT-utløpstiden leses fra miljøvariabler. Hver ny variabel dokumenteres uten verdi i `.env.example`. Les aldri `.env`. Utløpstiden er ikke fastsatt og får en dokumentert standardverdi. Merk at backend i dag ikke leser `.env` selv, bare miljøet.
-- **Testbruker:** brukerkontoen for turnusansvarlig opprettes av den eksisterende testdatakommandoen. Passordet lagres bare som hash.
+- **Tilgangskontroll:** alt utenom innlogging, helsesjekk og `GET /api/innloggingsinfo` krever gyldig sesjon. `innloggingsinfo` er et bevisst åpent unntak fra story 1.3 (OP-10): innloggingsflaten trenger det, og det viser bare `passord_kilde`, aldri passordet. Kravet gjelder både i API-et (avvisning med feilformen) og i frontend (omdirigering til Logg inn, også ved direkte URL og når sesjonen har utløpt).
+- **Hemmeligheter (avklart i 1.3, OP-10):** passordet til testbrukeren leses fra `TURNUSHJELPEREN_PASSORD` (personlig passord, varianten ved innlevering). Mangler variabelen, lager testdatakommandoen et tilfeldig testpassord og skriver det ut. Utløpstiden leses fra `TURNUSHJELPEREN_JWT_MINUTTER`, standard 480 minutter. JWT-signeringsnøkkelen lages tilfeldig ved hver oppstart og holdes bare i minnet, uten miljøvariabel, så alle logges ut ved omstart. Det avviker fra epics, som sa at nøkkelen skulle leses fra miljøet. Hver ny variabel dokumenteres uten verdi i `.env.example`. Les aldri `.env`. Backend leser ikke `.env` selv, bare miljøet.
+- **Testbruker:** brukerkontoen for turnusansvarlig (`kari.vestby`) opprettes av den eksisterende testdatakommandoen i tabellen `bruker`. Passordet lagres bare som scrypt-hash, og `passord_kilde` sier om det er `tilfeldig` eller `personlig`.
 - **Bare fiktive data:** ingen ekte personopplysninger og ingen integrasjon mot reelle systemer.
 - **Testdataene som vises (fra 1.2):** én Turnus for Kirurgisk sengepost, uke 39–40 2026, med periodestart, periodeslutt og tidspunkt for sist oppdatert. Fire vakttyper med faste tider: dag 07–15, mellom 10–18, kveld 15–23 og natt 23–07 (AV-02). Vakt #4127 (dagvakt søn. 27.09.2026) og #4189 (nattevakt) mangler bemanning. For slike vakter er det lagret hvem som var satt opp og når det ble meldt fra.
 - **Visningsperiode:** en vakt hører til perioden som inneholder starttidspunktet. Perioden er halvåpen, `[fra, til)` (AV-03). Vakthistorikken før periodestart finnes i databasen, men skal aldri vises på Vaktvalg.
@@ -29,16 +29,16 @@ Turnusansvarlig logger inn med brukernavn og passord, ser avdelingens vakter i p
 ## Technical Decisions
 
 - **Heksagonal struktur:** `domene/` importerer aldri fra `adaptere/*`. API-et ligger i `adaptere/api`, lagringen i `adaptere/lagring` og frontend i `frontend/src`, som bare snakker HTTP med API-et. Komposisjon skjer i oppstartslaget til `adaptere/api`.
-- **Skjemaeierskap:** `adaptere/lagring` eier SQLAlchemy-modellene og skjemaet alene. Konverteringen til domenetyper skjer der. Brukertabellen er ny i 1.3. Det finnes ikke noe migreringsverktøy, så et nytt skjema betyr at databasen slettes og testdataene lastes på nytt. Ingen kodevei utenom den framtidige skrivefunksjonen for Godkjenning (Epic 3) skal kunne markere en vakt som bemannet.
+- **Skjemaeierskap:** `adaptere/lagring` eier SQLAlchemy-modellene og skjemaet alene. Konverteringen til domenetyper skjer der. Brukertabellen `bruker` kom i 1.3 (`id`, `brukernavn`, `navn`, `passord_hash`, `passord_kilde`, `turnus_id`). Det finnes ikke noe migreringsverktøy, så et nytt skjema betyr at databasen slettes og testdataene lastes på nytt. Ingen kodevei utenom den framtidige skrivefunksjonen for Godkjenning (Epic 3) skal kunne markere en vakt som bemannet.
 - **Tid:** alle vakttidspunkt lagres og beregnes i `Europe/Oslo` med sommertid, aldri med fast UTC-offset. API-et bruker ISO 8601.
-- **Sesjon:** vellykket innlogging gir ett JWT i en `httpOnly`-cookie, aldri i `localStorage`, og det sendes automatisk på senere kall. Tokenet fornyes ikke stille. Utlogging fjerner cookien. Passordhashing skjer bare i `adaptere/lagring`.
-- **Feilform:** alle faktiske feil svarer med `{ "kode": string, "melding": string }`. `melding` vises aldri i UI. Frontend slår opp `kode` i en egen norsk tekstliste. Eksakte koder er ikke fastsatt. Det gjelder feil innlogging, manglende eller utløpt sesjon, ukjent vakt-ID og vakt som ikke mangler bemanning.
-- **Avklares i spesifikasjonen for 1.3 (OP-10), ikke vedtatt:**
-  1. Hvordan cookien når API-et: Vite-proxy for `/api` eller CORS med credentials.
-  2. Hvordan sensor får en testbruker fra en ren klone, og hva som skjer når passord- eller nøkkelvariabelen mangler.
-  3. Bibliotek for JWT og passordhashing. Gruppa har ikke avgjort om versjoner skal låses eksakt.
-  4. Hvordan brukertabellen ser ut i skjemaet.
-- **Utsatt:** JWT-utløpstid, ID-format og migreringsverktøy. Velg enkelt, dokumenter valget og bygg ikke mer enn storien trenger.
+- **Sesjon:** vellykket innlogging gir ett JWT (PyJWT 2.15.1, HS256) i cookien `turnushjelperen_sesjon` med `HttpOnly`, `SameSite=Strict` og `Path=/api`, aldri i `localStorage`, og det sendes automatisk på senere kall. Tokenet fornyes ikke stille. Utlogging fjerner cookien. Passordhashing skjer bare i `adaptere/lagring`.
+- **Feilform:** alle faktiske feil svarer med `{ "kode": string, "melding": string }`. `melding` vises aldri i UI. Frontend slår opp `kode` i en egen norsk tekstliste. Kodene fra 1.3: `feil_innlogging`, `mangler_sesjon`, `ugyldig_foresporsel`, `ikke_funnet`, `metode_ikke_tillatt`, `intern_feil` og `ukjent_feil`. Kodene for ukjent vakt-ID og vakt som ikke mangler bemanning er ikke fastsatt.
+- **Besvart i spesifikasjonen for 1.3 (OP-10, 2026-11-06):**
+  1. Cookien når API-et gjennom Vite-proxy for `/api` til `http://127.0.0.1:8000`. Samme opphav, ingen CORS.
+  2. Sensor velger et personlig passord med `TURNUSHJELPEREN_PASSORD` før testdatakommandoen kjøres. Uten variabelen lages et tilfeldig testpassord. Nøkkelen er ikke en variabel (se Hemmeligheter).
+  3. PyJWT 2.15.1, låst eksakt, og `hashlib.scrypt` fra standardbiblioteket.
+  4. Tabellen `bruker`, se Skjemaeierskap.
+- **Utsatt:** ID-format og migreringsverktøy. JWT-utløpstiden er fastsatt i 1.3. Velg enkelt, dokumenter valget og bygg ikke mer enn storien trenger.
 
 ## UX & Interaction Patterns
 

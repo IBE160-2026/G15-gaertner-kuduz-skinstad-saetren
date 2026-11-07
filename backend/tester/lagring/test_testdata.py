@@ -1,4 +1,4 @@
-"""Tester for testdataene i story 1.2 mot en database i `tmp_path`.
+"""Tester for testdataene i story 1.2 og brukeren fra story 1.3 mot en database i `tmp_path`.
 
 Hjelpefunksjonene for de fire harde reglene og for Ulempepoeng finnes bare her.
 De er ikke regelmotoren (Epic 2) eller Ulempemodellen (story 4.7), men en
@@ -7,6 +7,7 @@ fordi subtraksjon av to datetime med samme tzinfo ellers bruker veggklokketid.
 """
 
 import os
+import re
 import subprocess
 import sys
 from collections import Counter
@@ -29,12 +30,24 @@ from adaptere.lagring.database import (
     lag_sessionmaker,
     opprett_skjema,
 )
-from adaptere.lagring.modeller import AnsattRad, TurnusRad, VaktRad
-from adaptere.lagring.testdata import FASIT, HISTORIKK, PERIODE, PREFERANSER, VAKTTIDER, fyll_testdata
+from adaptere.lagring.brukere import verifiser_innlogging
+from adaptere.lagring.modeller import AnsattRad, BrukerRad, TurnusRad, VaktRad
+from adaptere.lagring.testdata import (
+    FASIT,
+    HISTORIKK,
+    PASSORD_VARIABEL,
+    PERIODE,
+    PREFERANSER,
+    VAKTTIDER,
+    fyll_testdata,
+    legg_til_turnusansvarlig,
+)
 
 OSLO = ZoneInfo("Europe/Oslo")
 UTC = ZoneInfo("UTC")
 BACKEND = Path(__file__).resolve().parents[2]
+
+FIXTURPASSORD = "fixturpassord"
 
 REGLER = ("kompetanse", "kolliderende", "elleve-timer", "trettifem-timer")
 PREFERANSEPOENG = {tekst: poeng for tekst, poeng in PREFERANSER.values()}
@@ -175,6 +188,7 @@ def engine(tmp_path: Path) -> Iterator[Engine]:
     opprett_skjema(engine)
     with lag_sessionmaker(engine).begin() as session:
         fyll_testdata(session)
+        legg_til_turnusansvarlig(session, FIXTURPASSORD, "tilfeldig")
     yield engine
     engine.dispose()
 
@@ -260,8 +274,8 @@ def test_ulempepoeng_per_vakt_og_vindusgrense() -> None:
 # --- Første og ny kjøring ----------------------------------------------------
 
 
-def test_forste_kjoring_lager_bare_de_tre_tabellene(engine: Engine, data: Data) -> None:
-    assert sorted(inspect(engine).get_table_names()) == ["ansatt", "turnus", "vakt"]
+def test_forste_kjoring_lager_bare_de_fire_tabellene(engine: Engine, data: Data) -> None:
+    assert sorted(inspect(engine).get_table_names()) == ["ansatt", "bruker", "turnus", "vakt"]
     assert len(data.ansatte) == 25
     assert sorted(data.ansatte) == list(range(1, 26))
     periode = [v for v in data.vakter if data.turnus.periode_start <= v.start < data.turnus.periode_slutt]
@@ -282,30 +296,96 @@ def test_ny_kjoring_gir_samme_radtall_og_ingen_duplikater(engine: Engine) -> Non
     foer = tell()
     with lag_sessionmaker(engine).begin() as session:
         radtall = fyll_testdata(session)
+        # fyll_testdata tømmer `bruker` (fremmednøkkel til `turnus`) uten å fylle den.
+        assert session.scalar(select(func.count()).select_from(BrukerRad)) == 0
+        legg_til_turnusansvarlig(session, FIXTURPASSORD, "tilfeldig")
     etter = tell()
     assert foer == etter
     assert radtall == {"turnus": foer[0], "ansatt": foer[1], "vakt": foer[2]}
     assert len(set(etter[3])) == len(etter[3])
+    with lag_sessionmaker(engine)() as s:
+        assert s.scalar(select(func.count()).select_from(BrukerRad)) == 1
+
+
+def test_turnusansvarlig(session: Session) -> None:
+    (bruker,) = session.scalars(select(BrukerRad)).all()
+    assert (bruker.brukernavn, bruker.navn, bruker.turnus_id) == ("kari.vestby", "Kari Vestby", 1)
+    assert bruker.passord_kilde == "tilfeldig"
+    assert FIXTURPASSORD not in bruker.passord_hash
+    innlogget = verifiser_innlogging(session, "kari.vestby", FIXTURPASSORD)
+    assert innlogget is not None
+    assert innlogget.avdeling == "Kirurgisk sengepost"
+
+
+def kjor_kommandoen(db: Path, passord: str | None) -> str:
+    """Kjører testdatakommandoen med `TURNUSHJELPEREN_PASSORD` satt eller fjernet."""
+    miljo = {**os.environ, MILJOVARIABEL: str(db), "PYTHONUTF8": "1"}
+    miljo.pop(PASSORD_VARIABEL, None)
+    if passord is not None:
+        miljo[PASSORD_VARIABEL] = passord
+    return subprocess.run(
+        [sys.executable, "-m", "adaptere.lagring.testdata"],
+        cwd=BACKEND, env=miljo, capture_output=True, text=True, encoding="utf-8", check=True,
+    ).stdout
+
+
+TILFELDIG_LINJE = re.compile(r"^Passord: tilfeldig testpassord, gjelder til neste kjøring: (\S+)$", re.M)
 
 
 def test_kommandoen_kan_kjores_to_ganger_mot_databasen_i_miljovariabelen(tmp_path: Path) -> None:
     db = tmp_path / "kommando.db"
-    miljo = {**os.environ, MILJOVARIABEL: str(db), "PYTHONUTF8": "1"}
-    kjoringer = [
-        subprocess.run(
-            [sys.executable, "-m", "adaptere.lagring.testdata"],
-            cwd=BACKEND, env=miljo, capture_output=True, text=True, check=True,
-        ).stdout
-        for _ in range(2)
-    ]
+    kjoringer = [kjor_kommandoen(db, "personlig-passord-i-test") for _ in range(2)]
     assert kjoringer[0] == kjoringer[1]
     assert "ansatt: 25" in kjoringer[0]
+    assert "bruker: 1" in kjoringer[0]
     engine = lag_engine(db)
     try:
         with lag_sessionmaker(engine)() as s:
             assert s.scalar(select(func.count()).select_from(TurnusRad)) == 1
             assert s.scalar(select(func.count()).select_from(AnsattRad)) == 25
             assert s.scalar(select(func.count()).select_from(VaktRad)) == len(HISTORIKK) + len(PERIODE)
+            assert s.scalar(select(func.count()).select_from(BrukerRad)) == 1
+    finally:
+        engine.dispose()
+
+
+def test_med_passordvariabel_er_passordet_personlig_og_skrives_ikke_ut(tmp_path: Path) -> None:
+    db = tmp_path / "personlig.db"
+    passord = "eget-valgt-passord-123"
+    utskrift = kjor_kommandoen(db, passord)
+    assert "Passord: personlig, fra TURNUSHJELPEREN_PASSORD" in utskrift
+    assert passord not in utskrift
+    assert TILFELDIG_LINJE.search(utskrift) is None
+    engine = lag_engine(db)
+    try:
+        with lag_sessionmaker(engine)() as s:
+            (bruker,) = s.scalars(select(BrukerRad)).all()
+            assert bruker.passord_kilde == "personlig"
+            assert passord not in bruker.passord_hash
+            assert verifiser_innlogging(s, "kari.vestby", passord) is not None
+    finally:
+        engine.dispose()
+
+
+@pytest.mark.parametrize("passord", [None, ""], ids=["mangler", "tom"])
+def test_uten_passordvariabel_virker_det_tilfeldige_testpassordet(tmp_path: Path, passord: str | None) -> None:
+    db = tmp_path / "tilfeldig.db"
+    forste = TILFELDIG_LINJE.search(kjor_kommandoen(db, passord))
+    assert forste is not None
+    andre_utskrift = kjor_kommandoen(db, passord)
+    andre = TILFELDIG_LINJE.search(andre_utskrift)
+    assert andre is not None
+    assert "personlig" not in andre_utskrift
+    assert forste.group(1) != andre.group(1)
+    engine = lag_engine(db)
+    try:
+        with lag_sessionmaker(engine)() as s:
+            (bruker,) = s.scalars(select(BrukerRad)).all()
+            assert bruker.passord_kilde == "tilfeldig"
+            assert andre.group(1) not in bruker.passord_hash
+            assert verifiser_innlogging(s, "kari.vestby", andre.group(1)) is not None
+            # Passordet gjelder bare til neste kjøring.
+            assert verifiser_innlogging(s, "kari.vestby", forste.group(1)) is None
     finally:
         engine.dispose()
 

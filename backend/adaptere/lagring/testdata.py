@@ -4,10 +4,16 @@ Kjøres fra `backend/`:
 
     python -m adaptere.lagring.testdata
 
-Kommandoen oppretter tabellene som mangler, tømmer `turnus`, `vakt` og `ansatt`
-og fyller dem på nytt i én transaksjon. Den kan kjøres så mange ganger man vil
-uten å lage duplikater. Databasestien kommer fra `TURNUSHJELPEREN_DB`, ellers
+Kommandoen oppretter tabellene som mangler, tømmer `bruker`, `turnus`, `vakt` og
+`ansatt` og fyller dem på nytt i én transaksjon. Den kan kjøres så mange ganger man
+vil uten å lage duplikater. Databasestien kommer fra `TURNUSHJELPEREN_DB`, ellers
 `backend/turnushjelperen.db`.
+
+Turnusansvarlig Kari Vestby (`kari.vestby`) får passordet i
+`TURNUSHJELPEREN_PASSORD` når variabelen er satt (personlig passord, varianten ved
+innlevering). Mangler den eller er den tom, lages et tilfeldig testpassord som
+skrives ut og gjelder til neste kjøring (story 1.3, OP-10). Passordet lagres bare
+som hash.
 
 Alle navn er fiktive. Alle Vakter, også historikken 24.08–20.09, står som faste,
 eksplisitte rader nedenfor. Ingenting lages av en generator eller et mønster i
@@ -17,15 +23,21 @@ kode (AV-10). Klokkeslettene kommer fra `VAKTTIDER` (AV-02).
 `tester/lagring/test_testdata.py` sjekker at dataene gir nøyaktig fasiten.
 """
 
+import os
+import secrets
 from datetime import date, datetime, time, timedelta
 
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 from adaptere.lagring.database import database_sti, lag_engine, lag_sessionmaker, opprett_skjema
-from adaptere.lagring.modeller import OSLO, AnsattRad, TurnusRad, VaktRad
+from adaptere.lagring.brukere import hash_passord
+from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
 
 AVDELING = "Kirurgisk sengepost"
+PASSORD_VARIABEL = "TURNUSHJELPEREN_PASSORD"
+TURNUSANSVARLIG_BRUKERNAVN = "kari.vestby"
+TURNUSANSVARLIG_NAVN = "Kari Vestby"
 TURNUS_ID = 1
 # Halvåpent intervall [man. 21.09.2026 00:00, man. 05.10.2026 00:00).
 PERIODE_START = datetime(2026, 9, 21, 0, 0, tzinfo=OSLO)
@@ -812,12 +824,16 @@ def _vaktrad(vaktnummer: int, dato: str, vakttype: str, ansatt_id: int | None, m
 
 
 def fyll_testdata(session: Session) -> dict[str, int]:
-    """Tømmer de tre tabellene og fyller dem med testdataene.
+    """Tømmer de fire tabellene og fyller `turnus`, `ansatt` og `vakt`.
+
+    `bruker` tømmes først på grunn av fremmednøkkelen til `turnus`, og fylles av
+    `legg_til_turnusansvarlig`.
 
     Kalleren eier transaksjonen, slik at tømming og fylling blir én enhet.
     Dette er den eneste kodeveien som markerer en vakt som bemannet, inntil
     skrivefunksjonen for Godkjenning kommer i Epic 3.
     """
+    session.execute(delete(BrukerRad))
     session.execute(delete(VaktRad))
     session.execute(delete(AnsattRad))
     session.execute(delete(TurnusRad))
@@ -854,15 +870,46 @@ def fyll_testdata(session: Session) -> dict[str, int]:
     }
 
 
+def legg_til_turnusansvarlig(session: Session, passord: str, passord_kilde: str) -> None:
+    """Legger til Kari Vestby med passordet som hash. Kjøres etter `fyll_testdata`."""
+    session.add(
+        BrukerRad(
+            brukernavn=TURNUSANSVARLIG_BRUKERNAVN,
+            navn=TURNUSANSVARLIG_NAVN,
+            passord_hash=hash_passord(passord),
+            passord_kilde=passord_kilde,
+            turnus_id=TURNUS_ID,
+        )
+    )
+    session.flush()
+
+
+def velg_passord() -> tuple[str, str]:
+    """Passordet og kilden: personlig fra miljøet, ellers et tilfeldig testpassord."""
+    personlig = os.environ.get(PASSORD_VARIABEL) or None
+    if personlig is not None:
+        return personlig, "personlig"
+    return secrets.token_urlsafe(9), "tilfeldig"
+
+
 def main() -> None:
+    passord, passord_kilde = velg_passord()
     engine = lag_engine()
     opprett_skjema(engine)
     with lag_sessionmaker(engine).begin() as session:
         radtall = fyll_testdata(session)
+        legg_til_turnusansvarlig(session, passord, passord_kilde)
+        brukere = session.scalar(select(func.count()).select_from(BrukerRad))
     print(f"Database: {database_sti()}")
     for tabell, antall in radtall.items():
         print(f"{tabell}: {antall}")
     print(f"  herav {len(PERIODE)} vakter i perioden og {len(HISTORIKK)} i historikken")
+    print(f"bruker: {brukere}")
+    print(f"Brukernavn: {TURNUSANSVARLIG_BRUKERNAVN}")
+    if passord_kilde == "personlig":
+        print(f"Passord: personlig, fra {PASSORD_VARIABEL}")
+    else:
+        print(f"Passord: tilfeldig testpassord, gjelder til neste kjøring: {passord}")
 
 
 if __name__ == "__main__":
