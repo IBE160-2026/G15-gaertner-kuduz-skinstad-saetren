@@ -1,7 +1,7 @@
 # Åpne punkter
 
 - [ ] 2026-10-26 [BMAD-status og neste steg](998-2026-10-26-20-55-18-bmad-status-og-neste-steg.md) — Følg opp de fire åpne handlingene i [sprintstatus](../../../_bmad-output/implementation-artifacts/sprint-status.yaml): periode/uke før story 4.1, ren klone på macOS/Linux, Python 3.12 og gruppens beslutning om versjonslåser.
-- [ ] 2026-10-26 [BMAD-status og neste steg](998-2026-10-26-20-55-18-bmad-status-og-neste-steg.md) — Oppdater vurderingsmatrisen med faktiske bevis fra story 1.1 ved neste milepæl.
+- [x] 2026-10-26 [BMAD-status og neste steg](998-2026-10-26-20-55-18-bmad-status-og-neste-steg.md) — Oppdater vurderingsmatrisen med faktiske bevis fra story 1.1 ved neste milepæl. (løst 2026-11-07: eget bevisavsnitt for story 1.1 og foreldet status rettet)
 - [ ] 2026-10-26 [Vurdering og research av produktbriefen](996-2026-10-26-21-09-00-productbrief-review-og-research.md) — Avklar briefens løfte om «lovlig og mulig», kandidatgrunnlagets tilgjengelighet og preferansenes gyldighetsperiode (review A1–A3).
   Delavklaring 2026-11-02: AV-04/AV-06 i `docs/beslutninger/avklaringspunkter.md` angir prototypetolkning, tilgjengelighetsantakelser og preferanser for demoperioden. Brief/PRD er ikke samordnet; samordningspunktet nedenfor følger opp dette.
 - [ ] 2026-10-26 [Vurdering og research av produktbriefen](996-2026-10-26-21-09-00-productbrief-review-og-research.md) — Avklar like faktorverdier, like totalscorer, feil i live-preferansetolkning og nødvendig datadekning ved periodens kanter (review E1–E4). Researchen viser også at kandidatrelativ normalisering kan snu A/B når en tredje kandidat tilkommer; avklar og test tilsiktet oppførsel før story 4.1.
@@ -28,3 +28,5 @@ Kontrollert mot lokale prosjektfiler, særlig [beslutningsreferatet](../../../do
 7. **PRD/epics hvile, opprinnelig ansatt og godkjenning:** AV-04/06 avklarer hvile og utelukkelse av opprinnelig ansatt. Epics ÅB-6 sier fortsatt «Åpen» og «midlertidig», så samordning gjenstår. Godkjenningens kontroll og varige resultat er fortsatt et PRD-sporbarhetspunkt mot story 3.2.
 8. **Mangelfulle data/KI-fakta/gamle svar:** Ingen ny samlet avklaring funnet. OP-03 og K-04 er fortsatt åpne; behold punktet åpent.
 9. **Samordning etter PR #4:** Story 4.7 finnes. Brief og PRD har allerede 40/20/15/25 (40/35/25 brukes som samlevekter med arbeidsbelastning delt i 20/15 og er ikke i seg selv en motstrid). Nye seeddata/vakttider og fasit er rettet i PR #5. Dokumentsti er rettet. KS-04 og OP-04 er godkjent. Resten må følges opp særskilt: KS-03 tidskategorier er fortsatt ikke utført ifølge referatet; «alle varer åtte timer» må avstemmes mot faktisk tid ved sommertid, og foreldet hvilestatus/dokumenttekst gjenstår.
+
+Oppfølging 2026-11-07: Vurderingsmatrisens foreldede status er rettet og story 1.1 har fått bevislenker. Samlepunkt 2 i statuskontrollen er dermed lukket. Ren klone og versjonslåser følges fortsatt opp i første åpne punkt.
