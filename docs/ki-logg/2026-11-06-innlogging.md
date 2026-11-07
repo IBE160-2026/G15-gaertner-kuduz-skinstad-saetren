@@ -213,6 +213,11 @@ Begrensninger i de manuelle testene, som et gruppemedlem bør gjøre for hånd:
 
 Ikke kontrollert:
 
-- Ikke kjørt på macOS/Linux (OP-05). Bash-kommandoene i README er ikke kjørt.
+- Ikke kjørt på macOS/Linux. Fysisk test der er strøket 2026-11-07 (OP-05), fordi verken
+  sensor eller noen i gruppa har Mac. Bash-kommandoene for passordvariantene er i stedet
+  kjørt i Git Bash på Windows av orkestratoren 2026-11-07, mot en midlertidig database.
+  `IFS= read -rsp` beholdt mellomrom først og sist, og innloggingen virket med det
+  passordet. Uten `IFS=` ble mellomrommene fjernet, som gjennomgangen sa. Variant B ga et
+  tilfeldig passord på 12 tegn.
 - Utskriften av «kjøring» blir feil i Git Bash på Windows (cp1252 i en pipe). Passordet
   er bare ASCII og vises riktig.

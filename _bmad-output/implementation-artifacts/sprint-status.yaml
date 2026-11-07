@@ -112,9 +112,12 @@ action_items:
     status: done
   - epic: 1
     action: "Story 1.1 merget etter selvgjennomgang 2026-10-19 (PR #3): kjør oppsettet
-      fra en ren klone på macOS/Linux og noter resultatet i PR #3."
+      fra en ren klone på macOS/Linux og noter resultatet i PR #3.
+      Strøket 2026-11-07 (OP-05): verken sensor eller noen i gruppa har Mac.
+      Koden skrives for å virke på tvers av operativsystem og testes fysisk på
+      Windows. Test fra ren klone er fortsatt åpen i OP-05."
     owner: "gruppa (medlem med Mac)"
-    status: open
+    status: done
   - epic: 1
     action: "Story 1.1 (PR #3): verifiser at backend installeres og testene kjører
       med Python 3.12, laveste versjon README oppgir.

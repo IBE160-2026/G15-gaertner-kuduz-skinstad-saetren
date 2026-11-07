@@ -37,7 +37,7 @@ Bevis per kriterium:
 Ikke dokumentert ennå:
 - gjennomgang i gruppa av PR-en
 - at gruppa godtar resultatet av KS-04. Datadekningen er kontrollert og låst med en test for #4127 og #4189. Begrensningen er at det ikke finnes vakter etter 05.10.
-- test fra en ren klone på macOS eller Linux (OP-05)
+- test fra en ren klone (OP-05). Fysisk test på macOS/Linux er strøket 2026-11-07, fordi verken sensor eller noen i gruppa har Mac.
 - gjennomgangen av agentoppsettet i OP-04. `bmad-build` er kjørt med underagenter uten den, og avviket står i KI-loggen.
 
 ## Rutine ved milepæler
@@ -69,4 +69,4 @@ Bevis per kriterium:
 Ikke dokumentert ennå:
 - gjennomgang i gruppa av PR-en
 - 20px standard skriftstørrelse med innstillingen i nettleseren og 360px vindusbredde. Agenten simulerte begge.
-- bash-kommandoene i README og en test fra en ren klone på macOS eller Linux (OP-05)
+- test fra en ren klone (OP-05). Fysisk test på macOS/Linux er strøket 2026-11-07. Bash-kommandoene i README er kontrollert i Git Bash på Windows.

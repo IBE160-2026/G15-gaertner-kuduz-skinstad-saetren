@@ -120,6 +120,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Oppsett som skal gjelde hele gruppa må ligge i sporede filer.
   `_bmad/config.user.toml`, `_bmad/custom/*.user.toml` og `.claude/settings.local.json`
   er gitignorerte og gjelder bare din maskin.
+- Koden skal virke på tvers av operativsystem: `pathlib` for stier, eksplisitt
+  `encoding="utf-8"` ved lesing, skriving og underprosesser, og ingen kall eller
+  kommandoer som bare finnes på Windows. README viser både PowerShell og bash. Fysisk
+  test skjer bare på Windows, fordi verken sensor eller noen i gruppa har Mac (OP-05,
+  2026-11-07). Bash-kommandoer kontrolleres i Git Bash.
 
 ## Kjente fallgruver
 
