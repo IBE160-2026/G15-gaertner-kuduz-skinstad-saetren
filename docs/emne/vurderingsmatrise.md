@@ -66,6 +66,8 @@ Bevis per kriterium:
 - **Kriterium 6:** README har nummererte steg for installasjon, testdata med personlig eller tilfeldig passord (PowerShell og bash), backend og frontend. Variablene er dokumentert uten verdier i [.env.example](../../.env.example).
 - **Kriterium 7:** passordet lagres bare som scrypt-hash, og JWT-nøkkelen finnes bare i minnet. Ingen hemmeligheter ligger i repoet.
 
+**Menneskelig gjennomgang og godkjenning 2026-11-07:** Kimsk81 gjennomførte `bmad-walkthrough` av story 1.3 ved `ab78ddc`, testet appen og meldte «Ingen feil oppdaget». Deretter bekreftet han uttrykkelig «Jeg godkjenner story 1.3». Under gjennomgangen ga egen kjøring av backendtestene 112 beståtte tester på Python 3.12, og `npm run build` bestod. Innlogging og sesjonsoppslag er også kontrollert gjennom Vite-proxyen. [Sesjonsloggen](../../.logs/kimsk81/991-2026-11-07-21-39-54-gjennomgang-story-1-3.md) dokumenterer omfang, testresultater og godkjenning. Dette er bevis for kriterium 1, 3 og 6. Brukerens testtilbakemelding spesifiserer ikke enkeltscenarioene. Godkjenningen gjelder storyen; PR-godkjenning i GitHub og merge er ikke utført i denne gjennomgangen.
+
 Ikke dokumentert ennå:
-- gjennomgang i gruppa av PR-en
+- registrering av PR-godkjenning i GitHub
 - test fra en ren klone (OP-05). Fysisk test på macOS/Linux er strøket 2026-11-07. Bash-kommandoene i README er kontrollert i Git Bash på Windows.
