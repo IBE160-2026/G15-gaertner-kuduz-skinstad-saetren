@@ -106,3 +106,5 @@ Lokal PR-gjennomgang etter commit `9473de4`: Backend/API-agenten fant ingen nye 
 - Fra `backend/`: `.venv\Scripts\python -m pytest` (bash: `.venv/bin/python -m pytest`).
 - Fra `frontend/`: `npm.cmd run build` (bash: `npm run build`).
 - Nettleser: test matrisen, inkludert forsinket `/api/meg` etter utlogging og forsinket 401 etter ny innlogging. Før faktiske resultater i KI-loggen.
+
+Nettleserkontroll 2026-11-08: Alle fem akseptansekriterier bestod med Playwright MCP mot isolert testdatabase. Direkte URL, offentlige/beskyttede API-kall, faktisk tokenutløp etter ett minutt, utlogging, tastaturfokus og 360/1600 px er kontrollert. To styrte nettleserprøver bekreftet at forsinket `/api/meg` etter utlogging ikke gjenoppretter innhold, og at forsinket 401 fra gammel generasjon ikke logger ut den nye sesjonen. 127 backendtester og 3 frontendtester bestod. Fremgangsmåte, resultater og avgrensning står i [KI-loggen](../../docs/ki-logg/2026-11-08-beskyttede-flater.md#nettleserkontroll-med-playwright-mcp-2026-11-08). Ingen funksjonsfeil ble funnet. Status beholdes `in-review` til formell PR-gjennomgang; ingen PR ble opprettet eller pushet under kontrollen.
