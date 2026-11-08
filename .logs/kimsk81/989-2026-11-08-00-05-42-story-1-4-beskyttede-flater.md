@@ -50,3 +50,13 @@ Implementasjonen ble committet lokalt som `9473de4`. To uavhengige agenter gjord
 **Resultat og kvalitetssikring:** Lagt til `rolldown` 1.2.14 i `frontend/package.json` og rotpakken i `frontend/package-lock.json`. Offline npm-oppdatering feilet fordi registry-metadata ikke var cachet; lockfila inneholdt allerede pakken og fullstendige metadata. `npm.cmd test` bestod (3/3).
 
 **Åpne punkter:** Ingen.
+
+### Ferdigstilling og merge kl. 15:01
+
+**Oppgave:** Brukeren ba om å sette Story 1.4 til `done`, committe og pushe endringene, og merge dem inn i `main`.
+
+**Plan:** Registrere reviewresultatet i spesifikasjonen, synkronisere før merge, kontrollere konflikter, og pushe feature-branchen og merge-resultatet.
+
+**Resultat og kvalitetssikring:** Storystatus i spesifikasjonen og sprintstatus er satt til `done`. Rolldown-avhengigheten, statuser og spesifikasjon er committet i `3a03a11`. Feature-branchen ble pushet. `git merge-tree` fant konfliktfritt merge-resultat; merge-commit `c4c0acf` ble pushet til `origin/main`. PR-tilbakemeldingen oppga beståtte backend- og frontendtester samt frontendbygg; frontendtesten ble kjørt på nytt etter Rolldown-endringen og bestod 3/3.
+
+**Åpne punkter:** Ingen.
