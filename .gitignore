@@ -40,6 +40,8 @@ htmlcov/
 coverage.xml
 test-results/
 playwright-report/
+# Sidesnapshots som Playwright MCP skriver ved nettleserkontroll
+.playwright-mcp/
 
 # Secrets and local environment; keep example files
 .env
