@@ -111,7 +111,7 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
      (standard 480) må være et positivt heltall, ellers starter ikke API-et.
   - Test: `.venv\Scripts\python -m pytest`. Testene bygger appen med `lag_app` mot en
     database i `tmp_path` og rører ikke `backend/turnushjelperen.db`.
-- Frontend (Node 20.19 eller nyere), fra `frontend/` i en egen terminal mens backend
+- Frontend (Node 22.12 eller nyere), fra `frontend/` i en egen terminal mens backend
   kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
   `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker og bygger.
   Rå størrelser og fargekoder står bare i `frontend/src/stil/tokens.css` (AV-13).
@@ -123,7 +123,7 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     utenfor Windows (OP-05). Rød 3.x med grønn 3.12 er som regel versjonsdrift og rettes
     som vanlig vedlikehold, oftest ved å oppdatere en pakkelås.
   - `.github/workflows/frontend-tester.yml`: `npm ci`, `npm run build` og `npm run test`
-    i `frontend/` med Node 20.19 (laveste versjon vi lover) og nyeste LTS (`lts/*`).
+    i `frontend/` med Node 22.12 (laveste versjon vi lover) og nyeste LTS (`lts/*`).
     Samme regel for versjonsdrift som for backend.
   - CI dekker ikke testene av modellverktøyene i `scripts/` eller manuell test. Grønn CI
     er ikke det samme som gjennomgått kode.

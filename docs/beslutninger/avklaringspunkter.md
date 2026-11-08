@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-08 (backend- og frontendtestene i CI og regelen om ingen hemmeligheter i CI vedtatt i PR #9; OP-11: Mithad Kuduz tar Story 1.5; ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6; se AV-08 og §11)  
+> **Sist oppdatert:** 2026-11-08 (laveste Node-versjon løftet til 22.12; backend- og frontendtestene i CI og regelen om ingen hemmeligheter i CI vedtatt i PR #9; OP-11: Mithad Kuduz tar Story 1.5; ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6; se AV-08 og §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -591,8 +591,15 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Rød CI blokkerer ikke merge, og `main` får ingen branchebeskyttelse. Mithad: «enig. Den som merger, ser resultatet og tar ansvaret.»
   - CI-avsnittet i `AGENTS.md`, som beskriver de tre workflowene.
 - **Endret etter godkjenningen, slik Mithad ba om:** `--if-present` er fjernet fra `npm run test` i `frontend-tester.yml`, fordi testskriptet kom med PR #8. Et manglende testskript gir nå rød CI i stedet for å bli hoppet over. README har fått et avsnitt om CI under Tester.
-- **Ikke vedtatt, egen sak:** Om laveste Node-versjon skal heves fra 20.19. Mithad: «la det stå. Jeg foreslår at vi tar det som en egen sak.» Står som åpent punkt.
+- **Ikke vedtatt, egen sak:** Om laveste Node-versjon skal heves fra 20.19. Mithad: «la det stå. Jeg foreslår at vi tar det som en egen sak.» Behandlet i oppføringen under.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-08 – Laveste Node-versjon løftes fra 20.19 til 22.12
+
+- **Hvem:** Avgjort av Johannes W. Gaertner etter merge av PR #9 (`db8c295`). Gjort rett på `main` etter regelen for branch og PR, fordi endringen er liten og lett å etterprøve. Gruppa kan ta det opp igjen.
+- **Grunnlag:** Node 20 gikk ut av vedlikehold i april 2026 og får ikke sikkerhetsrettinger. Å love en versjon uten vedlikehold er en unødvendig risiko. Node 22 har vedlikehold til april 2027, gjennom semesteret og sensuren. 22.12 er laveste 22-versjon Vite 8 støtter (`engines`: `^20.19.0 || >=22.12.0`). Node 24 ble vurdert, men ville tvunget den som har Node 22, til å oppgradere uten at det gir noe for prosjektet.
+- **Endret:** README (krav og CI-avsnittet), `AGENTS.md` (Frontend og CI-avsnittet) og CI-matrisen i `.github/workflows/frontend-tester.yml`, som nå tester 22.12 og nyeste LTS.
+- **Ikke endret:** `frontend/package.json` har ingen `engines`-felt, og det er ikke lagt til. De andre AV-, K-, OP- og KS-punktene.
 
 ---
 ### 2026-11-08 – Story 1.5 (OP-11)

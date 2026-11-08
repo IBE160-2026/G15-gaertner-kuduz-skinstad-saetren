@@ -1,6 +1,7 @@
-# Typesjekker, bygger og tester frontend på Linux med Node 20.19 (laveste versjon README lover) og nyeste LTS.
+# Typesjekker, bygger og tester frontend på Linux med Node 22.12 (laveste versjon README lover) og nyeste LTS.
+# 22.12, ikke 20.19: Node 20 gikk ut av vedlikehold i april 2026. 22.12 er laveste 22-versjon Vite 8 støtter.
 # `lts/*`, ikke `latest`: `latest` ga en alfaversjon (v27.0.0-alpha) 2026-11-08.
-# Rød lts/* med grønn 20.19 betyr som regel versjonsdrift; rett det som vanlig vedlikehold.
+# Rød lts/* med grønn 22.12 betyr som regel versjonsdrift; rett det som vanlig vedlikehold.
 name: Frontend-tester
 
 on:
@@ -16,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ["20.19", "lts/*"]
+        node-version: ["22.12", "lts/*"]
     defaults:
       run:
         working-directory: frontend

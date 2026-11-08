@@ -42,7 +42,7 @@ Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
 
 Appen har innlogging for turnusansvarlig, vaktoversikten (Vaktvalg) og fiktive
 testdata. Kandidatflaten kommer i story 1.6. Du trenger Python 3.12 eller nyere og
-Node 20.19 eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
+Node 22.12 eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
 (2026-11-04). Kommandoene under er for Windows PowerShell. På macOS/Linux bytter du
 `.venv\Scripts\python` med `.venv/bin/python`. Der det står en egen bash-kommando, er
 den for macOS/Linux og Git Bash. Appen er laget for å virke på alle tre, men er bare
@@ -190,7 +190,7 @@ bare fordi maskinen går i Oslo-tid. `npm run build` typesjekker og bygger
 se steg 4).
 
 GitHub Actions kjører de samme testene på Linux ved hver push: backend med Python
-3.12 og nyeste 3.x, frontend (`npm run build` og `npm run test`) med Node 20.19 og
+3.12 og nyeste 3.x, frontend (`npm run build` og `npm run test`) med Node 22.12 og
 nyeste LTS, og i tillegg speilingstesten for skills. Resultatet vises i hver PR. CI
 får ingen API-nøkler og gjør ingen kall mot Luna. Rød CI stopper ikke en merge, og
 grønn CI betyr ikke at koden er gjennomgått.
