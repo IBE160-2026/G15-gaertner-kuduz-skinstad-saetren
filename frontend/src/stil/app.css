@@ -202,3 +202,192 @@ button {
   margin: var(--space-3) 0 0;
   text-align: center;
 }
+
+/* --- Felles: skjult tekst for skjermlesere -------------------------------- */
+
+.visuelt-skjult {
+  position: absolute;
+  width: var(--visually-hidden-size);
+  height: var(--visually-hidden-size);
+  margin: calc(-1 * var(--visually-hidden-size));
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Brødsmulesti (UX-DR3, AV-14) ----------------------------------------- */
+
+.brodsmulesti {
+  background: var(--color-breadcrumb-bg);
+  border-bottom: var(--border-width) solid var(--color-border);
+  font-size: var(--font-size-meta);
+  color: var(--color-text-mute);
+}
+
+.brodsmulesti-innhold {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-2) var(--content-padding);
+  overflow-wrap: anywhere;
+}
+
+.brodsmulesti b {
+  color: var(--color-text-main);
+}
+
+/* --- Vaktvalg (story 1.5, UX-DR5, UX-DR6) --------------------------------- */
+
+.section-label {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: var(--font-size-section-label);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-section-label);
+  text-transform: uppercase;
+  color: var(--color-text-mute);
+}
+
+.section-label-forste {
+  margin-top: 0;
+}
+
+.alert-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+  padding: var(--alert-box-padding);
+  background: var(--color-bg-panel);
+  border: var(--border-width) solid var(--color-border);
+  border-left: var(--alert-border-left-width) solid var(--color-danger);
+  border-radius: var(--radius);
+}
+
+.alert-box-venstre {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.alert-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--alert-icon-size);
+  height: var(--alert-icon-size);
+  border-radius: var(--radius-full);
+  background: var(--color-alert-icon-bg);
+  color: var(--color-danger);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.alert-box-overskrift {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+.alert-box-linje {
+  margin: 0;
+  color: var(--color-text-mute);
+  overflow-wrap: anywhere;
+}
+
+.alert-box-status {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Primærknapp i flyten, uten full bredde (varselboksen). */
+.button-primary.button-kompakt {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 100%;
+  margin-top: 0;
+  padding: var(--button-compact-padding);
+}
+
+.tabellbeholder {
+  overflow-x: auto;
+  background: var(--color-bg-panel);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.tabell {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabell th {
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-column-header-bg);
+  border-bottom: var(--border-width) solid var(--color-border);
+  font-size: var(--font-size-column-header);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-column-header);
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--color-text-mute);
+  white-space: nowrap;
+}
+
+/* Cellene brytes ikke. På smale skjermer ruller tabellen i beholderen (AV-14). */
+.tabell td {
+  padding: var(--row-padding);
+  white-space: nowrap;
+  border-bottom: var(--border-width) solid var(--color-border);
+  vertical-align: top;
+}
+
+.tabell tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabell .row-alt {
+  background: var(--color-row-alt);
+}
+
+/* Første bemannede vakt i et nytt døgn. Ikke på første rad (Mithad, 2026-11-08). */
+.tabell .dogn-start td {
+  border-top: var(--day-divider-width) solid var(--color-day-divider);
+}
+
+.dato-uthevet {
+  font-weight: var(--font-weight-bold);
+}
+
+.vaktnummer {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
+.ansattnavn {
+  font-weight: var(--font-weight-bold);
+}
+
+.undertekst {
+  font-size: var(--font-size-meta);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-mute);
+}
+
+/* «Bemannet» er nøytral, aldri `ok` (DESIGN.md: `ok` er ordinær sats). */
+.tag-status {
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+.fotnote {
+  margin: var(--space-3) 0 0;
+  font-size: var(--font-size-meta);
+  color: var(--color-text-mute);
+  text-align: right;
+}

@@ -7,6 +7,7 @@ miljøet og databasen fra `lag_engine()`.
 
 import secrets
 from collections.abc import Iterator
+from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, Request, Response
@@ -20,6 +21,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from adaptere.api import sesjon
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
+from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -55,6 +57,48 @@ class InnloggetUt(BaseModel):
 
 class InnloggingsinfoUt(BaseModel):
     passord_kilde: Literal["tilfeldig", "personlig"] | None
+
+
+Vakttype = Literal["dag", "mellom", "kveld", "natt"]
+
+
+class AnsattUt(BaseModel):
+    navn: str
+    stilling: str
+    ansiennitet: int
+
+
+class ManglerBemanningUt(BaseModel):
+    vaktnummer: int
+    vakttype: Vakttype
+    start: datetime
+    slutt: datetime
+    satt_opp: str | None
+    meldt_fra: datetime | None
+    grunn: str | None
+
+
+class BemannetUt(BaseModel):
+    vaktnummer: int
+    vakttype: Vakttype
+    start: datetime
+    slutt: datetime
+    ansatt: AnsattUt
+
+
+class VaktoversiktUt(BaseModel):
+    """Bare data. Tekst og formatering lages i frontend (story 1.5).
+
+    Tidspunktene er i Europe/Oslo og sendes som ISO 8601 med offset.
+    """
+
+    avdeling: str
+    periode_start: datetime
+    periode_slutt: datetime
+    sist_oppdatert: datetime
+    antall_ansatte: int
+    krever_handling: list[ManglerBemanningUt]
+    bemannet: list[BemannetUt]
 
 
 def lag_app(
@@ -126,6 +170,17 @@ def lag_app(
     def meg(request: Request) -> InnloggetUt:
         bruker = request.state.bruker
         return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
+
+    @app.get("/api/vaktoversikt", response_model=VaktoversiktUt)
+    def vaktoversikt(request: Request, okt: Okt) -> VaktoversiktUt | JSONResponse:
+        # Vernet har allerede sjekket at brukeren og turnusen finnes. `None` her
+        # betyr at brukeren ble slettet mellom vernet og spørringen.
+        oversikt = hent_vaktoversikt(okt, request.state.bruker.id)
+        if oversikt is None:
+            respons = feil(401, "mangler_sesjon")
+            sesjon.slett_cookie(respons)
+            return respons
+        return VaktoversiktUt.model_validate(oversikt, from_attributes=True)
 
     @app.post("/api/utlogging", status_code=204)
     def utlogging(respons: Response) -> None:

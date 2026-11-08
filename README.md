@@ -40,9 +40,9 @@ Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
 
 ## Kjøre appen
 
-Appen har innlogging for turnusansvarlig, en foreløpig startside og fiktive testdata.
-Vaktoversikten kommer i story 1.5. Du trenger Python 3.12 eller nyere og Node 20.19
-eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
+Appen har innlogging for turnusansvarlig, vaktoversikten (Vaktvalg) og fiktive
+testdata. Kandidatflaten kommer i story 1.6. Du trenger Python 3.12 eller nyere og
+Node 20.19 eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
 (2026-11-04). Kommandoene under er for Windows PowerShell. På macOS/Linux bytter du
 `.venv\Scripts\python` med `.venv/bin/python`. Der det står en egen bash-kommando, er
 den for macOS/Linux og Git Bash. Appen er laget for å virke på alle tre, men er bare
@@ -163,20 +163,29 @@ Utviklingsserveren sender `/api` videre til backend på http://127.0.0.1:8000, s
 backend må kjøre samtidig. Svarer den ikke, viser innloggingssiden «Får ikke kontakt
 med serveren.».
 
-Etter innlogging åpnes `/turnus/kirurgisk-sengepost`, foreløpig med en plassholder
-til vaktoversikten bygges. Beskyttede adresser kontrollerer sesjonen før innhold
-vises. Uten gyldig sesjon sendes du til `/logg-inn`; en sesjon som bortfaller mens
-du bruker appen, gir meldingen «Sesjonen er utløpt. Logg inn på nytt.» og handlingen
-gjentas ikke. «Logg ut» sletter nettleserens cookie. Hvis serveren ikke bekrefter
-utloggingen, skjules innholdet og du kan prøve igjen. API-et krever sesjon for alle
-`/api`-kall unntatt `GET /api/helse`, `POST /api/innlogging` og
-`GET /api/innloggingsinfo`. API-dokumentasjon er deaktivert.
+Etter innlogging åpnes Vaktvalg på `/turnus/kirurgisk-sengepost`. Vakter som mangler
+bemanning står øverst under «Krever handling» (#4127 og #4189 i testdataene), og de
+164 bemannede vaktene i perioden står i tabellen under. Vakter som starter før
+periodestart, vises ikke (AV-03). «Velg vakt — finn erstatter →» går til
+`/vakt/<nr>/kandidater`, som viser «Fant ikke siden.» fram til story 1.6.
+
+Beskyttede adresser kontrollerer sesjonen før innhold vises. Uten gyldig sesjon
+sendes du til `/logg-inn`; en sesjon som bortfaller mens du bruker appen, gir
+meldingen «Sesjonen er utløpt. Logg inn på nytt.» og handlingen gjentas ikke.
+«Logg ut» sletter nettleserens cookie. Hvis serveren ikke bekrefter utloggingen,
+skjules innholdet og du kan prøve igjen. API-et krever sesjon for alle `/api`-kall
+unntatt `GET /api/helse`, `POST /api/innlogging` og `GET /api/innloggingsinfo`.
+`GET /api/vaktoversikt` gir dataene til Vaktvalg. API-dokumentasjon er deaktivert.
 
 ### Tester
 
 Fra `backend/`: `.venv\Scripts\python -m pytest`. Testene bruker egne databaser i en
 midlertidig mappe og rører ikke `backend/turnushjelperen.db`. Fra `frontend/`:
-`npm run test` kjører sesjonstestene, og `npm run build` typesjekker og bygger
+`npm run test` kjører `node --test`, som finner alle `*.test.mjs` og andre
+testfiler i hele `frontend/` utenom `node_modules`. I dag er det
+`tester/sesjon.test.mjs` og `tester/format.test.mjs`. Formateringstestene kjøres
+også en gang til i en underprosess med `TZ=America/New_York`, så de ikke består
+bare fordi maskinen går i Oslo-tid. `npm run build` typesjekker og bygger
 (`npm.cmd run test` og `npm.cmd run build` i PowerShell hvis skript er blokkert,
 se steg 4).
 
