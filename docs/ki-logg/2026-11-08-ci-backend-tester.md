@@ -121,3 +121,32 @@ Johannes W. Gaertner, ordrett, etter at PR #9 var åpnet:
   `npm run test` ble hoppet over, som forventet, fordi skriptet ikke finnes ennå.
 - **Ikke kontrollert i CI:** At frontendtestene fra PR #8 består på Linux. Det skjer først når PR #8 og denne PR-en begge er merget. Lokalt på Windows besto de (3 av 3, Node 26.7.0).
 - **Observasjon, ikke endret:** README lover Node 20.19 eller nyere. Ifølge Nodes utgivelsesplan gikk Node 20 ut av vedlikehold i april 2026. Om laveste versjon skal heves, avgjør gruppa.
+
+## Oppfølging etter godkjenningen
+
+### Prompten
+
+> pull fra main. kjør /Bmad-help
+
+> Hva er status på PR'ene jeg har sendt i dag
+
+> hva menes med fjern --if-present?
+
+> ja, fjern det i branchen og utfør oppfølgingsoppgaene og merge med main
+
+### Hva modellen leverte
+
+- `main` merget inn i branchen (`45aa9a4`), siden branchen var 23 commits bak og grønn CI ellers bare gjaldt koden fra før story 1.5.
+- `--if-present` og kommentaren om det er fjernet fra `frontend-tester.yml` (`b254b3d`). Mithad ba om det i godkjenningen.
+- README har fått et avsnitt om CI under Tester.
+- §11 i `avklaringspunkter.md` registrerer godkjenningen etter AV-08.
+
+### Hva som ble rettet, og hvorfor
+
+Ingenting i det modellen leverte. Det første commit-forsøket feilet fordi meldingen ble sendt som pipe til `git commit -F -` i PowerShell, og git tolket den som en filsti. Commiten ble gjort på nytt med meldingen i en fil.
+
+### Kvalitetssikring
+
+- **Lokalt:** `npm run test` ga 15 av 15 på Windows før push.
+- **CI:** [42519516996](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42519516996) på `b254b3d` var grønn. `npm run test` kjørte nå i begge jobbene, 15 av 15 på Node 20.19.6 og 26.13.0. Det var det denne kontrollen manglet før PR #8 ble merget. Backend-tester og speilingen var også grønne.
+- **Gjennomgang:** Mithad Kuduz godkjente PR #9 før denne oppfølgingen. Endringene etter godkjenningen er de han ba om selv.
