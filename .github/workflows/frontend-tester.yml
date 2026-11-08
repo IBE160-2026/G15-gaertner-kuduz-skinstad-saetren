@@ -1,0 +1,34 @@
+# Typesjekker, bygger og tester frontend på Linux med Node 20.19 (laveste versjon README lover) og nyeste Node.
+# Rød latest med grønn 20.19 betyr som regel versjonsdrift; rett det som vanlig vedlikehold.
+# `--if-present`: testskriptet kommer med story 1.4 (PR #8). Fjern flagget når den er merget, slik at et
+# manglende skript gir rød CI i stedet for å hoppes over.
+name: Frontend-tester
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["20.19", "latest"]
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: node --version
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test --if-present

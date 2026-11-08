@@ -115,16 +115,20 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
   `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker og bygger.
   Rå størrelser og fargekoder står bare i `frontend/src/stil/tokens.css` (AV-13).
-- CI kjører to workflows på hver push til alle brancher, på Linux:
+- CI kjører tre workflows på hver push til alle brancher, på Linux:
   - `.github/workflows/skills-speiling.yml`: speilingstesten for skills. Lokalt:
     `python -m unittest discover -s scripts -p "test_skills*.py"`.
   - `.github/workflows/backend-tester.yml`: `pytest` i `backend/` med Python 3.12
     (laveste versjon vi lover) og nyeste stabile 3.x. Det er den eneste kjøringen
     utenfor Windows (OP-05). Rød 3.x med grønn 3.12 er som regel versjonsdrift og rettes
     som vanlig vedlikehold, oftest ved å oppdatere en pakkelås.
-  - CI dekker ikke frontend, testene av modellverktøyene i `scripts/` eller manuell test.
-    Grønn CI er ikke det samme som gjennomgått kode. Rød CI stopper ikke merge, fordi
-    `main` ikke har branchebeskyttelse.
+  - `.github/workflows/frontend-tester.yml`: `npm ci`, `npm run build` og `npm run test`
+    i `frontend/` med Node 20.19 (laveste versjon vi lover) og nyeste Node. Samme regel
+    for versjonsdrift som for backend.
+  - CI dekker ikke testene av modellverktøyene i `scripts/` eller manuell test. Grønn CI
+    er ikke det samme som gjennomgått kode.
+  - Rød CI blokkerer ikke merge, og `main` har ingen branchebeskyttelse. Det er et valg:
+    den som merger, ser resultatet i PR-en og tar ansvaret (Policy).
 - Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering
   ligger i `docs/ki-logg/README.md`. Ikke skriv dem på nytt.
 
