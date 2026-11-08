@@ -1,0 +1,10 @@
+- generic [ref=f5e2]:
+  - banner [ref=f5e3]:
+    - generic [ref=f5e4]: TURNUSHJELPEREN
+    - generic [ref=f5e5]:
+      - generic [ref=f5e51]: "Innlogget: Kari Vestby (turnusansvarlig) · Avdeling Kirurgisk sengepost"
+      - button "Logg ut" [ref=f5e52] [cursor=pointer]
+  - main [ref=f5e53]:
+    - generic [ref=f5e54]:
+      - heading "Vaktoversikt" [level=1] [ref=f5e55]
+      - paragraph [ref=f5e56]: Vaktoversikten kommer i en senere versjon.
