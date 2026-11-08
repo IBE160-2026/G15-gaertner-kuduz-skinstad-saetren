@@ -8,6 +8,8 @@ Utarbeidet 2026-11-07 etter kontroll av hele arbeidstreets PRD, §§0–9 og FR-
 
 For hvert punkt: velg alternativ, skriv begrunnelse og noter hvem som faktisk besluttet det. Et svar fra ett medlem er et individuelt produktvalg inntil vedkommende uttrykkelig oppgir at gruppen har vedtatt det. ID-ene P-01 osv. er bare arbeids-ID-er i dette dokumentet; de erstatter ikke AV-, K-, OP- eller KS-ID-er.
 
+**Synspunkter før møtet:** Hvert punkt har ett felt per medlem. Skriv synspunktet ditt etter navnet ditt i stedet for `__`, også når det bare er «støtter anbefalingen» eller «vil drøfte i møtet». Endre ikke andres felt; svar heller i ditt eget. Synspunktene er individuelle og ikke vedtak. Gruppens beslutning føres i feltet under når punktet er behandlet. Kjør `git pull` før du skriver, siden flere redigerer samme fil.
+
 Anbefalingene er laget for en avgrenset, lokal prototype med fiktive data. De utvider ikke automatisk v1. Gruppen kan også velge en tydelig avgrensning eller utsettelse, med ansvarlig og tidspunkt for ny behandling.
 
 **Foreslått rekkefølge:** P-01–P-04 om beregninger, P-05–P-07 om KI, P-08–P-10 om datagrunnlag og flyt, P-11 om tomtilstand. Ta deretter stilling til avgrensningene P-12/P-13 og dokumentasjonsoppgavene E-01/E-02. P-05 har to delvalg som må besvares hver for seg.
@@ -48,6 +50,13 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 **Foreslått kontroll:** 32 eksisterende timer + 8 nye ved 300 kr/t gir 3 000 kr. Ved 40 eksisterende timer gir de 8 nye 3 600 kr.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-02 – Beregningsuke og timer over ukeskiftet
@@ -68,6 +77,13 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 **Foreslått kontroll:** Regn begge berørte uker, test 36 timer nøyaktig, ukeskifte og begge sommertidsovergangene. Dersom C velges, må konsekvenser for øvrige dokumenter avklares uttrykkelig.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-03 – Kostnadsvisning ved blandet ordinær sats og overtid
@@ -86,6 +102,13 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 **Foreslått kontroll:** Beløp, timer og satser skal forklare samme kostnad; ulik visningsavrunding skal ikke endre rekkefølgen.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-04 – Eksakt grense for høy timebelastning (K-02)
@@ -99,6 +122,13 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 | C | Ved minst 33 timer | Enklere heltall, men grensen er omtrent 91,7 % |
 
 **Anbefaling:** A. Sammenlign før visningsavrunding. 32:23 er under og 32:24 på grensen. Ved 40 timer er faktisk prosent omtrent 111,1 %, selv om selve linjen stopper ved full bredde. Vis nok presisjon nær grensen til å unngå at samme viste timetall virker å gi tilfeldig fargeskifte. Dette er ingen hard regel og endrer ingen rangeringspoeng.
+
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen
+- Kim: __
+- Mithad: __
+- Ragnhild: __
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -130,6 +160,13 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 **Foreslått kontroll:** Skill manglende tekst, vellykket nøytral tolkning og tolkningsfeil. Test ny vellykket tolkning, endret tekst og feilet nytt forsøk. Vellykket lagret tolkning gjenbrukes; rangeringen gjør ikke nye KI-kall.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Delvalg 1: __. Delvalg 2: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-06 – Faktakontroll av KI-forklaringer
@@ -148,6 +185,13 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 **Foreslått kontroll:** Feil beløp, ukjent kandidat, feil preferanse, omvendt sammenligning og feil rangeringspåstand gir reservetekst. Test både live- og demoveien. Manuell språk-/forståelseskontroll kommer i tillegg; struktur alene beviser ikke god forklaring.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI har gjort en beregning som utløser reserveteksten
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-07 – Hva skal forklaringen kunne sammenligne? (K-04)
@@ -165,6 +209,13 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 **Foreslått kontraktsinnhold:** Kandidat-/vaktreferanse, datagrunnlagets identitet, kostnadsverdi og ordinær/overtidsfordeling, eksisterende uketimer/prosent, ulempepoeng og fordeling, preferansekategori eller feilstatus, faktorpoeng/veide bidrag, totalscore og plassering. Bare nødvendige felt skal inn i KI-input; eksakt skjema er arkitekturarbeid etter beslutningen. En gyldig kandidat kan ha en utelukkelsesoppsummering i UI-et uten at de utelukkedes identiteter sendes til KI.
 
 **Foreslått kontroll:** Ingen referanse til utelukkede, ingen referansekandidat ved én gyldig, og ingen påstand om hvorfor en kandidat vinner som motsier de veide bidragene. Portene i AD-1, story 4.4, 4.7 og 5.3/5.6 må beskrive samme grunnlag.
+
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Kan det være hensiktsmessig med en funksjonalitet: **hvis** turnusansvarlig ønsker det, utfør en sammenligning av merkede kandidater, for eksempel rangert nummer 2 og rangert nummer 3. Sammenligningen utføres kun på forespørsel, normalt er sammenligningen gjort med rangert kandidat nummer 1.
+- Kim: __
+- Mithad: __
+- Ragnhild: __
 
 **Gruppens beslutning:** Ikke behandlet. Valg/referanseregel: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -186,6 +237,13 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 **Foreslått kontroll:** Manglende historikk gir ikke 0 ulempepoeng; manglende lønn gir ikke gratis vakt; feiltilstand gir ikke godkjenningsknapp. Test den vedtatte håndteringen av den kjente periodekanten særskilt.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Vi må nødvendigvis starte vår turnus på en gitt dato. Komplikasjonen er reell og virkelighetsnær. Anbefaler at vi godtar et synlig avgrenset unntak for demonstrasjonen, alternativt kan KS-04 justeres hvis det er et konkret behov.
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg og håndtering av kjent KS-04-begrensning: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-09 – Gamle svar og endrede data før godkjenning
@@ -206,6 +264,13 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 **Foreslått kontroll:** Forsinket svar fra vakt A erstatter aldri B. Endret kostnad eller preferanse utløser valgt atferd. Endret hardregelgyldighet gir fortsatt ingen lagring etter eksisterende FR-12.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-10 – Skal preferanser kunne redigeres i appen? (ÅB-4)
@@ -222,6 +287,13 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 **Foreslått kontroll:** PRD og epics lover samme registreringsmulighet. Hvis B/C velges, opprettes egne akseptkrav og stories før implementasjon.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1. ikke noe vi er avhengig av for å lykkes med applikasjonen, men vi tilstreber en arkitektur som muliggjør en implementasjon på fornuftig vis
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-11 – Når ingen kandidater er gyldige
@@ -237,6 +309,13 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 **Anbefaling:** A. Det forklarer resultatet med produktets begreper og uten å påstå at ingen i virkeligheten kan ta vakten. Bruk eksisterende tomtilstandsutforming, men vis resultatet med tekst slik at farge alene ikke bærer betydningen. Ingen godkjenningshandling, automatisk svekking av regler eller nye «del opp vakten»-knapper. Datafeil fra P-08 og KI-feil fra P-05/P-06 skal ha andre meldinger.
 
 **Foreslått kontroll:** #4189 gir riktig tomtilstand og årsaker; lasting og datafeil gir andre tilstander. I oppsummeringen telles en ansatt én gang totalt og kan telles under flere bruddårsaker, som story 2.5 allerede sier.
+
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen hvis innleie av personell er eneste lovlige løsning
+- Kim: __
+- Mithad: __
+- Ragnhild: __
 
 **Gruppens beslutning:** Ikke behandlet. Valg/justert tekst: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -256,6 +335,13 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 
 **Anbefaling:** A som eksplisitt avgrensning. B/C gir mer etterprøvbarhet i selve appen, men krever nye lagrings-/visningskrav. Prosessloggene i repoet dokumenterer utviklingsarbeidet og erstatter ikke en historikkfunksjon i produktet. Hvis A velges, må PRD ikke love at den nøyaktige teksten bak et tidligere valg kan hentes frem senere.
 
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1.
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
 ### P-13 – Hvilket UX-omfang skal være bindende nå?
@@ -271,6 +357,13 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 **Anbefaling:** A i tråd med OP-02; PRD kan være ferdig med en eksplisitt utsatt detalj og tidspunkt for behandling. C krever uttrykkelig endring av planlagt scope. Tastaturbetjening, lesbar tekst og forståelige statuser er allerede beskrevet i UX/stories og skal ikke omgjøres til valgfrie tillegg.
 
 **Forslag ellers:** Gjennomfør en liten oppgavebasert forståelsestest når kandidatflaten virker: be en person forklare hvorfor nr. 1 rangeres høyest, finne en annen gyldig kandidat og skille datafeil fra null gyldige. Dette er foreslått kvalitetssikring, ikke gjennomført brukervalidering eller et nytt emnekrav. Fastsett deltakere og akseptmål før testen hvis den vedtas.
+
+**Synspunkter før møtet:**
+
+- Johannes: Jeg støtter denne anbefalingen.
+- Kim: __
+- Mithad: __
+- Ragnhild: __
 
 **Gruppens beslutning:** Ikke behandlet. Valg, ansvarlig og behandlingstidspunkt: __. Eventuell forståelsestest: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -290,6 +383,13 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 
 **Anbefaling:** Finn en eksisterende skriftlig avklaring eller spør: «Krever IBE160 at selve applikasjonen bruker generativ KI, eller gjelder kravet at KI brukes og dokumenteres i utviklingsprosessen?» Dokumenter svar og kilde. Ingen melding er sendt gjennom dette arbeidet. KI beholdes i gjeldende produktscope uansett; et svar om emnekravet fjerner ikke eksisterende produktkrav automatisk.
 
+**Synspunkter før møtet:**
+
+- Johannes: KI i produktet er ikke et formelt krav i emnet, men de aller fleste av applikasjonene er planlagt med en implementasjon av KI i en eller annen form. Sannsynligvis fordi det er "inn i tiden". Dette ble uttalt i forelesning av faglærer. Dette punktet kan lukkes
+- Kim: __
+- Mithad: __
+- Ragnhild: __
+
 **Ansvarlig:** __. **Svar/kilde/dato:** __. **Status etter møtet:** __.
 
 ### E-02 – Samsvar med godkjent proposal
@@ -302,6 +402,13 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 - B: Hvis versjonen ikke kan gjenfinnes, be faglærer bekrefte hvilket grunnlag som ble godkjent. Behold kontrollpunktet åpent til det finnes dokumentasjon.
 
 Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenligningen avdekker konflikt, må gruppen avklare den før den berørte delen av PRD ferdigstilles. Ingen nye avvik er påstått uten denne sammenligningen.
+
+**Synspunkter før møtet:**
+
+- Johannes: Product Brief og PRD er levende dokumenter. Ja, det var en "innlevering" av Product Brief, men status på dokumentet ved innleveringstidspunkt er ikke bindende for produktet som leveres til slutt. Vi forstår at i det virkelige liv er dette kontrakter som er bindende, men dette er et læringscenario. Dette punktet kan lukkes
+- Kim: __
+- Mithad: __
+- Ragnhild: __
 
 **Ansvarlig:** __. **Dokument/kilde/dato og resultat:** __.
 
