@@ -87,18 +87,18 @@ Ikke dokumentert ennå:
 
 [Beslutningsgrunnlaget for gruppen](../beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) dokumenterer kontroll av hele PRD §§0–9 og alle 14 FR-er mot vedtak, stories, arkitektur og tidligere funn. To separate agentkontroller ble sammenholdt før forslagene ble skrevet. Underlaget har 13 produkt-/avgrensningspunkter og to dokumentasjonspunkter, med alternativer, anbefalinger og felt for gruppens faktiske svar. Det er prosessbevis for kriterium 1 og 3, ikke nye vedtak eller bevis for implementasjon. Den eksisterende PRD-teksten er uendret i denne oppgaven. Beregningseksempler, unike punkt-ID-er og lokale lenker er kontrollert. Faglærersvar om KI i produktet og kontroll mot godkjent proposal står åpne; PRD-en kan ikke på dette grunnlaget omtales som ferdig avklart.
 
-## CI med GitHub Actions 2026-11-08 (PR #6 merget, backend-testene foreslått)
+## CI med GitHub Actions 2026-11-08 (PR #6 merget, backend- og frontendtestene foreslått)
 
 Sensorveiledningen nevner ikke CI. Avsnittet viser hvordan CI støtter kriteriene som er der.
 
 - **PR #6, merget (`9939cfa`):** `.github/workflows/skills-speiling.yml` kontrollerer ved hver push at skillene for Codex og Claude Code er like. [KI-loggen](../ki-logg/2026-11-06-skills-speiling.md) viser at testen feilet i tre brudd som ble laget med vilje. Mithad Kuduz godkjente PR-en etter egen kjøring av testen.
-- **[PR #9](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/9), ikke merget:** `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` med Python 3.12 og nyeste 3.x på Linux. Den første kjøringen, [42477253888](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42477253888), ga 112 av 112 på både 3.12.16 og 3.15.2. Se [KI-loggen](../ki-logg/2026-11-08-ci-backend-tester.md).
+- **[PR #9](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/9), ikke merget:** `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` med Python 3.12 og nyeste 3.x på Linux. Den første kjøringen, [42477253888](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42477253888), ga 112 av 112 på både 3.12.16 og 3.15.2. `.github/workflows/frontend-tester.yml` kjører `npm ci`, `npm run build` og `npm run test` med Node 20.19 og nyeste LTS. Kjøringen [42478187812](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42478187812) var grønn på 20.19.6 og 26.13.0. Se [KI-loggen](../ki-logg/2026-11-08-ci-backend-tester.md).
 
 Bevis per kriterium:
 - **Kriterium 3:** Testene kjøres automatisk ved hver push, ikke bare når noen husker det. CI erstatter ikke sensors egen kjøring etter README.
-- **Kriterium 1:** CI-resultatet vises i hver PR, ved siden av gjennomgangen. Prosessen fram til CI-oppsettet er dokumentert i KI-loggen: forslaget kom i en PR-gjennomgang, ble vurdert med pre-mortem, red team og feilmodusanalyse, og Johannes rettet agentens forslag om en ren 3.12-lås.
+- **Kriterium 1:** CI-resultatet vises i hver PR, ved siden av gjennomgangen. Prosessen fram til CI-oppsettet er dokumentert i KI-loggen: forslaget kom i en PR-gjennomgang, ble vurdert med pre-mortem, red team og feilmodusanalyse, og Johannes rettet agentens forslag om en ren 3.12-lås. Agenten fant selv at `latest` ga en alfaversjon av Node, og rettet det til `lts/*`.
 - **Kriterium 5:** CI kontrollerer at de eksakt låste avhengighetene installeres fra en ren runner, både med laveste og nyeste Python.
 - **Kriterium 7:** CI har bare lesetilgang og ingen secrets. Policy i `AGENTS.md` forbyr modellnøkkelen i CI.
 - **Kryssplattform:** CI på Linux er den eneste kjøringen utenfor Windows etter OP-05.
 
-Ikke dekket: frontend, testene av modellverktøyene i `scripts/` og manuell test. Rød CI stopper ikke merge, fordi `main` ikke har branchebeskyttelse. README nevner ikke CI ennå. Det legges inn etter PR #8, som skriver om Tester-avsnittet.
+Ikke dekket: testene av modellverktøyene i `scripts/` og manuell test. Frontendtestene fra story 1.4 kjøres først når PR #8 er merget. Rød CI blokkerer ikke merge, og det er gruppas valg. README nevner ikke CI ennå. Det legges inn etter PR #8, som skriver om Tester-avsnittet.
