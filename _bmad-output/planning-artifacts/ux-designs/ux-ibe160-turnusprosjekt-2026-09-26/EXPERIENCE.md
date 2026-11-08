@@ -2,7 +2,7 @@
 title: "EXPERIENCE: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-10-14
+updated: 2026-11-06
 sources:
   - _bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md
   - _bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/.memlog.md
@@ -104,9 +104,13 @@ Enkel, fornuftig standard — **ikke** et utvidet WCAG-program. Dette er en bevi
 - Full tastaturnavigerbarhet: alle knapper, ekspander-lenker og skjemafelt må kunne nås og aktiveres uten mus.
 - Ingen bekreftet skjermleser-/ARIA-innsats utover det som følger naturlig av semantisk HTML — ikke spesifisert som eget krav.
 
+Mulig tillegg i v2 (2026-11-06): utvidet tilgjengelighet for svaksynte, med skjermleserstøtte som alternativtekst for ikoner, etiketter på skjemafelt, tabelloverskrifter skjermleseren kan lese og opplesing av åpnet/lukket begrunnelse og statusmeldinger. Avgrensningen over gjelder fortsatt for v1.
+
 ## Responsive & Platform
 
 Responsiv web-app — samme kodebase skal fungere godt på både desktop og mobil/nettbrett (bekreftet i beslutningsloggen), ikke en separat native app. Alle fire mockup-skjermene (`mockups/`) viser imidlertid kun én fast desktop-bredde (1180px, "nettleser-vindu"-innramming) — **ingen breakpoints, stablingsmønster for tabellen, eller mobiltilpasning er faktisk besluttet eller vist noe sted.**
+
+Besluttet 2026-11-06 (AV-14): 1180px er rammens bredde, ikke produktets. Appbaren går over hele bredden, innholdet får `max-width: 1180px`, og under det ruller brede tabeller vannrett i sin egen beholder fram til story 4.6. Siden som helhet skal ikke rulle vannrett. Breakpoints og stabling under er fortsatt utsatt (OP-02).
 
 **[ASSUMPTION]** Følgende er en rimelig, men ubekreftet, tilpasning avledet fra tettheten i `DESIGN.md` og bør bekreftes med gruppen før implementasjon:
 

@@ -2,7 +2,7 @@
 title: "DESIGN: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-09-26
+updated: 2026-11-06
 name: Turnushjelperen
 description: Beslutningsstøtte-fagsystem for turnusansvarlig — tett, klinisk, navy/grå. Ikke et konsumentprodukt, ikke dark-mode-først.
 colors:
@@ -176,13 +176,17 @@ Rollene er tettere trappet enn i et konsumentprodukt, fordi flaten skal romme my
 
 Ingen kursiv, ingen display-størrelser. Fet vekt (700) brukes til navn, tall og seksjonsoverskrifter — aldri til lange avsnitt.
 
+**Enhet (AV-13, 2026-11-06).** Størrelsene over står i `px` og er kilden. I CSS-tokenene skrives skriftstørrelsene i `rem` med 1rem = 16px og `px`-verdien i en kommentar, for eksempel `--font-body: 0.78125rem; /* 12.5px */`. Da følger teksten nettleserens innstilling for standard skriftstørrelse. Sporing, spacing, kanter, radius og faste bredder forblir i `px`. Ingen komponent bruker rå størrelser utenfor tokenene, og tekstbeholdere har ikke fast høyde. Se `docs/beslutninger/avklaringspunkter.md` §11.
+
 ## Layout & Spacing
 
 Skala: 4 / 8 / 12 / 16 / 22 / 32px. Innholdspolstring (`content-padding`, 22px) er fast for hovedflaten; tabellrader bruker en tettere `row-padding` (9px 12px) for å holde den tettheten som «Retning A» ble valgt for.
 
 Layouten er én kolonne av tett stablede seksjoner (varselboks → seksjonsoverskrift → tabell → ekskludert-boks → fotnote), ikke et flerkolonne-dashbord. Brødsmulesti (`Turnus > Avdeling > Vakt`) ligger fast øverst under appbar på alle skjermer etter innlogging, som fast stedsforankring i en tett flate.
 
-**[ASSUMPTION]** Eksakte breakpoints for mobil/nettbrett-tilpasning er ikke bestemt i noen av kildene (mockupene, f.eks. `mockups/direction-a-fagsystem.html`, viser kun en fast desktop-bredde på 1180px) — se EXPERIENCE.md § Responsive & Platform for hvordan tabelltettheten foreslås tilpasset smalere flater.
+**Bredde (AV-14, 2026-11-06).** Appbaren går over hele bredden. Innholdsflaten får `max-width: 1180px`, sentreres og har `content-padding` (22px) på sidene. `login-card` får `width: min(360px, 100% - 32px)`. Under 1180px ruller brede tabeller vannrett inne i sin egen beholder fram til story 4.6. Bredden på 1180px i mockupene er bredden på den ytre nettleser-rammen (`.browser`), samme presentasjonsartefakt som skyggen under Elevation & Depth, og ikke en fast produktbredde. Se `docs/beslutninger/avklaringspunkter.md` §11.
+
+**[ASSUMPTION]** Eksakte breakpoints for mobil/nettbrett-tilpasning er ikke bestemt i noen av kildene, og er utsatt (OP-02) — se EXPERIENCE.md § Responsive & Platform for hvordan tabelltettheten foreslås tilpasset smalere flater.
 
 ## Elevation & Depth
 
@@ -214,7 +218,7 @@ Ingen pille-former, ingen store radiuser. Skarpheten er bevisst — den signalis
 - **Tomtilstand (`empty-state`)** — Samme visuelle familie som varselboks (sirkulært `!`-ikon i `danger`-toner), men er en *forklarende* boks, ikke en feilmelding — se ovenfor og EXPERIENCE.md § State Patterns for ordlyd-kravet om at den aldri skal kunne forveksles med en last- eller feiltilstand. Se `mockups/direction-a-fagsystem.html` (variant nederst i filen).
 - **Avviksnotat (`deviation-note`)** — Stiplet kant, nøytral bakgrunn (`#f7f9fb`) — signaliserer "informasjon om et bevisst, tillatt valg", ikke en advarsel. Vis-når-regelen ligger i EXPERIENCE.md § Component Patterns. Se `mockups/key-godkjenning.html`.
 - **Bekreftelsesboks (`confirm-box`)** — Viser hvem som settes inn i hvilken vakt, med "Avbryt" (`button-secondary`) og "Godkjenn erstatning" (`button-primary`). To-stegs atferd og statuslinje er spesifisert i EXPERIENCE.md § Component Patterns / § State Patterns. Se `mockups/key-godkjenning.html`.
-- **Innloggingsskjema (`login-card`)** — Sentrert, smalt (360px) kort på ellers tom `bg-app`-flate. Ett rollenotat forklarer at kun turnusansvarlig har tilgang. Se `mockups/key-innlogging.html`.
+- **Innloggingsskjema (`login-card`)** — Sentrert, smalt (360px, smalere på små skjermer etter AV-14) kort på ellers tom `bg-app`-flate. Ett rollenotat forklarer at kun turnusansvarlig har tilgang. Se `mockups/key-innlogging.html`.
 - **Knapper** — `button-primary` (`{colors.accent}` fylt, hvit tekst) for hovedhandling per skjerm (velg vakt, godkjenn). `button-secondary` (hvit, kantlinje) for avbryt/sekundærhandling. Ingen tertiær/ghost-variant er definert.
 
 ## Do's and Don'ts

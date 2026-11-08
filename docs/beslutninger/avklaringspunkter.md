@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-06 (AV-08: sesjonslogg uten git-operasjoner, og forslag om ny ordlyd og CI, se §11)  
+> **Sist oppdatert:** 2026-11-07 (OP-10 besvart i spesifikasjonen for Story 1.3 og implementert; fysisk test på macOS/Linux strøket i OP-05, se §2.3, §3 og §11; 2026-11-06 også forslag om ny ordlyd i AV-08 og CI, se §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -58,7 +58,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-02 | UX og mobil | Vedtatt | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. | Ikke bestemt |
 | OP-03 | KI-feil ved preferansetolkning | Prioritering vedtatt; løsning åpen | Avklar før Story 5.1/5.2 er `done`. | Ikke bestemt |
 | OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
-| OP-05 | Ren klone/plattformtesting | Åpent | Testomfang/tidspunkt ikke avtalt; Codex-forslag ikke vedtatt. | Ikke bestemt |
+| OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07 | Fysisk test på macOS/Linux strykes: verken sensor eller noen i gruppa har Mac. Koden skrives for å virke på tvers av operativsystem og testes fysisk på Windows. Test fra ren klone er fortsatt ikke avtalt (§11). | Johannes W. Gaertner |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
 | OP-07 | PR #4 | Vedtatt | Ragnhild Sætren ansvarlig for oppfølging og retting av PR #4. | Ragnhild Sætren |
 | OP-08 | Story 1.2 | Vedtatt | Mithad Kuduz ansvarlig for oppdatering av Story 1.2. | Mithad Kuduz |
@@ -67,6 +67,14 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | KS-02 | Kontroller rangeringsformel | Utført for fasiten i Story 1.2 (2026-11-04) | Fasiten for #4127 er kontrollert og godkjent med PR #5 (§11). Gjelder ny fasit på nytt. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 | KS-03 | Kontroller tidskategorier | Kontroll vedtatt; ikke utført | Kontroller fire vakttyper før implementasjon av Story 4.7 og ferdigstilling av fasit. | Ikke bestemt |
 | KS-04 | Kontroller datadekning | Utført 2026-11-04 | Dekket for #4127 og #4189 og låst med test; begrensningen etter 05.10 er godtatt (§11). | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
+
+### 2.3 Vedtak etter møtet (ikke i PDF-en)
+
+| ID | Tema | Status | Kort beslutning | Ansvarlig |
+|---|---|---|---|---|
+| AV-13 | Enhet i designtokens | Vedtatt 2026-11-06 | Skriftstørrelser i `rem`; spacing, kanter, radius, sporing og faste bredder i `px`. Ingen rå størrelser i komponentene (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
+| AV-14 | Layoutbredde | Vedtatt 2026-11-06 | Appbar over hele bredden; innholdet får `max-width: 1180px`. Fast bredde på 1180px forkastes (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
+| OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -308,7 +316,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### OP-05 – Ren klone og plattformtesting
 
-- **Status:** Åpent; ingen testomfang eller tidspunkt vedtatt.
+- **Status:** Delvis vedtatt 2026-11-07 (§11). Fysisk test på macOS/Linux er strøket. Test fra ren klone er fortsatt ikke avtalt.
 - **Codex-anbefaling (ikke vedtak):** Test fra ren GitHub-klone, Python 3.12 og macOS/Linux før Story 1.2 er `done`; oppdater vurderingsmatrise ved milepæler.
 - **Konsekvens:** OP-05 innfører **ingen nye** ferdigkriterier. Eksisterende tester og vedtatte AV-/KS-krav gjelder fortsatt.
 - **Ansvarlig/frist:** Ikke bestemt.
@@ -427,7 +435,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Kontrollér om eksisterende logging dekker sporbarhet og begrunnelse for tak 300. | K-05 | Kontroll åpen; ingen loggendringer vedtatt. |
 | Gjennomgå agentpraksis/underagenter og bevar reviewfunn. | OP-04 | Gjennomført og godkjent 2026-11-04; regelen om underagenter står i `AGENTS.md` (§11). |
 | Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. |
-| Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | Åpent; ingen nye testkrav vedtatt. |
+| Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | macOS/Linux strøket 2026-11-07; ren klone fortsatt åpen. Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). |
 | Fastsett eventuell bindende arbeidsrekkefølge. | OP-06 | Codex-rekkefølgen er kun et forslag. |
 | Avtal frist for ny PR-review. | OP-09 | Ingen frist vedtatt. |
 | Eventuell videreføring av tariff-, fraværs-, stillingsprosent-, helligdags- og omfattende lovmodell. | OP-01 | **Utenfor v1**; krever nytt vedtak før eventuell utvikling. |
@@ -504,6 +512,49 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
     - Kvalitetssikringen må kunne spores uansett vei: PR-gjennomgangen, eller commit-meldingen og KI-loggen.
     - **Begrunnelse:** Gruppa stoler på hverandre. En maskinell regel sendte også små endringer til PR. Sensorveiledningen godtar «branches, pull requests, issues eller tilsvarende» og beskrivelser av rettede KI-feil som spor av gjennomgang.
 - **Ikke endret:** Første del av AV-08 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-06 – Designtokens, layoutbredde og Story 1.3 (AV-13, AV-14, OP-10)
+
+- **Hvem:** Johannes W. Gaertner, som har vedtatt på vegne av gruppa.
+- **Grunnlag:** Antakelsesgjennomgang og beslutningsforslag (Assumption Audit og Architecture Decision Records i `bmad-advanced-elicitation`) av anbefalingen om neste steg. Begge spørsmålene var åpne punkter fra UX-vurderingen samme dag og kom til forfall fordi Story 1.3 er første story som bygger designtokens og appbar. Detaljer: `.logs/johagartnerhimolde/994-2026-11-06-17-05-00-ux-vedtak-og-story-1-3.md`.
+- **AV-13 – Skriftstørrelser i `rem`:**
+  - Typografitokenene skrives i `rem` med 1rem = 16px, og `px`-verdien fra DESIGN.md står i en kommentar (for eksempel `--font-body: 0.78125rem; /* 12.5px */`). DESIGN.md beholder `px` som kilde.
+  - Spacing, kantlinjer, radius, sporing og faste bredder (`login-card` 360px, belastningslinja 110×7px) er i `px`.
+  - Ingen komponent bruker rå størrelser utenfor tokenene. Faste mål som 360px og 110×7px blir egne tokens.
+  - Tekstbeholdere har ikke fast høyde, slik at teksten ikke klippes når skrifta vokser.
+  - Kontroll: manuell test med nettleserens standard skriftstørrelse satt til 20px, dokumentert i storyen som innfører tokenene.
+  - Begrunnelse: Tekst på 10,5–12,5px følger da brukerens skriftinnstilling, mens tabelltettheten og skarpe kanter beholdes. Zoom virket allerede med `px`. Forkastet: alt i `px` (ignorerer skriftinnstillingen) og alt i `rem` (spacingen vokser, tabellen mister tettheten, og kanter gir brøkpiksler).
+- **AV-14 – Layoutbredde:**
+  - Appbaren går over hele bredden. Innholdsflaten får `max-width: 1180px`, `margin-inline: auto` og `padding-inline` lik `content-padding` (22px).
+  - `login-card` får `width: min(360px, 100% - 32px)`.
+  - Under 1180px ruller brede tabeller vannrett inne i sin egen beholder fram til Story 4.6. Breakpoints og stabling er fortsatt utsatt (OP-02).
+  - Begrunnelse: 1180px er bredden på `.browser`-rammen i mockupene (`key-innlogging.html:30–31`), en presentasjonsramme som skyggen DESIGN.md beskriver, og aldri en designbeslutning. Forkastet: fast 1180px (gir vannrett rulling av hele siden) og helt flytende (for brede tabeller på store skjermer).
+- **OP-10 – Story 1.3:**
+  - Johannes W. Gaertner tar Story 1.3.
+  - Anbefalt, ikke tildelt: et annet gruppemedlem kan starte domenedelen av Story 2.1 parallelt, på testdataene fra Story 1.2. Rekkefølgen er fortsatt ikke bindende (OP-06).
+  - Avklares i spesifikasjonen for Story 1.3, ikke vedtatt her: (1) hvordan cookien når API-et, med Vite-proxy for `/api` eller CORS med credentials; (2) hvordan sensor får en testbruker fra en ren klone, og hva som skjer når passord- eller nøkkelvariabelen mangler; (3) bibliotek for JWT og passordhashing, sett opp mot det åpne punktet om eksakte versjonslåser; (4) ny brukertabell i skjemaet.
+- **Endret:** DESIGN.md (Typography, Layout & Spacing), EXPERIENCE.md (Responsive & Platform), UX-DR1, UX-DR4 og Story 1.3 i `epics.md`.
+- **Ikke endret:** OP-02, OP-06 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-06 – OP-10 avklart i spesifikasjonen for Story 1.3
+
+- **Hvem:** Johannes W. Gaertner, i spesifikasjonen `_bmad-output/implementation-artifacts/spec-1-3-innlogging-for-turnusansvarlig.md` (Beslutninger). Implementert på branchen `story-1.3-innlogging` 2026-11-07. KI-logg: `docs/ki-logg/2026-11-06-innlogging.md`.
+- **Svarene på de fire spørsmålene:**
+  1. Cookien når API-et gjennom Vite-proxy for `/api` til `http://127.0.0.1:8000`. Samme opphav gir `SameSite=Strict` og ingen CORS.
+  2. Testbrukeren `kari.vestby` lages av testdatakommandoen. Er `TURNUSHJELPEREN_PASSORD` satt, er passordet personlig (varianten ved innlevering, valgt av den som installerer). Mangler den, lages et tilfeldig testpassord som skrives ut og gjelder til neste kjøring (varianten når gruppa tester). Utløpstiden er 480 minutter når `TURNUSHJELPEREN_JWT_MINUTTER` mangler. En ugyldig verdi stopper API-et.
+  3. PyJWT 2.15.1, låst eksakt som de andre pakkene, med HS256. Passordhash med `hashlib.scrypt` fra standardbiblioteket og tilfeldig salt per bruker.
+  4. Tabellen `bruker` med `id`, `brukernavn` (unik), `navn`, `passord_hash`, `passord_kilde` og `turnus_id`.
+- **Avvik fra epics:** JWT-nøkkelen leses ikke fra miljøet, slik akseptansekravet i epics sa. Den lages tilfeldig (`secrets.token_bytes(32)`) ved hver oppstart og holdes bare i minnet. Begrunnelse: en fast nøkkel gir bare at sesjonen overlever en omstart, og en nøkkel som aldri skrives ned, kan ikke lekke. Konsekvens: alle logges ut når API-et starter på nytt, også ved `--reload`.
+- **Endret:** Story 1.3 i `epics.md`, `ARCHITECTURE-SPINE.md` (miljøvariablene og den utsatte beslutningen om utløpstid) og `epic-1-context.md`.
+- **Ikke endret:** Eksakte versjonslåser generelt er fortsatt ikke drøftet i gruppa; PyJWT er låst eksakt fordi de andre pakkene er det. De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-07 – Fysisk test på macOS/Linux strøket (OP-05)
+
+- **Hvem:** Johannes W. Gaertner, under den manuelle testen av Story 1.3.
+- **Beslutning:** Fysisk test på macOS/Linux strykes. Verken sensor eller noen i gruppa har Mac. Koden skrives likevel etter god programmeringsskikk for å virke på tvers av operativsystem, og README beholder kommandoene for macOS/Linux. Regelen står under «Konvensjoner» i `AGENTS.md`.
+- **Kontrollert i stedet:** bash-kommandoene for passordvariantene i README er kjørt i Git Bash på Windows 2026-11-07, mot en midlertidig database. `IFS= read -rsp` beholdt mellomrom først og sist i passordet, og innloggingen virket med det. Variant B ga et tilfeldig passord på 12 tegn.
+- **Fortsatt åpent i OP-05:** om og når det skal testes fra en ren klone.
+- **Endret:** `AGENTS.md`, `README.md`, vurderingsmatrisen, KI-loggen for Story 1.3 og handlingspunktet for PR #3 i `sprint-status.yaml`.
 
 ---
 

@@ -1,4 +1,4 @@
-"""SQLAlchemy-modellene for Turnus, Vakt og Ansatt.
+"""SQLAlchemy-modellene for Turnus, Vakt, Ansatt og Bruker.
 
 Lagringsadapteren eier skjemaet alene (AD-5). Domenet importerer aldri herfra.
 """
@@ -120,3 +120,33 @@ class VaktRad(Base):
     satt_opp_ansatt: Mapped[AnsattRad | None] = relationship(
         foreign_keys=[satt_opp_ansatt_id]
     )
+
+
+PASSORD_KILDER = ("tilfeldig", "personlig")
+
+
+class BrukerRad(Base):
+    """Turnusansvarlig som kan logge inn (story 1.3, OP-10).
+
+    Passordet lagres bare som hash fra `adaptere.lagring.brukere`. Avdelingen
+    hentes fra Turnusen, ikke fra en egen kolonne.
+    """
+
+    __tablename__ = "bruker"
+    __table_args__ = (
+        CheckConstraint(
+            "passord_kilde IN (" + ", ".join(f"'{k}'" for k in PASSORD_KILDER) + ")",
+            name="gyldig_passord_kilde",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    brukernavn: Mapped[str] = mapped_column(String(50), unique=True)
+    navn: Mapped[str] = mapped_column(String(100))
+    passord_hash: Mapped[str] = mapped_column(String(255))
+    # "tilfeldig" (laget av testdatakommandoen) eller "personlig"
+    # (fra TURNUSHJELPEREN_PASSORD). Selve passordet lagres aldri.
+    passord_kilde: Mapped[str] = mapped_column(String(10))
+    turnus_id: Mapped[int] = mapped_column(ForeignKey("turnus.id"))
+
+    turnus: Mapped[TurnusRad] = relationship()

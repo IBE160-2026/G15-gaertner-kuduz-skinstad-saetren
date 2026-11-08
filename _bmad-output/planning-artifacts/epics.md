@@ -120,10 +120,10 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 
 ### UX-designkrav
 
-UX-DR1: Designtokens. Farger (`bg-app`, `bg-panel`, `bg-header`/`accent`, `border`, `text-main`, `text-mute`, `ok`, `warn`, `danger`, `row-alt`, `tag-bg`), typografiroller (`brand` 14,5/700, `heading` 15/700, `section-label` 12/700 versaler, `column-header` 10,5/700 versaler, `body` 12,5/400/1,55, `meta` 11/400), spacing-skala (4/8/12/16/22/32, `content-padding` 22px, `row-padding` 9px 12px) og radius (`sm` 3px, `DEFAULT` 4px, `full`) implementeres som CSS-variabler etter DESIGN.md. Systemfont `Segoe UI, Arial, sans-serif`. Ingen skygger (bare 1px kantlinjer), ingen gradienter, ingen farger utover paletten og ikke dark-mode-først.
+UX-DR1: Designtokens. Farger (`bg-app`, `bg-panel`, `bg-header`/`accent`, `border`, `text-main`, `text-mute`, `ok`, `warn`, `danger`, `row-alt`, `tag-bg`), typografiroller (`brand` 14,5/700, `heading` 15/700, `section-label` 12/700 versaler, `column-header` 10,5/700 versaler, `body` 12,5/400/1,55, `meta` 11/400), spacing-skala (4/8/12/16/22/32, `content-padding` 22px, `row-padding` 9px 12px) og radius (`sm` 3px, `DEFAULT` 4px, `full`) implementeres som CSS-variabler etter DESIGN.md. Skriftstørrelser skrives i `rem`, resten i `px`, og komponentene bruker ingen rå størrelser utenfor tokenene (AV-13, 2026-11-06). Innholdet får `max-width: 1180px` under en appbar over hele bredden (AV-14). Systemfont `Segoe UI, Arial, sans-serif`. Ingen skygger (bare 1px kantlinjer), ingen gradienter, ingen farger utover paletten og ikke dark-mode-først.
 UX-DR2: Appbar. Bakgrunn `bg-header` med hvit tekst. Til venstre står «TURNUSHJELPEREN» i `brand`-typografi. Til høyre står innlogget bruker + avdeling, eller «Ikke innlogget» på innloggingssiden. Innholdet endres bare ved inn- og utlogging.
 UX-DR3: Brødsmulesti ligger fast under appbar på alle skjermer etter innlogging. Etter mockupene er den `Turnus > Avdeling > Periode` på Vaktvalg (for eksempel «Uke 39–40, 2026»), `Turnus > Avdeling > Vakt #<nr> — <vakttype> <dato>` på kandidatflaten og `Turnus > Avdeling > Vakt #<nr> > Kandidater > Godkjenning` på Godkjenning. Det finnes ingen sidemeny eller fanenavigasjon, og flyten er lineær.
-UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord» uten kontosperring [ASSUMPTION]. Det finnes ingen registrering og ingen passordgjenoppretting.
+UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px (`min(360px, 100% - 32px)`, AV-14) på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord» uten kontosperring [ASSUMPTION]. Det finnes ingen registrering og ingen passordgjenoppretting.
 UX-DR5: Vaktvalg-flate etter `mockups/key-vaktvalg.html`. Seksjonen «Krever handling» (`section-label`) ligger øverst. Hver vakt som mangler bemanning, vises i en `alert-box` med 4px venstrekant i `danger` og sirkulært «!»-ikon. Boksen har overskriften «Vakt #<nr> — <vakttype>, <avdeling>» og en linje med dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når (for eksempel «Silje Amundsen meldt fra sykemeldt kl. 06:14»). Primærknappen «Velg vakt — finn erstatter →» er eneste vei inn i kandidatrangeringen for vakten. Under står seksjonen «Øvrige vakter denne perioden — bemannet» som tabell med kolonnene Vakt (#nr i `accent`, fet), Dato, Tid (tidsrom og varighet, med vakttype som undertekst), Ansatt (navn, med stilling og ansiennitet som `meta`) og Status (tag «Bemannet»). En fotnote nederst til høyre viser når Turnusen sist ble oppdatert og antall ansatte i avdelingen. Mockupens «Se detaljer»-lenke og grønne «Bemannet»-tag er ikke tatt med (se story 1.5).
 UX-DR6: Tilstanden «Ingen vakter krever handling» på Vaktvalg. Seksjonen skjules, eller den viser nøytral tekst («Ingen vakter krever handling nå»), aldri en tom «!»-boks [ASSUMPTION].
 UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, timebelastning, ulempe (UX-DR28), preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenivå vises som informasjon og påvirker ikke rekkefølgen (FR9).
@@ -300,14 +300,22 @@ So that Turnushjelperen ikke er åpen for alle (FR13).
 
 **Given** brukerkontoen for turnusansvarlig
 **When** den opprettes av testdatakommandoen
-**Then** passordet hentes fra en miljøvariabel som er dokumentert uten verdi i `.env.example`, og står aldri i kildekoden (NFR7)
+**Then** passordet hentes fra miljøvariabelen `TURNUSHJELPEREN_PASSORD` (personlig passord, varianten ved innlevering), eller lages tilfeldig og skrives ut når variabelen mangler (testpassord for gruppa). Variabelen er dokumentert uten verdi i `.env.example`, og passordet står aldri i kildekoden (NFR7). Utskriften og innloggingskortet sier hvilken variant som gjelder, uten å vise passordet (OP-10, 2026-11-06)
 **And** passordet lagres bare som hash, og hashingen skjer i `adaptere/lagring` (AD-3)
-**And** JWT-signeringsnøkkelen og utløpstiden leses fra miljøvariabler (utløpstiden er en utsatt beslutning og får en dokumentert standardverdi)
+**And** utløpstiden leses fra `TURNUSHJELPEREN_JWT_MINUTTER`, med 480 minutter (én vakt) som standard. JWT-signeringsnøkkelen lages tilfeldig ved hver oppstart og holdes bare i minnet, uten miljøvariabel, så alle logges ut ved omstart. Endret 2026-11-06 (OP-10): opprinnelig skulle nøkkelen leses fra miljøet, men en fast nøkkel gir bare at sesjonen overlever en omstart, og en nøkkel som aldri skrives ned, kan ikke lekke
 
 **Given** innloggingsflaten
 **When** jeg bruker bare tastatur
 **Then** jeg kan nå begge feltene og innloggingsknappen med tab og logge inn med enter (UX-DR24)
 **And** farger, typografi, spacing og radius kommer fra designtokens i CSS-variabler etter DESIGN.md (UX-DR1), og knappen følger `button-primary` (UX-DR22)
+
+**Given** designtokenene og appskallet (lagt til 2026-11-06, AV-13 og AV-14)
+**When** jeg setter nettleserens standard skriftstørrelse til 20px
+**Then** teksten vokser uten å klippes, mens spacing og kanter er uendret, og testen er dokumentert som manuell test
+**And** ingen komponent bruker rå størrelser utenfor tokenene, også 360px for `login-card`
+**And** appbaren går over hele bredden, innholdet har `max-width: 1180px`, og siden ruller ikke vannrett ned til 360px bredde
+
+**Avklart i spesifikasjonen 2026-11-06 (OP-10), se `docs/beslutninger/avklaringspunkter.md` §11:** Vite-proxy for `/api`, personlig passord fra `TURNUSHJELPEREN_PASSORD` eller et tilfeldig testpassord, ingen nøkkelvariabel (nøkkelen lages ved oppstart), PyJWT 2.15.1 og `hashlib.scrypt`, og tabellen `bruker`. Opprinnelig tekst: ~~Avklares i spesifikasjonen (OP-10, 2026-11-06): hvordan cookien når API-et (Vite-proxy for `/api` eller CORS med credentials), hvordan sensor får en testbruker fra en ren klone og hva som skjer når passord- eller nøkkelvariabelen mangler, bibliotek for JWT og passordhashing (eksakte versjonslåser er et åpent punkt), og ny brukertabell i skjemaet.~~
 
 ### Story 1.4: Beskyttede flater og utløpt sesjon
 
@@ -320,6 +328,7 @@ So that turnusdata bare kan ses av den som har tilgang (FR13, NFR6).
 **Given** at jeg ikke har gyldig JWT
 **When** jeg kaller et hvilket som helst API-endepunkt utenom innlogging og helsesjekk
 **Then** API-et avviser kallet med feilformen `{ "kode", "melding" }` (AD-4)
+**And** `GET /api/innloggingsinfo` er et bevisst unntak og forblir åpent (story 1.3, OP-10): innloggingsflaten trenger det før innlogging, og det viser bare `passord_kilde`, aldri passordet
 
 **Given** at jeg ikke har gyldig sesjon
 **When** jeg åpner en hvilken som helst flate utenom Logg inn direkte med URL
