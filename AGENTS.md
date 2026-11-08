@@ -123,8 +123,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     utenfor Windows (OP-05). Rød 3.x med grønn 3.12 er som regel versjonsdrift og rettes
     som vanlig vedlikehold, oftest ved å oppdatere en pakkelås.
   - `.github/workflows/frontend-tester.yml`: `npm ci`, `npm run build` og `npm run test`
-    i `frontend/` med Node 20.19 (laveste versjon vi lover) og nyeste Node. Samme regel
-    for versjonsdrift som for backend.
+    i `frontend/` med Node 20.19 (laveste versjon vi lover) og nyeste LTS (`lts/*`).
+    Samme regel for versjonsdrift som for backend.
   - CI dekker ikke testene av modellverktøyene i `scripts/` eller manuell test. Grønn CI
     er ikke det samme som gjennomgått kode.
   - Rød CI blokkerer ikke merge, og `main` har ingen branchebeskyttelse. Det er et valg:

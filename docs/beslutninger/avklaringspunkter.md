@@ -575,7 +575,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Workflowen `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` ved hver push, med Python 3.12 og nyeste stabile 3.x. Den er adskilt fra speilingstesten, slik at en installasjonsfeil ikke skjuler resultatet av den.
   - Testen mot nyeste 3.x er med fordi en ren lås til 3.12 også er en risiko over tid. Den skjuler versjonsdrift, som da kommer samlet senere. Rød 3.x rettes som vanlig vedlikehold. Presisert av Johannes.
   - **Ny regel i `AGENTS.md` (Policy):** CI får aldri `OPENROUTER_API_KEY` eller andre hemmeligheter, og tester mot KI-porten bruker en falsk OpenRouter.
-  - Workflowen `.github/workflows/frontend-tester.yml` kjører `npm ci`, `npm run build` og `npm run test` i `frontend/` med Node 20.19 og nyeste Node. Anbefalt av Johannes etter at stegene ble målt til ca. 12 s lokalt. `npm run test` har `--if-present` til PR #8 (story 1.4) med testskriptet er merget.
+  - Workflowen `.github/workflows/frontend-tester.yml` kjører `npm ci`, `npm run build` og `npm run test` i `frontend/` med Node 20.19 og nyeste LTS. Anbefalt av Johannes etter at stegene ble målt til ca. 12 s lokalt. `npm run test` har `--if-present` til PR #8 (story 1.4) med testskriptet er merget.
   - **Rød CI blokkerer ikke merge.** `main` får ingen branchebeskyttelse. Den som merger, ser resultatet i PR-en og tar ansvaret. Avgjort av Johannes.
   - CI-avsnittet i `AGENTS.md` sier hva CI ikke dekker, og at rød CI ikke blokkerer merge.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
