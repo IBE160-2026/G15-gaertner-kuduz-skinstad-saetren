@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-08 (ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6, se AV-08 og §11)  
+> **Sist oppdatert:** 2026-11-08 (ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6, se AV-08 og §11; forslag om backend-testene i CI, se §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -566,6 +566,18 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Speilingstesten og CI-workflowen `.github/workflows/skills-speiling.yml`.
 - **Forslag, ikke vedtatt:** Mithad foreslo at CI også kjører backend-testene (`pytest`). Det er ført som åpent punkt i `.logs/johagartnerhimolde/issues.md`.
 - **Ikke endret:** Første del av AV-08 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-08 – Backend-testene i CI, og CI får ingen hemmeligheter (foreslått)
+
+- **Hvem:** Foreslått av Mithad Kuduz i gjennomgangen av PR #6, utredet og implementert med Claude Code for Johannes W. Gaertner på branchen `ci-backend-tester`. Gjelder når PR-en fra branchen er godkjent av gruppa.
+- **Grunnlag:** Forslaget ble vurdert med pre-mortem, red team og feilmodusanalyse (`bmad-advanced-elicitation`). Største fordel er at CI blir den eneste kjøringen av backend utenfor Windows etter OP-05. Reelle risikoer er at Python-versjonen endrer seg, og at noen senere legger modellnøkkelen inn i CI. Detaljer: `docs/ki-logg/2026-11-08-ci-backend-tester.md`.
+- **Foreslått:**
+  - Workflowen `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` ved hver push, med Python 3.12 og nyeste stabile 3.x. Den er adskilt fra speilingstesten, slik at en installasjonsfeil ikke skjuler resultatet av den.
+  - Testen mot nyeste 3.x er med fordi en ren lås til 3.12 også er en risiko over tid. Den skjuler versjonsdrift, som da kommer samlet senere. Rød 3.x rettes som vanlig vedlikehold. Presisert av Johannes.
+  - **Ny regel i `AGENTS.md` (Policy):** CI får aldri `OPENROUTER_API_KEY` eller andre hemmeligheter, og tester mot KI-porten bruker en falsk OpenRouter.
+  - CI-avsnittet i `AGENTS.md` sier hva CI ikke dekker, og at rød CI ikke stopper merge.
+- **Ikke vedtatt her:** Om rød CI skal blokkere merge (branchebeskyttelse), og om CI skal kjøre frontendtestene fra Story 1.4.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ---
 
