@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-07 (OP-10 besvart i spesifikasjonen for Story 1.3 og implementert; fysisk test på macOS/Linux strøket i OP-05, se §2.3, §3 og §11; 2026-11-06 også forslag om ny ordlyd i AV-08 og CI, se §11)  
+> **Sist oppdatert:** 2026-11-08 (ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6, se AV-08 og §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -38,7 +38,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-05 | Rangering ved like verdier | Vedtatt | Min–maks for kostnad/timer; 50 faktorpoeng hvis alle er like; lik totalscore brytes med stigende ansatt-ID. | Ikke bestemt |
 | AV-06 | Tilgjengelighet/preferanser | Vedtatt | Faste demoforutsetninger; opprinnelig ansatt utelukkes; preferanser gjelder demoperioden. | Ikke bestemt |
 | AV-07 | Testdata og fasit | Vedtatt | Faste seeddata og eksplisitt fasit for #4127/#4189 og rangering. | Ikke bestemt |
-| AV-08 | Beslutningssporbarhet | Vedtatt | Navngitte, sporbare gruppevedtak; eksisterende logg- og agentinstruksjoner uendret. | Ikke bestemt |
+| AV-08 | Beslutningssporbarhet | Vedtatt | Navngitte, sporbare gruppevedtak; logg- og agentinstruksjoner endres bare når endringen registreres i §11 (fra 2026-11-08). | Ikke bestemt |
 | AV-09 | Målevindu ulempe | Vedtatt | 672 faktiske timer, halvåpent vindu, lokal kategorisering i Europe/Oslo. | Ikke bestemt |
 | AV-10 | Historikk | Vedtatt | Fast, reproduserbar historisk seeddata; ingen turnusgenerator i v1. | Ikke bestemt |
 | AV-11 | Ulempmodell | Vedtatt | Vekter 40/20/15/25; 0/1/2/3 poeng/t; tak 300; ingen helligdagsmodell eller innstillingsside. | Ikke bestemt |
@@ -181,7 +181,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Status:** Vedtatt.
 - **Oppdatering 2026-11-04:** Regelen om underagenter i `AGENTS.md` (PR #5) er godkjent under OP-04. Dermed er det et vedtatt unntak fra «behold `AGENTS.md` uendret». Loggreglene er ikke endret. Se §11.
 - **Oppdatering 2026-11-06:** Nytt vedtatt unntak fra «behold loggreglene uendret»: rene git-operasjoner logges ikke i sesjonsloggen. Endringen gjelder skillen `sesjonslogg` og avsnittet Sesjonslogg i `AGENTS.md`. Se §11.
-- **Foreslått endring 2026-11-06 (gjelder når PR-en `ci-skills-speiling` er godkjent av gruppa):** Første del av vedtaket står uendret: gruppevedtak dokumenteres sporbart. Andre del, «behold eksisterende `AGENTS.md`, `CLAUDE.md`, KI-logging, sesjonslogger og andre loggregler uendret», erstattes av:
+- **Endring vedtatt 2026-11-08 (foreslått 2026-11-06, godkjent i PR #6, se §11):** Første del av vedtaket står uendret: gruppevedtak dokumenteres sporbart. Andre del, «behold eksisterende `AGENTS.md`, `CLAUDE.md`, KI-logging, sesjonslogger og andre loggregler uendret», erstattes av:
   - Disse filene og reglene kan endres når endringen registreres i §11 med dato, innhold og hvem som godkjente den.
   - Endringer i en branch godkjennes i PR-gjennomgangen.
   - Agenter endrer dem ikke uten uttrykkelig beskjed fra et gruppemedlem.
@@ -497,9 +497,9 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Endret:** `.claude/skills/sesjonslogg/SKILL.md`, beskrivelsen i `.agents/skills/sesjonslogg/SKILL.md`, avsnittet Sesjonslogg i `AGENTS.md` og AV-08.
 - **Ikke endret:** KI-loggingen i `docs/ki-logg/` og de andre AV-, K-, OP- og KS-punktene.
 
-### 2026-11-06 – Automatisk kontroll av speilingen, ny ordlyd i AV-08 og ny regel for branch og PR (foreslått)
+### 2026-11-06 – Automatisk kontroll av speilingen, ny ordlyd i AV-08 og ny regel for branch og PR (foreslått, vedtatt 2026-11-08)
 
-- **Hvem:** Foreslått av Johannes W. Gaertner. Gjelder når PR-en fra branchen `ci-skills-speiling` er godkjent av gruppa.
+- **Hvem:** Foreslått av Johannes W. Gaertner. Gjelder når PR-en fra branchen `ci-skills-speiling` er godkjent av gruppa. Vedtatt 2026-11-08, se «Godkjenning av PR #6» under.
 - **Grunnlag:** `.agents/skills` (Codex) og `.claude/skills` (Claude Code) holdes like bare av en skriftlig regel i `AGENTS.md`. En gjennomgang 2026-11-06 viste at de var like, bortsett fra det vedtatte unntaket `sesjonslogg`. Ingen hook, CI eller test fanget opp avvik.
 - **Foreslått:**
   - Testen `scripts/test_skills_speiling.py` og workflow-filen `.github/workflows/skills-speiling.yml` sjekker speilingen ved hver push. Dette er prosjektets første CI.
@@ -555,6 +555,17 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kontrollert i stedet:** bash-kommandoene for passordvariantene i README er kjørt i Git Bash på Windows 2026-11-07, mot en midlertidig database. `IFS= read -rsp` beholdt mellomrom først og sist i passordet, og innloggingen virket med det. Variant B ga et tilfeldig passord på 12 tegn.
 - **Fortsatt åpent i OP-05:** om og når det skal testes fra en ren klone.
 - **Endret:** `AGENTS.md`, `README.md`, vurderingsmatrisen, KI-loggen for Story 1.3 og handlingspunktet for PR #3 i `sprint-status.yaml`.
+
+### 2026-11-08 – Godkjenning av PR #6 (speiling av skills i CI, AV-08 og regelen for branch og PR)
+
+- **Hvem:** Mithad Kuduz godkjente PR #6 på GitHub 2026-11-08. Han skrev at godkjenningen gjelder begge forslagene, slik PR-beskrivelsen sier. Johannes W. Gaertner, som foreslo endringene, merget PR-en samme dag (`9939cfa`) og registrerte vedtaket.
+- **Grunnlag:** Mithad kjørte speilingstesten, og den ga 3 av 3 OK både på branchen og mot `main`. CI-kjøringene var grønne, workflowen har bare `contents: read` og bruker ingen nøkler eller modellkall, og testen feilet i de tre bruddene som var laget med vilje. Konfliktene med `main` ble løst før merge, slik han ba om (`a2a79b1`), og CI-kjøringen [42474560746](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42474560746) var grønn etterpå.
+- **Vedtatt:**
+  - Den nye ordlyden i andre del av AV-08 (se AV-08).
+  - Regelen for branch og PR i `AGENTS.md` (Policy), slik den står i oppføringen 2026-11-06 over.
+  - Speilingstesten og CI-workflowen `.github/workflows/skills-speiling.yml`.
+- **Forslag, ikke vedtatt:** Mithad foreslo at CI også kjører backend-testene (`pytest`). Det er ført som åpent punkt i `.logs/johagartnerhimolde/issues.md`.
+- **Ikke endret:** Første del av AV-08 og de andre AV-, K-, OP- og KS-punktene.
 
 ---
 
