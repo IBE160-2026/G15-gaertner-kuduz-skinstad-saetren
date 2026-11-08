@@ -163,12 +163,22 @@ Utviklingsserveren sender `/api` videre til backend på http://127.0.0.1:8000, s
 backend må kjøre samtidig. Svarer den ikke, viser innloggingssiden «Får ikke kontakt
 med serveren.».
 
+Etter innlogging åpnes `/turnus/kirurgisk-sengepost`, foreløpig med en plassholder
+til vaktoversikten bygges. Beskyttede adresser kontrollerer sesjonen før innhold
+vises. Uten gyldig sesjon sendes du til `/logg-inn`; en sesjon som bortfaller mens
+du bruker appen, gir meldingen «Sesjonen er utløpt. Logg inn på nytt.» og handlingen
+gjentas ikke. «Logg ut» sletter nettleserens cookie. Hvis serveren ikke bekrefter
+utloggingen, skjules innholdet og du kan prøve igjen. API-et krever sesjon for alle
+`/api`-kall unntatt `GET /api/helse`, `POST /api/innlogging` og
+`GET /api/innloggingsinfo`. API-dokumentasjon er deaktivert.
+
 ### Tester
 
 Fra `backend/`: `.venv\Scripts\python -m pytest`. Testene bruker egne databaser i en
 midlertidig mappe og rører ikke `backend/turnushjelperen.db`. Fra `frontend/`:
-`npm run build` typesjekker og bygger (`npm.cmd run build` i PowerShell hvis skript er
-blokkert, se steg 4).
+`npm run test` kjører sesjonstestene, og `npm run build` typesjekker og bygger
+(`npm.cmd run test` og `npm.cmd run build` i PowerShell hvis skript er blokkert,
+se steg 4).
 
 ## Vurderingsgrunnlag
 

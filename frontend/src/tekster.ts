@@ -20,6 +20,11 @@ export function feiltekst(kode: string): string {
 export const TEKSTER = {
   merkevare: "TURNUSHJELPEREN",
   ikkeInnlogget: "Ikke innlogget",
+  loggUt: "Logg ut",
+  sesjonUtlopt: "Sesjonen er utløpt. Logg inn på nytt.",
+  utloggingFeilet: "Fikk ikke bekreftet utloggingen. Prøv igjen.",
+  provIgjen: "Prøv igjen",
+  sideIkkeFunnet: "Fant ikke siden.",
   innlogget: (navn: string, avdeling: string) =>
     `Innlogget: ${navn} (turnusansvarlig) · Avdeling ${avdeling}`,
 

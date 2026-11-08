@@ -27,7 +27,23 @@ export class IngenKontaktFeil extends Error {
 
 type Valg = { method?: string; body?: string; headers?: Record<string, string> };
 
-async function kall<T>(sti: string, init: Valg = {}): Promise<T> {
+let sesjonsgenerasjon = 0;
+let vedAvvistSesjon: (() => void) | null = null;
+
+export function nySesjonsgenerasjon(): number {
+  return ++sesjonsgenerasjon;
+}
+
+export function gjeldendeSesjonsgenerasjon(): number {
+  return sesjonsgenerasjon;
+}
+
+export function settSesjonsvarsler(varsler: (() => void) | null): void {
+  vedAvvistSesjon = varsler;
+}
+
+async function kall<T>(sti: string, init: Valg = {}, beskyttet = false): Promise<T> {
+  const generasjon = sesjonsgenerasjon;
   let respons: Response;
   try {
     respons = await fetch(sti, {
@@ -39,10 +55,18 @@ async function kall<T>(sti: string, init: Valg = {}): Promise<T> {
     throw new IngenKontaktFeil();
   }
 
+  // En proxy kan gi 401 uten JSON. Varsle før parsing, men bare om svaret
+  // tilhører sesjonen som fremdeles er aktiv.
+  if (beskyttet && respons.status === 401 && generasjon === sesjonsgenerasjon) {
+    vedAvvistSesjon?.();
+  }
+  if (respons.status === 204) return undefined as T;
+
   let kropp: unknown;
   try {
     kropp = await respons.json();
   } catch {
+    if (beskyttet && respons.status === 401) throw new ApiFeil(401, "mangler_sesjon");
     throw new IngenKontaktFeil();
   }
 
@@ -65,7 +89,11 @@ export function loggInn(brukernavn: string, passord: string): Promise<Innlogget>
 }
 
 export function hentMeg(): Promise<Innlogget> {
-  return kall<Innlogget>("/api/meg");
+  return kall<Innlogget>("/api/meg", {}, true);
+}
+
+export function loggUt(): Promise<unknown> {
+  return kall<unknown>("/api/utlogging", { method: "POST" }, true);
 }
 
 export async function hentInnloggingsinfo(): Promise<PassordKilde> {
