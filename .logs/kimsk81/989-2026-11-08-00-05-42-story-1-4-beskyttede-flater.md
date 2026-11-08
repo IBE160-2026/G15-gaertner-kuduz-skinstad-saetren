@@ -21,5 +21,8 @@ Sandkassen blokkerte først uv og lesing av genererte steg; eskalerte kommandoer
 Brukeren valgte «review spec». Fire uavhengige BMAD-linser ble brukt: adversarial, edge-case-hunter, struktur og prose. De fant særlig motstrid om 401 versus 404/405 for ukjente API-stier, forsinkede svar på tvers av sesjoner, feil utløpsmelding ved første besøk, uklare direkte URL-er og tvetydig utloggingsfeil. Spesifikasjonen er revidert med beslutning om 401 før ruting uten sesjon, sesjonsgenerasjon, tydelige URL-tilstander og systemnivå akseptansekriterier. Alle funn er triagert i spesifikasjonens Review Triage Log. Fortsatt `draft`; ingen implementering eller testkjøring.
 
 ### Åpne punkter
-Ingen nye. Eksisterende dokumentsamordning følges i `issues.md`.
+- Manuell nettleserkontroll av story 1.4 gjenstår. `iab` var utilgjengelig i denne økten. Ført i `issues.md`.
+
+### Implementering og gjennomgang samme dag
+Etter brukerens godkjenning ble spesifikasjonen satt til `ready-for-dev`, deretter `in-progress` og `in-review` etter BMAD-stegene. Sprintstatus er `in-progress`. Implementeringsagenten bygget felles API-vern, utlogging, History API/sesjonstilstand, tester, README og KI-logg. Tre uavhengige reviewlag leste diffen. Reelle feil ved navigasjon under utlogging, sent innloggingssvar, nettverksfeil og fokus ble rettet; funnene er triagert i spesifikasjonen og forklart i KI-loggen. Full kontroll: 127 backendtester, 3 frontendtester, frontendbygg og `git diff --check` bestod. Ingen lokal database ble endret; testdata lå i midlertidig database. Nettleserkontroll ble forsøkt med lokale servere, men `iab` var utilgjengelig, så manuell akseptanse er ikke bekreftet. Serverne er stoppet. Endringene er på feature-branchen og er ikke pushet.
 
