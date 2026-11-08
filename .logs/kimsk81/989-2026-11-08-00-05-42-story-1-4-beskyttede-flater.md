@@ -17,6 +17,9 @@ Kvalitetssikring: spesifikasjonen kontrollert mot story 1.4, kontinuiteten fra 1
 
 Sandkassen blokkerte først uv og lesing av genererte steg; eskalerte kommandoer lyktes. Brukerens godkjenning av spesifikasjonen er neste arbeidsflytsteg.
 
+### Review av spesifikasjonen samme dag
+Brukeren valgte «review spec». Fire uavhengige BMAD-linser ble brukt: adversarial, edge-case-hunter, struktur og prose. De fant særlig motstrid om 401 versus 404/405 for ukjente API-stier, forsinkede svar på tvers av sesjoner, feil utløpsmelding ved første besøk, uklare direkte URL-er og tvetydig utloggingsfeil. Spesifikasjonen er revidert med beslutning om 401 før ruting uten sesjon, sesjonsgenerasjon, tydelige URL-tilstander og systemnivå akseptansekriterier. Alle funn er triagert i spesifikasjonens Review Triage Log. Fortsatt `draft`; ingen implementering eller testkjøring.
+
 ### Åpne punkter
 Ingen nye. Eksisterende dokumentsamordning følges i `issues.md`.
 
