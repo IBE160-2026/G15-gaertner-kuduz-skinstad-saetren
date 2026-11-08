@@ -18,7 +18,11 @@ Få en gjennomgang av Kims PRD-review og resultatene av den. Deretter: Johannes 
   - P-07 er ny funksjonalitet som krever egen story. Den gir også flere KI-kall, og kontoen har en grense på 20 kall per minutt.
   - P-11 om innleie kan være i strid med anbefalingen om ikke å påstå at ingen i virkeligheten kan ta vakten, og appen har ingen data om eksterne vikarer.
   - E-01 krever ifølge dokumentet kilde og dato. En uttalelse i forelesning bør føres med dato før punktet lukkes.
+- Johannes var enig i tolkningene. Etter det ble følgende gjort, committet i `52051d4`:
+  - P-06 og P-11 er presisert i Johannes' felt. P-06 gjelder nå en forklaring som ikke besto faktakontrollen, og P-11 sier at innleie kan vurderes.
+  - E-01 er lukket etter Johannes' beslutning. Grunnlaget er faglærers muntlige uttalelse i forelesning om at KI i produktet ikke er et formelt emnekrav. KI beholdes som produktscope, og forelesningens dato er ikke notert.
+- P-07: Bekymringen om kallgrensen var overdrevet. Etter AD-7 og story 5.4 gir vanlig bruk ett KI-kall per vakt, og hver åpnet rad gir ett kall til. En sammenligning på forespørsel er ett kall per klikk og ligger langt under kontoens grense på 20 kall per minutt (adapteren tillater 18). Toppene kommer når preferansene tolkes i bakgrunnen ved innlasting av testdata, eller når flere bruker samme nøkkel samtidig, og der står begrenseren i AD-7. Det som gjenstår for P-07, er omfanget: funksjonen trenger en egen story og en kontrakt som faktakontrollen i P-06 også dekker.
 
 ### Åpne punkter
-- Kim, Mithad og Ragnhild skal skrive synspunktene sine i beslutningsgrunnlaget, og gruppa skal deretter behandle P-01–P-13 og E-01/E-02.
-- E-01: Før inn hvilken forelesning og dato faglærers uttalelse om KI i produktet kom fra, før punktet lukkes.
+- Kim, Mithad og Ragnhild skal skrive synspunktene sine i beslutningsgrunnlaget, og gruppa skal deretter behandle P-01–P-13 og E-02.
+- PRD §8 og addendum §5 omtaler fortsatt faglæreravklaringen (E-01) som åpen. Før inn lukkingen ved neste PRD-oppdatering.
