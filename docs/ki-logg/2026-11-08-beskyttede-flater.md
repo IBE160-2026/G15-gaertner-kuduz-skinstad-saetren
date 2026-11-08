@@ -32,3 +32,5 @@ Dette er implementeringsbevis for FR13/NFR6 og AD-4, ikke en påstand om at Stor
 ## Videre kontroll 2026-11-08
 
 Backend og Vite ble startet mot en isolert testdatabase med fiktive testdata. Den innebygde nettleseren svarte «No browser is available». Windows Computer Use kunne heller ikke koble til sin native pipe (`Systemet finner ikke angitt fil`). Serverne ble stoppet. Ingen faktisk nettleservisning, tastaturkontroll eller kontroll ved 360px/1600px ble dermed gjennomført. De tidligere resultatene (127 backendtester, 3 frontendtester og vellykket bygg) står ved lag, men storyen beholdes `in-review` med sprintstatus `in-progress` til nettlesermatrisen er kjørt og dokumentert.
+
+Lokal PR-gjennomgang av commit `9473de4` ble gjort av to uavhengige agenter. API-gjennomgangen fant ingen nye avvik. Frontend-gjennomgangen fant at fokusrammen på «Logg ut» brukte samme farge som appbaren og derfor ikke var synlig ved tastaturnavigasjon. CSS ble rettet til å bruke den eksisterende lyse fargetokenen `--color-on-accent`. Visuell bekreftelse i nettleser gjenstår.

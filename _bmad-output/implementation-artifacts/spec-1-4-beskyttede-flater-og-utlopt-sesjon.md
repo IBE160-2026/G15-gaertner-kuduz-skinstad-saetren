@@ -99,6 +99,8 @@ Kodegjennomgang 2026-11-08: Blind Hunter, Edge Case Hunter og Verification Gap f
 | VG | Direkte beskyttet URL hadde ingen frontendtest | medium, URL-helper testet; visning i faktisk nettleser fortsatt åpen |
 | VG | Forsinket 401 etter ny innlogging hadde ingen test | medium, styrt frontendtest lagt til |
 
+Lokal PR-gjennomgang etter commit `9473de4`: Backend/API-agenten fant ingen nye avvik. Frontend-agenten fant ett middels avvik: fokusrammen på «Logg ut» hadde samme farge som appbarens bakgrunn. Fargevalget er rettet i `app.css` med `--color-on-accent`; faktisk fokusvisning i nettleser gjenstår å kontrollere.
+
 ## Verification
 
 - Fra `backend/`: `.venv\Scripts\python -m pytest` (bash: `.venv/bin/python -m pytest`).
