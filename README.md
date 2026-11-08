@@ -189,6 +189,12 @@ bare fordi maskinen går i Oslo-tid. `npm run build` typesjekker og bygger
 (`npm.cmd run test` og `npm.cmd run build` i PowerShell hvis skript er blokkert,
 se steg 4).
 
+GitHub Actions kjører de samme testene på Linux ved hver push: backend med Python
+3.12 og nyeste 3.x, frontend (`npm run build` og `npm run test`) med Node 20.19 og
+nyeste LTS, og i tillegg speilingstesten for skills. Resultatet vises i hver PR. CI
+får ingen API-nøkler og gjør ingen kall mot Luna. Rød CI stopper ikke en merge, og
+grønn CI betyr ikke at koden er gjennomgått.
+
 ## Vurderingsgrunnlag
 
 - [Sensorveiledning del 1](docs/emne/sensorveiledning-del-1.md) – tekstgjengivelse med sidereferanser og lenke til original PDF.

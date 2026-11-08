@@ -1,8 +1,6 @@
 # Typesjekker, bygger og tester frontend på Linux med Node 20.19 (laveste versjon README lover) og nyeste LTS.
 # `lts/*`, ikke `latest`: `latest` ga en alfaversjon (v27.0.0-alpha) 2026-11-08.
 # Rød lts/* med grønn 20.19 betyr som regel versjonsdrift; rett det som vanlig vedlikehold.
-# `--if-present`: testskriptet kommer med story 1.4 (PR #8). Fjern flagget når den er merget, slik at et
-# manglende skript gir rød CI i stedet for å hoppes over.
 name: Frontend-tester
 
 on:
@@ -32,4 +30,4 @@ jobs:
       - run: node --version
       - run: npm ci
       - run: npm run build
-      - run: npm run test --if-present
+      - run: npm run test
