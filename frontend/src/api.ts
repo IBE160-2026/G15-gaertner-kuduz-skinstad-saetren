@@ -4,6 +4,37 @@
 export type Innlogget = { navn: string; avdeling: string };
 export type PassordKilde = "tilfeldig" | "personlig" | null;
 
+// GET /api/vaktoversikt (story 1.5). Tidspunktene er ISO 8601 med offset.
+export type Vakttype = "dag" | "mellom" | "kveld" | "natt";
+
+export type VaktSomManglerBemanning = {
+  vaktnummer: number;
+  vakttype: Vakttype;
+  start: string;
+  slutt: string;
+  satt_opp: string | null;
+  meldt_fra: string | null;
+  grunn: string | null;
+};
+
+export type BemannetVakt = {
+  vaktnummer: number;
+  vakttype: Vakttype;
+  start: string;
+  slutt: string;
+  ansatt: { navn: string; stilling: string; ansiennitet: number };
+};
+
+export type Vaktoversikt = {
+  avdeling: string;
+  periode_start: string;
+  periode_slutt: string;
+  sist_oppdatert: string;
+  antall_ansatte: number;
+  krever_handling: VaktSomManglerBemanning[];
+  bemannet: BemannetVakt[];
+};
+
 /** API-et svarte med feilformen `{ kode, melding }`. */
 export class ApiFeil extends Error {
   readonly status: number;
@@ -99,4 +130,8 @@ export function loggUt(): Promise<unknown> {
 export async function hentInnloggingsinfo(): Promise<PassordKilde> {
   const svar = await kall<{ passord_kilde: PassordKilde }>("/api/innloggingsinfo");
   return svar.passord_kilde;
+}
+
+export function hentVaktoversikt(): Promise<Vaktoversikt> {
+  return kall<Vaktoversikt>("/api/vaktoversikt", {}, true);
 }

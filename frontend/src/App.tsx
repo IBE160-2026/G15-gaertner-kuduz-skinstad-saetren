@@ -5,7 +5,7 @@ import {
 } from "./api";
 import Appbar from "./komponenter/Appbar";
 import LoggInn from "./komponenter/LoggInn";
-import Startside from "./komponenter/Startside";
+import Vaktvalg from "./komponenter/Vaktvalg";
 import { INNLOGGING_STI, OVERSIKT_STI, maalEtterBekreftetSesjon, naviger } from "./navigasjon";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "./tekster";
 
@@ -85,6 +85,12 @@ export default function App() {
     setSti(OVERSIKT_STI);
   }
 
+  function velgVakt(vaktnummer: number) {
+    const nySti = `/vakt/${vaktnummer}/kandidater`;
+    naviger(nySti);
+    setSti(nySti);
+  }
+
   async function loggUtNaa() {
     if (utloggingVenter.current) return;
     utloggingSperrer.current = true;
@@ -127,7 +133,7 @@ export default function App() {
         </main>
       )}
       {bruker === null && <LoggInn onInnlogget={innlogget} onForsinketInnlogging={kontroller} startfeil={startfeil} />}
-      {bruker && sti === OVERSIKT_STI && <Startside />}
+      {bruker && sti === OVERSIKT_STI && <Vaktvalg onVelgVakt={velgVakt} />}
       {bruker && sti !== OVERSIKT_STI && (
         <main className="innhold"><section className="panel">
           <h1 className="overskrift">{TEKSTER.sideIkkeFunnet}</h1>
