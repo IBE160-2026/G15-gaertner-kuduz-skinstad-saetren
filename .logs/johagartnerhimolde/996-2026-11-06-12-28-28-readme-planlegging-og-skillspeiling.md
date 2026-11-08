@@ -56,12 +56,13 @@ README på GitHub lenket bare til briefen under «Planleggingsgrunnlag». Bruker
 ## 2026-11-08 kl. 12:14 — johagartnerHiMolde
 
 ### Oppgave
-Gå gjennom tilbakemeldingene på PR #6 og løse konfliktene med `main` som Mithad ba om, slik at PR-en kunne merges. Etterpå registrere forslagene i PR-en som vedtatt og lukke punktet om godkjenning i `issues.md`.
+Gå gjennom tilbakemeldingene på PR #6 og løse konfliktene med `main` som Mithad ba om, slik at PR-en kunne merges. Etterpå registrere forslagene i PR-en som vedtatt og lukke punktet om godkjenning i `issues.md`. Til slutt pushe, slette branchen og vurdere ulempene ved Mithads forslag om å la CI også kjøre `pytest`.
 
 ### Plan
 - Lese gjennomgangen med `gh pr view 6` og kontrollere med `git merge-tree` hvilke filer som har konflikter.
 - Merge `main` inn i `ci-skills-speiling`, løse konfliktene, kjøre testene og pushe. Brukeren merget PR-en selv.
 - Føre vedtaket inn i AV-08 og §11 i `avklaringspunkter.md`.
+- Vurdere `pytest` i CI med `bmad-advanced-elicitation`: pre-mortem, red team og feilmodusanalyse, bygd på workflowen, `requirements*.txt`, testene og `--durations`.
 
 ### Resultat
 - Tilbakemeldingen: Mithad Kuduz godkjente PR #6 2026-11-08, og godkjenningen gjaldt begge forslagene. Kravet hans var at konfliktene med `main` ble løst før merge. Forslag til senere: la CI også kjøre `pytest`.
@@ -73,7 +74,14 @@ Gå gjennom tilbakemeldingene på PR #6 og løse konfliktene med `main` som Mith
 - `avklaringspunkter.md` (Sist oppdatert, oversiktstabellen og AV-08): forslaget er endret til «Endring vedtatt 2026-11-08». Oppføringen 2026-11-06 i §11 er markert som vedtatt. Den nye oppføringen «2026-11-08 – Godkjenning av PR #6» har med hvem, grunnlag, hva som er vedtatt og Mithads forslag om `pytest` i CI som ikke vedtatt.
 - Lukket i `issues.md`: «Gruppa gjennomgår og godkjenner PR #6».
 - Ikke endret: to historiske formuleringer i referatet sier fortsatt at loggreglene og agentinstruksjonene er uendret. Den ene står i tabellen over berørte områder («Ingen endring i loggregler (AV-08/K-05)»), den andre i merknaden om agentinstruksjoner etter forslaget til AGENTS-tekst. Begge er fra møtet 02.11 og er lest som historikk.
+- Branchen `ci-skills-speiling` er slettet på origin og lokalt. Før sletting ble det kontrollert at den var helt merget inn i `main`.
+- Vurderingen av `pytest` i CI:
+  - Fakta: 112 tester tar 29–42 s lokalt. Ingen nettverkskall, ingen secrets og ingen bruk av `backend/turnushjelperen.db`. Det finnes `__pycache__` for både cpython-312 og cpython-315. `main` ser ikke ut til å ha branchebeskyttelse (API-et svarte 404).
+  - Største fordel: CI blir den eneste kjøringen av backend på Linux etter OP-05.
+  - Reelle risikoer: at Python-versjonen endrer seg, og at noen legger `OPENROUTER_API_KEY` inn i CI når story 5.1 kommer.
+  - Brukeren påpekte at en ren 3.12-lås også er en risiko over tid. Forslaget ble derfor endret til en matrise med `3.12` (versjonen vi lover) og `3.x` (nyeste). Tidsbruken gjelder bare ved push og kjører ved siden av det man gjør.
+  - Anbefalingen er ført i det åpne punktet i `issues.md`. Ingenting er implementert.
 
 ### Åpne punkter
-- Vurder å la CI også kjøre backend-testene (`pytest`, 112 tester). Mithad foreslo det i gjennomgangen av PR #6.
-- Slett branchen `ci-skills-speiling` på origin rundt 2026-11-15, en uke etter merge av PR #6, slik dere gjorde med story 1.2.
+- Vurder å la CI også kjøre backend-testene (`pytest`, 112 tester). Mithad foreslo det i gjennomgangen av PR #6. Anbefalingen står i `issues.md`.
+- Slett branchen `ci-skills-speiling` på origin rundt 2026-11-15, en uke etter merge av PR #6, slik dere gjorde med story 1.2. (løst 2026-11-08: slettet etter brukerens ønske)
