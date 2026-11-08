@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-08 (OP-11: Mithad Kuduz tar Story 1.5; tidligere samme dag: AV-08, regelen for branch og PR og CI vedtatt i PR #6, se §11)  
+> **Sist oppdatert:** 2026-11-08 (backend- og frontendtestene i CI og regelen om ingen hemmeligheter i CI vedtatt i PR #9; OP-11: Mithad Kuduz tar Story 1.5; ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6; se AV-08 og §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -567,6 +567,32 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Speilingstesten og CI-workflowen `.github/workflows/skills-speiling.yml`.
 - **Forslag, ikke vedtatt:** Mithad foreslo at CI også kjører backend-testene (`pytest`). Det er ført som åpent punkt i `.logs/johagartnerhimolde/issues.md`.
 - **Ikke endret:** Første del av AV-08 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-08 – Backend- og frontendtestene i CI, og CI får ingen hemmeligheter (foreslått, vedtatt 2026-11-08)
+
+- **Hvem:** Foreslått av Mithad Kuduz i gjennomgangen av PR #6, utredet og implementert med Claude Code for Johannes W. Gaertner på branchen `ci-backend-tester` (PR #9). Gjelder når PR-en er godkjent av gruppa.
+- **Grunnlag:** Forslaget ble vurdert med pre-mortem, red team og feilmodusanalyse (`bmad-advanced-elicitation`). Største fordel er at CI blir den eneste kjøringen av backend utenfor Windows etter OP-05. Reelle risikoer er at Python-versjonen endrer seg, og at noen senere legger modellnøkkelen inn i CI. Detaljer: `docs/ki-logg/2026-11-08-ci-backend-tester.md`.
+- **Foreslått:**
+  - Workflowen `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` ved hver push, med Python 3.12 og nyeste stabile 3.x. Den er adskilt fra speilingstesten, slik at en installasjonsfeil ikke skjuler resultatet av den.
+  - Testen mot nyeste 3.x er med fordi en ren lås til 3.12 også er en risiko over tid. Den skjuler versjonsdrift, som da kommer samlet senere. Rød 3.x rettes som vanlig vedlikehold. Presisert av Johannes.
+  - **Ny regel i `AGENTS.md` (Policy):** CI får aldri `OPENROUTER_API_KEY` eller andre hemmeligheter, og tester mot KI-porten bruker en falsk OpenRouter.
+  - Workflowen `.github/workflows/frontend-tester.yml` kjører `npm ci`, `npm run build` og `npm run test` i `frontend/` med Node 20.19 og nyeste LTS. Anbefalt av Johannes etter at stegene ble målt til ca. 12 s lokalt. `npm run test` har `--if-present` til PR #8 (story 1.4) med testskriptet er merget.
+  - **Rød CI blokkerer ikke merge.** `main` får ingen branchebeskyttelse. Den som merger, ser resultatet i PR-en og tar ansvaret. Avgjort av Johannes.
+  - CI-avsnittet i `AGENTS.md` sier hva CI ikke dekker, og at rød CI ikke blokkerer merge.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-08 – Godkjenning av PR #9 (backend- og frontendtestene i CI)
+
+- **Hvem:** Mithad Kuduz godkjente PR #9 på GitHub 2026-11-08 og svarte på de tre forslagene i PR-beskrivelsen. Johannes W. Gaertner, som foreslo endringene, merget PR-en samme dag og registrerte vedtaket.
+- **Grunnlag:** Mithad kontrollerte at begge workflowene bare har `contents: read`, ingen secrets og ingen modellkall, og at matrisene og cachen er riktige. CI var grønn etter at `main` ble merget inn. Han løste konflikten i denne filen i branchen (`2796fc1`), og begge oppføringene i §11 står uendret.
+- **Vedtatt:**
+  - Workflowene `.github/workflows/backend-tester.yml` og `.github/workflows/frontend-tester.yml`, slik oppføringen over beskriver dem.
+  - Regelen i `AGENTS.md` (Policy) om at CI aldri får `OPENROUTER_API_KEY` eller andre hemmeligheter. Mithad: «enig».
+  - Rød CI blokkerer ikke merge, og `main` får ingen branchebeskyttelse. Mithad: «enig. Den som merger, ser resultatet og tar ansvaret.»
+  - CI-avsnittet i `AGENTS.md`, som beskriver de tre workflowene.
+- **Endret etter godkjenningen, slik Mithad ba om:** `--if-present` er fjernet fra `npm run test` i `frontend-tester.yml`, fordi testskriptet kom med PR #8. Et manglende testskript gir nå rød CI i stedet for å bli hoppet over. README har fått et avsnitt om CI under Tester.
+- **Ikke vedtatt, egen sak:** Om laveste Node-versjon skal heves fra 20.19. Mithad: «la det stå. Jeg foreslår at vi tar det som en egen sak.» Står som åpent punkt.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ---
 ### 2026-11-08 – Story 1.5 (OP-11)

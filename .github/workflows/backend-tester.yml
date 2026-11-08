@@ -1,0 +1,32 @@
+# Kjører backend-testene på Linux med Python 3.12 (laveste versjon vi lover) og nyeste stabile 3.x.
+# Rød 3.x med grønn 3.12 betyr som regel versjonsdrift; rett det som vanlig vedlikehold, oftest ved å
+# oppdatere en pakkelås. Jobben får aldri OPENROUTER_API_KEY eller andre hemmeligheter (Policy i AGENTS.md).
+name: Backend-tester
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.x"]
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: backend/requirements*.txt
+      - run: python --version
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest

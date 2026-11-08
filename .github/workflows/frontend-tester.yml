@@ -1,0 +1,33 @@
+# Typesjekker, bygger og tester frontend på Linux med Node 20.19 (laveste versjon README lover) og nyeste LTS.
+# `lts/*`, ikke `latest`: `latest` ga en alfaversjon (v27.0.0-alpha) 2026-11-08.
+# Rød lts/* med grønn 20.19 betyr som regel versjonsdrift; rett det som vanlig vedlikehold.
+name: Frontend-tester
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["20.19", "lts/*"]
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: node --version
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
