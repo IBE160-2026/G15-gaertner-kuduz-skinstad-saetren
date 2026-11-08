@@ -187,7 +187,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 **Synspunkter før møtet:**
 
-- Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI har gjort en beregning som utløser reserveteksten
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI-forklaringen ikke besto faktakontrollen og reserveteksten vises i stedet
 - Kim: __
 - Mithad: __
 - Ragnhild: __
@@ -312,7 +312,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 **Synspunkter før møtet:**
 
-- Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen hvis innleie av personell er eneste lovlige løsning
+- Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen at innleie av personell kan vurderes når ingen av de vurderte ansatte er gyldige
 - Kim: __
 - Mithad: __
 - Ragnhild: __
@@ -371,7 +371,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 
 ### E-01 – Er KI i produktet et emnekrav?
 
-**Status:** Fortsatt åpent. Dette avgjøres ikke ved avstemning om hva gruppen tror faglærer mener.
+**Status:** Lukket 2026-11-08. Faglærer har uttalt i forelesning at KI i produktet ikke er et formelt emnekrav. Utfallet er «valgfritt» i listen under: KI beholdes som valgt produktscope. Kilden er Johannes' gjengivelse av en muntlig uttalelse; forelesningens dato er ikke notert.
 
 Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet som et produktvalg, men ber uttrykkelig om bekreftelse fra faglærer. PRD §8 sier at tilbakemeldingen fra 06.10 roser KI/regelmotor-skillet uten å besvare spørsmålet eksplisitt. Sensorveiledningen vektlegger prosess og vurdering opp mot godkjent proposal. Ingen av disse opplysningene er dokumentert svar på selve spørsmålet.
 
@@ -390,7 +390,7 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 - Mithad: __
 - Ragnhild: __
 
-**Ansvarlig:** __. **Svar/kilde/dato:** __. **Status etter møtet:** __.
+**Ansvarlig:** Johannes. **Svar/kilde/dato:** KI i produktet er ikke et formelt krav i emnet; muntlig uttalelse fra faglærer i forelesning, gjengitt av Johannes 2026-11-08. **Status etter møtet:** Lukket av Johannes 2026-11-08 før møtet.
 
 ### E-02 – Samsvar med godkjent proposal
 
