@@ -1,6 +1,6 @@
 # Backend-testene i CI
 
-Dato: 2026-11-08. Branch: `ci-backend-tester`. Agent: Claude Code (Claude Opus 5.5).
+Dato: 2026-11-08. Branch: `ci-backend-tester` (PR #9). Agent: Claude Code (Claude Opus 5.5).
 Utført for Johannes W. Gaertner.
 
 Dette er agentens egenrapportering. Et gruppemedlem må lese den gjennom og korrigere.

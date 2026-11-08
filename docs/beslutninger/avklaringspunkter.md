@@ -569,7 +569,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 
 ### 2026-11-08 – Backend-testene i CI, og CI får ingen hemmeligheter (foreslått)
 
-- **Hvem:** Foreslått av Mithad Kuduz i gjennomgangen av PR #6, utredet og implementert med Claude Code for Johannes W. Gaertner på branchen `ci-backend-tester`. Gjelder når PR-en fra branchen er godkjent av gruppa.
+- **Hvem:** Foreslått av Mithad Kuduz i gjennomgangen av PR #6, utredet og implementert med Claude Code for Johannes W. Gaertner på branchen `ci-backend-tester` (PR #9). Gjelder når PR-en er godkjent av gruppa.
 - **Grunnlag:** Forslaget ble vurdert med pre-mortem, red team og feilmodusanalyse (`bmad-advanced-elicitation`). Største fordel er at CI blir den eneste kjøringen av backend utenfor Windows etter OP-05. Reelle risikoer er at Python-versjonen endrer seg, og at noen senere legger modellnøkkelen inn i CI. Detaljer: `docs/ki-logg/2026-11-08-ci-backend-tester.md`.
 - **Foreslått:**
   - Workflowen `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` ved hver push, med Python 3.12 og nyeste stabile 3.x. Den er adskilt fra speilingstesten, slik at en installasjonsfeil ikke skjuler resultatet av den.

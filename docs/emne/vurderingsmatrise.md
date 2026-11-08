@@ -92,7 +92,7 @@ Ikke dokumentert ennå:
 Sensorveiledningen nevner ikke CI. Avsnittet viser hvordan CI støtter kriteriene som er der.
 
 - **PR #6, merget (`9939cfa`):** `.github/workflows/skills-speiling.yml` kontrollerer ved hver push at skillene for Codex og Claude Code er like. [KI-loggen](../ki-logg/2026-11-06-skills-speiling.md) viser at testen feilet i tre brudd som ble laget med vilje. Mithad Kuduz godkjente PR-en etter egen kjøring av testen.
-- **Branchen `ci-backend-tester`, ikke merget:** `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` med Python 3.12 og nyeste 3.x på Linux. Den første kjøringen, [42477253888](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42477253888), ga 112 av 112 på både 3.12.16 og 3.15.2. Se [KI-loggen](../ki-logg/2026-11-08-ci-backend-tester.md).
+- **[PR #9](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/9), ikke merget:** `.github/workflows/backend-tester.yml` kjører `pytest` i `backend/` med Python 3.12 og nyeste 3.x på Linux. Den første kjøringen, [42477253888](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/42477253888), ga 112 av 112 på både 3.12.16 og 3.15.2. Se [KI-loggen](../ki-logg/2026-11-08-ci-backend-tester.md).
 
 Bevis per kriterium:
 - **Kriterium 3:** Testene kjøres automatisk ved hver push, ikke bare når noen husker det. CI erstatter ikke sensors egen kjøring etter README.
