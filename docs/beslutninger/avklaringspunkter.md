@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-08 (ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6, se AV-08 og §11; forslag om backend- og frontendtestene i CI, se §11)  
+> **Sist oppdatert:** 2026-11-08 (OP-11: Mithad Kuduz tar Story 1.5; forslag om backend- og frontendtestene i CI; ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6; se AV-08 og §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -75,6 +75,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-13 | Enhet i designtokens | Vedtatt 2026-11-06 | Skriftstørrelser i `rem`; spacing, kanter, radius, sporing og faste bredder i `px`. Ingen rå størrelser i komponentene (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
 | AV-14 | Layoutbredde | Vedtatt 2026-11-06 | Appbar over hele bredden; innholdet får `max-width: 1180px`. Fast bredde på 1180px forkastes (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
+| OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -579,6 +580,17 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - **Rød CI blokkerer ikke merge.** `main` får ingen branchebeskyttelse. Den som merger, ser resultatet i PR-en og tar ansvaret. Avgjort av Johannes.
   - CI-avsnittet i `AGENTS.md` sier hva CI ikke dekker, og at rød CI ikke blokkerer merge.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+---
+### 2026-11-08 – Story 1.5 (OP-11)
+
+- **Hvem:** Mithad Kuduz meldte 2026-11-08 at han tar Story 1.5. Det er en melding om ansvar, ikke et gruppevedtak. Gruppa kan si fra hvis noen allerede er i gang.
+- **OP-11 – Story 1.5, Vaktoversikt med «Krever handling»:**
+  - Mithad Kuduz er ansvarlig.
+  - Implementeringen starter etter at PR #8 (Story 1.4, beskyttede flater og utløpt sesjon) er merget, fordi 1.5 bygger på tilgangskontrollen og navigasjonen derfra.
+  - Kjent fallgruve: PR #8 korter ned `epic-1-context.md`, og detaljene om Vaktvalg forsvinner. Det gjelder alert-boksen, tabellkolonnene, fotnoten og teksten når ingen vakter krever handling. Ved oppstart av 1.5 lages konteksten på nytt fra planleggingsdokumentene, ellers leser spesifikasjonen EXPERIENCE.md og `mockups/key-vaktvalg.html` direkte.
+- **Grunnlag:** `.logs/mithad-kuduz/993-2026-11-08-13-12-18-gjennomgang-pr-8.md`.
+- **Ikke endret:** OP-06 (rekkefølgen er fortsatt ikke bindende) og de andre AV-, K-, OP- og KS-punktene.
 
 ---
 

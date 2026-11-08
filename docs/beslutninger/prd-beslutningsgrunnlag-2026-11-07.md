@@ -53,7 +53,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen
 - Mithad: __
 - Ragnhild: __
 
@@ -80,7 +80,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen
 - Mithad: __
 - Ragnhild: __
 
@@ -105,7 +105,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen
 - Mithad: __
 - Ragnhild: __
 
@@ -126,7 +126,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen
 - Mithad: __
 - Ragnhild: __
 
@@ -163,7 +163,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen for begge delvalg.
 - Mithad: __
 - Ragnhild: __
 
@@ -188,7 +188,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI-forklaringen ikke besto faktakontrollen og reserveteksten vises i stedet
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen og Johannes’ presisering om tydelig merking når reserveteksten vises.
 - Mithad: __
 - Ragnhild: __
 
@@ -213,7 +213,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Kan det være hensiktsmessig med en funksjonalitet: **hvis** turnusansvarlig ønsker det, utfør en sammenligning av merkede kandidater, for eksempel rangert nummer 2 og rangert nummer 3. Sammenligningen utføres kun på forespørsel, normalt er sammenligningen gjort med rangert kandidat nummer 1.
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen. Johannes’ forslag om valgfri sammenligning kan kanskje vurderes etter v1 eller etter kjerneflyten fungerer i v1?
 - Mithad: __
 - Ragnhild: __
 
@@ -240,7 +240,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Vi må nødvendigvis starte vår turnus på en gitt dato. Komplikasjonen er reell og virkelighetsnær. Anbefaler at vi godtar et synlig avgrenset unntak for demonstrasjonen, alternativt kan KS-04 justeres hvis det er et konkret behov.
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen og Johannes’ synspunkt om et synlig, avgrenset unntak for demonstrasjonen, med justering av KS-04 hvis det er et konkret behov.
 - Mithad: __
 - Ragnhild: __
 
@@ -267,7 +267,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen
 - Mithad: __
 - Ragnhild: __
 
@@ -290,7 +290,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1. ikke noe vi er avhengig av for å lykkes med applikasjonen, men vi tilstreber en arkitektur som muliggjør en implementasjon på fornuftig vis
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
 - Mithad: __
 - Ragnhild: __
 
@@ -313,7 +313,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen at innleie av personell kan vurderes når ingen av de vurderte ansatte er gyldige
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen og Johannes’ tillegg om at innleie av personell kan vurderes.
 - Mithad: __
 - Ragnhild: __
 
@@ -338,7 +338,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1.
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
 - Mithad: __
 - Ragnhild: __
 
@@ -361,7 +361,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 **Synspunkter før møtet:**
 
 - Johannes: Jeg støtter denne anbefalingen.
-- Kim: __
+- Kim: Jeg støtter denne anbefalingen og forslaget om en oppgavebasert forståelsestest når kandidatvisningen fungerer.
 - Mithad: __
 - Ragnhild: __
 
@@ -386,7 +386,7 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 **Synspunkter før møtet:**
 
 - Johannes: KI i produktet er ikke et formelt krav i emnet, men de aller fleste av applikasjonene er planlagt med en implementasjon av KI i en eller annen form. Sannsynligvis fordi det er "inn i tiden". Dette ble uttalt i forelesning av faglærer. Dette punktet kan lukkes
-- Kim: __
+- Kim: Jeg slutter meg til Johannes’ kommentar.
 - Mithad: __
 - Ragnhild: __
 
@@ -406,7 +406,7 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 **Synspunkter før møtet:**
 
 - Johannes: Product Brief og PRD er levende dokumenter. Ja, det var en "innlevering" av Product Brief, men status på dokumentet ved innleveringstidspunkt er ikke bindende for produktet som leveres til slutt. Vi forstår at i det virkelige liv er dette kontrakter som er bindende, men dette er et læringscenario. Dette punktet kan lukkes
-- Kim: __
+- Kim: Jeg slutter meg til Johannes’ kommentar.
 - Mithad: __
 - Ragnhild: __
 
