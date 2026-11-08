@@ -33,3 +33,22 @@ Undersøke hva filene i `.playwright-mcp/` inneholder, om de har noen funksjon i
 
 ### Åpne punkter
 - Avklare med Kim (og gruppa) om de 18 filene i `.playwright-mcp/` fra `8ddefd7` skal fjernes, og om `.playwright-mcp/` skal inn i `.gitignore`.
+
+## 2026-11-08 kl. 22:14 — Ragnhild
+
+### Oppgave
+Gjennomføre det anbefalte tiltaket etter avklaring med Kim: fjerne `.playwright-mcp/` fra repoet og ignorere mappen.
+
+### Plan
+- `git rm -r .playwright-mcp/`.
+- Legge `.playwright-mcp/` inn i `.gitignore` sammen med de andre testartefaktene (`test-results/`, `playwright-report/`).
+- Kontrollere regelen med en midlertidig fil og `git check-ignore -v`.
+
+### Resultat
+- Jeg avklarte med Kim at filene kan fjernes.
+- De 18 filene er fjernet, og `.playwright-mcp/` står i `.gitignore` med en kommentar. Committet i `e759d41`. Brødteksten forklarer hvorfor arbeidet fra `8ddefd7` endres.
+- `git check-ignore -v` bekreftet at en ny fil i mappen ignoreres (`.gitignore:44`). Testfila ble slettet etterpå.
+- Ingen kode er endret, så ingen ny KI-logg.
+
+### Åpne punkter
+Ingen. Punktet om `.playwright-mcp/` er lukket i `issues.md`.
