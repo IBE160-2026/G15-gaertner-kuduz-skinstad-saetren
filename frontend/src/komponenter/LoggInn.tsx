@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ApiFeil, hentInnloggingsinfo, loggInn, type Innlogget, type PassordKilde } from "../api";
+import { ApiFeil, gjeldendeSesjonsgenerasjon, hentInnloggingsinfo, loggInn, type Innlogget, type PassordKilde } from "../api";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 
 type Props = {
   onInnlogget: (bruker: Innlogget) => void;
+  onForsinketInnlogging: () => void;
   // Feil fra GET /api/meg ved oppstart, for eksempel at API-et ikke svarer.
   startfeil: string | null;
 };
@@ -12,7 +13,7 @@ function tekstForFeil(feil: unknown): string {
   return feil instanceof ApiFeil ? feiltekst(feil.kode) : INGEN_KONTAKT;
 }
 
-export default function LoggInn({ onInnlogget, startfeil }: Props) {
+export default function LoggInn({ onInnlogget, onForsinketInnlogging, startfeil }: Props) {
   const [brukernavn, setBrukernavn] = useState("");
   const [passord, setPassord] = useState("");
   const [feil, setFeil] = useState<string | null>(null);
@@ -37,9 +38,12 @@ export default function LoggInn({ onInnlogget, startfeil }: Props) {
     hendelse.preventDefault();
     if (sender.current) return;
     sender.current = true;
+    const generasjon = gjeldendeSesjonsgenerasjon();
     try {
       // Feltet beholder det som er skrevet, men mellomrom fra autoutfylling sendes ikke.
-      onInnlogget(await loggInn(brukernavn.trim(), passord));
+      const svar = await loggInn(brukernavn.trim(), passord);
+      if (generasjon === gjeldendeSesjonsgenerasjon()) onInnlogget(svar);
+      else onForsinketInnlogging(); // Svaret kan ha satt en ny cookie i nettleseren.
     } catch (e) {
       setFeil(tekstForFeil(e));
       setPassord("");
@@ -65,6 +69,7 @@ export default function LoggInn({ onInnlogget, startfeil }: Props) {
             <label htmlFor="brukernavn">{t.brukernavn}</label>
             <input
               id="brukernavn"
+              autoFocus
               name="brukernavn"
               type="text"
               autoComplete="username"

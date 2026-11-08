@@ -4,6 +4,37 @@
 export type Innlogget = { navn: string; avdeling: string };
 export type PassordKilde = "tilfeldig" | "personlig" | null;
 
+// GET /api/vaktoversikt (story 1.5). Tidspunktene er ISO 8601 med offset.
+export type Vakttype = "dag" | "mellom" | "kveld" | "natt";
+
+export type VaktSomManglerBemanning = {
+  vaktnummer: number;
+  vakttype: Vakttype;
+  start: string;
+  slutt: string;
+  satt_opp: string | null;
+  meldt_fra: string | null;
+  grunn: string | null;
+};
+
+export type BemannetVakt = {
+  vaktnummer: number;
+  vakttype: Vakttype;
+  start: string;
+  slutt: string;
+  ansatt: { navn: string; stilling: string; ansiennitet: number };
+};
+
+export type Vaktoversikt = {
+  avdeling: string;
+  periode_start: string;
+  periode_slutt: string;
+  sist_oppdatert: string;
+  antall_ansatte: number;
+  krever_handling: VaktSomManglerBemanning[];
+  bemannet: BemannetVakt[];
+};
+
 /** API-et svarte med feilformen `{ kode, melding }`. */
 export class ApiFeil extends Error {
   readonly status: number;
@@ -27,7 +58,23 @@ export class IngenKontaktFeil extends Error {
 
 type Valg = { method?: string; body?: string; headers?: Record<string, string> };
 
-async function kall<T>(sti: string, init: Valg = {}): Promise<T> {
+let sesjonsgenerasjon = 0;
+let vedAvvistSesjon: (() => void) | null = null;
+
+export function nySesjonsgenerasjon(): number {
+  return ++sesjonsgenerasjon;
+}
+
+export function gjeldendeSesjonsgenerasjon(): number {
+  return sesjonsgenerasjon;
+}
+
+export function settSesjonsvarsler(varsler: (() => void) | null): void {
+  vedAvvistSesjon = varsler;
+}
+
+async function kall<T>(sti: string, init: Valg = {}, beskyttet = false): Promise<T> {
+  const generasjon = sesjonsgenerasjon;
   let respons: Response;
   try {
     respons = await fetch(sti, {
@@ -39,10 +86,18 @@ async function kall<T>(sti: string, init: Valg = {}): Promise<T> {
     throw new IngenKontaktFeil();
   }
 
+  // En proxy kan gi 401 uten JSON. Varsle før parsing, men bare om svaret
+  // tilhører sesjonen som fremdeles er aktiv.
+  if (beskyttet && respons.status === 401 && generasjon === sesjonsgenerasjon) {
+    vedAvvistSesjon?.();
+  }
+  if (respons.status === 204) return undefined as T;
+
   let kropp: unknown;
   try {
     kropp = await respons.json();
   } catch {
+    if (beskyttet && respons.status === 401) throw new ApiFeil(401, "mangler_sesjon");
     throw new IngenKontaktFeil();
   }
 
@@ -65,10 +120,18 @@ export function loggInn(brukernavn: string, passord: string): Promise<Innlogget>
 }
 
 export function hentMeg(): Promise<Innlogget> {
-  return kall<Innlogget>("/api/meg");
+  return kall<Innlogget>("/api/meg", {}, true);
+}
+
+export function loggUt(): Promise<unknown> {
+  return kall<unknown>("/api/utlogging", { method: "POST" }, true);
 }
 
 export async function hentInnloggingsinfo(): Promise<PassordKilde> {
   const svar = await kall<{ passord_kilde: PassordKilde }>("/api/innloggingsinfo");
   return svar.passord_kilde;
+}
+
+export function hentVaktoversikt(): Promise<Vaktoversikt> {
+  return kall<Vaktoversikt>("/api/vaktoversikt", {}, true);
 }

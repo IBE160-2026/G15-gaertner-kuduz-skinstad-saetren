@@ -268,6 +268,19 @@ def test_token_for_slettet_bruker_mangler_sesjon(klient: TestClient, engine: Eng
     assert feilsvar("mangler_sesjon")(respons.json())
 
 
+def test_slettet_bruker_avvises_av_felles_vern_og_cookie_slettes(
+    klient: TestClient, engine: Engine
+) -> None:
+    token = logg_inn(klient)
+    with lag_sessionmaker(engine).begin() as session:
+        session.execute(delete(BrukerRad))
+
+    respons = klient.get("/api/finnes-ikke", headers={"Cookie": f"{COOKIE_NAVN}={token}"})
+    assert respons.status_code == 401
+    assert feilsvar("mangler_sesjon")(respons.json())
+    assert "Max-Age=0" in respons.headers["set-cookie"]
+
+
 def test_navnet_hentes_fra_databasen_og_ikke_fra_tokenet(klient: TestClient, engine: Engine) -> None:
     token = logg_inn(klient)
     innhold = jwt.decode(token, NOKKEL, algorithms=["HS256"])
@@ -325,17 +338,66 @@ def test_innloggingsinfo_uten_bruker(klient: TestClient, engine: Engine) -> None
 
 
 def test_ukjent_sti_gir_ikke_funnet(klient: TestClient) -> None:
+    logg_inn(klient)
     respons = klient.get("/api/finnes-ikke")
     assert respons.status_code == 404
     assert feilsvar("ikke_funnet")(respons.json())
 
 
 def test_feil_metode_gir_metode_ikke_tillatt(klient: TestClient) -> None:
+    logg_inn(klient)
     respons = klient.put("/api/innlogging", json=RIKTIG)
     assert respons.status_code == 405
     assert feilsvar("metode_ikke_tillatt")(respons.json())
     assert "POST" in respons.headers["allow"]
     assert PASSORD not in respons.text
+
+
+@pytest.mark.parametrize("metode,sti", [
+    ("GET", "/api/meg"), ("POST", "/api/utlogging"),
+    ("GET", "/api/finnes-ikke"), ("PUT", "/api/innlogging"),
+    ("POST", "/api/helse"), ("POST", "/api/innloggingsinfo"),
+])
+def test_api_er_stengt_uten_sesjon(klient: TestClient, metode: str, sti: str) -> None:
+    respons = klient.request(metode, sti)
+    assert respons.status_code == 401
+    assert feilsvar("mangler_sesjon")(respons.json())
+    assert f"{COOKIE_NAVN}=\"\"" in respons.headers["set-cookie"]
+
+
+def test_standardvern_gjelder_ogsa_ny_rute_uten_lokal_kontroll(klient: TestClient) -> None:
+    @klient.app.get("/api/test-uten-kontroll")
+    def ubeskyttet():
+        return {"hemmelig": True}
+
+    assert klient.get("/api/test-uten-kontroll").status_code == 401
+    logg_inn(klient)
+    assert klient.get("/api/test-uten-kontroll").json() == {"hemmelig": True}
+
+
+@pytest.mark.parametrize("token", ["ikke.et.token", lag_token(99999, NOKKEL, 480),
+                                   lag_token(1, NOKKEL, 480, naa=datetime.now(UTC) - timedelta(minutes=481))])
+def test_ugyldig_token_avvises_for_ruting_og_slettes(klient: TestClient, token: str) -> None:
+    klient.cookies.clear()
+    respons = klient.get("/api/finnes-ikke", headers={"Cookie": f"{COOKIE_NAVN}={token}"})
+    assert respons.status_code == 401
+    assert feilsvar("mangler_sesjon")(respons.json())
+    assert "Max-Age=0" in respons.headers["set-cookie"]
+
+
+def test_utlogging_sletter_cookie_og_avviser_neste_kall(klient: TestClient) -> None:
+    logg_inn(klient)
+    respons = klient.post("/api/utlogging")
+    assert respons.status_code == 204
+    assert "Max-Age=0" in respons.headers["set-cookie"]
+    assert "Path=/api" in respons.headers["set-cookie"]
+    assert "SameSite=strict" in respons.headers["set-cookie"]
+    assert klient.get("/api/meg").status_code == 401
+
+
+@pytest.mark.parametrize("sti", ["/docs", "/redoc", "/openapi.json"])
+def test_api_dokumentasjon_er_deaktivert(klient: TestClient, sti: str) -> None:
+    assert klient.get(sti).status_code == 404
 
 
 def test_uten_testdata_gir_intern_feil(tmp_path: Path) -> None:

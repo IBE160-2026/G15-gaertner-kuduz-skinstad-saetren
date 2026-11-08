@@ -20,6 +20,11 @@ export function feiltekst(kode: string): string {
 export const TEKSTER = {
   merkevare: "TURNUSHJELPEREN",
   ikkeInnlogget: "Ikke innlogget",
+  loggUt: "Logg ut",
+  sesjonUtlopt: "Sesjonen er utløpt. Logg inn på nytt.",
+  utloggingFeilet: "Fikk ikke bekreftet utloggingen. Prøv igjen.",
+  provIgjen: "Prøv igjen",
+  sideIkkeFunnet: "Fant ikke siden.",
   innlogget: (navn: string, avdeling: string) =>
     `Innlogget: ${navn} (turnusansvarlig) · Avdeling ${avdeling}`,
 
@@ -55,8 +60,38 @@ export const TEKSTER = {
     },
   },
 
-  startside: {
-    overskrift: "Vaktoversikt",
-    tekst: "Vaktoversikten kommer i en senere versjon.",
+  // Vaktvalg (story 1.5, UX-DR5, UX-DR6, UX-DR23).
+  vaktvalg: {
+    overskrift: "Vaktvalg",
+    laster: "Henter vaktene …",
+    kreverHandling: "Krever handling",
+    ingenKreverHandling: "Ingen vakter krever handling nå",
+    bemannet: "Øvrige vakter denne perioden — bemannet",
+    ingenBemannet: "Ingen bemannede vakter i perioden",
+    velgVakt: "Velg vakt — finn erstatter →",
+    statusBemannet: "Bemannet",
+    kolonner: { vakt: "Vakt", dato: "Dato", tid: "Tid", ansatt: "Ansatt", status: "Status" },
+    vaktoverskrift: (nr: number, vakttype: string, avdeling: string) =>
+      `Vakt #${nr} — ${vakttype}, ${avdeling}`,
+    vaktnummer: (nr: number) => `#${nr}`,
+    ansattMeta: (stilling: string, ansiennitet: number) => `${stilling} · ${ansiennitet} år ansiennitet`,
+    fotnote: (oppdatert: string, antall: number) =>
+      `Turnus oppdatert ${oppdatert} · ${antall} ansatte totalt i avdelingen`,
+  },
+
+  brodsmulesti: {
+    etikett: "Brødsmulesti",
+    turnus: "Turnus",
+  },
+
+  // Byggesteiner for format.ts.
+  format: {
+    ukedager: ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"],
+    vakttyper: { dag: "Dagvakt", mellom: "Mellomvakt", kveld: "Kveldsvakt", natt: "Nattevakt" },
+    timer: "t",
+    kl: "kl.",
+    uke: "Uke",
+    meldtFra: "meldt fra",
+    manglerBemanning: "Mangler bemanning",
   },
 } as const;

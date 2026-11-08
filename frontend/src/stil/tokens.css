@@ -25,6 +25,13 @@
   --color-tag-bg: #e7ecf1;
   /* Tekst på bg-header og accent: appbar og button-primary (UX-DR2, UX-DR22). */
   --color-on-accent: #ffffff;
+  /* Vaktvalg (story 1.5): kolonneoverskrift, «!»-ikon og brødsmulestripe fra
+     DESIGN.md og key-vaktvalg.html. Linja ved døgnskifte er ny og er en mørkere
+     variant av border, ikke en statusfarge. */
+  --color-column-header-bg: #f0f3f6;
+  --color-alert-icon-bg: #f3e3e3;
+  --color-breadcrumb-bg: #f7f9fb;
+  --color-day-divider: #8a99a8;
 
   /* Typografi */
   --font-family: "Segoe UI", Arial, sans-serif;
@@ -68,4 +75,12 @@
   --login-card-width: 360px;
   /* Margen på hver side av login-card på smale skjermer: min(360px, 100% - 2 × 16px). */
   --login-card-margin: 16px;
+  /* Vaktvalg (story 1.5). */
+  --alert-icon-size: 30px;
+  --alert-border-left-width: 4px;
+  --alert-box-padding: 14px 18px;
+  --button-compact-padding: 10px 18px;
+  --day-divider-width: 2px;
+  /* Visuelt skjult tekst (h1 «Vaktvalg»). */
+  --visually-hidden-size: 1px;
 }

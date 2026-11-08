@@ -7,6 +7,7 @@ miljøet og databasen fra `lag_engine()`.
 
 import secrets
 from collections.abc import Iterator
+from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, Request, Response
@@ -20,6 +21,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from adaptere.api import sesjon
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
+from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -57,6 +59,48 @@ class InnloggingsinfoUt(BaseModel):
     passord_kilde: Literal["tilfeldig", "personlig"] | None
 
 
+Vakttype = Literal["dag", "mellom", "kveld", "natt"]
+
+
+class AnsattUt(BaseModel):
+    navn: str
+    stilling: str
+    ansiennitet: int
+
+
+class ManglerBemanningUt(BaseModel):
+    vaktnummer: int
+    vakttype: Vakttype
+    start: datetime
+    slutt: datetime
+    satt_opp: str | None
+    meldt_fra: datetime | None
+    grunn: str | None
+
+
+class BemannetUt(BaseModel):
+    vaktnummer: int
+    vakttype: Vakttype
+    start: datetime
+    slutt: datetime
+    ansatt: AnsattUt
+
+
+class VaktoversiktUt(BaseModel):
+    """Bare data. Tekst og formatering lages i frontend (story 1.5).
+
+    Tidspunktene er i Europe/Oslo og sendes som ISO 8601 med offset.
+    """
+
+    avdeling: str
+    periode_start: datetime
+    periode_slutt: datetime
+    sist_oppdatert: datetime
+    antall_ansatte: int
+    krever_handling: list[ManglerBemanningUt]
+    bemannet: list[BemannetUt]
+
+
 def lag_app(
     nokkel: bytes | None = None,
     minutter: int | None = None,
@@ -73,7 +117,28 @@ def lag_app(
 
     Okt = Annotated[Session, Depends(databaseokt)]
 
-    app = FastAPI(title="Turnushjelperen")
+    app = FastAPI(title="Turnushjelperen", docs_url=None, redoc_url=None, openapi_url=None)
+
+    offentlige_ruter = {
+        ("GET", "/api/helse"),
+        ("POST", "/api/innlogging"),
+        ("GET", "/api/innloggingsinfo"),
+    }
+
+    @app.middleware("http")
+    async def krev_sesjon(request: Request, call_next):  # type: ignore[no-untyped-def]
+        # Autoriser før ruting: også ukjente API-stier og feil metoder er beskyttet.
+        if (request.url.path == "/api" or request.url.path.startswith("/api/")) and (request.method, request.url.path) not in offentlige_ruter:
+            token = sesjon.les_cookie(request)
+            bruker_id = sesjon.les_token(token, nokkel) if token else None
+            with okter() as okt:
+                bruker = hent_innlogget(okt, bruker_id) if bruker_id is not None else None
+            if bruker is None:
+                respons = feil(401, "mangler_sesjon")
+                sesjon.slett_cookie(respons)
+                return respons
+            request.state.bruker = bruker
+        return await call_next(request)
 
     @app.exception_handler(RequestValidationError)
     async def valideringsfeil(_request: Request, _exc: RequestValidationError) -> JSONResponse:
@@ -102,13 +167,24 @@ def lag_app(
         return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
 
     @app.get("/api/meg", response_model=InnloggetUt)
-    def meg(request: Request, okt: Okt) -> InnloggetUt | JSONResponse:
-        token = sesjon.les_cookie(request)
-        bruker_id = sesjon.les_token(token, nokkel) if token else None
-        bruker = hent_innlogget(okt, bruker_id) if bruker_id is not None else None
-        if bruker is None:
-            return feil(401, "mangler_sesjon")
+    def meg(request: Request) -> InnloggetUt:
+        bruker = request.state.bruker
         return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
+
+    @app.get("/api/vaktoversikt", response_model=VaktoversiktUt)
+    def vaktoversikt(request: Request, okt: Okt) -> VaktoversiktUt | JSONResponse:
+        # Vernet har allerede sjekket at brukeren og turnusen finnes. `None` her
+        # betyr at brukeren ble slettet mellom vernet og spørringen.
+        oversikt = hent_vaktoversikt(okt, request.state.bruker.id)
+        if oversikt is None:
+            respons = feil(401, "mangler_sesjon")
+            sesjon.slett_cookie(respons)
+            return respons
+        return VaktoversiktUt.model_validate(oversikt, from_attributes=True)
+
+    @app.post("/api/utlogging", status_code=204)
+    def utlogging(respons: Response) -> None:
+        sesjon.slett_cookie(respons)
 
     @app.get("/api/innloggingsinfo")
     def innloggingsinfo(okt: Okt) -> InnloggingsinfoUt:
