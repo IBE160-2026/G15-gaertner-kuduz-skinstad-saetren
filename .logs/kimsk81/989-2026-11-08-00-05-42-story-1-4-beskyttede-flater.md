@@ -31,3 +31,13 @@ Brukeren ba om å fortsette story 1.4, gjøre nettleserkontroll og deretter comm
 
 Implementasjonen ble committet lokalt som `9473de4`. To uavhengige agenter gjorde lokal PR-gjennomgang av diffen. API-agenten fant ingen nye avvik. Frontend-agenten fant at fokusrammen på «Logg ut» hadde samme farge som appbaren. Jeg bekreftet fargene i CSS, rettet til eksisterende lys token og dokumenterte funnet i spesifikasjonen og KI-loggen. `npm.cmd run build` og `git diff --cached --check` bestod; rettelsen er committet som `d02343e`. `gh pr list` svarte HTTP 401 fordi GitHub CLI ikke er autentisert. Ingen PR er opprettet, og ingenting er pushet.
 
+### Nettleserkontroll kl. 12:33
+
+**Oppgave:** Brukeren ba om å fullføre nettleserkontrollen av Story 1.4 med Playwright MCP, dokumentere hvert akseptansekriterium og deretter oppdatere prosjektfiler og logger. Ingen push.
+
+**Plan og fremgangsmåte:** Leste story, spesifikasjon, OP-10/AV-13/14 og sensorveiledningen. Startet backend og Vite med isolert SQLite-testdatabase i midlertidig mappe. Kjørte direkte URL, API-matrise, inn-/utlogging, faktisk ett minutts tokenutløp, tastatur og 360/1600 px. Styrte to forsinkede svar i nettleserens `fetch`-lag mens ekte inn-/utlogging traff API-et. Stoppet tjenestene og fjernet testdatabasen.
+
+**Resultat og kvalitetssikring:** Alle fem akseptansekriterier og de to løpssituasjonene bestod. Ingen funksjonsfeil funnet. 127 backendtester og 3 frontendtester bestod på nytt. Resultatene er ført i [KI-loggen](../../../docs/ki-logg/2026-11-08-beskyttede-flater.md#nettleserkontroll-med-playwright-mcp-2026-11-08), [spesifikasjonen](../../../_bmad-output/implementation-artifacts/spec-1-4-beskyttede-flater-og-utlopt-sesjon.md) og vurderingsmatrisen; dokumentasjonen ble lokalt committet i `0a1972f`. Det tidligere åpne nettleserpunktet er lukket i `issues.md`. Storyen er fortsatt `in-review` og sprintstatus `in-progress`, fordi formell PR-gjennomgang ikke er fullført; ingen PR ble opprettet eller pushet.
+
+**Åpne punkter:** Ingen nye produkt- eller testpunkter fra denne kontrollen. Formell PR-gjennomgang er gjenstående prosessarbeid, ikke et `issues.md`-punkt.
+
