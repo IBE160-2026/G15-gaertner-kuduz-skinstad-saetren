@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-07 (OP-10 besvart i spesifikasjonen for Story 1.3 og implementert; fysisk test på macOS/Linux strøket i OP-05, se §2.3, §3 og §11)  
+> **Sist oppdatert:** 2026-11-07 (OP-10 besvart i spesifikasjonen for Story 1.3 og implementert; fysisk test på macOS/Linux strøket i OP-05, se §2.3, §3 og §11; 2026-11-06 også forslag om ny ordlyd i AV-08 og CI, se §11)  
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -181,6 +181,12 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Status:** Vedtatt.
 - **Oppdatering 2026-11-04:** Regelen om underagenter i `AGENTS.md` (PR #5) er godkjent under OP-04. Dermed er det et vedtatt unntak fra «behold `AGENTS.md` uendret». Loggreglene er ikke endret. Se §11.
 - **Oppdatering 2026-11-06:** Nytt vedtatt unntak fra «behold loggreglene uendret»: rene git-operasjoner logges ikke i sesjonsloggen. Endringen gjelder skillen `sesjonslogg` og avsnittet Sesjonslogg i `AGENTS.md`. Se §11.
+- **Foreslått endring 2026-11-06 (gjelder når PR-en `ci-skills-speiling` er godkjent av gruppa):** Første del av vedtaket står uendret: gruppevedtak dokumenteres sporbart. Andre del, «behold eksisterende `AGENTS.md`, `CLAUDE.md`, KI-logging, sesjonslogger og andre loggregler uendret», erstattes av:
+  - Disse filene og reglene kan endres når endringen registreres i §11 med dato, innhold og hvem som godkjente den.
+  - Endringer i en branch godkjennes i PR-gjennomgangen.
+  - Agenter endrer dem ikke uten uttrykkelig beskjed fra et gruppemedlem.
+  - Kravene til KI-logg i `docs/ki-logg/` gjelder fortsatt.
+  - **Begrunnelse:** Fryseregelen fikk to unntak på tre dager (OP-04 og sesjonsloggen), og den hindret vanlig vedlikehold, som å rette utdaterte tall og legge inn CI. Sporbarheten er den samme, fordi hver endring fortsatt registreres og gjennomgås. Se §11.
 
 ### AV-09 – Målevindu på 672 faktiske timer
 
@@ -490,6 +496,22 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Logger som bare dokumenterer git-operasjoner, er fjernet. Med faglærerens uttrykkelige tillatelse for dette tilfellet ble alle loggmappene gjennomgått. Bare én fil var en ren git-logg, og den lå i Johannes' mappe. De andre filene inneholder også annet arbeid og er beholdt.
 - **Endret:** `.claude/skills/sesjonslogg/SKILL.md`, beskrivelsen i `.agents/skills/sesjonslogg/SKILL.md`, avsnittet Sesjonslogg i `AGENTS.md` og AV-08.
 - **Ikke endret:** KI-loggingen i `docs/ki-logg/` og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-06 – Automatisk kontroll av speilingen, ny ordlyd i AV-08 og ny regel for branch og PR (foreslått)
+
+- **Hvem:** Foreslått av Johannes W. Gaertner. Gjelder når PR-en fra branchen `ci-skills-speiling` er godkjent av gruppa.
+- **Grunnlag:** `.agents/skills` (Codex) og `.claude/skills` (Claude Code) holdes like bare av en skriftlig regel i `AGENTS.md`. En gjennomgang 2026-11-06 viste at de var like, bortsett fra det vedtatte unntaket `sesjonslogg`. Ingen hook, CI eller test fanget opp avvik.
+- **Foreslått:**
+  - Testen `scripts/test_skills_speiling.py` og workflow-filen `.github/workflows/skills-speiling.yml` sjekker speilingen ved hver push. Dette er prosjektets første CI.
+  - I `AGENTS.md` er TODO-en om CI erstattet med en beskrivelse av hva CI kjører. Tallet «214» i fallgruven om linjeskift er fjernet.
+  - AV-08 får ny ordlyd i andre del (se AV-08).
+  - **Regelen for branch og PR i `AGENTS.md` (Policy):** «Utvidelser av funksjonalitet går i egen branch» erstattes av en menneskelig vurdering.
+    - Den enkelte avgjør aktivt om arbeidet skal i branch og PR, ut fra hvor stort det er og hvor mange definerende avgjørelser det inneholder.
+    - Avgrensede endringer kan gå rett på `main`. Større endringer, og avgjørelser som binder gruppa, bør gjennomgås av et annet gruppemedlem i en PR.
+    - Agenter foreslår, men oppretter ikke branch eller PR uten at brukeren har valgt det.
+    - Kvalitetssikringen må kunne spores uansett vei: PR-gjennomgangen, eller commit-meldingen og KI-loggen.
+    - **Begrunnelse:** Gruppa stoler på hverandre. En maskinell regel sendte også små endringer til PR. Sensorveiledningen godtar «branches, pull requests, issues eller tilsvarende» og beskrivelser av rettede KI-feil som spor av gjennomgang.
+- **Ikke endret:** Første del av AV-08 og de andre AV-, K-, OP- og KS-punktene.
 
 ### 2026-11-06 – Designtokens, layoutbredde og Story 1.3 (AV-13, AV-14, OP-10)
 
