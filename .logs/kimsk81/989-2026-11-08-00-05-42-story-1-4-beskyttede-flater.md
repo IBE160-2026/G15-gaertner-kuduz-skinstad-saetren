@@ -40,3 +40,13 @@ Implementasjonen ble committet lokalt som `9473de4`. To uavhengige agenter gjord
 **Resultat og kvalitetssikring:** Alle fem akseptansekriterier og de to løpssituasjonene bestod. Ingen funksjonsfeil funnet. 127 backendtester og 3 frontendtester bestod på nytt. Resultatene er ført i [KI-loggen](../../../docs/ki-logg/2026-11-08-beskyttede-flater.md#nettleserkontroll-med-playwright-mcp-2026-11-08), [spesifikasjonen](../../../_bmad-output/implementation-artifacts/spec-1-4-beskyttede-flater-og-utlopt-sesjon.md) og vurderingsmatrisen; dokumentasjonen ble lokalt committet i `0a1972f`. Det tidligere åpne nettleserpunktet er lukket i `issues.md`. Storyen er fortsatt `in-review` og sprintstatus `in-progress`, fordi formell PR-gjennomgang ikke er fullført; ingen PR ble opprettet eller pushet.
 
 **Åpne punkter:** Ingen nye produkt- eller testpunkter fra denne kontrollen. Formell PR-gjennomgang er gjenstående prosessarbeid, ikke et `issues.md`-punkt.
+
+### Direkte devDependency for rolldown kl. 14:42
+
+**Oppgave:** Brukeren ba om å rette PR-merknaden om at `frontend/tester/sesjon.test.mjs` importerer `rolldown`, men at pakken bare var transitiv.
+
+**Plan:** Bruk samme versjon som allerede er låst via Vite i `package-lock.json`, og deklarer den direkte i frontendens devDependencies.
+
+**Resultat og kvalitetssikring:** Lagt til `rolldown` 1.2.14 i `frontend/package.json` og rotpakken i `frontend/package-lock.json`. Offline npm-oppdatering feilet fordi registry-metadata ikke var cachet; lockfila inneholdt allerede pakken og fullstendige metadata. `npm.cmd test` bestod (3/3).
+
+**Åpne punkter:** Ingen.
