@@ -798,9 +798,9 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 **When** Rangeringen kjører
 **Then** billigste Kandidat er ikke rangert øverst (FR9, SM-6)
 
-**Given** testscenarioet fra story 1.2 med to Gyldige kandidater som er nesten like på kostnad, Timebelastning og preferanse, men der den ene har klart høyere Ulempebelastning
+**Given** testscenarioet fra story 1.2 med to Gyldige kandidater med identisk kostnad, Timebelastning og preferansepoeng, men ulik Ulempebelastning (Jonas og Mette på #4127, AV-12)
 **When** Rangeringen kjører
-**Then** Kandidaten med lavest Ulempebelastning er rangert over den andre (FR9, FR14)
+**Then** Kandidaten med lavere Ulempebelastning er rangert over den andre, med den forskjellen i totalscore som fasiten i story 1.2 har beregnet på forhånd (7,0 poeng) (FR9, FR14, AV-12)
 
 **Given** to Gyldige kandidater med samme kostnad, Timebelastning, Ulempebelastning og Ansattpreferanse, men ulikt Kompetansenivå over Vaktens minstekrav
 **When** Rangeringen kjører
