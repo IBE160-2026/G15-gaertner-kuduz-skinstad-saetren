@@ -57,6 +57,24 @@ button {
   overflow-wrap: anywhere;
 }
 
+.button-secondary {
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  color: inherit;
+  border: var(--border-width) solid currentColor;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.appbar .button-secondary:focus-visible {
+  outline-color: var(--color-on-accent);
+}
+
+.panel .button-secondary {
+  margin-top: var(--space-3);
+  color: var(--color-text-main);
+}
+
 /* --- Innhold (AV-14) ------------------------------------------------------ */
 
 .innhold {

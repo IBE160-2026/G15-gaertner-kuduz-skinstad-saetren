@@ -84,5 +84,16 @@ def sett_cookie(respons: Response, token: str, minutter: int) -> None:
     )
 
 
+def slett_cookie(respons: Response) -> None:
+    """Fjern samme cookie som innloggingen setter, også når tokenet er ugyldig."""
+    respons.delete_cookie(
+        key=COOKIE_NAVN,
+        path=COOKIE_STI,
+        httponly=True,
+        samesite="strict",
+        secure=False,
+    )
+
+
 def les_cookie(request: Request) -> str | None:
     return request.cookies.get(COOKIE_NAVN) or None
