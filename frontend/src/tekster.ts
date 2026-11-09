@@ -79,6 +79,21 @@ export const TEKSTER = {
       `Turnus oppdatert ${oppdatert} · ${antall} ansatte totalt i avdelingen`,
   },
 
+  kandidatflate: {
+    overskrift: (nummer: number) => `Vakt #${nummer}`,
+    laster: "Henter vakten …",
+    brodsmule: (nummer: number, vakttype: string, dato: string) => `Vakt #${nummer} — ${vakttype} ${dato}`,
+    avdeling: "Avdeling",
+    vakttype: "Vakttype",
+    tidspunkt: "Tidspunkt",
+    start: (tid: string) => `Start: ${tid}`,
+    slutt: (tid: string) => `Slutt: ${tid}`,
+    kompetanse: "Kompetansekrav",
+    minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
+    plassholderOverskrift: "Kandidater kommer senere",
+    plassholderTekst: "Kandidatlisten blir tilgjengelig når filtrering av ansatte er på plass.",
+  },
+
   brodsmulesti: {
     etikett: "Brødsmulesti",
     turnus: "Turnus",

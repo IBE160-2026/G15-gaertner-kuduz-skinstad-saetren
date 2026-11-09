@@ -1,6 +1,13 @@
 export const OVERSIKT_STI = "/turnus/kirurgisk-sengepost";
 export const INNLOGGING_STI = "/logg-inn";
 
+export function vaktnummerFraSti(sti: string): number | null {
+  const treff = /^\/vakt\/([1-9]\d*)\/kandidater$/.exec(sti);
+  if (!treff) return null;
+  const nummer = Number(treff[1]);
+  return Number.isSafeInteger(nummer) ? nummer : null;
+}
+
 export function maalEtterBekreftetSesjon(sti: string): string {
   return sti === INNLOGGING_STI || sti === "/" ? OVERSIKT_STI : sti;
 }

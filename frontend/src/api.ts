@@ -35,6 +35,15 @@ export type Vaktoversikt = {
   bemannet: BemannetVakt[];
 };
 
+export type Vaktdetaljer = {
+  avdeling: string;
+  vaktnummer: number;
+  vakttype: Vakttype;
+  start: string;
+  slutt: string;
+  minstenivå: number;
+};
+
 /** API-et svarte med feilformen `{ kode, melding }`. */
 export class ApiFeil extends Error {
   readonly status: number;
@@ -134,4 +143,8 @@ export async function hentInnloggingsinfo(): Promise<PassordKilde> {
 
 export function hentVaktoversikt(): Promise<Vaktoversikt> {
   return kall<Vaktoversikt>("/api/vaktoversikt", {}, true);
+}
+
+export function hentVaktdetaljer(vaktnummer: number): Promise<Vaktdetaljer> {
+  return kall<Vaktdetaljer>(`/api/vakter/${vaktnummer}`, {}, true);
 }
