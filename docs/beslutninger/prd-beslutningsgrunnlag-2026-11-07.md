@@ -339,7 +339,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1.
 - Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
-- Mithad: __
+- Mithad: Jeg støtter A, med B som et mulig tillegg i v1 med egen story, på samme måte som for P-10.
 - Ragnhild: Jeg støtter denne anbefalingen og forslaget om alternativ B som stretch-goal til v1.
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -362,7 +362,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 
 - Johannes: Jeg støtter denne anbefalingen.
 - Kim: Jeg støtter denne anbefalingen og forslaget om en oppgavebasert forståelsestest når kandidatvisningen fungerer.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og forståelsestesten. Vaktoversikten fra story 1.5 er allerede kontrollert på 360 px uten vannrett siderulling, så mobil er ikke helt uprøvd.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg, ansvarlig og behandlingstidspunkt: __. Eventuell forståelsestest: __. Begrunnelse: __. Dato/deltakere: __.
@@ -387,7 +387,7 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 
 - Johannes: KI i produktet er ikke et formelt krav i emnet, men de aller fleste av applikasjonene er planlagt med en implementasjon av KI i en eller annen form. Sannsynligvis fordi det er "inn i tiden". Dette ble uttalt i forelesning av faglærer. Dette punktet kan lukkes
 - Kim: Jeg slutter meg til Johannes’ kommentar.
-- Mithad: __
+- Mithad: Jeg slutter meg til Johannes' kommentar.
 - Ragnhild: Jeg slutter meg til Johannes’ kommentar
 
 **Ansvarlig:** Johannes. **Svar/kilde/dato:** KI i produktet er ikke et formelt krav i emnet; muntlig uttalelse fra faglærer i forelesning, gjengitt av Johannes 2026-11-08. **Status etter møtet:** Lukket av Johannes 2026-11-08 før møtet.
@@ -407,7 +407,7 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 
 - Johannes: Product Brief og PRD er levende dokumenter. Ja, det var en "innlevering" av Product Brief, men status på dokumentet ved innleveringstidspunkt er ikke bindende for produktet som leveres til slutt. Vi forstår at i det virkelige liv er dette kontrakter som er bindende, men dette er et læringscenario. Dette punktet kan lukkes
 - Kim: Jeg slutter meg til Johannes’ kommentar.
-- Mithad: __
+- Mithad: Jeg er enig i at proposalen ikke binder produktet. Men sensor leser den godkjente proposalen og kontrollerer «at det som er utelatt eller endret fra proposal, er beskrevet og begrunnet» (sensorveiledning-del-1.md, linje 59 og 141). Vi bør derfor finne den innleverte versjonen og skrive en kort liste over viktige avvik med begrunnelse før innlevering. Punktet bør ikke lukkes før det er gjort.
 - Ragnhild: Jeg slutter meg til Johannes’ kommentar.
 
 **Ansvarlig:** __. **Dokument/kilde/dato og resultat:** __.
