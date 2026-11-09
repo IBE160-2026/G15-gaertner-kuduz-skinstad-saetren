@@ -1,4 +1,4 @@
-// Rene formateringsfunksjoner for Vaktvalg (story 1.5). Alt vises i
+// Rene formateringsfunksjoner for Vaktvalg og kandidatflaten. Alt vises i
 // Europe/Oslo, uansett tidssonen til nettleseren. Bare tallene hentes fra
 // `Intl.DateTimeFormat(...).formatToParts`. Ukedagnavn, skilletegn og
 // nuller foran settes sammen her, så teksten ikke avhenger av ICU-versjonen.
@@ -63,6 +63,11 @@ function ukedagsindeks(d: OsloDeler): number {
 export function ukedagOgDato(iso: string): string {
   const d = deler(iso);
   return `${TEKSTER.format.ukedager[ukedagsindeks(d)]} ${dato(d)}`;
+}
+
+/** «Vakt #4127 — Dagvakt 27.09.2026» for brødsmulestien. */
+export function vaktBrodsmule(nummer: number, vakttype: Vakttype, start: string): string {
+  return TEKSTER.kandidatflate.brodsmule(nummer, vakttypenavn(vakttype), dato(deler(start)));
 }
 
 /** «23:00–07:00 (8 t)». Varigheten er reell tid, også over sommertidsskiftet. */

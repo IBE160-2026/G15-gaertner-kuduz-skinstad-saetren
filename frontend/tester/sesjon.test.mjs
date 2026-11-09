@@ -58,3 +58,12 @@ test("forsinket /api/meg etter utlogging kan skilles fra gjeldende sesjon", asyn
   assert.notEqual(generasjon, api.gjeldendeSesjonsgenerasjon());
   delete globalThis.fetch;
 });
+
+test("kandidat-URL tolkes bare for positive, sikre vaktnumre", async () => {
+  const { vaktnummerFraSti } = await lastTs("../src/navigasjon.ts");
+  assert.equal(vaktnummerFraSti("/vakt/4127/kandidater"), 4127);
+  assert.equal(vaktnummerFraSti("/vakt/4189/kandidater"), 4189);
+  for (const sti of ["/vakt/0/kandidater", "/vakt/-1/kandidater", "/vakt/01/kandidater", "/vakt/4127/kandidater/", "/vakt/9007199254740993/kandidater"]) {
+    assert.equal(vaktnummerFraSti(sti), null);
+  }
+});

@@ -391,3 +391,30 @@ button {
   color: var(--color-text-mute);
   text-align: right;
 }
+
+/* Vaktdetaljer og ærlig kandidatplassholder (story 1.6). */
+.kandidatflate {
+  overflow-wrap: anywhere;
+}
+
+.vaktdetaljer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--detail-column-min)), 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.vaktdetaljer dt {
+  color: var(--color-text-mute);
+  font-size: var(--font-size-meta);
+}
+
+.vaktdetaljer dd {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+}
+
+.kandidatplassholder {
+  margin-top: var(--space-4);
+  background: var(--color-breadcrumb-bg);
+}

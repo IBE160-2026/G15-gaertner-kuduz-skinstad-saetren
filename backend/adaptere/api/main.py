@@ -21,6 +21,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from adaptere.api import sesjon
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
+from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
@@ -99,6 +100,15 @@ class VaktoversiktUt(BaseModel):
     antall_ansatte: int
     krever_handling: list[ManglerBemanningUt]
     bemannet: list[BemannetUt]
+
+
+class VaktdetaljerUt(BaseModel):
+    avdeling: str
+    vaktnummer: int
+    vakttype: Vakttype
+    start: datetime
+    slutt: datetime
+    minstenivå: int
 
 
 def lag_app(
@@ -181,6 +191,13 @@ def lag_app(
             sesjon.slett_cookie(respons)
             return respons
         return VaktoversiktUt.model_validate(oversikt, from_attributes=True)
+
+    @app.get("/api/vakter/{vaktnummer}", response_model=VaktdetaljerUt)
+    def vaktdetaljer(vaktnummer: int, request: Request, okt: Okt) -> VaktdetaljerUt | JSONResponse:
+        detaljer = hent_vaktdetaljer(okt, request.state.bruker.id, vaktnummer)
+        if detaljer is None:
+            return feil(404, "ikke_funnet")
+        return VaktdetaljerUt.model_validate(detaljer, from_attributes=True)
 
     @app.post("/api/utlogging", status_code=204)
     def utlogging(respons: Response) -> None:
