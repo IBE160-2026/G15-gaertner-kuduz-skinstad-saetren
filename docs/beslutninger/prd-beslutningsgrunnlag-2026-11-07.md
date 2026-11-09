@@ -54,7 +54,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen. A stemmer med rangeringsfasiten for #4127 i story 1.2, der vaktkostnaden er regnet med overtid (Ingrid 3 850 kr).
 - Ragnhild: Jeg støtter anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -81,7 +81,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -106,7 +106,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -127,7 +127,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter A, men merk: demodataene fra story 1.2 forutsatte at 32 t gir høy belastning (Ingrid Dahl, 32 t = 88,9 %). Med A må Ingrid få minst 32,4 t i testdataene, eller så velger vi B.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -164,7 +164,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen for begge delvalg.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen for begge delvalg. 50 er også den nøytrale preferanseverdien i regneeksempelet for #4127 i story 1.2.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Delvalg 1: __. Delvalg 2: __. Begrunnelse: __. Dato/deltakere: __.
@@ -189,7 +189,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI-forklaringen ikke besto faktakontrollen og reserveteksten vises i stedet
 - Kim: Jeg støtter denne anbefalingen og Johannes’ presisering om tydelig merking når reserveteksten vises.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og presiseringen om tydelig merking når reserveteksten vises. A følger regelen vår om at KI aldri beregner tall, bare formidler dem.
 - Ragnhild: Jeg støtter denne anbefalingen og presiseringen om tydelig merking når reservetekst vises.
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -214,7 +214,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Kan det være hensiktsmessig med en funksjonalitet: **hvis** turnusansvarlig ønsker det, utfør en sammenligning av merkede kandidater, for eksempel rangert nummer 2 og rangert nummer 3. Sammenligningen utføres kun på forespørsel, normalt er sammenligningen gjort med rangert kandidat nummer 1.
 - Kim: Jeg støtter denne anbefalingen. Johannes’ forslag om valgfri sammenligning kan kanskje vurderes etter v1 eller etter kjerneflyten fungerer i v1?
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og er enig med Kim og Ragnhild i å vente med valgfri sammenligning til etter v1. For #4127 betyr A at Jonas sammenlignes med Mette, som er lik ham bortsett fra ulempe (AV-12). Det gir en ryddig demo av forklaringen.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Kim. Johannes sitt forslag om valgfri sammenligning kan være nyttig, men jeg synes vi bør avvente en eventuell beslutning om dette til vi ser hvordan løsningen fungerer i praksis. Da kan vi heller vurdere om det er behov for funksjonaliteten i en senere versjon.
 
 **Gruppens beslutning:** Ikke behandlet. Valg/referanseregel: __. Begrunnelse: __. Dato/deltakere: __.
@@ -241,7 +241,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Vi må nødvendigvis starte vår turnus på en gitt dato. Komplikasjonen er reell og virkelighetsnær. Anbefaler at vi godtar et synlig avgrenset unntak for demonstrasjonen, alternativt kan KS-04 justeres hvis det er et konkret behov.
 - Kim: Jeg støtter denne anbefalingen og Johannes’ synspunkt om et synlig, avgrenset unntak for demonstrasjonen, med justering av KS-04 hvis det er et konkret behov.
-- Mithad: __
+- Mithad: Jeg støtter A og et synlig, avgrenset unntak for demonstrasjonen. #4127 og #4189 har full datadekning, og det er låst med test i story 1.2, så demoscenarioene påvirkes ikke.
 - Ragnhild: Jeg støtter anbefaling A og er enig med Johannes og Kim i at vi bør kunne demonstrere løsningen med et tydelig avgrenset datagrunnlag. Jeg synes samtidig det er viktig å skille mellom manglende historikk og dokumentert fravær av vakter. Vi må unngå at manglende opplysninger tolkes som null timer eller null kostnad, da dette kan gi en misvisende rangering.
 
 **Gruppens beslutning:** Ikke behandlet. Valg og håndtering av kjent KS-04-begrensning: __. Begrunnelse: __. Dato/deltakere: __.
@@ -268,7 +268,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -291,7 +291,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1. ikke noe vi er avhengig av for å lykkes med applikasjonen, men vi tilstreber en arkitektur som muliggjør en implementasjon på fornuftig vis
 - Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
-- Mithad: __
+- Mithad: Jeg støtter A, med B som et mulig tillegg i v1. B bør i så fall få egen story med akseptkriterier før den implementeres, slik at kjerneflyten ikke venter på den.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Johannes’ forslag om alternativ B
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -314,7 +314,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen at innleie av personell kan vurderes når ingen av de vurderte ansatte er gyldige
 - Kim: Jeg støtter denne anbefalingen og Johannes’ tillegg om at innleie av personell kan vurderes.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og tillegget om innleie. Det bør være en tekst, ikke en knapp, siden appen ikke har noen innleiefunksjon.
 - Ragnhild: Jeg støtter anbefalingen og tillegget om innleie av personell.
 
 **Gruppens beslutning:** Ikke behandlet. Valg/justert tekst: __. Begrunnelse: __. Dato/deltakere: __.
@@ -339,7 +339,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1.
 - Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
-- Mithad: __
+- Mithad: Jeg støtter A, med B som et mulig tillegg i v1 med egen story, på samme måte som for P-10.
 - Ragnhild: Jeg støtter denne anbefalingen og forslaget om alternativ B som stretch-goal til v1.
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -362,7 +362,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 
 - Johannes: Jeg støtter denne anbefalingen.
 - Kim: Jeg støtter denne anbefalingen og forslaget om en oppgavebasert forståelsestest når kandidatvisningen fungerer.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og forståelsestesten. Vaktoversikten fra story 1.5 er allerede kontrollert på 360 px uten vannrett siderulling, så mobil er ikke helt uprøvd.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg, ansvarlig og behandlingstidspunkt: __. Eventuell forståelsestest: __. Begrunnelse: __. Dato/deltakere: __.
@@ -387,7 +387,7 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 
 - Johannes: KI i produktet er ikke et formelt krav i emnet, men de aller fleste av applikasjonene er planlagt med en implementasjon av KI i en eller annen form. Sannsynligvis fordi det er "inn i tiden". Dette ble uttalt i forelesning av faglærer. Dette punktet kan lukkes
 - Kim: Jeg slutter meg til Johannes’ kommentar.
-- Mithad: __
+- Mithad: Jeg slutter meg til Johannes' kommentar.
 - Ragnhild: Jeg slutter meg til Johannes’ kommentar
 
 **Ansvarlig:** Johannes. **Svar/kilde/dato:** KI i produktet er ikke et formelt krav i emnet; muntlig uttalelse fra faglærer i forelesning, gjengitt av Johannes 2026-11-08. **Status etter møtet:** Lukket av Johannes 2026-11-08 før møtet.
@@ -407,7 +407,7 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 
 - Johannes: Product Brief og PRD er levende dokumenter. Ja, det var en "innlevering" av Product Brief, men status på dokumentet ved innleveringstidspunkt er ikke bindende for produktet som leveres til slutt. Vi forstår at i det virkelige liv er dette kontrakter som er bindende, men dette er et læringscenario. Dette punktet kan lukkes
 - Kim: Jeg slutter meg til Johannes’ kommentar.
-- Mithad: __
+- Mithad: Jeg er enig i at proposalen ikke binder produktet. Men sensor leser den godkjente proposalen og kontrollerer «at det som er utelatt eller endret fra proposal, er beskrevet og begrunnet» (sensorveiledning-del-1.md, linje 59 og 141). Vi bør derfor finne den innleverte versjonen og skrive en kort liste over viktige avvik med begrunnelse før innlevering. Punktet bør ikke lukkes før det er gjort.
 - Ragnhild: Jeg slutter meg til Johannes’ kommentar.
 
 **Ansvarlig:** __. **Dokument/kilde/dato og resultat:** __.
