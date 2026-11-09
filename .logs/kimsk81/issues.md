@@ -1,6 +1,6 @@
 # Åpne punkter
 
-- [ ] 2026-11-09 [Story 1.6 – mergehistorikk](985-2026-11-09-18-33-00-story-1-6-vaktdetaljer.md) — Bekreft på GitHub om PR #11 hadde menneskelig gjennomgang og om CI var kontrollert før merge; lokal git-historikk gir ikke dette beviset.
+- [x] 2026-11-09 [Story 1.6 – mergehistorikk](985-2026-11-09-18-33-00-story-1-6-vaktdetaljer.md) — Bekreft på GitHub om PR #11 hadde menneskelig gjennomgang og om CI var kontrollert før merge; lokal git-historikk gir ikke dette beviset. (løst 2026-11-09: brukeren opplyste at han selv godkjente PR-en og at CI bestod)
 
 - [ ] 2026-11-08 [Gjennomgang av PR #10](988-2026-11-08-18-44-03-gjennomgang-pr-10.md) — Kontroller tomtilstanden og feil-/prøv-igjen-tilstanden i Vaktvalg i nettleser. Også dokumentert i `deferred-work.md` og Mithads `issues.md`.
 - [ ] 2026-11-08 [Gjennomgang av PR #10](988-2026-11-08-18-44-03-gjennomgang-pr-10.md) — Oppdater `AGENTS.md` med Story 1.5 og frontendtestkommandoen gjennom AV-08-prosessen. Også dokumentert i `deferred-work.md`.
