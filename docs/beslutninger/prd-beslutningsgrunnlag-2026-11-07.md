@@ -1,6 +1,6 @@
 # Turnushjelperen – beslutningsgrunnlag for ferdigstilling av PRD
 
-**Status: Forslag til gruppens behandling. Ingen nye gruppevedtak er registrert.**
+**Status: P-01–P-13 har vedtatte hovedvalg basert på skriftlige svar fra Johannes, Kim, Mithad og Ragnhild, bekreftet som gruppevedtak av Kim 2026-11-09. Enkelte tillegg og gjennomføringsdetaljer står åpne; se hvert punkt og §7. E-01 er lukket, E-02 står åpent.**
 
 Utarbeidet 2026-11-07 etter kontroll av hele arbeidstreets PRD, §§0–9 og FR-1–FR-14. Kontrollen gjelder krav og dokumentsamsvar, ikke implementert funksjonalitet, testresultater eller juridisk etterlevelse. PRD-endringene fra tidligere samme dag er med i kontrollgrunnlaget. Lokal HEAD ved kontrollstart: `a6285ca`.
 
@@ -57,7 +57,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Mithad: Jeg støtter anbefalingen. A stemmer med rangeringsfasiten for #4127 i story 1.2, der vaktkostnaden er regnet med overtid (Ingrid 3 850 kr).
 - Ragnhild: Jeg støtter anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Sammenlign merkostnaden ved tildeling, summert over berørte uker, uten fratrekk for den opprinnelig ansattes lønn. Dette måler kostnaden ved selve valget og tar med overtid; Mithad viser til fasiten for #4127. Grunnlag: Enstemmige skriftlige svar fra Johannes, Kim, Mithad og Ragnhild, bekreftet av Kim på vegne av gruppen.
 
 ### P-02 – Beregningsuke og timer over ukeskiftet
 
@@ -84,7 +84,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Fordel faktisk arbeidstid fra både eksisterende og ny vakt på kalenderuker i Europe/Oslo; bruk 36-timersgrensen i hver berørt uke. FR-8 viser fortsatt eksisterende timer i startuken. Dette gir entydig behandling av ukeskifte og sommertid. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen.
 
 ### P-03 – Kostnadsvisning ved blandet ordinær sats og overtid
 
@@ -109,7 +109,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Vis samlet vaktkostnad med to desimaler, «Ordinær» eller «Inkluderer overtid» og fordeling på timer og satser i detaljer. Beregn rangeringen uavrundet. En enkelt timesats ville villede ved blandet sats. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen.
 
 ### P-04 – Eksakt grense for høy timebelastning (K-02)
 
@@ -130,7 +130,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Mithad: Jeg støtter A, men merk: demodataene fra story 1.2 forutsatte at 32 t gir høy belastning (Ingrid Dahl, 32 t = 88,9 %). Med A må Ingrid få minst 32,4 t i testdataene, eller så velger vi B.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09: Indikatoren bytter ved minst 32,4 timer før visningsavrunding, nøyaktig 90 % av 36 timer. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen følge av vedtaket:** Mithad påpeker at Ingrid i dagens testdata har 32 timer og dermed ikke lenger får indikatoren «høy». Gruppen må velge om den berørte testforventningen eller seeddataene skal endres, og kontrollere følgene for øvrig fasit. Ingen av disse to rettingene er vedtatt ennå.
 
 ### P-05 – Registrert preferanse som ikke kan tolkes (OP-03)
 
@@ -167,7 +167,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Mithad: Jeg støtter anbefalingen for begge delvalg. 50 er også den nøytrale preferanseverdien i regneeksempelet for #4127 i story 1.2.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Delvalg 1: __. Delvalg 2: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A i begge delvalg 2026-11-09. Delvalg 1: Bruk midlertidig 50 poeng med egen status for ventende eller feilet tolkning; behold råteksten og skill dette fra manglende tekst og reell nøytral tolkning. Delvalg 2: Gjør avgrensede automatiske nye forsøk ved forbigående feil og la brukeren be om nytt forsøk etter endelig feil; vellykket tolkning oppdaterer rangeringen før bekreftelse. KI-feil skal være synlig uten å gjøre kandidaten ugyldig. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen.
 
 ### P-06 – Faktakontroll av KI-forklaringer
 
@@ -192,7 +192,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Mithad: Jeg støtter anbefalingen og presiseringen om tydelig merking når reserveteksten vises. A følger regelen vår om at KI aldri beregner tall, bare formidler dem.
 - Ragnhild: Jeg støtter denne anbefalingen og presiseringen om tydelig merking når reservetekst vises.
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A med Johannes' tillegg 2026-11-09. Bruk strukturerte KI-begrunnelser, valider påstandene mot beregnede fakta og bruk reservetekst hvis valideringen feiler. Merk tydelig for turnusansvarlig at reservetekst vises. KI skal formidle, ikke beregne eller endre, beslutningsgrunnlaget. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen.
 
 ### P-07 – Hva skal forklaringen kunne sammenligne? (K-04)
 
@@ -217,7 +217,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Mithad: Jeg støtter anbefalingen og er enig med Kim og Ragnhild i å vente med valgfri sammenligning til etter v1. For #4127 betyr A at Jonas sammenlignes med Mette, som er lik ham bortsett fra ulempe (AV-12). Det gir en ryddig demo av forklaringen.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Kim. Johannes sitt forslag om valgfri sammenligning kan være nyttig, men jeg synes vi bør avvente en eventuell beslutning om dette til vi ser hvordan løsningen fungerer i praksis. Da kan vi heller vurdere om det er behov for funksjonaliteten i en senere versjon.
 
-**Gruppens beslutning:** Ikke behandlet. Valg/referanseregel: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A med anbefalt referanseregel 2026-11-09: Nr. 1 sammenlignes med nr. 2, øvrige med nr. 1, og én gyldig kandidat får ingen referanse. Dette gir en kontrollerbar sammenligning; Mithad peker på #4127 som demonstrasjon. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpent tillegg:** Johannes foreslår valgfri sammenligning av to merkede kandidater. Kim, Mithad og Ragnhild vil vurdere dette etter v1 eller etter at kjerneflyten virker. Gruppen har ikke vedtatt om eller når tillegget skal utvikles.
 
 ### P-08 – Ufullstendig eller ugyldig datagrunnlag
 
@@ -244,7 +244,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Mithad: Jeg støtter A og et synlig, avgrenset unntak for demonstrasjonen. #4127 og #4189 har full datadekning, og det er låst med test i story 1.2, så demoscenarioene påvirkes ikke.
 - Ragnhild: Jeg støtter anbefaling A og er enig med Johannes og Kim i at vi bør kunne demonstrere løsningen med et tydelig avgrenset datagrunnlag. Jeg synes samtidig det er viktig å skille mellom manglende historikk og dokumentert fravær av vakter. Vi må unngå at manglende opplysninger tolkes som null timer eller null kostnad, da dette kan gi en misvisende rangering.
 
-**Gruppens beslutning:** Ikke behandlet. Valg og håndtering av kjent KS-04-begrensning: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A med et synlig, avgrenset demounntak ved kjent periodekant 2026-11-09. Stopp vurdering ved ukjent nødvendig datadekning, ugyldige tider, manglende vaktkrav eller kostnadsgrunnlag; behold særregelen for manglende kandidatkompetanse. Dokumentert fri gir null timer, mens ukjent historikk ikke gjør det. #4127 og #4189 har kontrollert dekning. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen gjennomføringsregel:** Gruppen må angi eksakt hvilke vakter eller datoer unntaket omfatter, hva brukeren får se, og om godkjenning tillates der før denne delen implementeres. KS-04s godkjente begrensning er ikke opphevet.
 
 ### P-09 – Gamle svar og endrede data før godkjenning
 
@@ -271,7 +271,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Forkast forsinkede svar fra en tidligere valgt vakt eller kandidat; ved endret beslutningsgrunnlag vises nye beregninger og brukeren må bekrefte på nytt før lagring. Godkjenningen skal gjelde grunnlaget som faktisk ble vist. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen.
 
 ### P-10 – Skal preferanser kunne redigeres i appen? (ÅB-4)
 
@@ -294,7 +294,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Mithad: Jeg støtter A, med B som et mulig tillegg i v1. B bør i så fall få egen story med akseptkriterier før den implementeres, slik at kjerneflyten ikke venter på den.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Johannes’ forslag om alternativ B
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Bruk faste preferanser i testdata i kjerneversjonen. B, redigering i appen, er et mulig tillegg i v1, ikke en forutsetning for kjerneflyten; en eventuell implementasjon krever egen story og akseptkriterier. Johannes ønsker at arkitekturen legger til rette for dette. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen prioritering:** Gruppen har ikke bestemt om tillegget skal gjennomføres i v1.
 
 ### P-11 – Når ingen kandidater er gyldige
 
@@ -317,7 +317,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Mithad: Jeg støtter anbefalingen og tillegget om innleie. Det bør være en tekst, ikke en knapp, siden appen ikke har noen innleiefunksjon.
 - Ragnhild: Jeg støtter anbefalingen og tillegget om innleie av personell.
 
-**Gruppens beslutning:** Ikke behandlet. Valg/justert tekst: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A med Johannes' tillegg 2026-11-09. Bruk anbefalt tomtilstand og utelukkelsesoppsummering. Legg til teksten «Innleie av personell kan vurderes», uten knapp eller påstand om at appen tilbyr innleie. Dette gir brukeren et mulig neste steg uten at de fire reglene svekkes. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen.
 
 ## 4. Avgrensninger som bør gjøres uttrykkelige
 
@@ -342,7 +342,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Mithad: Jeg støtter A, med B som et mulig tillegg i v1 med egen story, på samme måte som for P-10.
 - Ragnhild: Jeg støtter denne anbefalingen og forslaget om alternativ B som stretch-goal til v1.
 
-**Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Godkjenningen lagres varig, men vist forklaring lagres ikke historisk i kjerneversjonen. B, lagring av forklaring og grunnlag, er et mulig tillegg i v1 som krever egen story hvis det prioriteres. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen prioritering:** Gruppen har ikke bestemt om tillegget skal gjennomføres i v1.
 
 ### P-13 – Hvilket UX-omfang skal være bindende nå?
 
@@ -365,7 +365,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Mithad: Jeg støtter anbefalingen og forståelsestesten. Vaktoversikten fra story 1.5 er allerede kontrollert på 360 px uten vannrett siderulling, så mobil er ikke helt uprøvd.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Ikke behandlet. Valg, ansvarlig og behandlingstidspunkt: __. Eventuell forståelsestest: __. Begrunnelse: __. Dato/deltakere: __.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Behold desktop og eksisterende tilgjengelighetskrav nå; avklar mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles, i tråd med OP-02. Mithad påpeker at vaktoversikten allerede er kontrollert ved 360 px; kandidatflaten er ikke dermed kontrollert. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpent tillegg:** Kim og Mithad støtter uttrykkelig en oppgavebasert forståelsestest; Johannes og Ragnhild har ikke kommentert den særskilt. Gruppen må avgjøre om den skal gjennomføres, og i så fall ansvarlig, deltakere og akseptmål. Ansvarlig for mobil-/nettbrettavklaringen er heller ikke bestemt.
 
 ## 5. Spørsmål som krever dokumentasjon
 
@@ -392,6 +392,8 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 
 **Ansvarlig:** Johannes. **Svar/kilde/dato:** KI i produktet er ikke et formelt krav i emnet; muntlig uttalelse fra faglærer i forelesning, gjengitt av Johannes 2026-11-08. **Status etter møtet:** Lukket av Johannes 2026-11-08 før møtet.
 
+**Oppsummering av gruppesvar:** Alle fire slutter seg til Johannes' gjengivelse. Punktet er lukket som dokumentert muntlig avklaring, med ukjent dato for selve forelesningen. Dette endrer ikke gruppens valgte KI-funksjonalitet i produktet.
+
 ### E-02 – Samsvar med godkjent proposal
 
 **Status:** Må dokumenteres før endelig erklæring om samsvar med emneleveransen. Sensorveiledning §3 og vurderingsmatrisen krever kontroll mot det gruppen faktisk har lovet. Godkjent proposal er ikke identifisert som et selvstendig, godkjent dokument i det kontrollerte grunnlaget.
@@ -411,6 +413,8 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 - Ragnhild: Jeg slutter meg til Johannes’ kommentar.
 
 **Ansvarlig:** __. **Dokument/kilde/dato og resultat:** __.
+
+**Oppsummering av gruppesvar og foreslått håndtering:** Johannes, Kim og Ragnhild mener at innlevert product brief ikke binder sluttproduktet og ønsker å lukke punktet. Mithad er enig i at løsningen kan endres, men viser til sensorveiledningens uttrykkelige krav om å beskrive og begrunne det som er utelatt eller endret fra proposal. Dette er en reell uenighet om dokumentasjonsstatus, ikke nødvendigvis om produktscope. Foreslått løsning: Finn den godkjente proposalen og noter vesentlige avvik med korte begrunnelser før innlevering; hvis den ikke kan finnes, spør faglærer hvilket grunnlag sensor vil bruke. Ikke merk E-02 som kontrollert før sammenligningen finnes. Ansvarlig, kilde og tidspunkt for kontroll: __.
 
 ## 6. Samordning og kontroller etter møtet
 
@@ -446,10 +450,12 @@ Dette er dokumentarbeid eller kvalitetssikring, ikke nye produktvalg. Ikke merk 
 
 Kontrollen gir et samlet grunnlag for de kjente avklaringene nå. Den gir ingen garanti mot nye funn under implementasjon. Følgende er foreslått ferdigstillingskriterium for dokumentet:
 
-1. P-01–P-11 har eksplisitte svar, inkludert delvalgene og konsekvensen for kjent datadekning. Utsatte valg har ansvarlig, tidspunkt og en tydelig avgrensning som gjør øvrige krav brukbare.
-2. P-12/P-13 har valgt v1-avgrensning eller dokumentert utsettelse.
+**Status etter svarene 2026-11-09:** Hovedvalgene P-01–P-13 er vedtatt av gruppen, inkludert begge delvalg i P-05 og felles tillegg i P-06/P-11. Før berørt implementasjon må P-08s konkrete unntak ved siste periodekant defineres; uten den grensen kan ikke unntaket implementeres entydig. Bestem hvordan P-04 påvirker Ingrid-fasiten før indikator og testdata låses. P-07s valgfrie sammenligning og P-10B/P-12B er bare mulige tillegg og stopper ikke kjerneflyten. P-13 trenger ansvarlig for senere mobil-/nettbrettavklaring; beslutning om forståelsestest mangler. E-02 må dokumenteres før gruppen hevder samsvar med godkjent proposal, men hindrer ikke uavhengig implementasjon av allerede avklarte deler. Vedtakene må fortsatt føres i beslutningsreferatet og samordnes med PRD, stories og arkitektur før dokumentene kan kalles ferdige.
+
+1. P-01–P-11 har eksplisitte svar, inkludert delvalgene. Den konkrete håndteringen av kjent datadekning i P-08 og testdatafølgen i P-04 gjenstår. Utsatte tillegg har tydelig avgrensning; ansvar og tidspunkt fastsettes når de eventuelt prioriteres.
+2. P-12/P-13 har valgt v1-avgrensning. P-13s senere mobil-/nettbrettavklaring trenger ansvarlig, og forståelsestesten er fortsatt et forslag.
 3. E-01 er enten dokumentert besvart eller synlig åpent med ansvarlig; det skal ikke fremstilles som løst ved fravær av svar. E-02 er kontrollert før gruppen hevder samsvar med godkjent proposal.
-4. Faktiske gruppevedtak er registrert med kilde/dato i beslutningsreferatet og deretter innarbeidet i PRD, relevante stories og arkitektur. Individuelle bekreftelser er merket som slike.
+4. Faktiske gruppevedtak er registrert med kilde/dato i beslutningsreferatet og deretter innarbeidet i PRD, relevante stories og arkitektur. Beslutningsgrunnlaget dokumenterer gruppens skriftlige svar og Kims bekreftelse 2026-11-09; samordningen med de øvrige dokumentene er ikke utført her.
 5. Samordningslisten er gjennomgått. Hvert funksjonskrav har et entydig forventet resultat; uavklarte tekniske detaljer er plassert i riktig story.
 6. Vurderingsmatrise og prosesslogger viser hva som er dokumentert. Implementasjon, kjøring av tester og menneskelig godkjenning føres først når de faktisk er gjort.
 
