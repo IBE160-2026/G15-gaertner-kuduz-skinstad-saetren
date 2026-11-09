@@ -1,6 +1,6 @@
 # Turnushjelperen – beslutningsgrunnlag for ferdigstilling av PRD
 
-**Status: P-01–P-13 har vedtatte hovedvalg basert på skriftlige svar fra Johannes, Kim, Mithad og Ragnhild, bekreftet som gruppevedtak av Kim 2026-11-09. Enkelte tillegg og gjennomføringsdetaljer står åpne; se hvert punkt og §7. E-01 er lukket, E-02 står åpent.**
+**Status: P-01–P-13 har vedtatte hovedvalg basert på skriftlige svar fra Johannes, Kim, Mithad og Ragnhild, bekreftet som gruppevedtak av Kim 2026-11-09. Følgevalgene i P-04/P-08/P-10/P-12/P-13 og dokumentasjonspunkt E-02 er avklart av Kim 2026-11-09 for senere innarbeiding i PRD. E-01 er lukket. Implementasjon og sluttkontroller er ikke utført gjennom dette dokumentet.**
 
 Utarbeidet 2026-11-07 etter kontroll av hele arbeidstreets PRD, §§0–9 og FR-1–FR-14. Kontrollen gjelder krav og dokumentsamsvar, ikke implementert funksjonalitet, testresultater eller juridisk etterlevelse. PRD-endringene fra tidligere samme dag er med i kontrollgrunnlaget. Lokal HEAD ved kontrollstart: `a6285ca`.
 
@@ -130,7 +130,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Mithad: Jeg støtter A, men merk: demodataene fra story 1.2 forutsatte at 32 t gir høy belastning (Ingrid Dahl, 32 t = 88,9 %). Med A må Ingrid få minst 32,4 t i testdataene, eller så velger vi B.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Vedtatt A 2026-11-09: Indikatoren bytter ved minst 32,4 timer før visningsavrunding, nøyaktig 90 % av 36 timer. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen følge av vedtaket:** Mithad påpeker at Ingrid i dagens testdata har 32 timer og dermed ikke lenger får indikatoren «høy». Gruppen må velge om den berørte testforventningen eller seeddataene skal endres, og kontrollere følgene for øvrig fasit. Ingen av disse to rettingene er vedtatt ennå.
+**Gruppens beslutning:** Vedtatt A 2026-11-09: Indikatoren bytter ved minst 32,4 timer før visningsavrunding, nøyaktig 90 % av 36 timer. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Følge av vedtaket, avklart av Kim 2026-11-09:** Behold Ingrid på 32 timer i seeddataene og rett forventningen i story 1.2 og eventuelle visnings-/indikator-tester: Hun skal ikke merkes med «høy belastning». Dette endrer ikke timegrunnlaget eller rangeringsfasiten for #4127. Kontroll av den faktiske rettingen gjenstår ved samordning; den er ikke utført i dette dokumentet.
 
 ### P-05 – Registrert preferanse som ikke kan tolkes (OP-03)
 
@@ -244,7 +244,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Mithad: Jeg støtter A og et synlig, avgrenset unntak for demonstrasjonen. #4127 og #4189 har full datadekning, og det er låst med test i story 1.2, så demoscenarioene påvirkes ikke.
 - Ragnhild: Jeg støtter anbefaling A og er enig med Johannes og Kim i at vi bør kunne demonstrere løsningen med et tydelig avgrenset datagrunnlag. Jeg synes samtidig det er viktig å skille mellom manglende historikk og dokumentert fravær av vakter. Vi må unngå at manglende opplysninger tolkes som null timer eller null kostnad, da dette kan gi en misvisende rangering.
 
-**Gruppens beslutning:** Vedtatt A med et synlig, avgrenset demounntak ved kjent periodekant 2026-11-09. Stopp vurdering ved ukjent nødvendig datadekning, ugyldige tider, manglende vaktkrav eller kostnadsgrunnlag; behold særregelen for manglende kandidatkompetanse. Dokumentert fri gir null timer, mens ukjent historikk ikke gjør det. #4127 og #4189 har kontrollert dekning. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen gjennomføringsregel:** Gruppen må angi eksakt hvilke vakter eller datoer unntaket omfatter, hva brukeren får se, og om godkjenning tillates der før denne delen implementeres. KS-04s godkjente begrensning er ikke opphevet.
+**Gruppens beslutning:** Vedtatt A med et synlig, avgrenset demounntak ved kjent periodekant 2026-11-09. Stopp vurdering ved ukjent nødvendig datadekning, ugyldige tider, manglende vaktkrav eller kostnadsgrunnlag; behold særregelen for manglende kandidatkompetanse. Dokumentert fri gir null timer, mens ukjent historikk ikke gjør det. #4127 og #4189 har kontrollert dekning. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Gjennomføringsregel, avklart av Kim 2026-11-09:** Seedturnusen dekker planlagte vakter frem til 2026-10-05 kl. 00:00 i Europe/Oslo. Behold vaktene 2026-10-04 (#4261–#4265) i demonstrasjonen, men ved behov for ny vurdering av en vakt der skal appen vise «Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.» og opplyse at datagrunnlaget slutter 05.10. Ingen rangert kandidatliste eller godkjenning tilbys på ufullstendig grunnlag. Samme stoppregel gjelder enhver annen vakt der den nødvendige historikken eller fremtidige nabovakter ikke er dokumentert. Denne avgrensningen er ikke en ny hard arbeidsregel og opphever ikke KS-04s godkjente begrensning. Test den konkret ved implementasjon.
 
 ### P-09 – Gamle svar og endrede data før godkjenning
 
@@ -294,7 +294,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Mithad: Jeg støtter A, med B som et mulig tillegg i v1. B bør i så fall få egen story med akseptkriterier før den implementeres, slik at kjerneflyten ikke venter på den.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Johannes’ forslag om alternativ B
 
-**Gruppens beslutning:** Vedtatt A 2026-11-09. Bruk faste preferanser i testdata i kjerneversjonen. B, redigering i appen, er et mulig tillegg i v1, ikke en forutsetning for kjerneflyten; en eventuell implementasjon krever egen story og akseptkriterier. Johannes ønsker at arkitekturen legger til rette for dette. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen prioritering:** Gruppen har ikke bestemt om tillegget skal gjennomføres i v1.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Bruk faste preferanser i testdata i kjerneversjonen. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Videre prioritering, avklart av Kim 2026-11-09:** Planlegg B som egen story i v1 etter at kjerneflyten virker. Turnusansvarlig skal da kunne redigere preferansetekst i appen, slik at ny tekst tolkes av KI og kan testes av brukeren og sensor. Storyen må ha akseptkriterier for lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. Kjerneflyten venter ikke på B; hvis tiden ikke rekker, dokumenteres B som utsatt. C, manuell overstyring av kategori, er ikke valgt.
 
 **Johannes' oppfølging 2026-11-09:** Han ønsker nå at turnusansvarlig skal kunne redigere preferanser i appen, blant annet for å gi brukeren og sensor flere muligheter til å prøve KI-tolkningen med egen tekst. Dette er sterkere enn hans tidligere støtte til B som mulig tillegg. Det endrer ikke alene gruppevedtaket om kjerneversjonen; prioritering av B må fortsatt avklares av gruppen.
 
@@ -344,7 +344,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Mithad: Jeg støtter A, med B som et mulig tillegg i v1 med egen story, på samme måte som for P-10.
 - Ragnhild: Jeg støtter denne anbefalingen og forslaget om alternativ B som stretch-goal til v1.
 
-**Gruppens beslutning:** Vedtatt A 2026-11-09. Godkjenningen lagres varig, men vist forklaring lagres ikke historisk i kjerneversjonen. B, lagring av forklaring og grunnlag, er et mulig tillegg i v1 som krever egen story hvis det prioriteres. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen prioritering:** Gruppen har ikke bestemt om tillegget skal gjennomføres i v1.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Godkjenningen lagres varig, men vist forklaring lagres ikke historisk i kjerneversjonen. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Videre prioritering, avklart av Kim 2026-11-09:** Vurder B først etter at kjerneflyten virker. Lagring av nøyaktig vist forklaring er ikke et krav for v1. Hvis gruppen senere velger B, trengs egen story med krav til lagring av både forklaring og beregningsgrunnlag; ikke beskriv dette som implementert eller trivielt før det er undersøkt.
 
 **Johannes' oppfølging 2026-11-09:** Han antar at lagring av vist forklaring vil koste lite å implementere, men har ingen sterk preferanse mellom lagring og en ny forklaring senere. Kostnad og mulighet for regenerering er foreløpige vurderinger, ikke kontrollerte implementasjonsfakta eller et nytt gruppevedtak.
 
@@ -369,7 +369,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Mithad: Jeg støtter anbefalingen og forståelsestesten. Vaktoversikten fra story 1.5 er allerede kontrollert på 360 px uten vannrett siderulling, så mobil er ikke helt uprøvd.
 - Ragnhild: Jeg støtter denne anbefalingen
 
-**Gruppens beslutning:** Vedtatt A 2026-11-09. Behold desktop og eksisterende tilgjengelighetskrav nå; avklar mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles, i tråd med OP-02. Mithad påpeker at vaktoversikten allerede er kontrollert ved 360 px; kandidatflaten er ikke dermed kontrollert. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpent tillegg:** Kim og Mithad støtter uttrykkelig en oppgavebasert forståelsestest; Johannes og Ragnhild har ikke kommentert den særskilt. Gruppen må avgjøre om den skal gjennomføres, og i så fall ansvarlig, deltakere og akseptmål. Ansvarlig for mobil-/nettbrettavklaringen er heller ikke bestemt.
+**Gruppens beslutning:** Vedtatt A 2026-11-09. Behold desktop og eksisterende tilgjengelighetskrav nå; avklar mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles, i tråd med OP-02. Mithad påpeker at vaktoversikten allerede er kontrollert ved 360 px; kandidatflaten er ikke dermed kontrollert. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Oppfølging, avklart av Kim 2026-11-09:** Gruppemedlemmene har felles ansvar for mobil-/nettbrettavklaringen og gjennomfører en liten oppgavebasert forståelsestest når kandidatvisningen virker. Testpersonen skal uten hint kunne forklare hvorfor nr. 1 rangeres høyest, finne en annen gyldig kandidat og skille datafeil fra null gyldige. Gruppen dokumenterer deltakere, resultat og eventuelle rettinger før story 4.6 ferdigstilles. Testen er besluttet, ikke gjennomført.
 
 ## 5. Spørsmål som krever dokumentasjon
 
@@ -400,14 +400,22 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 
 ### E-02 – Samsvar med godkjent proposal
 
-**Status:** Må dokumenteres før endelig erklæring om samsvar med emneleveransen. Sensorveiledning §3 og vurderingsmatrisen krever kontroll mot det gruppen faktisk har lovet. Godkjent proposal er ikke identifisert som et selvstendig, godkjent dokument i det kontrollerte grunnlaget.
+**Status:** Avklart som PRD-beslutningspunkt 2026-11-09 av Kim på vegne av gruppen. Kim bekreftet at `ee6d798` er versjonen som fikk tilbakemelding og var den godkjente proposalen. Avvikslista nedenfor sammenligner den med dagens brief og plan. Dette er dokumentert planavvik, ikke en kontroll av at sluttproduktet er ferdig implementert.
 
-**Alternativer for oppfølging:**
+**Avviksliste – `ee6d798` mot dagens brief/plan:**
 
-- A – anbefalt: Finn levert/godkjent versjon og dokumenter dato/kilde. Sammenlign omfanget med PRD og før eventuelle avvik med begrunnelse.
-- B: Hvis versjonen ikke kan gjenfinnes, be faglærer bekrefte hvilket grunnlag som ble godkjent. Behold kontrollpunktet åpent til det finnes dokumentasjon.
+| Tema | Endring fra briefen som fikk tilbakemelding | Begrunnelse og spor i prosjektet |
+| --- | --- | --- |
+| Harde regler og kompetanse | Fra eksempler på kompetanse, kollisjon og arbeidstid/hvile til fire navngitte kontroller: kompetanse-minstekrav, kollisjon, 11 timers daglig hvile og 35 timers ukentlig fri. Kompetanse gir ikke rangeringspoeng, og kandidater under minstekravet utelukkes. | Avklarte og avgrenset prototypens regelsett; kompetanse som absolutt krav erstattet tidligere kompetansenærhet som myk faktor. Se `a67760d`, PRD §4.2 og AV-04. |
+| Rangeringsmodell | Fra et «begrenset sett kriterier» uten vekter til kostnad 40 %, arbeidsbelastning 35 % (timer 20 %, ulempe 15 %) og preferanser 25 %. | Gjør rangeringen bestemt og etterprøvbar; ulempebelastning ble lagt til etter gruppevalg. Se `a67760d`, `b7f793d`, PRD §§4.3–4.4 og AV-11. |
+| Kandidatvisning | Fra en kort liste over aktuelle kandidater til inntil fem høyest rangerte gyldige kandidater, med alle når færre enn fem er gyldige og tydelig melding når ingen er gyldige. | Konkretiserer visning og tomtilstand. Se `6db2d0f`, PRD FR-9 og relevant story/UX. |
+| Preferanser | Fra to generelle omtaler av KI-tolkning til fem faste poengnivåer, 15 definerte fasittekster og egne regler for manglende preferanse og nøytral tekst. | Gjør tolkning og rangering målbar; tekst uten holdning til ekstravakter ble avklart som nøytral. Se `6db2d0f`, `49cb2d4` og PRD §4.5. |
+| Demo | Demo uten API-nøkkel med forhåndstolkede preferanser og forhåndsgenererte forklaringer/maltekst ble uttrykkelig lagt til. | Sensor skal kunne prøve kjerneflyten uten betalte tjenester eller gruppens nøkkel. Se `c307f5e`, PRD FR-11 og arkitektur AD-6. |
+| Avgrensning av arbeidstidsregler | Maks arbeidstid per døgn/uke og overtidsgrenser ble uttrykkelig lagt utenfor v1 som harde regler. | Presiserer at prototypens fire kontroller ikke er full juridisk eller tariffmessig kontroll. Se dagens brief, PRD §4.2 og AV-04. |
 
-Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenligningen avdekker konflikt, må gruppen avklare den før den berørte delen av PRD ferdigstilles. Ingen nye avvik er påstått uten denne sammenligningen.
+Kjerneformålet er beholdt: støtte turnusansvarlig ved ombemanning av én vakt i en fiktiv turnus, filtrere ugyldige kandidater, forklare avveininger og la mennesket ta sluttbeslutningen. Endringene er i hovedsak presisering og avgrensning av modellen, samt eksplisitt demo- og preferanseomfang.
+
+**Kontrollens avgrensning:** Git-diffen fra `ee6d798` til dagens `product-brief.md` viser 26 innsettinger og 7 slettinger. Commitmeldingene gir begrunnelser for endringene, men denne dokumentasjonen kontrollerer ikke hver funksjon mot ferdig implementert app. Før endelig samsvar med levert produkt erklæres, sammenholdes avvikslista med faktisk funksjonalitet, relevante tester og eventuelle utelatelser. Utelatelser føres med begrunnelse; manglende implementasjon skal ikke fremstilles som levert.
 
 **Synspunkter før møtet:**
 
@@ -416,11 +424,11 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 - Mithad: Jeg er enig i at proposalen ikke binder produktet. Men sensor leser den godkjente proposalen og kontrollerer «at det som er utelatt eller endret fra proposal, er beskrevet og begrunnet» (sensorveiledning-del-1.md, linje 59 og 141). Vi bør derfor finne den innleverte versjonen og skrive en kort liste over viktige avvik med begrunnelse før innlevering. Punktet bør ikke lukkes før det er gjort.
 - Ragnhild: Jeg slutter meg til Johannes’ kommentar.
 
-**Ansvarlig:** __. **Dokument/kilde/dato og resultat:** __.
+**Ansvarlig:** Kim Skinstad. **Dokument/kilde/dato og resultat:** Git-historikken for `product-brief.md`, første commit `ee6d798` (2026-09-16), sammenlignet med dagens versjon 2026-11-09; Kim bekreftet 2026-11-09 at `ee6d798` var den godkjente proposalen. Avvikene fra gjeldende plan er ført ovenfor. Sammenligning med faktisk levert funksjonalitet inngår i sluttkontrollen, ikke som et åpent PRD-produktvalg.
 
-**Oppsummering av gruppesvar og foreslått håndtering:** Johannes, Kim og Ragnhild mener at innlevert product brief ikke binder sluttproduktet og ønsker å lukke punktet. Mithad er enig i at løsningen kan endres, men viser til sensorveiledningens uttrykkelige krav om å beskrive og begrunne det som er utelatt eller endret fra proposal. Dette er en reell uenighet om dokumentasjonsstatus, ikke nødvendigvis om produktscope. Foreslått løsning: Finn den godkjente proposalen og noter vesentlige avvik med korte begrunnelser før innlevering; hvis den ikke kan finnes, spør faglærer hvilket grunnlag sensor vil bruke. Ikke merk E-02 som kontrollert før sammenligningen finnes. Ansvarlig, kilde og tidspunkt for kontroll: __.
+**Oppsummering av gruppesvar og avklaring:** Johannes, Kim og Ragnhild mente at proposalen ikke binder sluttproduktets omfang. Mithad var enig i at omfanget kan endres, men viste til sensorveiledningens krav om å beskrive og begrunne endringer. Den godkjente versjonen er nå identifisert, og avvikslista over dokumenterer endringene fra plan. E-02 krever ingen ytterligere gruppebeslutning før PRD-arbeidet; ved innlevering kontrolleres avvikslista mot den faktiske appen og testene.
 
-**Johannes' oppfølging 2026-11-09:** Han mener at eksisterende logger allerede begrunner forslag og endringer, og ønsker derfor fortsatt å se bort fra en egen E-02-kontroll. Det dokumenterer ikke at den innleverte proposalen er funnet og sammenlignet med leveransen. Uenigheten om lukking består; sensorveiledningens kontrollpunkt er fortsatt synlig.
+**Johannes' oppfølging 2026-11-09:** Han mener at eksisterende logger allerede begrunner forslag og endringer. Avvikslista samler lenkene til disse begrunnelsene på ett sted. Hans innspill og Mithads ønske om etterprøvbarhet er dermed tatt med uten å gjøre proposalen til et uforanderlig produktscope.
 
 ## 6. Samordning og kontroller etter møtet
 
@@ -431,12 +439,12 @@ Dette er dokumentarbeid eller kvalitetssikring, ikke nye produktvalg. Ikke merk 
 | AV-04 | Epics ÅB-5/6 og stories 2.3/2.4 sier fortsatt åpen/midlertidig | Endre status og henvisning til det allerede vedtatte prototypetolkningsvalget; behold grensekravene |
 | AV-06 | Story 2.1 sier utelukkelse av opprinnelig ansatt ikke er uttrykt i PRD | Fjern foreldet antakelsesstatus; PRD har nå kravet |
 | AV-12 | FR-9 sier «nesten like», mens vedtaket krever identiske øvrige faktorer for isolert ulempetest | Viderefør vedtaket uttrykkelig i PRD og relevant teststory; ikke endre modellen |
-| K-02 / ÅB-3 | «Løst» gjelder hva 90 % er prosent av, ikke eksakt grense | Skill den vedtatte 36-timersnormaluken fra valgt grense etter P-04 |
+| K-02 / ÅB-3 | «Løst» i epics gjelder hva 90 % er prosent av; eksakt grense er nå vedtatt i P-04 | Før inn 32,4 timer i PRD/story 4.2 og rett forventningen for Ingrid uten å endre seeddata |
 | ÅB-2 / arkitektur Deferred | Satser/terskel omtales som uavklart i arkitekturen selv om 36/150 er avklart | Rett foreldet status; kostnadsverdi og ukefordeling følges separat i P-01/P-02 |
-| Story 4.1 / kostnadsuke | Innledningen sier startuken også brukes for kostnad, mens PRD §8 fortsatt holder dette åpent | Avstem kostnadsdelen etter P-02. Behold allerede fastsatt startuke for FR-8 |
+| Story 4.1 / kostnadsuke | Innledningen sier startuken også brukes for kostnad, mens PRD §8 fortsatt holder dette åpent | Avstem kostnadsdelen mot P-01/P-02: merkostnad fordeles på berørte kalenderuker. Behold startuken for FR-8 |
 | K-04 | AD-1s minimumsfelt og story 4.4/4.7/5.3 har forskjellig detaljnivå | Samordne kontrakter etter P-06/P-07, uten å hevde at de er implementert |
 | OP-03 | Story 5.1 og AD-6 bruker «Ingen registrert» ved tolkningsfeil/ukjent tekst | Samordne feilstatus, poeng, retry og demovei etter P-05 |
-| K-06 / PRD-status | PRD har status final, men eksplisitte åpne valg; §8 har også historiske «løst»-overskrifter som kan misforstås | Merk dokumentet som kravgrunnlag med åpne deler frem til behandling; behold historikk og datoer. Samordne §9 med faktiske antakelser |
+| K-06 / PRD-status | PRD har status final, men de tidligere åpne valgene er først avklart i dette beslutningsgrunnlaget; §8 har også historiske «løst»-overskrifter som kan misforstås | Innarbeid vedtakene før PRD omtales som samordnet; behold historikk og datoer. Samordne §9 med faktiske antakelser |
 | AV-11 / tak 300 | PRD sier «foreløpig» om et vedtatt v1-tak | Presiser at 300 er vedtatt verdi; konfigurerbar kodeparameter betyr ikke at produktvalget er åpent |
 | Ordlyd og lovlighetsløfter | Brief og visjons-/reiseformuleringer kan leses sterkere enn prototypens fire kontroller | Bruk «oppfyller de fire kontrollerte reglene i prototypen», og behold avgrensningen fra AV-04; ingen ny juridisk modell |
 | KS-03 / AV-02 | Kontroll av tidskategorier for fire vakttyper står fortsatt som ikke utført | Gjennomfør og dokumenter før story 4.7 implementeres/tilhørende fasit ferdigstilles. «Åtte timer» må ikke overstyre faktisk tid ved sommertid |
@@ -456,16 +464,16 @@ Dette er dokumentarbeid eller kvalitetssikring, ikke nye produktvalg. Ikke merk 
 
 Kontrollen gir et samlet grunnlag for de kjente avklaringene nå. Den gir ingen garanti mot nye funn under implementasjon. Følgende er foreslått ferdigstillingskriterium for dokumentet:
 
-**Status etter svarene 2026-11-09:** Hovedvalgene P-01–P-13 er vedtatt av gruppen, inkludert begge delvalg i P-05 og felles tillegg i P-06/P-11. Før berørt implementasjon må P-08s konkrete unntak ved siste periodekant defineres; uten den grensen kan ikke unntaket implementeres entydig. Bestem hvordan P-04 påvirker Ingrid-fasiten før indikator og testdata låses. P-07s valgfrie sammenligning er et strekkmål etter fungerende v1. P-10B er ønsket sterkere av Johannes i hans oppfølging, men prioritering er ikke avklart i gruppen; P-12B er fortsatt mulig tillegg. Disse stopper ikke kjerneflyten. P-13 trenger ansvarlig for senere mobil-/nettbrettavklaring; beslutning om forståelsestest mangler. E-02 må dokumenteres før gruppen hevder samsvar med godkjent proposal, men hindrer ikke uavhengig implementasjon av allerede avklarte deler. Vedtakene må fortsatt føres i beslutningsreferatet og samordnes med PRD, stories og arkitektur før dokumentene kan kalles ferdige.
+**Status etter avklaringene 2026-11-09:** Hovedvalgene P-01–P-13 er vedtatt, inkludert begge delvalg i P-05 og felles tillegg i P-06/P-11. P-04 retter fasitforventningen uten å endre seeddata; P-08 viser datagrensen og stopper vurdering/godkjenning på ufullstendig grunnlag; P-07s valgfrie sammenligning er et strekkmål etter fungerende v1. P-10B planlegges som egen story etter kjerneflyten; P-12B er utsatt til kjerneflyten virker og er ikke krav i v1. Gruppemedlemmene har felles ansvar for P-13s mobil-/nettbrettavklaring og forståelsestest. E-02 er avklart mot proposalen i `ee6d798` med avviksliste over; samsvar med faktisk levert app kontrolleres ved innlevering. Vedtakene må fortsatt føres i beslutningsreferatet og samordnes med PRD, stories og arkitektur før dokumentene kan kalles ferdige.
 
-1. P-01–P-11 har eksplisitte svar, inkludert delvalgene. Den konkrete håndteringen av kjent datadekning i P-08 og testdatafølgen i P-04 gjenstår. Utsatte tillegg har tydelig avgrensning; ansvar og tidspunkt fastsettes når de eventuelt prioriteres.
-2. P-12/P-13 har valgt v1-avgrensning. P-13s senere mobil-/nettbrettavklaring trenger ansvarlig, og forståelsestesten er fortsatt et forslag.
-3. E-01 er enten dokumentert besvart eller synlig åpent med ansvarlig; det skal ikke fremstilles som løst ved fravær av svar. E-02 er kontrollert før gruppen hevder samsvar med godkjent proposal.
+1. P-01–P-11 har eksplisitte svar, inkludert delvalgene og konkret håndtering av P-04/P-08. P-07 og P-10B har valgt rekkefølge etter fungerende kjerneflyt.
+2. P-12/P-13 har valgt v1-avgrensning og ansvar. Selve forståelsestesten og mobil-/nettbrettavklaringen gjennomføres ved den avtalte milepælen, ikke ved denne dokumentbeslutningen.
+3. E-01 er dokumentert besvart. E-02 har identifisert godkjent proposal og dokumentert planavvik; sluttkontroll mot faktisk levert funksjonalitet gjenstår ved innlevering.
 4. Faktiske gruppevedtak er registrert med kilde/dato i beslutningsreferatet og deretter innarbeidet i PRD, relevante stories og arkitektur. Beslutningsgrunnlaget dokumenterer gruppens skriftlige svar og Kims bekreftelse 2026-11-09; samordningen med de øvrige dokumentene er ikke utført her.
 5. Samordningslisten er gjennomgått. Hvert funksjonskrav har et entydig forventet resultat; uavklarte tekniske detaljer er plassert i riktig story.
 6. Vurderingsmatrise og prosesslogger viser hva som er dokumentert. Implementasjon, kjøring av tester og menneskelig godkjenning føres først når de faktisk er gjort.
 
-Gruppen kan godkjenne PRD som produktkravgrunnlag med en synlig ekstern avklaring i E-01. Den bør da ikke omtales som «alle spørsmål lukket». Et avvik mot proposal i E-02 kan kreve ny behandling.
+Dette dokumentet er beslutningsgrunnlag for innarbeiding i PRD. Ferdig PRD krever fortsatt samordning med beslutningsreferatet, stories og arkitektur. Åpne implementasjons- og sluttkontroller skal ikke omtales som utført før de er dokumentert.
 
 ## 8. Kontrollens dekning og kilder
 
@@ -473,7 +481,7 @@ Gruppen kan godkjenne PRD som produktkravgrunnlag med en synlig ekstern avklarin
 | --- | --- |
 | §§0–1 formål/visjon | Sammenhengende mål; kontroller sterke lovlighetsformuleringer og proposal-sporbarhet |
 | §2 målgruppe/reise | Én brukerrolle og én vakt er tydelig; registrering av preferanser og sammenligningsløftet følges i P-07/P-10 |
-| §3 ordliste | Begrepene støtter modellen; kostnadsverdi og periodefordeling må bli entydige etter P-01/P-02 |
+| §3 ordliste | Begrepene støtter modellen; vedtatt kostnadsverdi og periodefordeling i P-01/P-02 må innarbeides |
 | §4.1 / FR-1 | Valg av vakt utløser vurdering; gamle svar håndteres i P-09 |
 | §4.2 / FR-2–6 | Fire regler er avklart; datagrunnlag og tomtilstand følger P-08/P-11, intervallgrense har eksisterende storyfasit |
 | §4.3 / FR-7/8/14 | P-01–P-04 er de vesentlige beregningsvalgene; ulempemodell og KS-kontroller bevares |
@@ -482,8 +490,8 @@ Gruppen kan godkjenne PRD som produktkravgrunnlag med en synlig ekstern avklarin
 | §4.6 / FR-12 | Hovedflyten er avklart; endrede myke faktorer og lagret forklaring følger P-09/P-12 |
 | §4.7 / FR-13 | Innlogging er krav; tekniske detaljer er avklart i story 1.3, ikke nye PRD-valg |
 | §§5–6 ikke-mål/MVP | Tydelig avgrensning; P-10/P-12/P-13 må ikke gi stille scopeutvidelse |
-| §7 suksesskriterier | Behold målene, skill dem fra gjennomførte tester. Forståelsestest er foreslått i P-13; ingen nye vilkårlige ytelseskrav er lagt til |
-| §§8–9 åpne spørsmål/antakelser | Seks kjente spørsmål er dekket, men ÅB-4, feil-/endringstilstander og eksplisitte avgrensninger må også behandles. Historiske vedtak er ikke nye antakelser |
+| §7 suksesskriterier | Behold målene, skill dem fra gjennomførte tester. Den lille forståelsestesten er besluttet i P-13, men ikke utført; ingen nye ytelseskrav er lagt til |
+| §§8–9 åpne spørsmål/antakelser | De kjente produktvalgene, ÅB-4, feil-/endringstilstander og avgrensninger er behandlet her og må innarbeides i PRD. Historiske vedtak er ikke nye antakelser; faktiske tester og sluttkontroller føres først når de er utført |
 
 **Sentrale kilder:**
 
