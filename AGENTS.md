@@ -34,6 +34,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   avveininger mellom kandidater som regelmotoren allerede har godkjent.
 - Aldri skriv API-nøkler i kildekode. Les dem fra miljøvariabler, og dokumenter nye
   variabler i `.env.example` uten verdier.
+- CI får aldri `OPENROUTER_API_KEY` eller andre hemmeligheter. Tester mot KI-porten
+  bruker en falsk OpenRouter, slik at ingen push gir betalte kall.
 - Endrer commiten filer fra tidligere arbeid, si i brødteksten hvorfor: snudd
   beslutning, en utsatt avgjørelse som kom til forfall, eller feil oppdaget i
   ettertid. Det står ikke i diffen og kan ikke rekonstrueres senere.
@@ -109,13 +111,24 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
      (standard 480) må være et positivt heltall, ellers starter ikke API-et.
   - Test: `.venv\Scripts\python -m pytest`. Testene bygger appen med `lag_app` mot en
     database i `tmp_path` og rører ikke `backend/turnushjelperen.db`.
-- Frontend (Node 20.19 eller nyere), fra `frontend/` i en egen terminal mens backend
+- Frontend (Node 22.12 eller nyere), fra `frontend/` i en egen terminal mens backend
   kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
   `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker og bygger.
   Rå størrelser og fargekoder står bare i `frontend/src/stil/tokens.css` (AV-13).
-- CI (`.github/workflows/skills-speiling.yml`) kjører bare speilingstesten for skills,
-  på hver push til alle brancher. Lokalt: `python -m unittest discover -s scripts -p
-  "test_skills*.py"`. Backend-, frontend- og modelltestene kjøres ikke i CI.
+- CI kjører tre workflows på hver push til alle brancher, på Linux:
+  - `.github/workflows/skills-speiling.yml`: speilingstesten for skills. Lokalt:
+    `python -m unittest discover -s scripts -p "test_skills*.py"`.
+  - `.github/workflows/backend-tester.yml`: `pytest` i `backend/` med Python 3.12
+    (laveste versjon vi lover) og nyeste stabile 3.x. Det er den eneste kjøringen
+    utenfor Windows (OP-05). Rød 3.x med grønn 3.12 er som regel versjonsdrift og rettes
+    som vanlig vedlikehold, oftest ved å oppdatere en pakkelås.
+  - `.github/workflows/frontend-tester.yml`: `npm ci`, `npm run build` og `npm run test`
+    i `frontend/` med Node 22.12 (laveste versjon vi lover) og nyeste LTS (`lts/*`).
+    Samme regel for versjonsdrift som for backend.
+  - CI dekker ikke testene av modellverktøyene i `scripts/` eller manuell test. Grønn CI
+    er ikke det samme som gjennomgått kode.
+  - Rød CI blokkerer ikke merge, og `main` har ingen branchebeskyttelse. Det er et valg:
+    den som merger, ser resultatet i PR-en og tar ansvaret (Policy).
 - Ferdige, testede spørringer for å hente ut KI-dokumentasjonen ved innlevering
   ligger i `docs/ki-logg/README.md`. Ikke skriv dem på nytt.
 

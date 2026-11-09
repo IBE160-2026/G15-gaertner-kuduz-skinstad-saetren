@@ -55,7 +55,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -82,7 +82,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -107,7 +107,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -128,7 +128,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -165,7 +165,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen for begge delvalg.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Delvalg 1: __. Delvalg 2: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -190,7 +190,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI-forklaringen ikke besto faktakontrollen og reserveteksten vises i stedet
 - Kim: Jeg støtter denne anbefalingen og Johannes’ presisering om tydelig merking når reserveteksten vises.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen og presiseringen om tydelig merking når reservetekst vises.
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -215,7 +215,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Kan det være hensiktsmessig med en funksjonalitet: **hvis** turnusansvarlig ønsker det, utfør en sammenligning av merkede kandidater, for eksempel rangert nummer 2 og rangert nummer 3. Sammenligningen utføres kun på forespørsel, normalt er sammenligningen gjort med rangert kandidat nummer 1.
 - Kim: Jeg støtter denne anbefalingen. Johannes’ forslag om valgfri sammenligning kan kanskje vurderes etter v1 eller etter kjerneflyten fungerer i v1?
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen og er enig med Kim. Johannes sitt forslag om valgfri sammenligning kan være nyttig, men jeg synes vi bør avvente en eventuell beslutning om dette til vi ser hvordan løsningen fungerer i praksis. Da kan vi heller vurdere om det er behov for funksjonaliteten i en senere versjon.
 
 **Gruppens beslutning:** Ikke behandlet. Valg/referanseregel: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -242,7 +242,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Vi må nødvendigvis starte vår turnus på en gitt dato. Komplikasjonen er reell og virkelighetsnær. Anbefaler at vi godtar et synlig avgrenset unntak for demonstrasjonen, alternativt kan KS-04 justeres hvis det er et konkret behov.
 - Kim: Jeg støtter denne anbefalingen og Johannes’ synspunkt om et synlig, avgrenset unntak for demonstrasjonen, med justering av KS-04 hvis det er et konkret behov.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter anbefaling A og er enig med Johannes og Kim i at vi bør kunne demonstrere løsningen med et tydelig avgrenset datagrunnlag. Jeg synes samtidig det er viktig å skille mellom manglende historikk og dokumentert fravær av vakter. Vi må unngå at manglende opplysninger tolkes som null timer eller null kostnad, da dette kan gi en misvisende rangering.
 
 **Gruppens beslutning:** Ikke behandlet. Valg og håndtering av kjent KS-04-begrensning: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -269,7 +269,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -292,7 +292,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1. ikke noe vi er avhengig av for å lykkes med applikasjonen, men vi tilstreber en arkitektur som muliggjør en implementasjon på fornuftig vis
 - Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen og er enig med Johannes’ forslag om alternativ B
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -315,7 +315,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen at innleie av personell kan vurderes når ingen av de vurderte ansatte er gyldige
 - Kim: Jeg støtter denne anbefalingen og Johannes’ tillegg om at innleie av personell kan vurderes.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter anbefalingen og tillegget om innleie av personell.
 
 **Gruppens beslutning:** Ikke behandlet. Valg/justert tekst: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -340,7 +340,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1.
 - Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen og forslaget om alternativ B som stretch-goal til v1.
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -363,7 +363,7 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Johannes: Jeg støtter denne anbefalingen.
 - Kim: Jeg støtter denne anbefalingen og forslaget om en oppgavebasert forståelsestest når kandidatvisningen fungerer.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg, ansvarlig og behandlingstidspunkt: __. Eventuell forståelsestest: __. Begrunnelse: __. Dato/deltakere: __.
 
@@ -388,7 +388,7 @@ Addendum §5 tolker emnet som KI-assistert utvikling og omtaler KI i produktet s
 - Johannes: KI i produktet er ikke et formelt krav i emnet, men de aller fleste av applikasjonene er planlagt med en implementasjon av KI i en eller annen form. Sannsynligvis fordi det er "inn i tiden". Dette ble uttalt i forelesning av faglærer. Dette punktet kan lukkes
 - Kim: Jeg slutter meg til Johannes’ kommentar.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg slutter meg til Johannes’ kommentar
 
 **Ansvarlig:** Johannes. **Svar/kilde/dato:** KI i produktet er ikke et formelt krav i emnet; muntlig uttalelse fra faglærer i forelesning, gjengitt av Johannes 2026-11-08. **Status etter møtet:** Lukket av Johannes 2026-11-08 før møtet.
 
@@ -408,7 +408,7 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 - Johannes: Product Brief og PRD er levende dokumenter. Ja, det var en "innlevering" av Product Brief, men status på dokumentet ved innleveringstidspunkt er ikke bindende for produktet som leveres til slutt. Vi forstår at i det virkelige liv er dette kontrakter som er bindende, men dette er et læringscenario. Dette punktet kan lukkes
 - Kim: Jeg slutter meg til Johannes’ kommentar.
 - Mithad: __
-- Ragnhild: __
+- Ragnhild: Jeg slutter meg til Johannes’ kommentar.
 
 **Ansvarlig:** __. **Dokument/kilde/dato og resultat:** __.
 
