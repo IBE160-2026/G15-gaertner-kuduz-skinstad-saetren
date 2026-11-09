@@ -54,7 +54,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen. A stemmer med rangeringsfasiten for #4127 i story 1.2, der vaktkostnaden er regnet med overtid (Ingrid 3 850 kr).
 - Ragnhild: Jeg støtter anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -81,7 +81,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -106,7 +106,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -127,7 +127,7 @@ Følgende er allerede dokumentert, og legges ikke frem som nye valg:
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter A, men merk: demodataene fra story 1.2 forutsatte at 32 t gir høy belastning (Ingrid Dahl, 32 t = 88,9 %). Med A må Ingrid få minst 32,4 t i testdataene, eller så velger vi B.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
