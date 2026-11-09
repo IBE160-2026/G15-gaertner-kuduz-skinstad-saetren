@@ -241,7 +241,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Vi må nødvendigvis starte vår turnus på en gitt dato. Komplikasjonen er reell og virkelighetsnær. Anbefaler at vi godtar et synlig avgrenset unntak for demonstrasjonen, alternativt kan KS-04 justeres hvis det er et konkret behov.
 - Kim: Jeg støtter denne anbefalingen og Johannes’ synspunkt om et synlig, avgrenset unntak for demonstrasjonen, med justering av KS-04 hvis det er et konkret behov.
-- Mithad: __
+- Mithad: Jeg støtter A og et synlig, avgrenset unntak for demonstrasjonen. #4127 og #4189 har full datadekning, og det er låst med test i story 1.2, så demoscenarioene påvirkes ikke.
 - Ragnhild: Jeg støtter anbefaling A og er enig med Johannes og Kim i at vi bør kunne demonstrere løsningen med et tydelig avgrenset datagrunnlag. Jeg synes samtidig det er viktig å skille mellom manglende historikk og dokumentert fravær av vakter. Vi må unngå at manglende opplysninger tolkes som null timer eller null kostnad, da dette kan gi en misvisende rangering.
 
 **Gruppens beslutning:** Ikke behandlet. Valg og håndtering av kjent KS-04-begrensning: __. Begrunnelse: __. Dato/deltakere: __.
@@ -268,7 +268,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -291,7 +291,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Alternativ B settes som et stretch-goal til v1. ikke noe vi er avhengig av for å lykkes med applikasjonen, men vi tilstreber en arkitektur som muliggjør en implementasjon på fornuftig vis
 - Kim: Jeg støtter denne anbefalingen og Johannes’ forslag om alternativ B som et mulig tillegg i v1.
-- Mithad: __
+- Mithad: Jeg støtter A, med B som et mulig tillegg i v1. B bør i så fall få egen story med akseptkriterier før den implementeres, slik at kjerneflyten ikke venter på den.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Johannes’ forslag om alternativ B
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -314,7 +314,7 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Legg til i tekstvisningen at innleie av personell kan vurderes når ingen av de vurderte ansatte er gyldige
 - Kim: Jeg støtter denne anbefalingen og Johannes’ tillegg om at innleie av personell kan vurderes.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og tillegget om innleie. Det bør være en tekst, ikke en knapp, siden appen ikke har noen innleiefunksjon.
 - Ragnhild: Jeg støtter anbefalingen og tillegget om innleie av personell.
 
 **Gruppens beslutning:** Ikke behandlet. Valg/justert tekst: __. Begrunnelse: __. Dato/deltakere: __.
