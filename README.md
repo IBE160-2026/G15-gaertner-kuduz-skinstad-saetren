@@ -40,8 +40,8 @@ Gruppa har valgt `openai/gpt-6-luna` via OpenRouter etter disse testene:
 
 ## Kjøre appen
 
-Appen har innlogging for turnusansvarlig, vaktoversikten (Vaktvalg) og fiktive
-testdata. Kandidatflaten kommer i story 1.6. Du trenger Python 3.12 eller nyere og
+Appen har innlogging for turnusansvarlig, vaktoversikt (Vaktvalg), valg av vakt og fiktive
+testdata. Kandidatlisten kommer i Epic 2. Du trenger Python 3.12 eller nyere og
 Node 22.12 eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
 (2026-11-04). Kommandoene under er for Windows PowerShell. På macOS/Linux bytter du
 `.venv\Scripts\python` med `.venv/bin/python`. Der det står en egen bash-kommando, er
@@ -167,7 +167,10 @@ Etter innlogging åpnes Vaktvalg på `/turnus/kirurgisk-sengepost`. Vakter som m
 bemanning står øverst under «Krever handling» (#4127 og #4189 i testdataene), og de
 164 bemannede vaktene i perioden står i tabellen under. Vakter som starter før
 periodestart, vises ikke (AV-03). «Velg vakt — finn erstatter →» går til
-`/vakt/<nr>/kandidater`, som viser «Fant ikke siden.» fram til story 1.6.
+`/vakt/<nr>/kandidater`. Her vises avdeling, vakttype, tidspunkt og minstenivå,
+med en tydelig plassholder for kandidatlisten fram til Epic 2. Direkte URL og
+nettleserens tilbakeknapp virker. En bemannet, ukjent eller utenforliggende vakt
+gir en nøytral feilmelding (AV-03). Feil ved lasting kan prøves på nytt.
 
 Beskyttede adresser kontrollerer sesjonen før innhold vises. Uten gyldig sesjon
 sendes du til `/logg-inn`; en sesjon som bortfaller mens du bruker appen, gir
@@ -175,7 +178,9 @@ meldingen «Sesjonen er utløpt. Logg inn på nytt.» og handlingen gjentas ikke
 «Logg ut» sletter nettleserens cookie. Hvis serveren ikke bekrefter utloggingen,
 skjules innholdet og du kan prøve igjen. API-et krever sesjon for alle `/api`-kall
 unntatt `GET /api/helse`, `POST /api/innlogging` og `GET /api/innloggingsinfo`.
-`GET /api/vaktoversikt` gir dataene til Vaktvalg. API-dokumentasjon er deaktivert.
+`GET /api/vaktoversikt` gir dataene til Vaktvalg. `GET /api/vakter/{vaktnummer}`
+gir bare detaljer for en ubemannet vakt i innlogget brukers turnus og visningsperiode.
+API-dokumentasjon er deaktivert.
 
 ### Tester
 

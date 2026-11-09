@@ -6,7 +6,8 @@ import {
 import Appbar from "./komponenter/Appbar";
 import LoggInn from "./komponenter/LoggInn";
 import Vaktvalg from "./komponenter/Vaktvalg";
-import { INNLOGGING_STI, OVERSIKT_STI, maalEtterBekreftetSesjon, naviger } from "./navigasjon";
+import Kandidatflate from "./komponenter/Kandidatflate";
+import { INNLOGGING_STI, OVERSIKT_STI, maalEtterBekreftetSesjon, naviger, vaktnummerFraSti } from "./navigasjon";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "./tekster";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
   const utloggingSperrer = useRef(false);
   const utloggingVenter = useRef(false);
   const retryknapp = useRef<HTMLButtonElement>(null);
+  const vaktnummer = vaktnummerFraSti(sti);
 
   useEffect(() => {
     if (kontrollfeil || navigasjonsfeil) retryknapp.current?.focus();
@@ -134,7 +136,8 @@ export default function App() {
       )}
       {bruker === null && <LoggInn onInnlogget={innlogget} onForsinketInnlogging={kontroller} startfeil={startfeil} />}
       {bruker && sti === OVERSIKT_STI && <Vaktvalg onVelgVakt={velgVakt} />}
-      {bruker && sti !== OVERSIKT_STI && (
+      {bruker && vaktnummer !== null && <Kandidatflate key={vaktnummer} vaktnummer={vaktnummer} />}
+      {bruker && sti !== OVERSIKT_STI && vaktnummer === null && (
         <main className="innhold"><section className="panel">
           <h1 className="overskrift">{TEKSTER.sideIkkeFunnet}</h1>
         </section></main>
