@@ -217,7 +217,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 - Mithad: Jeg støtter anbefalingen og er enig med Kim og Ragnhild i å vente med valgfri sammenligning til etter v1. For #4127 betyr A at Jonas sammenlignes med Mette, som er lik ham bortsett fra ulempe (AV-12). Det gir en ryddig demo av forklaringen.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Kim. Johannes sitt forslag om valgfri sammenligning kan være nyttig, men jeg synes vi bør avvente en eventuell beslutning om dette til vi ser hvordan løsningen fungerer i praksis. Da kan vi heller vurdere om det er behov for funksjonaliteten i en senere versjon.
 
-**Gruppens beslutning:** Vedtatt A med anbefalt referanseregel 2026-11-09: Nr. 1 sammenlignes med nr. 2, øvrige med nr. 1, og én gyldig kandidat får ingen referanse. Dette gir en kontrollerbar sammenligning; Mithad peker på #4127 som demonstrasjon. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpent tillegg:** Johannes foreslår valgfri sammenligning av to merkede kandidater. Kim, Mithad og Ragnhild vil vurdere dette etter v1 eller etter at kjerneflyten virker. Gruppen har ikke vedtatt om eller når tillegget skal utvikles.
+**Gruppens beslutning:** Vedtatt A med anbefalt referanseregel 2026-11-09: Nr. 1 sammenlignes med nr. 2, øvrige med nr. 1, og én gyldig kandidat får ingen referanse. Dette gir en kontrollerbar sammenligning; Mithad peker på #4127 som demonstrasjon. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Tillegg avklart etter Johannes' oppfølging 2026-11-09:** Valgfri sammenligning av to merkede kandidater er et strekkmål etter fungerende v1, som kan tas hvis det er tid. Dette samsvarer med de øvrige medlemmenes ønske om å vente. Tillegget er ikke del av kjerneflyten; ingen implementasjon eller prioritering er gjennomført.
 
 ### P-08 – Ufullstendig eller ugyldig datagrunnlag
 
@@ -296,6 +296,8 @@ Den allerede godkjente begrensningen i KS-04 skal ikke oppheves i dette dokument
 
 **Gruppens beslutning:** Vedtatt A 2026-11-09. Bruk faste preferanser i testdata i kjerneversjonen. B, redigering i appen, er et mulig tillegg i v1, ikke en forutsetning for kjerneflyten; en eventuell implementasjon krever egen story og akseptkriterier. Johannes ønsker at arkitekturen legger til rette for dette. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen prioritering:** Gruppen har ikke bestemt om tillegget skal gjennomføres i v1.
 
+**Johannes' oppfølging 2026-11-09:** Han ønsker nå at turnusansvarlig skal kunne redigere preferanser i appen, blant annet for å gi brukeren og sensor flere muligheter til å prøve KI-tolkningen med egen tekst. Dette er sterkere enn hans tidligere støtte til B som mulig tillegg. Det endrer ikke alene gruppevedtaket om kjerneversjonen; prioritering av B må fortsatt avklares av gruppen.
+
 ### P-11 – Når ingen kandidater er gyldige
 
 **Grunnlag:** FR-6 og §8 punkt 2. Story 2.6/UX-DR16 har allerede et tekstforslag og krever fortsatt utelukkelsesoppsummering; ingen funksjon for å dele opp vakten.
@@ -343,6 +345,8 @@ Disse punktene er ikke nye obligatoriske funksjoner. En eksplisitt utsettelse ka
 - Ragnhild: Jeg støtter denne anbefalingen og forslaget om alternativ B som stretch-goal til v1.
 
 **Gruppens beslutning:** Vedtatt A 2026-11-09. Godkjenningen lagres varig, men vist forklaring lagres ikke historisk i kjerneversjonen. B, lagring av forklaring og grunnlag, er et mulig tillegg i v1 som krever egen story hvis det prioriteres. Grunnlag: Enstemmige skriftlige svar fra de fire medlemmene, bekreftet av Kim på vegne av gruppen. **Åpen prioritering:** Gruppen har ikke bestemt om tillegget skal gjennomføres i v1.
+
+**Johannes' oppfølging 2026-11-09:** Han antar at lagring av vist forklaring vil koste lite å implementere, men har ingen sterk preferanse mellom lagring og en ny forklaring senere. Kostnad og mulighet for regenerering er foreløpige vurderinger, ikke kontrollerte implementasjonsfakta eller et nytt gruppevedtak.
 
 ### P-13 – Hvilket UX-omfang skal være bindende nå?
 
@@ -416,6 +420,8 @@ Ikke anta at dagens produktbrief er identisk med levert proposal. Dersom sammenl
 
 **Oppsummering av gruppesvar og foreslått håndtering:** Johannes, Kim og Ragnhild mener at innlevert product brief ikke binder sluttproduktet og ønsker å lukke punktet. Mithad er enig i at løsningen kan endres, men viser til sensorveiledningens uttrykkelige krav om å beskrive og begrunne det som er utelatt eller endret fra proposal. Dette er en reell uenighet om dokumentasjonsstatus, ikke nødvendigvis om produktscope. Foreslått løsning: Finn den godkjente proposalen og noter vesentlige avvik med korte begrunnelser før innlevering; hvis den ikke kan finnes, spør faglærer hvilket grunnlag sensor vil bruke. Ikke merk E-02 som kontrollert før sammenligningen finnes. Ansvarlig, kilde og tidspunkt for kontroll: __.
 
+**Johannes' oppfølging 2026-11-09:** Han mener at eksisterende logger allerede begrunner forslag og endringer, og ønsker derfor fortsatt å se bort fra en egen E-02-kontroll. Det dokumenterer ikke at den innleverte proposalen er funnet og sammenlignet med leveransen. Uenigheten om lukking består; sensorveiledningens kontrollpunkt er fortsatt synlig.
+
 ## 6. Samordning og kontroller etter møtet
 
 Dette er dokumentarbeid eller kvalitetssikring, ikke nye produktvalg. Ikke merk oppgaver som utført bare fordi de står her.
@@ -450,7 +456,7 @@ Dette er dokumentarbeid eller kvalitetssikring, ikke nye produktvalg. Ikke merk 
 
 Kontrollen gir et samlet grunnlag for de kjente avklaringene nå. Den gir ingen garanti mot nye funn under implementasjon. Følgende er foreslått ferdigstillingskriterium for dokumentet:
 
-**Status etter svarene 2026-11-09:** Hovedvalgene P-01–P-13 er vedtatt av gruppen, inkludert begge delvalg i P-05 og felles tillegg i P-06/P-11. Før berørt implementasjon må P-08s konkrete unntak ved siste periodekant defineres; uten den grensen kan ikke unntaket implementeres entydig. Bestem hvordan P-04 påvirker Ingrid-fasiten før indikator og testdata låses. P-07s valgfrie sammenligning og P-10B/P-12B er bare mulige tillegg og stopper ikke kjerneflyten. P-13 trenger ansvarlig for senere mobil-/nettbrettavklaring; beslutning om forståelsestest mangler. E-02 må dokumenteres før gruppen hevder samsvar med godkjent proposal, men hindrer ikke uavhengig implementasjon av allerede avklarte deler. Vedtakene må fortsatt føres i beslutningsreferatet og samordnes med PRD, stories og arkitektur før dokumentene kan kalles ferdige.
+**Status etter svarene 2026-11-09:** Hovedvalgene P-01–P-13 er vedtatt av gruppen, inkludert begge delvalg i P-05 og felles tillegg i P-06/P-11. Før berørt implementasjon må P-08s konkrete unntak ved siste periodekant defineres; uten den grensen kan ikke unntaket implementeres entydig. Bestem hvordan P-04 påvirker Ingrid-fasiten før indikator og testdata låses. P-07s valgfrie sammenligning er et strekkmål etter fungerende v1. P-10B er ønsket sterkere av Johannes i hans oppfølging, men prioritering er ikke avklart i gruppen; P-12B er fortsatt mulig tillegg. Disse stopper ikke kjerneflyten. P-13 trenger ansvarlig for senere mobil-/nettbrettavklaring; beslutning om forståelsestest mangler. E-02 må dokumenteres før gruppen hevder samsvar med godkjent proposal, men hindrer ikke uavhengig implementasjon av allerede avklarte deler. Vedtakene må fortsatt føres i beslutningsreferatet og samordnes med PRD, stories og arkitektur før dokumentene kan kalles ferdige.
 
 1. P-01–P-11 har eksplisitte svar, inkludert delvalgene. Den konkrete håndteringen av kjent datadekning i P-08 og testdatafølgen i P-04 gjenstår. Utsatte tillegg har tydelig avgrensning; ansvar og tidspunkt fastsettes når de eventuelt prioriteres.
 2. P-12/P-13 har valgt v1-avgrensning. P-13s senere mobil-/nettbrettavklaring trenger ansvarlig, og forståelsestesten er fortsatt et forslag.
