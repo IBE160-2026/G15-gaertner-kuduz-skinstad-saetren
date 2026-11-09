@@ -164,7 +164,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 - Johannes: Jeg støtter denne anbefalingen
 - Kim: Jeg støtter denne anbefalingen for begge delvalg.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen for begge delvalg. 50 er også den nøytrale preferanseverdien i regneeksempelet for #4127 i story 1.2.
 - Ragnhild: Jeg støtter denne anbefalingen
 
 **Gruppens beslutning:** Ikke behandlet. Delvalg 1: __. Delvalg 2: __. Begrunnelse: __. Dato/deltakere: __.
@@ -189,7 +189,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Det må synliggjøres på en enkel måte for turnusansvarlig når KI-forklaringen ikke besto faktakontrollen og reserveteksten vises i stedet
 - Kim: Jeg støtter denne anbefalingen og Johannes’ presisering om tydelig merking når reserveteksten vises.
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og presiseringen om tydelig merking når reserveteksten vises. A følger regelen vår om at KI aldri beregner tall, bare formidler dem.
 - Ragnhild: Jeg støtter denne anbefalingen og presiseringen om tydelig merking når reservetekst vises.
 
 **Gruppens beslutning:** Ikke behandlet. Valg: __. Begrunnelse: __. Dato/deltakere: __.
@@ -214,7 +214,7 @@ Samme regel foreslås mens registrert tekst fortsatt venter på første tolkning
 
 - Johannes: Jeg støtter denne anbefalingen. Kommentar: Kan det være hensiktsmessig med en funksjonalitet: **hvis** turnusansvarlig ønsker det, utfør en sammenligning av merkede kandidater, for eksempel rangert nummer 2 og rangert nummer 3. Sammenligningen utføres kun på forespørsel, normalt er sammenligningen gjort med rangert kandidat nummer 1.
 - Kim: Jeg støtter denne anbefalingen. Johannes’ forslag om valgfri sammenligning kan kanskje vurderes etter v1 eller etter kjerneflyten fungerer i v1?
-- Mithad: __
+- Mithad: Jeg støtter anbefalingen og er enig med Kim og Ragnhild i å vente med valgfri sammenligning til etter v1. For #4127 betyr A at Jonas sammenlignes med Mette, som er lik ham bortsett fra ulempe (AV-12). Det gir en ryddig demo av forklaringen.
 - Ragnhild: Jeg støtter denne anbefalingen og er enig med Kim. Johannes sitt forslag om valgfri sammenligning kan være nyttig, men jeg synes vi bør avvente en eventuell beslutning om dette til vi ser hvordan løsningen fungerer i praksis. Da kan vi heller vurdere om det er behov for funksjonaliteten i en senere versjon.
 
 **Gruppens beslutning:** Ikke behandlet. Valg/referanseregel: __. Begrunnelse: __. Dato/deltakere: __.
