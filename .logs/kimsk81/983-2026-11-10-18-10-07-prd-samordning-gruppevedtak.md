@@ -14,7 +14,7 @@ Samordne beslutningsreferat, PRD og berørte planleggingsdokumenter med P-01–P
 
 ### Resultat
 
-- Branchen `docs-samordne-prd-vedtak-2026-11-10` ble opprettet fra rent `main`. Ingen push eller PR ble gjort.
+- Branchen `docs-samordne-prd-vedtak-2026-11-10` ble opprettet fra rent `main`. Dokumentarbeidet er committet i `70dc378`, pushet etter at valideringen var ferdig og lagt frem som [PR #12](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/12). PR-en er opprettet for gjennomgang, ikke merget.
 - Referat §12 skiller P-vedtakene fra implementasjon og kontroller. P-10 er løst fra kildenes status: Johannes' individuelle ønske endret ikke Kims senere gruppeavklaring; P-10B er story 5.9 etter fungerende kjerneflyt. P-07s valgfrie sammenligning er strekkmål; P-12B er ikke v1-krav.
 - PRD FR-1–FR-14 beholdt ID-ene og fikk testbare konsekvenser for merkostnad/ukefordeling, 32,4-timersgrense, datastopp, preferansefeil, KI-faktakontroll, ny bekreftelse og tomtilstand. PRD-memloggen ble oppdatert med bmad-prd-skriptet. Historiske reviews og modelltestresultater er urørt.
 - Epics, Story 1.2-spesifikasjonen, arkitektur, DESIGN/EXPERIENCE, godkjenningsmockup, brief og sprintstatus ble samordnet. Ingrid har fortsatt 32 timer og skal ikke merkes høy belastning. Den tidlige `direction-a-fagsystem.html` er merket som historisk visuell utforskning. Vurderingsmatrisen fikk en dokumentmilepæl uten å påstå implementasjon.
