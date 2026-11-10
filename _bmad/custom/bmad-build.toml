@@ -1,0 +1,11 @@
+# Modellvalg per story for gruppa. Tabellen står i docs/modellvalg-stories.md.
+[workflow]
+
+persistent_facts = [
+  "file:docs/modellvalg-stories.md",
+  "Når en story i docs/modellvalg-stories.md har «Sonnet, gjennomgang med Opus», start minst én av gjennomgangsagentene med model: opus. Gjelder bare Claude Code.",
+]
+
+activation_steps_append = [
+  "Slå opp storien som skal bygges i docs/modellvalg-stories.md. Si i én til to setninger hvilken modell som er anbefalt og hvorfor, og hvilken modell denne økten kjører på. Står storien ikke i tabellen, foreslå en kategori etter regelen i dokumentet. Er anbefalt og faktisk modell ulike, be brukeren bytte med /model eller bekrefte at dere fortsetter, og vent på svar før steg 01. Er de like, fortsett uten å spørre. I Codex: nevn anbefalingen, men ikke be om modellbytte.",
+]
