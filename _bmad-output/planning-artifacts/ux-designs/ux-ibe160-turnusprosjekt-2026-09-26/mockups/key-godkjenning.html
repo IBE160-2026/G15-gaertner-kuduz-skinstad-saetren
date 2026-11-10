@@ -7,9 +7,9 @@
   NØKKELSKJERM: GODKJENNING
   Illustrerer FR-12 (turnusansvarlig kan velge en hvilken som helst Gyldig kandidat — ikke nødvendigvis
   den øverst rangerte — og må gi eksplisitt Godkjenning før noe anses gjennomført). Kari velger her bevisst
-  Jonas Bakke (rangert nr. 2, overtidssats) fremfor Ingrid Dahl (nr. 1), for å vise at avvik fra rangeringen
+  Mette Solberg (rangert nr. 2) fremfor Jonas Bakke (nr. 1) etter kontrollert #4127-fasit, for å vise at avvik fra rangeringen
   er en gyldig, støttet arbeidsflyt, ikke en feiltilstand. Viderefører direction-a-fagsystem.html sine tokens,
-  kostnadsfarger (grønn=ordinær/oker=overtid, aldri rødt) og arbeidsbelastningslinje, samt mønsteret med
+  kostnadsfarger (grønn=ordinær/oker=inkluderer overtid, aldri rødt) og arbeidsbelastningslinje, samt mønsteret med
   progressiv visning — KI-begrunnelsen for den valgte kandidaten er nå den som vises utvidet.
 -->
 <style>
@@ -157,8 +157,8 @@ body{
       <div class="candidate-card">
         <div class="cand-head">
           <div>
-            <div class="cand-name">Jonas Bakke</div>
-            <div class="cand-sub">Sykepleier · 3 år ansiennitet</div>
+            <div class="cand-name">Mette Solberg</div>
+            <div class="cand-sub">Sykepleier · 9 år ansiennitet</div>
           </div>
           <div class="rank-pill">Rangert nr. 2 av 4 gyldige</div>
         </div>
@@ -166,39 +166,39 @@ body{
         <div class="facts">
           <div class="fact">
             <div class="lbl">Kompetanse</div>
-            Kvalifisert<div class="tag">Nivå 3/4</div>
+            Fullt kvalifisert<div class="tag">Nivå 4/4</div>
           </div>
           <div class="fact">
             <div class="lbl">Kostnad</div>
-            <span class="cost-ot">Overtid</span><div class="sub">kr 578/t</div>
+            <span class="cost-ord">Ordinær</span><div class="sub">Vaktkostnad 2 960,00 kr · 8 t × 370 kr</div>
           </div>
           <div class="fact">
             <div class="lbl">Arbeidsbelastning (uke)</div>
-            26 t<div class="bar-wrap"><div class="bar" style="width:38%"></div></div>
+            16 t<div class="bar-wrap"><div class="bar" style="width:44%"></div></div>
           </div>
           <div class="fact">
             <div class="lbl">Preferanse</div>
-            <span class="tag">Fleksibel</span>
+            <span class="tag">Positiv ved behov</span>
           </div>
         </div>
 
         <div class="explain">
           <span class="lbl">KI-generert begrunnelse</span>
-          <span class="pill-up">▲ Trekker opp:</span> kvalifisert for vakttypen, lav gjeldende arbeidsbelastning, og har selv oppgitt fleksibilitet på kort varsel.
-          <span class="pill-down">▼ Trekker ned:</span> vakten utløser overtidssats for Jonas denne uken, og han er ikke fullt kvalifisert (nivå 3/4) slik Ingrid Dahl er.
+          <span class="pill-up">▲ Trekker opp:</span> Mette kan ta vakten, har 16 t i startuken og er positiv til ekstravakt ved behov.
+          <span class="pill-down">▼ Trekker ned:</span> Mette har høyere ulempebelastning enn Jonas Bakke (180 mot 40 poeng), og rangeres derfor som nr. 2.
         </div>
       </div>
 
       <div class="deviation-note">
         <span class="lbl">Avvik fra anbefalt rangering</span>
-        Ingrid Dahl er rangert øverst (nr. 1) og er fortsatt en gyldig kandidat, men er <b>ikke</b> valgt her. Dette er en tillatt handling —
+        Jonas Bakke er rangert øverst (nr. 1) og er fortsatt en gyldig kandidat, men er <b>ikke</b> valgt her. Dette er en tillatt handling —
         Turnushjelperen anbefaler, den bestemmer aldri selv.
-        <div class="compare">Ingrid Dahl: ordinær sats (kr 385/t), fullt kvalifisert, 32,5 t arbeidsbelastning · Jonas Bakke: overtidssats (kr 578/t), kvalifisert, 26 t arbeidsbelastning.</div>
+        <div class="compare">Mette: 2 960,00 kr, 16 t i startuken, 180 ulempepoeng · Jonas: 2 960,00 kr, 16 t i startuken, 40 ulempepoeng. Begge har 75 preferansepoeng.</div>
       </div>
 
       <div class="confirm-box">
         <h2>Bekreft erstatning</h2>
-        <p>Du er i ferd med å sette <b>Jonas Bakke</b> inn i <b>Vakt #4127</b> (Dagvakt, 27.09.2026, 07:00–15:00) i stedet for Silje Amundsen.
+        <p>Du er i ferd med å sette <b>Mette Solberg</b> inn i <b>Vakt #4127</b> (Dagvakt, 27.09.2026, 07:00–15:00) i stedet for Silje Amundsen.
         Ingen endring gjøres i turnusen før du trykker <b>Godkjenn erstatning</b>. Handlingen registreres med ditt navn og tidspunkt.</p>
         <div class="confirm-actions">
           <button class="btn-secondary">Avbryt</button>

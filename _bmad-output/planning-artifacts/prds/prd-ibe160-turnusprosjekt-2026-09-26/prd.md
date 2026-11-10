@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-11-07
+updated: 2026-11-10
 ---
 
 # PRD: Turnushjelperen
@@ -12,13 +12,13 @@ updated: 2026-11-07
 
 Denne PRD-en er skrevet for prosjektgruppen selv (4 medlemmer) og bygger videre på `product-brief.md` og dens `addendum.md`. Den definerer *hva* Turnushjelperen skal gjøre og *hvorfor*, som grunnlag for arkitektur, epics/stories og den godkjente proposalen til IBE160. Krav er gruppert per funksjon med globalt nummererte FR-er; antakelser er merket `[ASSUMPTION]` inline og samlet i §9.
 
-Presiseringene av hvilekontroll, kandidatgrunnlag og rangering bygger på [gruppens beslutningsreferat](../../../../docs/beslutninger/avklaringspunkter.md) fra 2026-11-02 (AV-04, AV-05, AV-06 og K-03). Åpne oppfølgingspunkter fra referatet står fortsatt åpne i §8.
+Kravene bygger på [gruppens beslutningsreferat](../../../../docs/beslutninger/avklaringspunkter.md), inkludert P-01–P-13 og E-01/E-02 vedtatt eller avklart 2026-11-09 på grunnlag av [PRD-beslutningsgrunnlaget](../../../../docs/beslutninger/prd-beslutningsgrunnlag-2026-11-07.md). Dette er produktkrav og planvalg; implementasjon og tester har egen status. Åpne gjennomføringskontroller står i §8.
 
 ## 1. Visjon
 
 Når en planlagt vakt i en eksisterende turnus plutselig må dekkes av noen andre, skal den turnusansvarlige gå fra «denne vakten mangler bemanning» til et begrunnet forslag om hvem som bør ta den — uten å måtte kontrollere alle 20–30 ansatte manuelt.
 
-Turnushjelperen er en web-app som fungerer som beslutningsstøtte for én vaktendring om gangen: harde regler (kompetanse, kolliderende vakter, arbeidstids- og hviletidskrav) filtrerer bort ugyldige kandidater, en enkel og reproduserbar modell rangerer de gyldige etter arbeidsbelastning, kostnad og ansattpreferanser, og KI tolker de tekstbaserte preferansene og forklarer avveiningene mellom kandidatene i klartekst. Turnushjelperen anbefaler — den bestemmer aldri selv, og den kan aldri anbefale en kandidat som en hard regel har utelukket.
+Turnushjelperen er en web-app som fungerer som beslutningsstøtte for én vaktendring om gangen: fire avgrensede prototyperegler (kompetanse, kollisjon, 11 timer hvile før/etter og 35 timer fri i berørt kalenderuke) filtrerer bort ugyldige kandidater, en enkel og reproduserbar modell rangerer de gyldige etter arbeidsbelastning, kostnad og ansattpreferanser, og KI tolker tekstbaserte preferanser og forklarer avveininger. Turnushjelperen anbefaler — den bestemmer aldri selv, og den kan aldri anbefale en kandidat som en hard regel har utelukket. Prototypen gir ingen garanti om full juridisk kontroll (AV-04).
 
 Dette betyr noe fordi det viser en konkret, testbar arbeidsdeling mellom regelbasert programmering og generativ KI: det som må være forutsigbart (lovkrav, kostnad) forblir deterministisk, mens det som er mykt og menneskelig (preferanser, avveininger) får KI-støtte — uten at KI noensinne får siste ord.
 
@@ -37,7 +37,7 @@ En enkel digital turnusløsning kan vise hvem som er ledig; en regelbasert løsn
 
 ### 2.2 Ikke-brukere (v1)
 
-Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn, se egne vakter, eller registrere preferanser selv (preferanser legges inn av turnusansvarlig eller forhåndsdefineres i testdata). En lesende ansattoversikt og vaktbytte mellom ansatte er eksplisitt vurdert og lagt til stretch goals / senere versjon (se addendum §3). Dette skiller Turnushjelperen fra en ansattportal.
+Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn, se egne vakter eller registrere preferanser selv. Kjerneflyten bruker forhåndsdefinerte preferanser i testdata. Redigering av preferansetekst av turnusansvarlig (P-10B) planlegges som egen story etter fungerende kjerneflyt, uten å blokkere denne. En lesende ansattoversikt og vaktbytte mellom ansatte er vurdert og lagt til senere versjon (se addendum §3).
 
 ### 2.3 Sentrale brukerreiser
 
@@ -47,7 +47,7 @@ Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn,
   - **Sti:** (1) Kari velger den konkrete vakten som må bemannes på nytt. (2) Systemet viser en rangert liste over gyldige kandidater — ansatte som ikke oppfyller kompetanse-minstekravet, har kolliderende vakt, eller ville brutt hviletids-/arbeidstidsregler, er allerede filtrert bort. (3) Kari åpner en kandidat og ser kostnadsvurdering, arbeidsbelastning, og en KI-generert forklaring av avveiningene (f.eks. «rangeres over nr. 2 fordi overtidskostnaden er lavere, selv om nr. 2 har uttrykt ønske om flere vakter»). (4) Kari sammenligner 2–3 kandidater på denne måten.
   - **Klimaks:** Kari ser tydelig hvorfor den øverste kandidaten er anbefalt, og stoler på grunnlaget uten å måtte sjekke de resterende 20+ ansatte manuelt.
   - **Oppløsning:** Kari velger kandidaten hun mener er riktig (ikke nødvendigvis den øverste) og bekrefter valget — Turnushjelperen gjennomfører ingen endring på egen hånd.
-  - **Edge case:** Ingen kandidater er gyldige (alle filtrert bort av harde regler) — Turnushjelperen må vise dette tydelig i stedet for en tom eller misvisende liste. **[ASSUMPTION]** Nøyaktig hvordan «ingen gyldige kandidater» presenteres er ikke bestemt ennå — dekkes som egen FR i §4.
+  - **Edge case:** Ingen kandidater er gyldige (alle filtrert bort av harde regler) — Turnushjelperen viser egen tomtilstand med utelukkelsesoppsummering (FR-6). Ukjent eller ugyldig nødvendig datagrunnlag gir i stedet en datafeil uten rangering eller godkjenning (P-08).
 
 **[ASSUMPTION]** Persona-navnet «Kari» og detaljene rundt henne er oppdiktet for å gjøre reisen konkret — dette er ikke ment å representere en reell bruker, kun en fiktiv illustrasjon slik brief-omfanget (fiktiv turnus, ingen ekte personopplysninger) tilsier.
 
@@ -69,6 +69,7 @@ Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn,
 - **Ansattpreferanse** — Tekstbasert informasjon om en ansatts ønsker eller begrensninger, tolket av KI-laget som del av Rangeringen.
 - **Rangering** — Den sorterte listen over Gyldige kandidater, ordnet etter Myke faktorer.
 - **Avveining** — KI-generert forklaring av hvorfor én Kandidat rangeres over en annen.
+- **Vaktkostnad** — Økningen i forenklet, modellberegnet lønnskostnad når den vurderte Vakten legges til, summert over berørte kalenderuker (P-01/P-02).
 - **Godkjenning** — Turnusansvarliges eksplisitte, endelige valg av Kandidat. Ingen endring anses gjennomført før Godkjenning er gitt.
 
 ## 4. Funksjoner
@@ -85,7 +86,9 @@ Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus. Realiserer UJ-1.
 
 **Konsekvenser (testbare):**
 - Systemet viser Vaktens tidspunkt og kompetansekrav ved valg.
-- Valget starter filtrering og Rangering av Kandidater (FR-2 til FR-9 og FR-14) uten ytterligere handling fra Turnusansvarlig.
+- Når nødvendig datagrunnlag er komplett, starter valget filtrering og Rangering av Kandidater (FR-2 til FR-9 og FR-14) uten ytterligere handling fra Turnusansvarlig.
+- Når nødvendig grunnlag er ukjent eller ugyldig (P-08), vises «Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.» med konkret kjent datagrense der den finnes. Ingen rangert liste eller Godkjenning tilbys; dette er forskjellig fra FR-6s null gyldige.
+- Et forsinket svar for en tidligere valgt Vakt eller Kandidat skal ikke erstatte den aktive visningen (P-09).
 
 ### 4.2 Regelmotor (harde regler)
 
@@ -94,6 +97,8 @@ Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus. Realiserer UJ-1.
 **Kandidatgrunnlag (AV-06):** Alle Ansatte i Turnusen vurderes, bortsett fra den Ansatte som opprinnelig var satt opp på Vakten som skal bemannes på nytt. Øvrige Ansatte antas tilgjengelige med mindre planlagte Vakter eller Harde regler utelukker dem. Dette er en fast demonstrasjonsforutsetning, ikke en garanti for faktisk tilgjengelighet; v1 har ingen separat fraværsmodell.
 
 **Avgrenset hvilekontroll (AV-04):** v1 bruker prototypemodellen i FR-4 og FR-5. Kontrollen krever relevante nabovakter og komplette berørte kalenderuker, også utenfor perioden som vises. Modellen skal ikke fremstilles som full juridisk kontroll av arbeidsmiljøloven.
+
+**Nødvendig datadekning (P-08):** Ukjent historikk er ikke dokumentert fri. Mangler nødvendig historikk eller fremtidige nabovakter, gyldige start-/sluttider, Vaktens kompetansekrav eller Kandidatens kostnadsgrunnlag, skal vurderingen stoppe med datafeil uten rangert liste eller Godkjenning. Manglende kandidatkompetanse følger fortsatt FR-2. Seedturnusen har planlagte Vakter til 2026-10-05 kl. 00:00 i `Europe/Oslo`; #4127 og #4189 har kontrollert dekning etter KS-04. Ved ny vurdering av #4261–#4265 skal appen opplyse at nødvendig turnusgrunnlag mangler og at seeddata slutter 05.10, uten å beregne Kandidater. Samme stoppregel gjelder andre Vakter med ufullstendig nødvendig grunnlag.
 
 **Funksjonelle krav:**
 
@@ -104,14 +109,15 @@ Systemet skal utelukke en Kandidat hvis Kandidatens Kompetansenivå er under Vak
 **Konsekvenser (testbare):**
 - 100 % av Kandidatene med Kompetansenivå under minstekravet filtreres bort i definerte testscenarioer.
 - Minstekravet senkes ikke dersom ingen Kandidater oppfyller det; systemet viser da ingen gyldige kandidater (FR-6).
+- Kandidat uten registrert Kompetansenivå for vakttypen utelukkes med «kompetanse-minstekrav» (story 2.1). Manglende minstekrav på selve Vakten er derimot datafeil etter P-08.
 - Kompetansenivå påvirker bare filtreringen og inngår ikke i poengberegningen i FR-9. To ellers identiske Gyldige kandidater får samme totalscore selv om Kompetansenivået deres er forskjellig.
 
 #### FR-3: Filtrere på kolliderende vakt
 
-Systemet kan utelukke en Kandidat som allerede har en Vakt som overlapper i tid med Vakten som skal bemannes.
+Systemet skal utelukke en Kandidat som allerede har en Vakt som overlapper i tid med Vakten som skal bemannes.
 
 **Konsekvenser (testbare):**
-- 100 % av Kandidatene med tidsmessig overlappende Vakt filtreres bort i definerte testscenarioer.
+- 100 % av Kandidatene med tidsmessig overlappende Vakt filtreres bort i definerte testscenarioer. Vakter behandles som halvåpne tidsintervaller: slutt nøyaktig ved den vurderte Vaktens start er ikke kollisjon, mens ett minutts overlapp er det (story 2.2).
 
 #### FR-4: Filtrere på 11-timersregelen (daglig hvile)
 
@@ -137,6 +143,7 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 
 **Konsekvenser (testbare):**
 - Meldingen for «ingen gyldige kandidater» er tekstlig og visuelt forskjellig fra en laste- eller feiltilstand, slik at Turnusansvarlig ikke kan forveksle de to.
+- Tomtilstanden oppsummerer hvorfor Kandidater ble utelukket og sier «Innleie av personell kan vurderes», uten knapp eller påstand om at appen tilbyr innleie (P-11). Datafeil etter P-08 skal aldri presenteres som null gyldige.
 
 **Feature-spesifikke NFR-er:**
 - En Kandidat utelukket av en Hard regel skal aldri kunne opptre i Rangeringen (§4.4) eller nevnes av KI-forklaringen (§4.5) — testbar invariant.
@@ -146,7 +153,7 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 
 **Beskrivelse:** For hver Gyldig kandidat beregnes en forenklet kostnadsvurdering (ordinær sats vs. overtidssats) og gjeldende arbeidsbelastning. Arbeidsbelastningen består av Timebelastning (FR-8) og Ulempebelastning (FR-14), som beregnes og vises hver for seg. Rangeringen (§4.4) bygger på disse Myke faktorene.
 
-**Kostnadsmodell (bekreftet av gruppen 2026-10-06):** Hver Ansatt har en individuell timelønn (testdata). Ordinær ukentlig terskel er **36 timer/uke** (addendum §2, grensen for helkontinuerlig skiftarbeid). Timer en Kandidat allerede er satt opp på denne uken, pluss timene i Vakten som vurderes, sammenlignes mot terskelen: timer til og med 36 timer kostes til ordinær timelønn, timer utover kostes til **150 % av ordinær timelønn** (lovens minstekrav er 40 % tillegg, 50 % er vanlig praksis og enkelt å beregne). Dette er en bevisst forenkling, ikke en tariffberegning — se Out of Scope.
+**Kostnadsmodell (P-01/P-02):** Hver Ansatt har en individuell timelønn (testdata). Ordinær ukentlig terskel er **36 timer/uke** (addendum §2, grensen for helkontinuerlig skiftarbeid). Modellert kostnad for timer til og med 36 i hver kalenderuke er ordinær timelønn, og for timer utover er den **150 %** av ordinær timelønn. Kalenderuken er mandag kl. 00:00 til neste mandag kl. 00:00 i `Europe/Oslo`. Faktisk forløpt arbeidstid fra både eksisterende og vurdert Vakt fordeles etter overlapp med hver uke, også ved sommertid. Vakter som slutter nøyaktig på ukegrensen gir ingen timer i neste uke. **Vaktkostnaden er forskjellen i modellert kostnad før og etter tildelingen, summert over berørte uker**; opprinnelig ansatts lønn trekkes ikke fra. Dette er en forenklet modell, ikke en tariffberegning — se Out of Scope.
 
 **Ulempemodell (besluttet av bruker 2026-10-30, utvider ÅB-3):** Ulempebelastningen måler hvor mye ubekvem arbeidstid Kandidaten har hatt i de fire ukene før Vakten. Hver arbeidstime gir Ulempepoeng etter tidspunkt:
 
@@ -161,7 +168,7 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 - Tiden regnes i faktisk forløpt tid i `Europe/Oslo` med sommertid og med minuttoppløsning. En halv time kveld gir 0,5 poeng. Poengene avrundes først ved visning.
 - Måleperioden er de 672 faktiske timene bakover fra Vaktens starttidspunkt, som halvåpent intervall [start − 672 t, start). Over et sommertidsskifte er det ikke det samme som 28 kalenderdøgn (gruppevedtak AV-09, 2026-11-02). Vakten som vurderes, er ikke med. En Vakt som krysser grensen for måleperioden, telles bare for delen innenfor. Perioden regnes fra Vaktens start og ikke fra dagens dato, slik at samme input alltid gir samme resultat (SM-5).
 - Helligdager regnes som vanlige ukedager i v1 (bekreftet av gruppa 2026-11-02).
-- **Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)).** Taket er foreløpig **300 Ulempepoeng**, omtrent 100 nattetimer på fire uker. Taket er én navngitt, konfigurerbar parameter i domenekjernen, sammen med vektene i §4.4. Det skal ikke være en miljøvariabel, fordi samme input da kunne gitt ulikt resultat på ulike maskiner.
+- **Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)).** Vedtatt v1-tak er **300 Ulempepoeng** (AV-11), omtrent 100 nattetimer på fire uker. Taket er én navngitt, konfigurerbar parameter i domenekjernen, sammen med vektene i §4.4. Det er ikke en miljøvariabel, fordi samme input da kunne gitt ulikt resultat på ulike maskiner.
 - Skalaen er fast, ikke relativ til de Gyldige kandidatene, slik at små forskjeller gir små utslag. 40 mot 42 Ulempepoeng gir 0,1 poeng forskjell i totalscoren, mens en skala relativ til kandidatene kunne gitt opptil 15. Lik Ulempebelastning gir alltid lik Ulempescore, og en ny Kandidat endrer ikke de andres score. Taket på 300 er valgt fremfor 240 og 432 ut fra regneeksempler med typiske turnuser: vanlige turnuser gir omtrent 50–180 poeng over fire uker, nattunge 250–320. Regneeksemplene bruker vakttidene dag 07–15, kveld 15–23 og natt 23–07 (story 1.2) og kan kjøres på nytt med `scripts/ulempe_regneeksempler.py`. 432 er ikke et teoretisk maksimum, fordi overtid er tillatt, og faste nattevakter (ca. 320 poeng) får bevisst Ulempescore 0.
 - Timebelastning og Ulempebelastning vises separat. Ulempebelastningen vises med samlet poengsum og fordeling på kveld-, helg- og nattetimer, uten terskel eller fargeskifte. 90 %-grensen i FR-8 gjelder bare Timebelastningen.
 
@@ -169,12 +176,13 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 
 #### FR-7: Beregne forenklet kostnad per kandidat
 
-Systemet kan beregne en forenklet kostnadsvurdering for hver Gyldig kandidat etter kostnadsmodellen over, basert på om Vakten utløser ordinær sats, overtidssats, eller en kombinasjon for Kandidaten.
+Systemet kan beregne Vaktkostnaden for hver Gyldig kandidat etter modellen over, med ordinære og eventuelle overtidstimer.
 
 **Konsekvenser (testbare):**
-- Samme Kandidat og samme Vakt gir samme beregnet kostnad hver gang (reproduserbart).
-- En Kandidat hvis ukentlige timer (eksisterende Vakter + denne Vakten) holder seg på eller under 36 timer, kostes utelukkende til ordinær sats.
-- En Kandidat som med denne Vakten overstiger 36 timer denne uken, får timene utover terskelen kostet til 150 % av ordinær sats; øvrige timer forblir på ordinær sats.
+- Samme fullstendige strukturerte beslutningsgrunnlag (Kandidat, Vakt, øvrig Turnus og timelønn) gir samme beregnede kostnad hver gang (reproduserbart).
+- 32 eksisterende timer + en ny åttetimersvakt ved 300 kr/t gir 3 000 kr i Vaktkostnad (4 t × 300 + 4 t × 450). Ved 40 eksisterende timer gir vakten 3 600 kr.
+- En søndag 23–mandag 07-vakt fordeles med 1 t i første og 7 t i neste uke uten sommertidsskifte. Ved 36/20 eksisterende timer og 300 kr/t gir dette 2 550 kr (1 × 450 + 7 × 300). Nøyaktig 36 t, ukeskifte og begge sommertidsskifter er grensetilfeller.
+- Vis samlet Vaktkostnad med to desimaler og «Ordinær» når ingen nye timer er overtid, ellers «Inkluderer overtid». Detaljer viser timer × sats per del, slik at de summerer til beløpet. Visningsavrunding endrer ikke uavrundet poengberegning (P-03/K-03).
 - Beregningen er ikke avhengig av KI.
 
 **Out of Scope:**
@@ -184,18 +192,18 @@ Systemet kan beregne en forenklet kostnadsvurdering for hver Gyldig kandidat ett
 
 Systemet kan vise hvor mye hver Gyldig kandidat allerede er satt opp til å arbeide i den aktuelle uken, som andel av normaluken på 36 timer (samme terskel som FR-7). Dette er Timebelastningen, den ene av arbeidsbelastningens to deler. Den andre er Ulempebelastningen (FR-14).
 
-**Terskel (bekreftet av gruppen 2026-10-06):** Timebelastningen vises som Kandidatens planlagte timer *denne uken* (uten den Vakten som vurderes) delt på 36 timer. «Denne uken» er kalenderuken (mandag–søndag, `Europe/Oslo`) som Vakten starter i (presisert 2026-10-30). Terskelen bytter til «høy belastning»-visning ved ~90 % (ca. 32–33 timer). Samme 36-timers normaluke som kostnadsmodellen i FR-7 — én terskel, to visninger. Til forskjell fra FR-7 legger denne visningen **ikke** til den vurderte Vakten; den viser eksisterende belastning som den er. 90 %-grensen er bare en visuell indikator og påvirker ikke poengene i §4.4.
+**Terskel (P-02/P-04):** Timebelastningen er Kandidatens eksisterende timer i kalenderuken den valgte Vakten **starter** i, delt på 36 timer. Også timer fra en eksisterende Vakt som startet i forrige uke fordeles etter faktisk overlapp. Den vurderte Vakten legges ikke til her. Visningen bytter til «høy belastning» ved **minst 32,4 timer (32 t 24 min)** før visningsavrunding. Dette er kun en visuell indikator og endrer ikke rangeringspoeng. Ingrid i seeddata har 32 timer og er derfor under grensen.
 
 **Konsekvenser (testbare):**
 - Timebelastningen oppdateres konsistent med Turnusens øvrige Vakter for Kandidaten.
-- Prosentandelen beregnes som planlagte timer denne uken ÷ 36, og bytter visuell tilstand ved ~90 % av terskelen.
+- Prosentandelen beregnes som eksisterende timer i startuken ÷ 36. Ved 32 t 23 min vises ikke «høy belastning», ved 32 t 24 min vises den; avrundet timetekst må ikke skjule hvorfor fargen skifter. Prosent over 100 kan vises selv om linjen stopper ved full bredde.
 
 #### FR-14: Beregne og vise ulempebelastning per kandidat
 
 Systemet kan beregne Ulempepoeng for hver Gyldig kandidat etter Ulempemodellen over, ut fra Kandidatens Vakter i de 672 faktiske timene før Vaktens start, og regne dem om til en Ulempescore på fast skala. Ulempebelastningen vises separat fra Timebelastningen, med samlet poengsum og fordeling på kveld-, helg- og nattetimer. *Lagt til 2026-10-30. Nummeret er valgt for å unngå omnummerering.*
 
 **Konsekvenser (testbare):**
-- Samme Kandidat og samme Vakt gir samme Ulempepoeng og Ulempescore hver gang (reproduserbart).
+- Samme fullstendige strukturerte beslutningsgrunnlag (Kandidat, Vakt og dokumentert historikk) gir samme Ulempepoeng og Ulempescore hver gang (reproduserbart).
 - Hver arbeidstime telles bare én gang, i kategorien med høyest poeng (natt > helg > kveld > dag).
 - Ulempepoeng på eller over taket gir Ulempescore 0. Lik poengsum gir lik Ulempescore.
 - En Kandidat uten Vakter i måleperioden får 0 Ulempepoeng og Ulempescore 100.
@@ -214,7 +222,7 @@ Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %
 | Kostnad | 40 % | Lavest kostnad blant Gyldige kandidater for Vakten = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
 | Arbeidsbelastning: Timebelastning | 20 % | Lavest Timebelastning (FR-8) blant Gyldige kandidater = 100 poeng, høyest = 0 poeng, lineær skala imellom. |
 | Arbeidsbelastning: Ulempebelastning | 15 % | Fast skala: Ulempescore = maks(0, 100 × (1 − Ulempepoeng / 300)), etter Ulempemodellen i §4.3 (FR-14). |
-| Ansattpreferanse | 25 % | Fem faste nivåer: 100, 75, 50, 25 eller 0 poeng etter kategoriene i §4.5. Manglende registrert preferanse = 50 poeng, merket «ingen registrert preferanse». |
+| Ansattpreferanse | 25 % | Fem faste nivåer: 100, 75, 50, 25 eller 0 poeng etter §4.5. Manglende tekst gir 50 poeng merket «ingen registrert preferanse»; ventende/feilet tolkning av registrert tekst gir midlertidig 50 med egen status (P-05). |
 
 
 Totalscore = 0,40 × kostnadspoeng + 0,20 × timebelastningspoeng + 0,15 × Ulempescore + 0,25 × preferansepoeng. Kompetanse vurderes utelukkende som Hard regel i FR-2.
@@ -227,11 +235,11 @@ Kostnad og Timebelastning bruker en skala relativ til de Gyldige kandidatene. Ul
 
 #### FR-9: Rangere gyldige kandidater
 
-Systemet kan rangere alle Gyldige kandidater for en Vakt basert på den poengbaserte modellen over. Kandidatlisten viser inntil fem av de høyest rangerte. Finnes færre enn fem Gyldige kandidater, vises alle; finnes ingen, gjelder FR-6. Turnusansvarlig skal fortsatt kunne få tilgang til øvrige Gyldige kandidater for valg etter FR-12.
+Systemet kan rangere **alle** Gyldige kandidater for en Vakt basert på modellen over. Min–maks beregnes over alle Gyldige før listen begrenses til de fem høyest rangerte. Finnes færre enn fem, vises alle; finnes ingen, gjelder FR-6. Turnusansvarlig kan velge «Vis alle gyldige kandidater» eller tilsvarende for å se og velge øvrige etter FR-12.
 
 **Konsekvenser (testbare):**
 - Minst ett testscenario demonstrerer at den billigste Kandidaten ikke rangeres høyest, fordi andre Myke faktorer samlet sett veier tyngre.
-- Minst ett testscenario demonstrerer at Ulempebelastningen endrer rekkefølgen mellom to Kandidater som ellers er nesten like.
+- Minst ett testscenario har to Gyldige kandidater med **identisk** kostnad, Timebelastning og preferansepoeng, men ulik Ulempebelastning; Ulempescoren alene forklarer forskjellen i totalscore og rekkefølge (AV-12, #4127: Jonas/Mette, 7,0 totalpoeng).
 - Samme input (Kandidater, Vakt, preferanser) gir samme rangeringsrekkefølge hver gang — poengmodellen er en ren, deterministisk beregning, ikke avhengig av KI.
 - Når alle Gyldige kandidater har samme kostnad, får alle 50 kostnadspoeng. Når alle har samme Timebelastning, får alle 50 timebelastningspoeng. Begge særreglene gjelder også ved én Gyldig kandidat. Ulempescore beregnes fortsatt på sin faste skala.
 - To Kandidater med identisk uavrundet totalscore rangeres etter stigende ansatt-ID. Visningsavrunding endrer verken rekkefølgen eller hvilke inntil fem Kandidater som vises.
@@ -252,6 +260,8 @@ Registrerte Ansattpreferanser gjelder hele demonstrasjonsperioden (AV-06). v1 ha
 - Tolkede preferanser sendes som strukturert kategori til Rangeringen. Koden tildeler kategoriens faste poengsum; språkmodellen utfører ikke selve poengberegningen eller Rangeringen.
 - Alle de 15 definerte preferansetekstene under skal tolkes til forventet kategori. Eksakt ordlyd i KI-forklaringen er ikke en del av fasiten.
 - Manglende registrert preferanse gir 50 poeng og merkes «ingen registrert preferanse». Det skal ikke fremstilles som et uttrykkelig nøytralt ønske.
+- Registrert tekst som venter på første tolkning gir midlertidig 50 poeng med «Preferanse venter på tolkning»; feilet/ugyldig tolkning gir midlertidig 50 med «Preferanse kunne ikke tolkes». Råteksten og status beholdes, uten oppdiktet nøytral tolkning. Kandidaten utelukkes ikke, og brukeren ser at rangeringen kan endres (P-05).
+- Forbigående feil får avgrensede automatiske nye forsøk; etter endelig feil kan turnusansvarlig be om nytt forsøk. Vellykket tolkning lagres for den aktuelle teksten og oppdaterer rangeringen før bekreftelse; endret tekst bruker aldri gammel tolkning. En gyldig kategori som oppdages som semantisk feil følger feilflyten. Ukjent tekst i demo er ikke «ingen registrert» (P-05).
 
 **Preferansekategorier og poeng:**
 
@@ -293,6 +303,9 @@ Systemet kan generere en KI-basert forklaring for hver Kandidat i Rangeringen: h
 - Forklaringen nevner aldri en Kandidat som er utelukket av en Hard regel (testbar invariant, jf. addendum §4).
 - Forklaringen kan vise til Timebelastning og Ulempebelastning med fordeling på kveld, helg og natt, men bare med tallene regelmotoren har beregnet. KI beregner dem aldri selv.
 - Ved feil, tomt eller ubrukelig svar fra språkmodellen viser systemet en forhåndsdefinert reservetekst eller feilmelding i stedet for KI-forklaringen — aldri en anbefaling uten gyldig grunnlag — og systemet fortsetter å fungere uten å krasje.
+- KI returnerer strukturerte begrunnelser fra et avgrenset sett. Koden validerer kandidat-/faktareferanser og sammenligningens retning mot beregnet, uavrundet grunnlag og setter inn beregnede navn og tall. Ett ugyldig påstandsfelt forkaster hele forklaringen til fordel for tydelig merket reservetekst; rangering og Godkjenning forblir tilgjengelig (P-06).
+- Tillatte begrunnelsestyper i v1 er at Kandidaten oppfyller de fire prototypereglene, at en navngitt beregnet faktor trekker opp eller ned, og at en faktor/totalscore er høyere, lavere eller lik den forhåndsberegnede referansens. «Lik» krever lik uavrundet verdi. KI leverer type og referanse, ikke egne tall eller navn; kontrakten og negative tester fastsettes i story 5.3/5.4 (P-06/P-07).
+- Forklaringen kan bruke én forhåndsberegnet, Gyldig referansekandidat: nr. 1 sammenlignes med nr. 2, øvrige med nr. 1. Ved én Gyldig kandidat er ingen referanse tilgjengelig. KI kan ikke velge referansen, finne på sammenligninger eller nevne utelukkede kandidater (P-07). Valgfri sammenligning av to merkede kandidater er strekkmål etter fungerende v1.
 
 **Feature-spesifikke NFR-er:**
 - Grensen mellom deterministisk lag (§4.2–§4.4) og KI-laget er en hard systemgrense: KI mottar allerede filtrerte og beregnede data, og kan ikke endre dem.
@@ -312,9 +325,11 @@ Turnusansvarlig kan velge en hvilken som helst Gyldig kandidat fra Rangeringen �
 - Ingen endring i Turnusen anses gjennomført før Godkjenning er gitt.
 - Systemet kan ikke gjennomføre en Godkjenning automatisk eller uten Turnusansvarliges eksplisitte handling.
 - Ved Godkjenning kontrollerer systemet de fire Harde reglene på nytt mot gjeldende Turnus før noe lagres. Er Kandidaten ikke lenger gyldig, lagres ingenting, og Turnusansvarlig får en melding om dette.
+- Hvis øvrig beslutningsgrunnlag har endret seg siden visningen, forkastes den gamle vurderingen; nye beregninger vises og Turnusansvarlig må bekrefte på nytt. Forsinkede KI-svar fra tidligere Vakt/Kandidat brukes ikke (P-09). Ufullstendig nødvendig datagrunnlag stopper også Godkjenning (P-08).
 - Ved vellykket Godkjenning lagres hvem som overtar hvilken Vakt og når Godkjenningen ble gitt, og Vakten bemannes med den valgte Kandidaten. Resultatet lagres varig og er synlig når Turnusen åpnes på nytt.
 - Etter lagring vises en bekreftelse på Vaktvalg, og Vakten vises blant bemannede Vakter i stedet for under «Krever handling».
 - En ny Godkjenning for samme allerede godkjente erstatning avvises, også ved dobbeltklikk. Det finnes bare én Godkjenning for Vakten.
+- Den viste KI-forklaringen lagres ikke historisk som del av Godkjenningen (P-12); eventuell senere lagring av nøyaktig vist forklaring og tilhørende beregningsgrunnlag krever egen beslutning og story.
 
 Disse konsekvensene viderefører den avklarte godkjenningsflyten i [epics, story 3.2](../../epics.md) og lagringskravet i [arkitekturens AD-5](../../architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md).
 
@@ -348,7 +363,7 @@ Turnushjelperen v1 skal **ikke**:
 - Automatisk gjennomføre et KI-forslag uten Godkjenning (§4.6).
 - Inneholde en full ansattportal, avansert rollebasert autentisering, eller en generell KI-chat for ansatte.
 
-**[NOTE FOR PM]** Ansattportal og mer avansert autentisering/KI-funksjonalitet er stretch goals dersom kjernen (§4) er ferdig og stabil — ikke en del av v1-leveransen.
+**Planlagt etter kjerneflyten:** P-10B får egen story om redigering av preferansetekst i appen, med lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. Kjerneflyten venter ikke på den; hvis tiden ikke rekker, dokumenteres den som utsatt. Historisk lagring av forklaring (P-12B) er ikke v1-krav. Ansattportal og mer avansert autentisering er senere muligheter.
 
 ## 6. MVP-omfang
 
@@ -383,14 +398,18 @@ Turnushjelperen v1 skal **ikke**:
 - **SM-C1**: Antall implementerte Harde regler skal ikke maksimeres på bekostning av testdekning per regel — addendums anbefaling («fire regler som beviselig fungerer er verdt mer enn tolv som er halvveis») veier tyngre enn regelmengde. Motvirker en eventuell trang til å utvide §4.2 uten tilsvarende testarbeid.
 - **SM-C2**: Rask responstid på KI-forklaringen skal ikke optimeres på bekostning av at forklaringen faktisk er korrekt og aldri nevner en utelukket Kandidat. Motvirker SM-3/SM-4 ved å hindre at hastighet trumfer den testbare invarianten i SM-2.
 
-## 8. Åpne spørsmål
+## 8. Gjenstående gjennomføring og kontroll
 
-1. **Bekreft med faglærer** om KI i selve produktet (ikke bare i utviklingsprosessen) er et karakterkrav eller et rent produktvalg (addendum §5). Bør avklares før proposal leveres. Faglærers tilbakemelding på product brief (2026-10-06) vurderer KI/regelmotor-skillet som en styrke, men bekrefter ikke eksplisitt dette spørsmålet — fortsatt åpent.
-2. Nøyaktig tekst/utforming av «ingen gyldige kandidater»-meldingen (§4.2, FR-6) — atferden er spesifisert (skal skille seg fra laste-/feiltilstand), men ordlyden er åpen for forslag fra resten av gruppen.
-3. Kostnadsgrunnlaget i FR-7/FR-9: presiser hvilken kostnadsverdi Rangeringen bruker, hvilken uke «denne uken» viser til for kostnad, og hvordan timer og kostnad fordeles når Vakten krysser ukeskiftet. Startuken er allerede fastsatt for Timebelastning (FR-8); dette avgjør ikke kostnadsfordelingen.
-4. Håndtering av registrert Ansattpreferanse som ikke kan tolkes, inkludert feilmerking og preferansepoeng (OP-03). Teknisk løsning er ikke vedtatt og skal avklares før story 5.1 og 5.2 er ferdige.
-5. Konkret kontroll av faktuelle avvik i KI-forklaringen, inkludert feil kostnad, preferanse og sammenligninger, og samordning av KI-input med den gjeldende rangeringsmodellen (K-04). En bestemt valideringsløsning er ikke vedtatt.
-6. Eksakt grense for «høy Timebelastning» (FR-8, K-02): 32,4 timer, altså 90 % av 36 timer, er et forslag, ikke et gruppevedtak. K-03 fastsetter avrunding ved visning, men avgjør ikke terskelen.
+Produktvalgene over er vedtatt, men følgende **kontroller/oppgaver** gjenstår:
+
+1. P-01–P-04: Implementer og test merkostnad per berørt uke, ukeskifte/sommertid, detaljert kostnadsvisning og 32:23/32:24-grensen. Ingrid beholdes på 32 timer; rett test-/visningsforventning uten å endre #4127-fasiten.
+2. P-05–P-07: Fastsett KI-kontrakten i stories/arkitektur og test ventende/feilet tolkning, nye forsøk, faktakontroll og referanseregelen mot falsk OpenRouter. Manuell kontroll av norsk og mening kommer i tillegg.
+3. P-08/P-09/P-11: Test manglende datadekning, særlig #4261–#4265 etter seedgrensen, gammelt svar/endret beslutningsgrunnlag og tydelig forskjell mellom datafeil og null gyldige.
+4. P-10B: Story 5.9 er planlagt i backlog; prioriter implementasjon først etter fungerende kjerneflyt. Hvis tiden ikke rekker, før den som utsatt. P-12B krever først senere valg og er ikke v1-krav.
+5. P-13/OP-02: Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Gjennomfør og dokumenter en liten oppgavebasert forståelsestest: forklar nr. 1 uten hint, finn en annen gyldig Kandidat, skill datafeil fra null gyldige. Testen er besluttet, ikke utført.
+6. E-02: Kontroller levert funksjonalitet mot den godkjente proposalen i `ee6d798` ved innlevering, og forklar planavvik. E-01 er lukket: KI i produktet er et valgt produktscope, ikke et formelt emnekrav ifølge Johannes' gjengivelse av faglærers muntlige utsagn; forelesningsdato er ukjent.
+
+**Vedtak innarbeidet 2026-11-10:** P-01–P-13 bygger på [beslutningsgrunnlaget](../../../../docs/beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) og er ført i [referatet §12](../../../../docs/beslutninger/avklaringspunkter.md#12-prd-vedtak-2026-11-09-og-status-ved-dokumentsamordning). Dette er samordning av krav, ikke dokumentasjon på implementasjon eller beståtte apptester. KS-02s #4127-fasit og KS-04s begrensede datagodkjenning for #4127/#4189 består.
 
 **Samordnet med vedtak og eksisterende krav (2026-11-07):**
 - AV-04: Hvilekontrollen er presisert i FR-4 og FR-5 som prototypemodellen med 11 timer før/etter og 35 timer innenfor hver berørte kalenderuke.
@@ -420,3 +439,4 @@ Turnushjelperen v1 skal **ikke**:
 - Fra §4.2/§8: Regelutvalget (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen) er bekreftet av bruker; maks arbeidstid per døgn/uke og overtidsgrenser er bevisst utelatt fra v1 — revurderes bare hvis gruppen ønsker et bredere regelsett.
 - Fra §4.3 (Ulempemodell): Taket på 300 Ulempepoeng bygger på regneeksempler med antatte, typiske turnusprofiler, ikke på en kilde, og kan justeres i én parameter. Helligdager som vanlige ukedager var en antakelse til gruppa bekreftet det 2026-11-02.
 - Fra §7 (SM-9): Antakelse om at «kjører fra et rent klonet repo» er det addendum mener med teknisk kvalitetskriterium fra emnekravet — ikke eksplisitt bekreftet av gruppen, men utledet direkte fra addendum §6.
+- Fra §4.2: Tilgjengelighet utover planlagte Vakter er en uttrykkelig demonstrasjonsforutsetning (AV-06), ikke en påstand om virkelig tilgjengelighet. Ukjent nødvendig historikk behandles som datafeil (P-08), aldri som dokumentert fri.

@@ -183,7 +183,7 @@ Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av
   - Jonas og Mette har like kostnadspoeng (84,76), timepoeng (100) og preferansepoeng (75). Ulempescore er 86,67 mot 40,00. Forskjellen er 0,15 × 46,67 = **7,0 totalpoeng** (AV-12). Uten ulempe ville de stått likt, og da avgjør stigende ansatt-ID (AV-05).
   - Med nøytral preferanse for alle (Epic 5 ikke på plass) blir det Jonas 79,40, Mette 72,40, Thomas 71,50 og Ingrid 24,50. Thomas er fortsatt ikke øverst.
   - Testene i 1.2 sjekker at dataene gir nøyaktig disse inputene. Selve rangeringen testes i story 4.4.
-- Ingrid skal vises med høy belastning. Story 4.2 setter grensen så 32 t regnes som høy.
+- **Rettet etter P-04 (2026-11-09):** Ingrid beholdes på 32 timer i seeddata og ligger under vedtatt grense 32,4 timer. Hun skal ikke vises med «høy belastning». Denne rettingen endrer ikke #4127-fasiten, som fortsatt bruker 32 timer og 3 850 kr i Vaktkostnad. Tidligere forventning om høy belastning ved 32 timer var feil.
 - Thomas står på 2/4 i mockupen, men det strider mot FR-2, så han får nivå 3.
 
 **Utelukket på #4127 (20):**
@@ -230,7 +230,7 @@ I helgen:
 
 Eksakte summer som 40, 60, 120 og 180 lar seg derfor sette sammen av hele vakter.
 
-KS-04 (datadekning ved periodegrensene) er ikke kontrollert. Det finnes ingen vakter etter natten 04.10–05.10. Det holder for #4127 og #4189, men ikke for regelsjekk av vakter i slutten av perioden. Historikken slutter 20.09 og påvirker bare elleve- og trettifem-timersregelen i begynnelsen av uke 39. Testen regner alle reglene over hele datasettet.
+**Historisk designmerknad, erstattet av kontrollen 2026-11-03 og KS-04-godkjenningen 2026-11-04:** Datadekningen for #4127/#4189 ble kontrollert og godkjent med kjent begrensning etter 05.10. Det finnes ingen planlagte Vakter etter 2026-10-05 kl. 00:00. Ved ny vurdering av #4261–#4265 eller annen Vakt der nødvendig historikk/nabovakter mangler, skal appen stoppe med datafeil uten rangering eller Godkjenning (P-08); implementasjon/test av denne stoppregelen gjenstår. Fasiten og KS-04s avgrensning bevares.
 
 ## Verification
 
