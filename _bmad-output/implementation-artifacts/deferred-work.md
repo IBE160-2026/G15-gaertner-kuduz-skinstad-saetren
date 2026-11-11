@@ -7,3 +7,9 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-5-vaktoversikt-med-krever-handling.md`
   summary: Innledningen og «Kjøring og verifisering» i AGENTS.md nevner ikke vaktoversikten fra 1.5 eller `npm run test`.
   evidence: AGENTS.md er agentkontekst. Etter AV-08 endres den med registrering i §11 eller i egen PR, ikke som en del av denne storien.
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-1-gyldige-kandidater-filtrert-pa-kompetanse-minstekrav.md`
+  summary: Frontend har ingen komponenttestrigg, så gjengivelsen av tilstandene og «Prøv igjen» i `Kandidatliste` testes ikke automatisk.
+  evidence: Verification-gap 2026-11-11. `frontend/tester/kandidater.test.mjs` tester bare logikken i `src/kandidater.ts`. Fjernes `forsok` fra avhengighetene i `useEffect`, er alle tester fortsatt grønne. Komponenten dekkes bare av den manuelle nettleserkontrollen.
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-1-gyldige-kandidater-filtrert-pa-kompetanse-minstekrav.md`
+  summary: AGENTS.md sier fortsatt «ingen domenelogikk ennå» og nevner ikke `tester/regelmotor/` eller arkitekturtesten med import-linter.
+  evidence: Blind-hunter 2026-11-11. Story 2.1 legger inn `backend/domene/` med regelmotor. Rettingen gjelder en agentkontekstfil (AV-08) og krever et valg fra et gruppemedlem.

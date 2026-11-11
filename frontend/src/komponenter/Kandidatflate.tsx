@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ApiFeil, gjeldendeSesjonsgenerasjon, hentVaktdetaljer, type Vaktdetaljer } from "../api";
 import { datoOgKlokke, vaktBrodsmule, vakttypenavn } from "../format";
+import { lastKandidater, type Kandidattilstand } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
 
@@ -79,10 +80,68 @@ export default function Kandidatflate({ vaktnummer }: { vaktnummer: number }) {
           <div><dt>{t.kompetanse}</dt><dd>{t.minstenivaa(data.minstenivå)}</dd></div>
         </dl>
       </section>
-      <section className="panel kandidatplassholder" aria-labelledby="kandidater-tittel">
-        <h2 id="kandidater-tittel" className="overskrift">{t.plassholderOverskrift}</h2>
-        <p className="brodtekst">{t.plassholderTekst}</p>
-      </section>
+      <Kandidatliste vaktnummer={data.vaktnummer} />
     </main>
   </>;
+}
+
+// Hentes automatisk når vakten er lastet (story 2.1). Bare Gyldige kandidater.
+function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
+  const [tilstand, setTilstand] = useState<Kandidattilstand>({ type: "laster" });
+  const [forsok, setForsok] = useState(0);
+  const retryknapp = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => lastKandidater(vaktnummer, setTilstand), [vaktnummer, forsok]);
+
+  useEffect(() => {
+    if (tilstand.type === "feil") retryknapp.current?.focus();
+  }, [tilstand]);
+
+  if (tilstand.type === "avvist") return null;
+
+  const overskrift = <>
+    <h2 id="kandidater-tittel" className="overskrift">{t.kandidaterOverskrift}</h2>
+    <p className="meta">{t.midlertidigMerknad}</p>
+  </>;
+
+  if (tilstand.type === "laster") return (
+    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+      {overskrift}
+      <p className="meta kandidater-status" role="status">{t.kandidaterLaster}</p>
+    </section>
+  );
+  if (tilstand.type === "feil") return (
+    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+      {overskrift}
+      <div role="alert">
+        <p className="brodtekst kandidater-status">{tilstand.tekst}</p>
+        <button ref={retryknapp} type="button" className="button-secondary" onClick={() => setForsok((n) => n + 1)}>
+          {TEKSTER.provIgjen}
+        </button>
+      </div>
+    </section>
+  );
+  if (tilstand.type === "datafeil") return (
+    <section className="panel kandidater datafeil" aria-labelledby="kandidater-tittel">
+      {overskrift}
+      <div role="alert">
+        <p className="brodtekst datafeil-tekst">{t.datafeil}</p>
+        <p className="meta">{t.datagrense(datoOgKlokke(tilstand.datagrense))}</p>
+      </div>
+    </section>
+  );
+
+  return (
+    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+      {overskrift}
+      <ul className="kandidatliste">
+        {tilstand.kandidater.map((k) => (
+          <li key={k.id}>
+            <span className="ansattnavn">{k.navn}</span>
+            <span className="tag">{t.nivaaTag(k.kompetansenivå)}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }

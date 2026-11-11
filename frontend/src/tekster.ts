@@ -90,8 +90,14 @@ export const TEKSTER = {
     slutt: (tid: string) => `Slutt: ${tid}`,
     kompetanse: "Kompetansekrav",
     minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
-    plassholderOverskrift: "Kandidater kommer senere",
-    plassholderTekst: "Kandidatlisten blir tilgjengelig når filtrering av ansatte er på plass.",
+    // Kandidatlisten (story 2.1).
+    kandidaterOverskrift: "Gyldige kandidater",
+    // Midlertidig til alle fire reglene er på plass. Fjernes i story 2.4.
+    midlertidigMerknad: "Filtrert på kompetanse-minstekrav. Flere regler kommer.",
+    kandidaterLaster: "Henter kandidatene …",
+    nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
+    datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
+    datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },
 
   brodsmulesti: {

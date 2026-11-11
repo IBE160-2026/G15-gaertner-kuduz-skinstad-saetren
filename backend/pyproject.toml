@@ -6,3 +6,16 @@ requires-python = ">=3.12"
 [tool.pytest.ini_options]
 testpaths = ["tester"]
 pythonpath = ["."]
+
+# Domenekjernen importerer aldri adaptere (AD-1, AD-2). Kontrakten gjelder hele
+# `domene`, også `domene.regelmotor`, `domene.porter` og nye moduler direkte under
+# `domene/`. Indirekte importer er også forbudt. Kontrakten kjøres av
+# `tester/test_arkitektur.py` som del av `pytest`.
+[tool.importlinter]
+root_packages = ["domene", "adaptere"]
+
+[[tool.importlinter.contracts]]
+name = "domene importerer ikke adaptere (AD-1, AD-2)"
+type = "forbidden"
+source_modules = ["domene"]
+forbidden_modules = ["adaptere"]
