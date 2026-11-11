@@ -2,7 +2,7 @@
 
 Arbeidsdokument for gruppen, opprettet 2026-10-12. Tiltakene er vår anvendelse av [sensorveiledningen](sensorveiledning-del-1.md), ikke nye emnekrav. Vektene er veiledende innenfor del 1, som teller 70 % av samlet karakter. Matrisen gir ingen karaktergaranti.
 
-Oppdatert 2026-11-07 mot dokumentert status for story 1.1–1.3 og gruppevedtakene. Lenke til faktiske bevis må legges inn før et tiltak merkes ferdig. Appskjelett, lagring med fiktive testdata og innlogging er implementert og merget. Kjerneflyten med regelmotor, rangering, KI-forklaringer og godkjenning gjenstår. Dette er ikke en full revisjon av repo eller historikk. Godkjent proposal må kontrolleres før endelig omfang fastsettes.
+Oppdatert 2026-11-10 med dokumentmilepælen for P-01–P-13/E-01/E-02. Lenke til faktiske bevis må legges inn før et tiltak merkes ferdig. Appskjelett, lagring med fiktive testdata og innlogging er implementert og merget. Kjerneflyten med regelmotor, rangering, KI-forklaringer og godkjenning gjenstår. Dette er ikke en full revisjon av repo eller historikk. Godkjent proposal er identifisert som `ee6d798` (E-02); sluttkontroll mot levert app gjenstår.
 
 | Kriterium | Vekt | Forventet leveranse i turnusprosjektet | Bevis / grunnlag nå | Gjenstår / neste tiltak |
 |---|---:|---|---|---|
@@ -28,7 +28,7 @@ Implementeringsmilepæl 2026-11-09: [Story 1.6-spesifikasjonen](../../_bmad-outp
 
 ## PRD samordnet med vedtak 2026-11-07
 
-[PRD-en](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md) er oppdatert med AV-04/05/06 og K-03 fra [beslutningsreferatet](../beslutninger/avklaringspunkter.md), og FR-12 er samordnet med story 3.2 og arkitekturens AD-5. [Kildeavstemmingen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/reconcile-vedtak-2026-11-07.md), [godkjenningskravene](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/reconcile-godkjenning-2026-11-07.md), [rubrikkgjennomgangen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/review-rubric-2026-11-07.md) og [den redaksjonelle gjennomgangen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/review-editorial-2026-11-07.md) dokumenterer kvalitetssikringen. Dette er prosessbevis for kriterium 1 og 3; det dokumenterer samordnede krav, ikke implementert regelmotor eller godkjenningsflyt. Kostnadsgrunnlag, KI-feilhåndtering/faktakontroll og eksakt belastningsterskel står fortsatt åpne i PRD §8; foreldet beslutningsstatus i epics gjenstår å samordne.
+**Status ved milepælen 2026-11-07:** [PRD-en](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md) ble da oppdatert med AV-04/05/06 og K-03 fra [beslutningsreferatet](../beslutninger/avklaringspunkter.md), og FR-12 ble samordnet med story 3.2 og AD-5. [Kildeavstemmingen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/reconcile-vedtak-2026-11-07.md), [godkjenningskravene](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/reconcile-godkjenning-2026-11-07.md), [rubrikkgjennomgangen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/review-rubric-2026-11-07.md) og [den redaksjonelle gjennomgangen](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/review-editorial-2026-11-07.md) er historiske prosessbevis. Åpne spørsmål som disse rapportene fant, ble senere behandlet i P-01–P-13; se ny milepæl nedenfor. Rapportene dokumenterer ikke implementert regelmotor eller godkjenningsflyt.
 
 ## Story 1.1 implementert og merget (PR #3)
 
@@ -93,7 +93,7 @@ Ikke dokumentert ennå:
 
 ## Full kontroll av PRD og beslutningsgrunnlag 2026-11-07
 
-[Beslutningsgrunnlaget for gruppen](../beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) dokumenterer kontroll av hele PRD §§0–9 og alle 14 FR-er mot vedtak, stories, arkitektur og tidligere funn. To separate agentkontroller ble sammenholdt før forslagene ble skrevet. Underlaget har 13 produkt-/avgrensningspunkter og to dokumentasjonspunkter, med alternativer, anbefalinger og felt for gruppens faktiske svar. Det er prosessbevis for kriterium 1 og 3, ikke nye vedtak eller bevis for implementasjon. Den eksisterende PRD-teksten er uendret i denne oppgaven. Beregningseksempler, unike punkt-ID-er og lokale lenker er kontrollert. Faglærersvar om KI i produktet og kontroll mot godkjent proposal står åpne; PRD-en kan ikke på dette grunnlaget omtales som ferdig avklart.
+**Status ved undersøkelsen 2026-11-07:** [Beslutningsgrunnlaget for gruppen](../beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) dokumenterte kontroll av PRD §§0–9 og FR-1–FR-14 mot vedtak, stories, arkitektur og tidligere funn. To separate agentkontroller ble sammenholdt. P-01–P-13 og E-01/E-02 var da spørsmål/anbefalinger, ikke vedtak eller implementasjonsbevis. De senere gruppesvarene 2026-11-09 og dokumentsamordningen 2026-11-10 er ført nedenfor.
 
 ## CI med GitHub Actions 2026-11-08 (PR #6 og PR #9 merget)
 
@@ -110,3 +110,8 @@ Bevis per kriterium:
 - **Kryssplattform:** CI på Linux er den eneste kjøringen utenfor Windows etter OP-05.
 
 Ikke dekket: testene av modellverktøyene i `scripts/` og manuell test. Rød CI blokkerer ikke merge, og det er gruppas valg. README beskriver CI under Tester.
+## Dokumentsamordning av PRD-vedtak 2026-11-10
+
+[Beslutningsreferatet §12](../beslutninger/avklaringspunkter.md#12-prd-vedtak-2026-11-09-og-status-ved-dokumentsamordning) fører P-01–P-13 og E-01/E-02 med skille mellom vedtak og gjenstående kontroll. [PRD-en](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md) har beholdt FR-ID-ene og fått testbare konsekvenser for beregning, datamangler, KI-feil/faktakontroll og ny bekreftelse. [Epics](../../_bmad-output/planning-artifacts/epics.md), [arkitektur](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md), [UX-reisen](../../_bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/EXPERIENCE.md), [Story 1.2-spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-1-2-fiktiv-turnus-med-ansatte-og-vakter.md) og [produktbriefen](../../product-brief.md) er samordnet der tidligere tekst var misvisende. Sprintstatus fører P-10B som story 5.9 i backlog. Dette er bevis for **prosess og planleggingskvalitet** (kriterium 1), ikke for implementert funksjonalitet eller beståtte apptester (kriterium 2/3).
+
+Kontroller som fortsatt trengs for vurderingsgrunnlaget: grensetester av P-01–P-04; P-08-stopp ved #4261–#4265 og andre datamangler; P-05–P-07 mot falsk OpenRouter og manuell forståelighet; P-09-ny bekreftelse; P-11-tomtilstand; P-13s mobil-/nettbrettavklaring og dokumenterte forståelsestest før story 4.6; kontroll av faktisk levert app mot godkjent proposal `ee6d798` (E-02). KS-02s #4127-fasit og KS-04s avgrensede godkjenning av #4127/#4189 står fast. Ingen av disse kontrollene markeres utført av dokumentvedtakene.

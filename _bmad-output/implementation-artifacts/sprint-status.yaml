@@ -77,8 +77,21 @@ development_status:
   5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: backlog
   5-7-demo-modus-uten-api-nøkkel: backlog
   5-8-sensor-kan-kjøre-live-ki: backlog
+  5-9-redigere-preferansetekst-etter-kjerneflyt: backlog
   epic-5-retrospective: optional
 action_items:
+  - epic: 4
+    action: "P-13/OP-02: Etter fungerende kandidatvisning og før story 4.6 ferdigstilles, avklar mobil/nettbrett og dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige."
+    owner: "gruppa"
+    status: open
+  - epic: 2
+    action: "P-08/KS-04: Test at ny vurdering av #4261–#4265 og annet ufullstendig datagrunnlag stopper uten rangering/godkjenning; bevar #4127/#4189-fasit og KS-04s avgrensede godkjenning."
+    owner: "gruppa"
+    status: open
+  - epic: 5
+    action: "P-10B: Start story 5.9 først etter fungerende kjerneflyt. Hvis tiden ikke rekker, dokumenter den som utsatt. P-07s valgfrie sammenligning er strekkmål, og P-12B er ikke v1-krav."
+    owner: "gruppa"
+    status: open
   - epic: 4
     action: "Readiness 2026-10-19: Fjern kompetanse som myk faktor i FR2/FR9-oppsummeringen
       og UX-DR7 i epics.md og i ARCHITECTURE-SPINE.md:193, i tråd med PRD §4.4 og

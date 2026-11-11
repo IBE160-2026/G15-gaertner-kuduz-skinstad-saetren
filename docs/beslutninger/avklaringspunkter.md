@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-08 (laveste Node-versjon løftet til 22.12; backend- og frontendtestene i CI og regelen om ingen hemmeligheter i CI vedtatt i PR #9; OP-11: Mithad Kuduz tar Story 1.5; ny ordlyd i AV-08, ny regel for branch og PR og CI for speilingen av skills vedtatt i PR #6; se AV-08 og §11)  
+> **Sist oppdatert:** 2026-11-10 (P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12; dokumentvedtak er skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -49,14 +49,14 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | ID | Tema | Status | Kort registrering | Ansvarlig |
 |---|---|---|---|---|
 | K-01 | Feil regneeksempel | Åpent | `22 + 2 × 21 + 3 × 29 = 151`, ikke 136; konkret retting ikke avtalt. | Ikke bestemt |
-| K-02 | Høy timebelastning | Åpent | Codex foreslår terskel 32,4 t (90 % av 36); ikke vedtatt. | Ikke bestemt |
+| K-02 | Høy timebelastning | Vedtatt 2026-11-09 (P-04) | Terskel minst 32,4 t før visningsavrunding. Ingrid beholdes på 32 t og er under grensen; retting av forventning i Story 1.2 er dokumentarbeid, visning/test gjenstår. | Gruppen |
 | K-03 | Avrunding | Vedtatt | Beregn/sorter uavrundet; vis én desimal. | Ikke bestemt |
-| K-04 | `RangertKandidat`/KI-kontrakt | Åpent | Codex anbefaler samordning; konkret endring ikke vedtatt. | Ikke bestemt |
+| K-04 | `RangertKandidat`/KI-kontrakt | Produktvalg vedtatt 2026-11-09 (P-06/P-07); kontrakt og tester gjenstår | Strukturerte, faktakontrollerte begrunnelser og én forhåndsberegnet referansekandidat; se §12. | Gruppen |
 | K-05 | KI-sporbarhet | Prinsipp vedtatt; kontroll åpen | Behold logging uendret; sjekk senere dokumentasjon inkl. tak 300. | Ikke bestemt |
-| K-06 | Dokumentkvalitet | Åpent | Codex anbefaler retting av foreldet tekst, lenker og status; ikke vedtatt. | Ikke bestemt |
+| K-06 | Dokumentkvalitet | Samordning pågår 2026-11-10 | P-vedtakene føres i planleggingsdokumentene; endelig dokumentkontroll gjenstår. | Gruppen |
 | OP-01 | Avgrensninger i v1 | Vedtatt | Ingen omfattende tariff-, fraværs-, stillingsprosent-, helligdags- eller juridisk modell. | Ikke bestemt |
 | OP-02 | UX og mobil | Vedtatt | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. | Ikke bestemt |
-| OP-03 | KI-feil ved preferansetolkning | Prioritering vedtatt; løsning åpen | Avklar før Story 5.1/5.2 er `done`. | Ikke bestemt |
+| OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); implementasjon gjenstår | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. | Gruppen |
 | OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
 | OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07 | Fysisk test på macOS/Linux strykes: verken sensor eller noen i gruppa har Mac. Koden skrives for å virke på tvers av operativsystem og testes fysisk på Windows. Test fra ren klone er fortsatt ikke avtalt (§11). | Johannes W. Gaertner |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
@@ -251,6 +251,8 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### K-02 – Terskel for høy timebelastning
 
+**Senere vedtak 2026-11-09 (P-04, gjeldende status):** Minst 32,4 timer før visningsavrunding. Ingrid beholdes på 32 timer og ligger under grensen. Story 1.2s dokumentforventning er rettet 2026-11-10; implementert visning og grensetester gjenstår. Linjene nedenfor gjengir den historiske statusen fra 02.11.
+
 - **Funn:** Codex anbefaler nøyaktig `0,90 × 36 = 32,4 timer`; Ingrid med 32 timer ligger under **den anbefalte** terskelen.
 - **Status:** Åpent. **32,4 timer er en Codex-anbefaling, ikke et gruppevedtak.**
 - **Kontrollbehov:** Avklar om feilen gjelder eksempel, visning eller faktisk beregningslogikk. Ikke gjør «høy belastning» til en ekstra hard regel uten vedtak.
@@ -266,6 +268,8 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### K-04 – Datakontrakten `RangertKandidat` og KI-input
 
+**Senere vedtak 2026-11-09 (P-06/P-07, gjeldende status):** Produktkravene om strukturerte, faktakontrollerte begrunnelser og én forhåndsberegnet gyldig referanse er fastsatt. Kontrakt og negative tester gjenstår i story 5.3/5.4. Linjene nedenfor er historisk status fra 02.11.
+
 - **Status:** Åpent; ingen konkret endring godkjent.
 - **Codex-anbefaling:** Samordne `RangertKandidat` i epics, arkitektur og KI-input med vedtatt rangeringsmodell og ulempfelt. Domenet/regelmotoren beregner faktor- og totalscore, KI forklarer.
 - **Kontrollbehov:** Finn faktiske forskjeller før forslag til retting legges frem. Ingen agent får gjennom K-04 alene mandat til å endre kontrakten eller lage ny funksjonalitet.
@@ -279,6 +283,8 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Ansvarlig/frist:** Ikke bestemt.
 
 ### K-06 – Dokumentkvalitet og status
+
+**Oppfølging 2026-11-10:** De identifiserte P-vedtakene er samordnet i PRD og berørte dokumenter, med [valideringsrapport](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/validation-report-2026-11-10.md). Dette lukker ikke generell dokumentkontroll ved senere implementasjon. Linjene nedenfor beskriver status 02.11.
 
 - **Status:** Åpent; Codex-anbefalingen er **ikke** et gruppevedtak om korrigering.
 - **Codex-funn:** Utdatert beskrivelse av kostnadsmodell, feil lenker og misvisende status som «løst» uten godkjenning.
@@ -302,6 +308,8 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Ansvarlig/frist:** Ikke bestemt; senere milepæl er fungerende kandidatvisning.
 
 ### OP-03 – KI-feilhåndtering ved preferansetolkning
+
+**Senere vedtak 2026-11-09 (P-05, gjeldende status):** Venting/feil for registrert tekst gir midlertidig 50 poeng med egen status; avgrensede automatiske forsøk og brukerutløst nytt forsøk er valgt. Implementasjon/test gjenstår før story 5.1/5.2 kan være ferdige. Linjene nedenfor er historisk status fra 02.11.
 
 - **Status:** Prioritering vedtatt; teknisk løsning åpen.
 - **Beslutning:** Detaljert håndtering kan utsettes, **men skal være avklart før Story 5.1 og 5.2 er `done`**.
@@ -384,7 +392,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ## 7. Samlede konsekvenser for prosjektfiler og funksjoner
 
-**Dette er en endrings-/kontrolloversikt, ikke en påstand om hvilke endringer som allerede er gjort i repoet.** Kontroller filnavn, faktiske stier og nåværende innhold før gjennomføring. Betegnelsene under følger møteunderlaget.
+**Historisk endrings-/kontrolloversikt fra 02.11, ikke gjeldende status.** Senere vedtak og kontroller er ført i §11–§12. Tabellen er beholdt for å vise hva gruppen skulle undersøke på møtet; kontroller filnavn, faktiske stier og nåværende innhold før gjennomføring.
 
 | Område | Må samsvare med vedtak/kontroller | Status og merknad |
 |---|---|---|
@@ -615,3 +623,27 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 ---
 
 **Dokumentvedlikehold:** Endre status til «Vedtatt», «Utsatt» eller «Løst» for et åpent punkt **bare etter faktisk avklaring**, med dato, beslutning og kilde/henvisning. Behold opprinnelig beslutnings-ID for sporbarhet. Nye punkter gis nye ID-er uten å omskrive historiske vedtak.
+
+## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
+
+Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.
+
+| ID | Vedtatt krav eller avgrensning | Dokument-/implementasjonsstatus og gjenstående kontroll |
+|---|---|---|
+| P-01 | Rangeringen bruker modellert **merkostnad ved tildeling** over berørte uker, uten fratrekk for opprinnelig ansatt. | Krav skal inn i FR-7/FR-9 og story 4.3/4.4; beregning og grensetester gjenstår. |
+| P-02 | Fordel faktisk forløpt tid fra både eksisterende og ny vakt på kalenderuker i `Europe/Oslo`; 36-timersgrensen gjelder hver berørt uke. FR-8 viser eksisterende timer i startuken. | Ukeskifte, nøyaktig 36 t og begge sommertidsskifter må testes i domenekoden. |
+| P-03 | Vis total vaktkostnad med to desimaler, «Ordinær» eller «Inkluderer overtid», og timer × satser i detaljer. Rangering regnes uavrundet. | Kostnadsvisning og samsvar med beregning må testes. |
+| P-04 / K-02 | «Høy belastning» begynner ved minst 32,4 t før avrunding. Ingrid har fortsatt 32 t i seeddata og skal ikke merkes høy. | Story 1.2s forventning må rettes; UI og grense 32:23/32:24 må testes. #4127-fasiten endres ikke. |
+| P-05 / OP-03 | Ventende eller feilet tolkning av registrert tekst gir midlertidig 50 preferansepoeng med egen status og beholdt råtekst. Avgrensede automatiske forsøk ved forbigående feil; brukeren kan prøve igjen etter endelig feil. Ny tolkning oppdaterer rangeringen før bekreftelse. | Skill manglende tekst, nøytral tolkning, venting og feil i story 5.1/5.2 og tester. KI-feil utelukker ikke kandidaten. |
+| P-06 | KI foreslår strukturerte begrunnelser; koden validerer referanser og retning mot beregnede fakta og setter inn navn/tall. Ugyldig påstand gir tydelig merket reservetekst. | KI-kontrakt, falsk-OpenRouter-tester og manuell språkkontroll gjenstår. |
+| P-07 / K-04 | Forklaring kan sammenligne med én forhåndsberegnet, gyldig referanse: nr. 1 mot nr. 2, øvrige mot nr. 1; én gyldig kandidat får ingen referanse. | Kontrakt og kontrollerte sammenligninger gjenstår. Valgfri sammenligning av to merkede kandidater er strekkmål **etter** fungerende v1. |
+| P-08 | Stopp vurdering og godkjenning når nødvendig turnusdekning, tid, vaktkrav eller kostnadsgrunnlag er ukjent/ugyldig. Dokumentert fri er null timer; ukjent historikk er ikke det. | #4127/#4189 beholder KS-04-godkjenningen. Ved ny vurdering av #4261–#4265 må appen opplyse om seeddata-grensen 2026-10-05 kl. 00:00 og ikke vise rangering/godkjenning. Denne og andre periodekanter må testes. |
+| P-09 | Forkast forsinkede svar for tidligere vakt/kandidat. Ved endret beslutningsgrunnlag vises nye beregninger og kreves ny bekreftelse før lagring. | Klientflyt og kontroll ved godkjenning gjenstår. |
+| P-10 | Kjerneflyten bruker faste preferanser i testdata. **P-10B planlegges som egen story etter fungerende kjerneflyt**: turnusansvarlig kan redigere tekst, med lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. | B er planlagt v1-tillegg, ikke forutsetning for kjerneflyten; dokumenter som utsatt hvis tiden ikke rekker. Manuell kategori-overstyring er ikke valgt. Johannes' individuelle ønske om høyere prioritet i kilden endrer ikke Kims senere gruppeavklaring. |
+| P-11 | Ved null gyldige vises egen tomtilstand, utelukkelsesoppsummering og teksten «Innleie av personell kan vurderes», uten innleieknapp. | Skill tomtilstanden fra datafeil og lasting i UI-test. |
+| P-12 | Godkjenning lagres varig; vist forklaring lagres ikke historisk i kjerneversjonen. | Historisk forklaringslagring er **ikke v1-krav**. Eventuelt senere valg krever egen story for forklaring og beregningsgrunnlag. |
+| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende nå. Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 er ferdig. | Felles ansvar: dokumenter oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. Testen er ikke utført. |
+| E-01 | Faglærers muntlige opplysning er gjengitt: KI i produktet er ikke et formelt emnekrav; KI beholdes som valgt produktscope. | Lukket som dokumentasjonspunkt 2026-11-08; forelesningsdato er ukjent. |
+| E-02 | Commit `ee6d798` er identifisert som godkjent proposal; planavvikene er listet i beslutningsgrunnlaget. | Avklart som dokumentpunkt 2026-11-09. Kontroller faktisk levert app mot proposal og forklar avvik ved innlevering. |
+
+**Status 2026-11-10:** Beslutningene er ført her. PRD og nedstrøms dokumenter samordnes i egen branch. Dette er ingen påstand om at P-01–P-13 er implementert, at KS-03 er utført, eller at P-13s brukerprøve er gjennomført.

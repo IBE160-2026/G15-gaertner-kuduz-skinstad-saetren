@@ -77,7 +77,7 @@ components:
     track: '#e2e7ec'
     fill-normal: '{colors.accent}'
     fill-warn: '{colors.warn}'
-    warnThreshold: '~90%'
+    warnThreshold: '32.4h'
     radius: '{rounded.sm}'
   cost-indicator:
     ordinary: '{colors.ok}'
@@ -154,7 +154,7 @@ Paletten er bevisst begrenset og nøktern — fargen skal bære mening (status, 
 - **`bg-panel` (`#ffffff`)** er panel-, tabell- og kortbakgrunn — alt "innhold" ligger på ren hvit for kontrast mot `bg-app`.
 - **`text-main` (`#1b2733`)** og **`text-mute` (`#5b6b7a`)** er primær og sekundær tekst. Ingen ren svart — samme nøkternt kjølige register som resten av paletten.
 - **`ok` (`#1f7a4d`, grønn)** betyr **ordinær sats** i kostnadsvisning. Betyr aldri "suksess"-melding eller ferdig-status generelt — bruken er avgrenset til kostnadstype.
-- **`warn` (`#a15a00`, oker/brun)** betyr **overtid** i kostnadsvisning, og **høy arbeidsbelastning** (terskel ca. 90 %+) i arbeidsbelastningslinjen. Dette er en bevisst beslutning: overtid og høy belastning er *dyrere/tyngre*, ikke *feil* — rødt ville feilaktig signalisere en feiltilstand for noe som er et gyldig, om enn kostbart, valg.
+- **`warn` (`#a15a00`, oker/brun)** betyr **«Inkluderer overtid»** i kostnadsvisning, og **høy timebelastning** fra minst 32,4 timer før avrunding i arbeidsbelastningslinjen (P-03/P-04). Ingrid med 32 timer er under grensen. Dette er gyldige, men dyrere/tyngre valg, ikke feil.
 - **`danger` (`#8c2f2f`, rødt)** er reservert for faktiske utelukkelser og tomme/manko-tilstander: ikonet i "ingen gyldige kandidater", "trekker ned"-punkter i Avveiningen, og varsel-ikonet for en vakt som mangler bemanning. Rødt brukes **aldri** for overtid eller kostnad — se over.
 - **`row-alt` (`#f5f7f9`)** er annenhver rad i tabeller, for lesbarhet i tette lister.
 - **`tag-bg` (`#e7ecf1`)** er bakgrunnen for kompetanse- og preferanse-tags — nøytral, informativ, ikke statusbærende.
@@ -206,11 +206,11 @@ Ingen pille-former, ingen store radiuser. Skarpheten er bevisst — den signalis
 ## Components
 
 - **Appbar** — `{colors.bg-header}` bakgrunn, hvit tekst. Venstre: produktnavn (`brand`-typografi). Høyre: innlogget bruker + avdeling, eller "Ikke innlogget" på innloggingssiden. Atferd (hva som vises pre-/post-innlogging) er spesifisert i EXPERIENCE.md § Component Patterns, ikke her — denne raden er kun visuell.
-- **Rangeringstabell** — Kolonner: rangeringsnummer, kandidat (navn + `meta`), Kompetansenivå (+ tag), kostnad (fargekodet), timebelastning (tall + linje), ulempe (poeng + fordeling), preferanse (tag), ekspander-lenke. Ulempekolonnen er lagt til 2026-10-30 og finnes ikke i mockupene. `row-alt` på annenhver rad. Se `mockups/direction-a-fagsystem.html`.
+- **Rangeringstabell** — Kolonner: rangeringsnummer, kandidat (navn + `meta`), Kompetansenivå (+ tag), Vaktkostnad, timebelastning (tall + linje), ulempe (poeng + fordeling), preferanse (tag), ekspander-lenke. `row-alt` på annenhver rad. `mockups/direction-a-fagsystem.html` er en bevart tidlig visuell utforskning; navn, timer og rekkefølge der er ikke gjeldende #4127-fasit (KS-02).
 - **Rangeringsnummer (`rank-badge`)** — `{colors.accent}`, fet, 14px — det første tallet blikket skal lande på i raden.
-- **Arbeidsbelastningslinje** — 110×7px linje. Viser bare timebelastningen. Fylles med `{colors.accent}` under terskelen (~90 %), bytter til `{colors.warn}` ved og over terskelen. Aldri rødt.
+- **Arbeidsbelastningslinje** — 110×7px linje. Viser bare eksisterende timebelastning i startuken. Fylles med `{colors.accent}` under 32,4 t og `{colors.warn}` fra 32,4 t før visningsavrunding (P-04). Aldri rødt.
 - **Ulempeindikator** (lagt til 2026-10-30) — Ren tekst, ingen linje: samlet poengsum i `body` (f.eks. «182 p»), fordeling i `meta` under (f.eks. «kveld 16 t · helg 32 t · natt 34 t»). Ingen terskel og ingen fargeskifte, aldri `warn` eller `danger`. Ulempe er informasjon om sammensetningen, ikke et varsel.
-- **Kostnadsindikator** — Tekst "Ordinær" i `{colors.ok}` eller "Overtid" i `{colors.warn}`, med kr/t under i `meta`.
+- **Kostnadsindikator** — Vaktkostnad med to desimaler, «Ordinær» i `{colors.ok}` eller «Inkluderer overtid» i `{colors.warn}`. Detaljer viser timer × sats for hver del; én sats representerer ikke en blandet Vakt (P-01/P-03).
 - **Tag** — `{colors.tag-bg}` bakgrunn, `{rounded.sm}`, nøytral informasjon (kompetansenivå-tekst, preferanse som "Ønsker flere vakter", "Fleksibel", "Ingen registrert").
 - **Forklaringsrad/-panel (`explain-panel`)** — Utvides under kandidatraden (tabell) eller som eget panel i kandidatkortet (godkjenning). Lyseblå bakgrunn (`#f2f6f9`) skiller den fra resten av tabellen/kortet. "▲ Trekker opp" i `{colors.ok}`, "▼ Trekker ned" i `{colors.danger}`. Atferd (hvilket panel er utvidet som standard) er spesifisert i EXPERIENCE.md § Component Patterns, ikke her.
 - **Ekskludert-boks** — Stiplet kantlinje, oppsummerer antall og årsak til utelukkelse (f.eks. "9 under kompetanse-minstekrav · 7 kolliderende vakt"), med "Vis full liste ▾". Se `mockups/direction-a-fagsystem.html`.

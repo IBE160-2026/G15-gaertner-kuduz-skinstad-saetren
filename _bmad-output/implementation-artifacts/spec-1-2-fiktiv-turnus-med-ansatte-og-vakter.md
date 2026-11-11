@@ -230,7 +230,7 @@ I helgen:
 
 Eksakte summer som 40, 60, 120 og 180 lar seg derfor sette sammen av hele vakter.
 
-KS-04 (datadekning ved periodegrensene) er ikke kontrollert. Det finnes ingen vakter etter natten 04.10–05.10. Det holder for #4127 og #4189, men ikke for regelsjekk av vakter i slutten av perioden. Historikken slutter 20.09 og påvirker bare elleve- og trettifem-timersregelen i begynnelsen av uke 39. Testen regner alle reglene over hele datasettet.
+**Historisk designmerknad, erstattet av kontrollen 2026-11-03 og KS-04-godkjenningen 2026-11-04:** Datadekningen for #4127/#4189 ble kontrollert og godkjent med kjent begrensning etter 05.10. Det finnes ingen planlagte Vakter etter 2026-10-05 kl. 00:00. Ved ny vurdering av #4261–#4265 eller annen Vakt der nødvendig historikk/nabovakter mangler, skal appen stoppe med datafeil uten rangering eller Godkjenning (P-08); implementasjon/test av denne stoppregelen gjenstår. Fasiten og KS-04s avgrensning bevares.
 
 ## Verification
 

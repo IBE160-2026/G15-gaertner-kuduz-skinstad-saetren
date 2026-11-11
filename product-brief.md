@@ -13,7 +13,7 @@ Endringer i en eksisterende turnus kan være tidkrevende å håndtere. Når en p
 
 Prosjektet skal utvikle en prototype av en web-app som fungerer som et beslutningsstøtteverktøy og hjelper en turnusansvarlig med å finne gode alternativer når én konkret vakt i en eksisterende turnus må endres. Løsningen skal ikke lage en komplett turnus fra bunnen av. Den skal filtrere bort kandidater som ikke oppfyller nødvendige krav, rangere gyldige kandidater etter et begrenset sett kriterier og presentere et forståelig beslutningsgrunnlag.
 
-Generativ KI gjør det mulig å kombinere kontrollerbar, regelbasert programmering med støtte for mer ustrukturerte og menneskelige hensyn. I denne løsningen skal faste regler avgjøre hva som er lovlig og mulig, mens KI brukes til å tolke og forklare mykere forhold, som ansattpreferanser og avveininger mellom aktuelle kandidater. KI skal ikke kunne overstyre absolutte regler eller gjennomføre endringer på egen hånd. Den endelige beslutningen tas alltid av brukeren.
+Generativ KI gjør det mulig å kombinere kontrollerbar, regelbasert programmering med støtte for mer ustrukturerte og menneskelige hensyn. I denne prototypen filtrerer fire avgrensede regler kandidatene etter kompetanse, kollisjon og de valgte 11-/35-timerskontrollene (AV-04); dette er ingen garanti om full juridisk etterlevelse. KI brukes til å tolke og forklare mykere forhold, som ansattpreferanser og avveininger mellom aktuelle kandidater. KI kan ikke overstyre de harde reglene eller gjennomføre endringer på egen hånd. Den endelige beslutningen tas alltid av brukeren.
 
 ## Problemet
 
@@ -122,13 +122,15 @@ Førsteversjonen skal demonstrere håndtering av én turnusendring om gangen i e
 - filtrere kandidater etter fire harde regler: vaktens kompetanse-minstekrav, ingen kolliderende vakter, 11-timersregelen (daglig hvile) og 35-timersregelen (ukentlig fri), som spesifisert i PRD §4.2
 - utelukke kandidater under vaktens kompetanse-minstekrav, også når ingen kandidater oppfyller kravet
 - rangere gyldige kandidater etter kostnad (40 %), arbeidsbelastning (35 %) og ansattpreferanser (25 %)
-- bruke en forenklet økonomisk modell, for eksempel ordinær kostnad kontra overtidskostnad
+- bruke modellert merkostnad ved tildelingen, fordelt på berørte kalenderuker, med samlet Vaktkostnad og ordinær-/overtidsfordeling (P-01–P-03)
 - ta hensyn til et begrenset sett ansattpreferanser
 - bruke KI til å tolke og forklare myke forhold
 - presentere en rangert kandidatliste med begrunnelse
 - kreve menneskelig godkjenning før en endring anses som valgt
 - tilby enkel innlogging for turnusansvarlig, slik at løsningen ikke er åpen for alle
 - starte i demo-modus uten API-nøkkel, med forhåndstolkede preferanser og forhåndsgenererte forklaringer eller maltekst, slik at sensor kan prøve hele kjerneflyten uten betalte tjenester (PRD §4.5 og arkitektur AD-6)
+
+Kjerneflyten bruker faste preferanser i testdata. Feilet/ventende tolkning av registrert tekst gir midlertidig 50 poeng med egen status, ikke «ingen registrert» (P-05). Manglende nødvendig datadekning stopper vurdering og godkjenning (P-08); null gyldige er en egen tomtilstand (P-11). KI-forklaringer faktakontrolleres mot beregnede data og kan sammenligne med én angitt gyldig referanse (P-06/P-07). Vist forklaring lagres ikke historisk ved godkjenning (P-12).
 
 **Ikke inkludert (out of scope)**
 
@@ -147,7 +149,9 @@ Førsteversjonen skal ikke:
 - inneholde full ansattportal eller avansert rollebasert autentisering (flere roller, tilgangsnivåer, SSO e.l.)
 - inneholde en generell KI-chat for ansatte
 
-Ansattportal og mer avansert autentisering/KI-funksjonalitet behandles som mulige stretch goals dersom kjerneløsningen er ferdig og stabil. Førsteversjonen skal likevel ha enkel innlogging (for eksempel brukernavn/passord) for turnusansvarlig.
+P-10B, redigering av preferansetekst av turnusansvarlig, planlegges som egen story etter fungerende kjerneflyt; den blokkerer ikke kjernen og utsettes dokumentert hvis tiden ikke rekker. Valgfri sammenligning av to merkede kandidater (P-07) er strekkmål etter fungerende v1. Historisk lagring av forklaring (P-12B) er ikke v1-krav. Ansattportal og mer avansert autentisering er senere muligheter. Førsteversjonen har enkel innlogging for turnusansvarlig.
+
+Den godkjente proposalen er identifisert som `ee6d798` (E-02). [Avvikslisten i PRD-beslutningsgrunnlaget](docs/beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) begrunner forskjellene mellom den og gjeldende plan. Samsvar mot faktisk levert app kontrolleres ved innlevering.
 
 ## Visjon
 

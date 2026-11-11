@@ -9,6 +9,11 @@ scope: moderat
 
 # Endringsforslag: KI-leverandør og kjøring uten gruppens nøkkel
 
+> **Senere presisering 2026-11-10:** Forslaget nedenfor er historisk. P-05 (vedtatt
+> 2026-11-09) erstatter akseptkriteriet om at ukjent registrert tekst i demo gir
+> «Ingen registrert»: den får egen manglende/feilet tolkestatus og midlertidig
+> 50 poeng. Gjeldende krav står i PRD FR-10 og epics story 5.7.
+
 > **Oppdatering 2026-10-16:** Standardmodellen er senere endret fra
 > `anthropic/claude-haiku-5.5` til `openai/gpt-6-luna` etter modelltestene i
 > `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md` og
