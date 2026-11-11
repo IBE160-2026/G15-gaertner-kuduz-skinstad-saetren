@@ -77,3 +77,20 @@ Rette det som burde rettes etter Opus-gjennomgangen, forklare valget i A5, skriv
 - Gruppa tar stilling til A5 (P-08: all historikk eller bare nødvendig grunnlag) før 2.3.
 - Merge når PR #14 er godkjent: løs konflikter mot `main`, sett 2.2 til `done` i sprint-status og vurderingsmatrisen, og merge.
 - Nettleserkontrollen av #4127 og #4189 gjenstår.
+
+## 2026-11-11 kl. 16:59 — johagartnerHiMolde
+
+### Oppgave
+Johannes meldte at nettleserkontrollen er gjort og godkjent. Bakgrunnsjobben for merge skulle fjernes, og PR-en skulle si at den som godkjenner, merger og løser konflikter. Gruppa vedtok B i A5, og løsningen bygges i 2.3. Alt skulle pushes.
+
+### Plan
+- Stoppe bakgrunnsjobben og føre vedtaket i referatet, Epic 2-konteksten og `deferred-work.md`.
+- Oppdatere KI-loggen, vurderingsmatrisen, spec-en og PR-beskrivelsen, og pushe.
+
+### Resultat
+- Bakgrunnsjobben er stoppet. PR #14 har fått et avsnitt om merge og et om vedtaket i A5, og nettleserkontrollen står som godkjent.
+- Commit for vedtaket og nettleserkontrollen er laget: avklaringspunktene §11 og P-08-raden, `epic-2-context.md`, `deferred-work.md`, KI-loggen, vurderingsmatrisen og Implementation Notes i spec-en.
+- Alt er pushet til `origin/story-2.2-kolliderende-vakt`.
+
+### Åpne punkter
+- Story 2.3 bygger vinduet per regel og avgrenser datafeilsjekken (vedtak A5, alternativ B).
