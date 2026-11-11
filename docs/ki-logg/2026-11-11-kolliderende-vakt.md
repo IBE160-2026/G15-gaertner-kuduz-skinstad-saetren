@@ -38,9 +38,12 @@ Kontroller:
    - Begge testene er kontrollert med mutasjon av adapteren (periodefilter og filter på `start < slutt`), og hver mutasjon ga nøyaktig én rød test. Adapteren er tilbakestilt.
    - Testhjelperen `kandidat()` gjorde `kompetanse={}` om til full kompetanse. Rettet med `is None`.
    - Mutasjonstallet og statusen for gjennomgangen i denne loggen og vurderingsmatrisen var utdatert.
-   - Ikke rettet her: Vaktens egen rad blir en «egen vakt» når Epic 3 kjører reglene på nytt etter Godkjenning. Det kan ikke skje i dag, fordi databasen krever at en vakt med tildelt Ansatt ikke mangler bemanning, og kandidatgrunnlaget henter bare ubemannede vakter. Ført i `deferred-work.md` for story 3.2. Om datafeilsjekken skal gjelde all historikk eller bare vakter som kan påvirke regelen (P-08, «nødvendig»), er lagt fram for gruppa i PR-en.
+   - Ikke rettet her: Vaktens egen rad blir en «egen vakt» når Epic 3 kjører reglene på nytt etter Godkjenning. Det kan ikke skje i dag, fordi databasen krever at en vakt med tildelt Ansatt ikke mangler bemanning, og kandidatgrunnlaget henter bare ubemannede vakter. Ført i `deferred-work.md` for story 3.2. Om datafeilsjekken skal gjelde all historikk eller bare vakter som kan påvirke regelen (P-08, «nødvendig»), ble lagt fram i PR #14. Gruppa vedtok 2026-11-11 at den bare skal gjelde vakter i et vindu per regel. Det bygges i story 2.3 (se avklaringspunktene, §11).
+
+## Manuell kontroll
+
+- Johannes gjorde nettleserkontrollen 2026-11-11 og godkjente den: #4127 viser 9 kandidater og #4189 viser 19.
 
 ## Gjenstår
 
-- Nettleserkontrollen (logg inn, velg #4127 og #4189 og se 9 og 19 kandidater).
-- Menneskelig PR-gjennomgang av et gruppemedlem.
+- Menneskelig PR-gjennomgang av et gruppemedlem. Den som godkjenner PR #14, merger den og løser eventuelle konflikter mot `main`.

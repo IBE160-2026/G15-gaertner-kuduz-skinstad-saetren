@@ -88,6 +88,10 @@ context:
 
 ## Implementation Notes
 
+- 2026-11-11: Implementert av en underagent fra spec-en alene. Etter to uavhengige gjennomganger (se Review Triage Log): 275 backendtester og 26 frontendtester består, og bygget går gjennom.
+- 2026-11-11: Johannes gjorde nettleserkontrollen i Verification manuelt og godkjente den.
+- 2026-11-11: Funn A5 er vedtatt som alternativ B. Datafeilsjekken skal bare gjelde Kandidatens vakter i et vindu per regel. Det bygges i story 2.3. Til da validerer 2.2 all tildelt historikk (se avklaringspunktene, §11).
+
 ## Spec Change Log
 
 ## Review Triage Log
