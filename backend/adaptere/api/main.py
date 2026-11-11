@@ -239,7 +239,7 @@ def lag_app(
         grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
         if grunnlag is None:
             return feil(404, "ikke_funnet")
-        vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense)
+        vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
         if isinstance(vurdering, Datafeil):
             # Grunnene sendes ikke til frontend, men må kunne ses ved feilsøking.
             logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))

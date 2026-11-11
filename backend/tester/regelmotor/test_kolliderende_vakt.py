@@ -16,6 +16,7 @@ from domene.typer import Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Vakt
 
 OSLO = ZoneInfo("Europe/Oslo")
 DATAGRENSE = datetime(2026, 11, 8, 0, 0, tzinfo=OSLO)
+HISTORIKKSTART = datetime(2026, 8, 24, 0, 0, tzinfo=OSLO)
 DAG_START = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
 DAG_SLUTT = DAG_START + timedelta(hours=8)
 
@@ -33,8 +34,14 @@ def kandidat(*egne: Tidsrom, id: int = 1, kompetanse: dict | None = None) -> Kan
     return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse={"dag": 4, "natt": 4} if kompetanse is None else kompetanse, vakter=egne)
 
 
+# Testene fra 2.2 vurderer bare kompetanse og kolliderende vakt, så en uventet
+# ekstra årsak gir rød test. Samspillet med 11-timersregelen testes i
+# `test_11_timersregelen.py`.
+KOLLISJONSREGLER = REGLER[:2]
+
+
 def vurder(v: Vakt, *kandidater: Kandidat) -> Kandidatvurdering:
-    resultat = vurder_kandidater(v, kandidater, DATAGRENSE)
+    resultat = vurder_kandidater(v, kandidater, DATAGRENSE, HISTORIKKSTART, regler=KOLLISJONSREGLER)
     assert isinstance(resultat, Kandidatvurdering), resultat
     return resultat
 
@@ -247,7 +254,7 @@ def test_kollisjon_og_for_lavt_nivå_gir_begge_årsaker_i_fast_rekkefølge() -> 
 
 
 def test_regelen_ligger_som_nummer_to_i_regellisten() -> None:
-    assert [r.årsak for r in REGLER] == ["kompetanse-minstekrav", "kolliderende vakt"]
+    assert [r.årsak for r in REGLER] == ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen"]
     assert REGLER[1].bryter is kolliderende_vakt.bryter_kollisjon
 
 
@@ -261,17 +268,17 @@ def test_bare_kollisjon_gir_bare_den_årsaken() -> None:
 
 def test_samme_input_gir_samme_output() -> None:
     kandidater = [
-        kandidat(rom(DAG_START + timedelta(hours=i - 4), DAG_START + timedelta(hours=i + 4)), id=i)
+        kandidat(rom(DAG_START + timedelta(hours=3 * i - 4), DAG_START + timedelta(hours=3 * i + 4)), id=i)
         for i in range(1, 13)
     ]
     v = vakt()
-    første = vurder_kandidater(v, kandidater, DATAGRENSE)
+    første = vurder_kandidater(v, kandidater, DATAGRENSE, HISTORIKKSTART)
     assert isinstance(første, Kandidatvurdering)
     assert første.gyldige and første.utelukkede
     for _ in range(3):
         for resultat in (
-            vurder_kandidater(v, kandidater, DATAGRENSE),
-            vurder_kandidater(v, list(reversed(kandidater)), DATAGRENSE),
+            vurder_kandidater(v, kandidater, DATAGRENSE, HISTORIKKSTART),
+            vurder_kandidater(v, list(reversed(kandidater)), DATAGRENSE, HISTORIKKSTART),
         ):
             assert resultat == første
             assert isinstance(resultat, Kandidatvurdering)
@@ -302,7 +309,7 @@ def test_vurderingen_endrer_ikke_kandidatens_vakter() -> None:
 
 
 def datafeil(*kandidater: Kandidat) -> Datafeil:
-    resultat = vurder_kandidater(vakt(), kandidater, DATAGRENSE)
+    resultat = vurder_kandidater(vakt(), kandidater, DATAGRENSE, HISTORIKKSTART)
     assert isinstance(resultat, Datafeil), resultat
     assert resultat.grunner
     return resultat
@@ -333,3 +340,26 @@ def test_ugyldig_vakt_hos_den_ene_stopper_hele_vurderingen() -> None:
     feil = kandidat(rom(DAG_START, DAG_START), id=2)
     resultat = datafeil(ok, feil)
     assert resultat.datagrense == DATAGRENSE
+
+
+# --- Vedtak A5 (PR #14): bare vakter i vinduet valideres -----------------------
+# Vinduet for Vakten 27.09 07–15 er [26.09 20:00, 28.09 02:00) med 11-timersregelen.
+
+
+def test_ugyldig_vakt_langt_unna_ignoreres() -> None:
+    # Uke 35, Vakt 27.09: kan ikke påvirke noen regel (A5).
+    langt_unna = datetime(2026, 8, 26, 7, 0, tzinfo=OSLO)
+    k = kandidat(rom(langt_unna, langt_unna - timedelta(hours=1)), id=3)
+    assert vurder(vakt(), k).gyldige == (k,)
+
+
+@pytest.mark.parametrize("felt", ["start", "slutt"])
+def test_egen_vakt_uten_tidssone_langt_unna_er_likevel_datafeil(felt: str) -> None:
+    # Uten tidssone kan vakten ikke plasseres i tid, så vi vet ikke at den er langt unna.
+    langt_unna = rom(datetime(2026, 8, 26, 7, 0, tzinfo=OSLO), datetime(2026, 8, 26, 15, 0, tzinfo=OSLO))
+    naiv = Tidsrom(**{**langt_unna.__dict__, felt: getattr(langt_unna, felt).replace(tzinfo=None)})
+    datafeil(kandidat(naiv))
+
+
+def test_det_som_ikke_er_et_tidsrom_er_datafeil() -> None:
+    datafeil(kandidat("27.09 07–15", id=4))  # type: ignore[arg-type]

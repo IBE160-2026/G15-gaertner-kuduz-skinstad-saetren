@@ -66,7 +66,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | KS-01 | Åpne punkter ved merge | Vedtatt | K-01/K-02/K-04/K-06 kan være åpne etter merge; øvrige godkjenningskrav gjelder. | Ikke bestemt |
 | KS-02 | Kontroller rangeringsformel | Utført for fasiten i Story 1.2 (2026-11-04) | Fasiten for #4127 er kontrollert og godkjent med PR #5 (§11). Gjelder ny fasit på nytt. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 | KS-03 | Kontroller tidskategorier | Kontroll vedtatt; ikke utført | Kontroller fire vakttyper før implementasjon av Story 4.7 og ferdigstilling av fasit. | Ikke bestemt |
-| KS-04 | Kontroller datadekning | Utført 2026-11-04 | Dekket for #4127 og #4189 og låst med test; begrensningen etter 05.10 er godtatt (§11). | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
+| KS-04 | Kontroller datadekning | Utført 2026-11-04 | Dekket for #4127 og #4189 og låst med test; begrensningen etter 05.10 er godtatt (§11). Se §11, 2026-11-11 (Story 2.3): vakter som slutter etter 04.10 kl. 13:00 gir nå datafeil. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 
 ### 2.3 Vedtak etter møtet (ikke i PDF-en)
 
@@ -491,7 +491,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - PR #5 som helhet.
   - **OP-04:** Agentoppsettet med underagenter i `bmad-build`. Regelen i `AGENTS.md` fra PR #5 står, og AV-08 har fått en henvisning til dette unntaket.
   - **AV-10:** Radene ble skrevet ut med kladdeskript utenfor appen, og kladdeskriptene ligger i `docs/ki-logg/2026-11-03-testdata/`. Repoet har bare de faste radene, og det oppfyller AV-10. Det er fortsatt ingen turnusgenerator i appen.
-  - **KS-04:** Kontrollen av datadekningen er godtatt, med den kjente begrensningen etter 05.10.
+  - **KS-04:** Kontrollen av datadekningen er godtatt, med den kjente begrensningen etter 05.10. Se §11, 2026-11-11 (Story 2.3): vakter som slutter etter 04.10 kl. 13:00 gir nå datafeil.
   - **KS-02:** Fasiten for #4127 er godkjent etter kontrollen som er beskrevet under KS-02.
   - **Valg spesifikasjonen ikke avgjorde:** Andre vakter har minstenivå 2, Eirik har ingen vakter i uke 40, og helgen 26.–27.09 er tynt bemannet.
 - **Ikke endret:** Ingen andre AV-, K-, OP- eller KS-punkter. Ragnhilds åpne punkt om gamle vakttider i spesifikasjonen for Story 1.2 er løst i PR #5, men lukkes i hennes egen `issues.md`.
@@ -656,6 +656,16 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Vedtatt (alternativ B):** Datafeilsjekken for Kandidatens vakter gjelder bare vakter som kan påvirke reglene, det vil si vakter innenfor et vindu rundt Vakten som hver regel definerer. Det gjelder overlapp for kolliderende vakt, ±11 t for 11-timersregelen og hele berørte kalenderuker for 35-timersregelen. Ugyldig historikk innenfor vinduet er fortsatt ikke fri tid og gir datafeil.
 - **Gjennomføring:** Story 2.3 bygger vinduet og retter datafeilsjekken, med grensetester. Story 2.2 beholder inntil da at all tildelt historikk valideres (alternativ A). Det er strengere enn vedtaket, og gir aldri en falsk Gyldig kandidat.
 - **Ikke endret:** Selve P-08 (ukjent historikk er ikke fri), datafeilformen og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-11 – Story 2.3 (OP-12): beslutning 1A og 2A, og vakter ved periodeslutt
+
+- **Hvem:** Mithad Kuduz avgjorde 2026-11-11 de to spørsmålene som sto åpne før Story 2.3, som eier av storyen (OP-12). Det er avgjørelser i storyen, ikke gruppevedtak. Gruppa kan ta dem opp igjen.
+- **1A – Overlapp og 11 t:** En egen vakt som overlapper Vakten, teller bare som kolliderende vakt. 11-timersregelen ser bare på vakter som ikke overlapper, og nærmeste slutt før og nærmeste start etter avgjør, som testhjelperen `bryter_elleve_timer` fra Story 1.2. Hver Ansatt får én årsak for samme forhold, og fasiten (AV-07) står seg. Dette svarer på det åpne spørsmålet under «Story 2.3 (OP-12)» over.
+- **2A – Historikkstart:** Datadekningen starter ved `turnus.periode_start − 672 t` (24.08.2026 kl. 00:00 i seeden), samme vindu som ulempemålingen i AV-09. Adapteren beregner verdien i UTC, og skjemaet endres ikke.
+- **Endring mot KS-04:** Med vinduet `[start − 11 t, slutt + 11 t)` gir alle vakter som slutter etter 04.10 kl. 13:00, nå datafeil, fordi `slutt + 11 t` havner etter datagrensen 05.10 kl. 00:00. Det gjelder blant annet #4261–#4265 og kvelds- og nattevakten 04.10. KS-04 godtok tidligere at hvilen etter vakter ved periodeslutt ikke ble kontrollert fullt ut. Endringen følger P-08: ukjent historikk er ikke fri. #4127 og #4189 ligger fortsatt innenfor dekningen.
+- **Kjente begrensninger, godtatt av Mithad 2026-11-11:** `datagrense` i datafeilsvaret er `turnus.periode_slutt` også når det er historikkstarten som ikke holder, og en egen vakt som starter før historikkstarten og slutter etter den, regnes som kjent data. Ingen vakt i perioden treffer den nedre grensen.
+- **Grunnlag:** [spesifikasjonen for Story 2.3](../../_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md) og [KI-loggen](../ki-logg/2026-11-11-11-timersregelen.md).
+- **Ikke endret:** Vedtak A5 og P-08 (gjennomført, ikke endret), datafeilformen og de andre AV-, K-, OP- og KS-punktene.
 
 ---
 

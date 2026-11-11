@@ -72,7 +72,7 @@ test("laster, feil og datafeil har ulik tekst", () => {
   for (const tekst of [t.kandidaterLaster, t.datafeil]) assert.ok(!feil.has(tekst), tekst);
   assert.notEqual(t.kandidaterLaster, t.datafeil);
   assert.equal(t.datafeil, "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.");
-  assert.equal(t.midlertidigMerknad, "Filtrert på kompetanse og kolliderende vakt. Flere regler kommer.");
+  assert.equal(t.midlertidigMerknad, "Filtrert på kompetanse, kolliderende vakt og 11-timersregelen. Flere regler kommer.");
 });
 
 test("taggen viser nivået av fire", () => {

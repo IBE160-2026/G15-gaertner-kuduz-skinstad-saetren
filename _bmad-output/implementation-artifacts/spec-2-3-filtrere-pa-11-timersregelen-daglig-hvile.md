@@ -2,7 +2,7 @@
 title: 'Story 2.3: Filtrere på 11-timersregelen (daglig hvile)'
 type: 'feature'
 created: '2026-11-11'
-status: 'ready-for-dev'
+status: 'done'
 baseline_commit: 'f2188100b434a1ee014b6f4b57cfea4f48e02a74'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -99,14 +99,14 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/domene/regelmotor/elleve_timer.py`: regel, årsak og vindu i UTC (FR4).
-- [ ] `backend/domene/regelmotor/vurdering.py` og `kolliderende_vakt.py`: `vindu` på `Regel`, samlet vindu, sjekk mot datadekning og vindusbasert validering av vakter (A5, P-08).
-- [ ] `backend/adaptere/lagring/kandidatgrunnlag.py` og `backend/adaptere/api/main.py`: `historikkstart` fra adapteren til regelmotoren (AD-5).
-- [ ] `backend/tester/regelmotor/test_11_timersregelen.py`: hele matrisen, begge sommertidsskiftene, determinisme og vindus-datafeil. Det er kravet i AC-en i epics. Sommertidstestene (29.03 og 25.10) ligger utenfor dekningen i seeden. De sender derfor egne verdier for `historikkstart` og `datagrense`. Begge tidene i en sammenligning bruker samme `ZoneInfo`-objekt, ellers fanger mutasjonen i AC-en ikke UTC-feilen.
-- [ ] `backend/tester/regelmotor/test_kompetanse.py`, `test_kolliderende_vakt.py` og `backend/tester/api/test_kandidater.py`: ny signatur, A5-testene og fasiten 5/1 mot `FASIT` (AV-07).
-- [ ] `frontend/src/tekster.ts`, `frontend/tester/kandidater.test.mjs` og `README.md`: ny merknad og regelstatus.
-- [ ] `docs/ki-logg/<dato>-11-timersregelen.md`, `docs/emne/vurderingsmatrise.md` og `_bmad-output/implementation-artifacts/epic-2-context.md`: KI-logg og bevis. Merk A5-punktet i `deferred-work.md` som utført.
-- [ ] `docs/beslutninger/avklaringspunkter.md` §11: før inn at vakter som slutter etter 04.10 kl. 13:00 nå gir datafeil, fordi `slutt + 11 t` havner etter 05.10 kl. 00:00. KS-04 godtok tidligere at hvilen etter vakter ved periodeslutt ikke ble kontrollert fullt ut. Endringen følger P-08. Før også inn beslutningene 1A og 2A (OP-12).
+- [x] `backend/domene/regelmotor/elleve_timer.py`: regel, årsak og vindu i UTC (FR4).
+- [x] `backend/domene/regelmotor/vurdering.py` og `kolliderende_vakt.py`: `vindu` på `Regel`, samlet vindu, sjekk mot datadekning og vindusbasert validering av vakter (A5, P-08).
+- [x] `backend/adaptere/lagring/kandidatgrunnlag.py` og `backend/adaptere/api/main.py`: `historikkstart` fra adapteren til regelmotoren (AD-5).
+- [x] `backend/tester/regelmotor/test_11_timersregelen.py`: hele matrisen, begge sommertidsskiftene, determinisme og vindus-datafeil. Det er kravet i AC-en i epics. Sommertidstestene (29.03 og 25.10) ligger utenfor dekningen i seeden. De sender derfor egne verdier for `historikkstart` og `datagrense`. Begge tidene i en sammenligning bruker samme `ZoneInfo`-objekt, ellers fanger mutasjonen i AC-en ikke UTC-feilen.
+- [x] `backend/tester/regelmotor/test_kompetanse.py`, `test_kolliderende_vakt.py` og `backend/tester/api/test_kandidater.py`: ny signatur, A5-testene og fasiten 5/1 mot `FASIT` (AV-07).
+- [x] `frontend/src/tekster.ts`, `frontend/tester/kandidater.test.mjs` og `README.md`: ny merknad og regelstatus.
+- [x] `docs/ki-logg/<dato>-11-timersregelen.md`, `docs/emne/vurderingsmatrise.md` og `_bmad-output/implementation-artifacts/epic-2-context.md`: KI-logg og bevis. Merk A5-punktet i `deferred-work.md` som utført.
+- [x] `docs/beslutninger/avklaringspunkter.md` §11: før inn at vakter som slutter etter 04.10 kl. 13:00 nå gir datafeil, fordi `slutt + 11 t` havner etter 05.10 kl. 00:00. KS-04 godtok tidligere at hvilen etter vakter ved periodeslutt ikke ble kontrollert fullt ut. Endringen følger P-08. Før også inn beslutningene 1A og 2A (OP-12).
 
 **Acceptance Criteria:**
 - Given en valgt vakt, when kandidatflaten lastes, then listen er filtrert på alle tre reglene.
@@ -115,6 +115,10 @@ context:
 - Given hele pakken, when `pytest`, `npm.cmd run build` og `npm.cmd test` kjøres, then alt består.
 
 ## Implementation Notes
+
+- 2026-11-11: En underagent implementerte storyen, med spesifikasjonen som eneste kilde. Avvik fra Code Map: når Vakten er ugyldig, samles kompetansefeilene likevel, men vinduet regnes ikke ut. Det holder en eksisterende test grønn og er ikke i strid med rekkefølgen.
+- 2026-11-11: Etter kodegjennomgangen er seks funn rettet, ett utsatt og resten avvist (se Review Triage Log). 337 backendtester og 26 frontendtester består, og bygget går gjennom.
+- Nettleserkontrollen gjenstår: #4127 skal vise 5 kandidater og #4189 1, med ny merknad.
 
 ## Spec Change Log
 
@@ -136,6 +140,24 @@ En uavhengig underagent gikk gjennom spesifikasjonen 2026-11-11, før godkjennin
 | 10 | `historikkstart` uten tidssone, og plassen i signaturen | lav | Code Map |
 | 11 | Sommertidstestene ligger utenfor dekningen i seeden | lav | oppgaven for testmodulen |
 | 12 | Vakter 04.10 gir nå datafeil, som er en endring mot KS-04 | lav | ny oppgave: før det inn i §11 |
+
+Kodegjennomgang 2026-11-11 med blind-hunter (BH), edge-case-hunter (ECH) og verification-gap (VG). Hvert funn er kontrollert mot koden.
+
+| Lag | Funn | Dom og bevis | Rute |
+|---|---|---|---|
+| VG, ECH, BH | Adaptertesten for `historikkstart` fanger ikke at `.astimezone(UTC)` fjernes. Seedens 672 t krysser ikke noe sommertidsskifte, og forventningen `PERIODE_START - timedelta(days=28)` regner selv på veggklokka | medium: koden er riktig, men en regresjon ville passert. Gjelder perioder der 672 t krysser 29.03 eller 25.10 | patch: forventning i UTC og ny test med `periode_start` 13.04 |
+| ECH | Forventningen i den samme testen regner på veggklokka | samme rot som over | patch (samme) |
+| ECH, BH | `bryter_elleve_timer` hopper stille over ugyldige vakter. Det er trygt bare via `vurder_kandidater` | low: ingen kaller den direkte i dag, men Epic 3 skal sjekke reglene på nytt. Rettingen er en setning i docstringen | patch: forutsetningen i docstringen |
+| ECH | `Regel.vindu` kan returnere naive tider | false: alle tre reglene returnerer `None` eller UTC-tider (`kolliderende_vakt.vindu`, `elleve_timer.vindu`), og `REGLER` er intern | avvist |
+| ECH | En vakt som krysser historikkstarten, regnes som kjent | low: kjent begrensning, godtatt av Mithad i den låste delen | avvist |
+| BH | epics.md sier fortsatt «Grensetester gjenstår» (l.116, ~502) | low: det er reelt. Endring i et planleggingsdokument gjør `epic-2-context.md` ugyldig for 2.4 og hører til gruppas samordning | defer |
+| BH | KS-04-raden og sammendraget peker ikke til endringen i §11 | low: reelt, og rettingen er direkte | patch |
+| BH | `sprint-status.yaml` sier `in-progress`, mens spesifikasjonen sier `in-review` | false: steg 5 i `bmad-build` setter sprintstatus til `review`. Statusene er midlertidig ulike midt i gjennomgangen | avvist |
+| BH | `utelukket`-hjelperen i `test_kolliderende_vakt.py` krever ikke lenger nøyaktig én årsak | low: VG viser at 1A fortsatt er låst av eksakte tupler, men 2.2-testene ble svakere. Rettingen er direkte: `regler=REGLER[:2]` | patch |
+| BH | Datafeilskjermen viser datagrensen 05.10 også for en vakt som slutter 04.10 kl. 13:01 | low: kan ikke nås i dag, fordi bare #4127 og #4189 mangler bemanning. Visningen av datagrensen er godtatt i den låste delen | avvist |
+| BH | Språkfeil i den låste delen: «møtes Vakten» | low: rettingen er en endring i spesifikasjonen | avvist |
+| BH | A5-punktet i `deferred-work.md` er bare halvveis oppdatert | low: rettingen er direkte | patch |
+| BH | README beskriver en datafeil som ikke kan nås, og den manuelle kontrollen dekker den ikke | low: README-delen er rettet direkte. Den manuelle kontrollen ville vært en endring i spesifikasjonen | patch (README), resten avvist |
 
 ## Design Notes
 

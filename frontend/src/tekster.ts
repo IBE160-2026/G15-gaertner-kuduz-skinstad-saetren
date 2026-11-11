@@ -93,7 +93,7 @@ export const TEKSTER = {
     // Kandidatlisten (story 2.1).
     kandidaterOverskrift: "Gyldige kandidater",
     // Midlertidig til alle fire reglene er på plass. Fjernes i story 2.4.
-    midlertidigMerknad: "Filtrert på kompetanse og kolliderende vakt. Flere regler kommer.",
+    midlertidigMerknad: "Filtrert på kompetanse, kolliderende vakt og 11-timersregelen. Flere regler kommer.",
     kandidaterLaster: "Henter kandidatene …",
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
