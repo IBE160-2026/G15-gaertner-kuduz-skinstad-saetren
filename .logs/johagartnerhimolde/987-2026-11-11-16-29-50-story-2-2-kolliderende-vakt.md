@@ -52,3 +52,28 @@
 
 ### Åpne punkter
 - Johannes velger hvilke funn fra Opus-gjennomgangen som skal rettes før PR. Funnlisten står i chat-rapporten, og hovedpunktene står over.
+
+## 2026-11-11 kl. 16:49 — johagartnerHiMolde
+
+### Oppgave
+Rette det som burde rettes etter Opus-gjennomgangen, forklare valget i A5, skrive PR-en og merge når et gruppemedlem har godkjent den.
+
+### Plan
+- Rette VG1, VG2, EC2, EC3 og A1, A2 og A13, kontrollere de nye testene med mutasjon og kjøre full verifisering.
+- Rette ikke EC1, fordi den ikke kan nås i dag. Den er utsatt til story 3.2. A3 avvist, fordi det er samme mønster som i 2.1.
+- Legge A5 fram for gruppa i PR-en.
+- Vente på godkjenning i bakgrunnen og merge når den kommer.
+
+### Resultat
+- Commit `878a1a2` har to nye API-tester: egen vakt før periodestart som overlapper, og ugyldig tildelt vakt gir datafeil. Hver av dem er kontrollert med én mutasjon av adapteren, som ga én rød test.
+- Testhjelperen `kandidat()` er rettet med `is None`.
+- Mutasjonen til lukkede intervall er kjørt på nytt og gir 14 røde av 124.
+- KI-loggen, vurderingsmatrisen og Review Triage Log i spec-en er oppdatert med andre gjennomgang. EC1 er ført i `deferred-work.md`.
+- Verifisert: `pytest` gir 275 bestått, `npm.cmd run build` går gjennom, og `npm.cmd test` gir 26.
+- PR #14 er opprettet: https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/14. A5 er lagt fram som valg mellom A (all historikk, slik det er nå) og B (vindu per regel), med anbefaling om å beholde A i 2.2 og vedta B før 2.3.
+- En bakgrunnsjobb i denne økten sjekker PR-en hvert 5. minutt. Den virker bare så lenge økten er åpen.
+
+### Åpne punkter
+- Gruppa tar stilling til A5 (P-08: all historikk eller bare nødvendig grunnlag) før 2.3.
+- Merge når PR #14 er godkjent: løs konflikter mot `main`, sett 2.2 til `done` i sprint-status og vurderingsmatrisen, og merge.
+- Nettleserkontrollen av #4127 og #4189 gjenstår.
