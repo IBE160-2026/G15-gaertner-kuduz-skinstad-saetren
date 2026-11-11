@@ -76,6 +76,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-14 | Layoutbredde | Vedtatt 2026-11-06 | Appbar over hele bredden; innholdet får `max-width: 1180px`. Fast bredde på 1180px forkastes (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
+| OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -618,6 +619,17 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Implementeringen starter etter at PR #8 (Story 1.4, beskyttede flater og utløpt sesjon) er merget, fordi 1.5 bygger på tilgangskontrollen og navigasjonen derfra.
   - Kjent fallgruve: PR #8 korter ned `epic-1-context.md`, og detaljene om Vaktvalg forsvinner. Det gjelder alert-boksen, tabellkolonnene, fotnoten og teksten når ingen vakter krever handling. Ved oppstart av 1.5 lages konteksten på nytt fra planleggingsdokumentene, ellers leser spesifikasjonen EXPERIENCE.md og `mockups/key-vaktvalg.html` direkte.
 - **Grunnlag:** `.logs/mithad-kuduz/993-2026-11-08-13-12-18-gjennomgang-pr-8.md`.
+- **Ikke endret:** OP-06 (rekkefølgen er fortsatt ikke bindende) og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-11 – Story 2.3 (OP-12)
+
+- **Hvem:** Mithad Kuduz meldte 2026-11-11 at han tar Story 2.3. Det er en melding om ansvar, ikke et gruppevedtak. Gruppa kan si fra hvis noen allerede er i gang.
+- **OP-12 – Story 2.3, 11-timersregelen (daglig hvile):**
+  - Mithad Kuduz er ansvarlig.
+  - Implementeringen starter etter at PR #14 (Story 2.2, kolliderende vakt) er merget. 2.3 legges inn som regel nummer tre i `REGLER` og bruker `Kandidat.vakter` fra 2.2.
+  - 2.3 bygger også vinduet per regel og avgrenser datafeilsjekken for Kandidatens vakter til vinduet, etter Johannes' vedtak A5 (alternativ B) i PR #14.
+- **Åpent spørsmål som må avklares før start:** Skal en vakt som overlapper Vakten også telle som brudd på 11-timersregelen, eller bare som kolliderende vakt? Fasiten fra Story 1.2 forutsetter at overlapp bare teller som kolliderende vakt. For #4127 er det 7 kolliderende og 4 med elleve-timer. Mithads anbefaling er at overlapp bare teller som kolliderende vakt. Det er da ingen hvileperiode å måle, Ekskludert-boksen (2.5) får ikke to årsaker for samme forhold, og fasiten (AV-07) står seg. Det er ikke vedtatt.
+- **Grunnlag:** `.logs/mithad-kuduz/` (gjennomgangen av PR #14) og [modellvalg-stories.md](../modellvalg-stories.md), som anbefaler Opus for 2.3.
 - **Ikke endret:** OP-06 (rekkefølgen er fortsatt ikke bindende) og de andre AV-, K-, OP- og KS-punktene.
 
 ### 2026-11-11 – Godkjenning av PR #13 (Story 2.1): datafeilformen og AGENTS.md
