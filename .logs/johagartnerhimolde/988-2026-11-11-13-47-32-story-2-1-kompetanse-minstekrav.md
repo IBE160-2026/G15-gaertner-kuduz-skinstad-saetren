@@ -44,3 +44,35 @@ Storien er implementert, gjennomgått og committet lokalt i `61c8dd0` på `story
 - AGENTS.md sier fortsatt «ingen domenelogikk ennå» og nevner ikke `tester/regelmotor/` eller arkitekturtesten. Det er en agentkontekstfil (AV-08), så et gruppemedlem må velge å endre den.
 - Story 2.3: at overlappende vakter bare teller som kollisjon og ikke under 11-timersregelen, er en tolkning fra testhjelperne i story 1.2, ikke et gruppevedtak. Det må avklares med gruppa før 2.3.
 - Datafeilformen (200 med `status: "datafeil"`) er ført i AD-4, men ikke i referatet. Den føres der når PR-en er gjennomgått.
+
+## 2026-11-11 kl. 14:51 — johagartnerHiMolde
+
+### Oppgave
+Godkjenne og merge PR #13 på vegne av gruppa. Deretter lukke de åpne punktene som kan lukkes, føre datafeilformen inn der den hører hjemme, og pushe alt til `main`.
+
+### Plan
+- PR #13 ble laget, og Johannes' godkjenning er skrevet som kommentar, fordi GitHub ikke lar forfatteren godkjenne sin egen PR. PR-en ble merget etter grønn CI.
+- Hvert åpent punkt i `issues.md` ble sjekket mot repoet.
+
+### Resultat
+- **PR #13** er merget i `bdfd1a4`. Før merge ble sprintstatus satt til `done` for 2.1, og vurderingsmatrisen viser til PR-en.
+- **Datafeilformen:**
+  - Ført i referatet §11, i en ny oppføring om godkjenningen av PR #13.
+  - Lagt til i P-08-raden i §12.
+  - Står fra før i AD-4 i `ARCHITECTURE-SPINE.md`.
+- **AGENTS.md** nevner nå domenekjernen, `tester/regelmotor/` og arkitekturtesten med import-linter. Endringen er registrert i §11 etter AV-08.
+- **Addendum §5** sier nå at E-01 er bekreftet og lukket, ikke lenger «bør bekreftes med faglærer».
+- **Lukket i `issues.md`:**
+  - Branchen `story-1.2-fiktiv-turnus` var allerede slettet på origin.
+  - E-01 er ført i addendum.
+  - Datafeilformen er ført i referatet.
+  - AGENTS.md er oppdatert.
+  - Sju punkter som allerede var merket «løst», men sto med `[ ]`.
+- **Fortsatt åpne, fordi gruppa må avgjøre dem:**
+  - Motstriden i FR-9 (fem kandidater mot alle gyldige). PRD FR-9 sier fortsatt fem, og UX-DR7 sier én rad per gyldig kandidat.
+  - Utkastet til sensor om innloggingen.
+  - Modellanbefalingen per story.
+  - Overlappende vakter og 11-timersregelen før 2.3.
+
+### Åpne punkter
+- Gruppa avklarer at overlappende vakter bare teller som kollisjon og ikke under 11-timersregelen, før story 2.3. Punktet står fra før i `issues.md`.
