@@ -30,3 +30,25 @@ Kim ba Mithad gå gjennom `docs/beslutninger/prd-beslutningsgrunnlag-2026-11-07.
 
 - Velger gruppa P-04 A, må testdataene for Ingrid i story 1.2 endres.
 - E-02: finn den innleverte proposalen og lag en kort liste over avvik med begrunnelse før innlevering, hvis gruppa er enig.
+
+## 2026-11-10 — Mithad Kuduz
+
+### Oppgave
+
+Etter pull: Kim har ferdigstilt beslutningsgrunnlaget og bekreftet P-01 til P-13 som gruppevedtak 2026-11-09. Mithad ba om å rette spesifikasjonen for story 1.2 etter P-04.
+
+### Plan
+
+- Lese Kims følgevalg for P-04 og E-02.
+- Søke etter forventninger om høy belastning for Ingrid i spesifikasjonen, planene og testene.
+
+### Resultat
+
+- **P-04:** Kim avklarte at Ingrid beholder 32 t i testdataene, og at forventningen rettes. Linje 186 i spesifikasjonen for 1.2 sier nå at Ingrid *ikke* skal vises med høy belastning (grense minst 32,4 t), med lenke til vedtaket og en merknad om hva som stod før (`967274e`). Ingen test i backend eller frontend forventet høy belastning. Testdata og fasit er uendret.
+- **E-02:** Kim fant den første versjonen av briefen (`ee6d798`) og bekreftet at det var den godkjente proposalen. Han har også ført inn en liste over avvik. Det var det Mithad ba om.
+- **Ikke rettet, utenfor oppgaven:** PRD §8 punkt 6 og K-02 i `avklaringspunkter.md` sier fortsatt at 32,4 t ikke er vedtatt. Ifølge beslutningsgrunnlaget skal vedtakene føres inn og samordnes senere.
+- **Story 1.6:** Kim godkjente PR #11 selv. Ingen andre i gruppa har sett over koden.
+
+### Åpne punkter
+
+- Ingen nye for Mithad. Samordningen av vedtakene med PRD, K-02 og stories ligger hos gruppa, ifølge beslutningsgrunnlaget.

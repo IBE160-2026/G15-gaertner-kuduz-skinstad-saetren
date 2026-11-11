@@ -183,7 +183,7 @@ Grunnturnusen følger selv reglene. Kveld kan for eksempel aldri etterfølges av
   - Jonas og Mette har like kostnadspoeng (84,76), timepoeng (100) og preferansepoeng (75). Ulempescore er 86,67 mot 40,00. Forskjellen er 0,15 × 46,67 = **7,0 totalpoeng** (AV-12). Uten ulempe ville de stått likt, og da avgjør stigende ansatt-ID (AV-05).
   - Med nøytral preferanse for alle (Epic 5 ikke på plass) blir det Jonas 79,40, Mette 72,40, Thomas 71,50 og Ingrid 24,50. Thomas er fortsatt ikke øverst.
   - Testene i 1.2 sjekker at dataene gir nøyaktig disse inputene. Selve rangeringen testes i story 4.4.
-- **Rettet etter P-04 (2026-11-09):** Ingrid beholdes på 32 timer i seeddata og ligger under vedtatt grense 32,4 timer. Hun skal ikke vises med «høy belastning». Denne rettingen endrer ikke #4127-fasiten, som fortsatt bruker 32 timer og 3 850 kr i Vaktkostnad. Tidligere forventning om høy belastning ved 32 timer var feil.
+- Ingrid skal *ikke* vises med høy belastning. Grensen er minst 32,4 t før visningsavrunding, altså 90 % av 36 t, og hennes 32 t ligger under den (P-04 A, vedtatt 2026-11-09 i [beslutningsgrunnlaget for PRD](../../docs/beslutninger/prd-beslutningsgrunnlag-2026-11-07.md#p-04--eksakt-grense-for-høy-timebelastning-k-02)). Timene og rangeringsfasiten for #4127 er uendret. *Rettet 2026-11-10: før stod det at Ingrid skulle vises med høy belastning, og at story 4.2 skulle sette grensen så 32 t regnes som høy.*
 - Thomas står på 2/4 i mockupen, men det strider mot FR-2, så han får nivå 3.
 
 **Utelukket på #4127 (20):**
