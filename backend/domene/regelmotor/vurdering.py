@@ -18,7 +18,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from domene.regelmotor import kompetanse
+from domene.regelmotor import kolliderende_vakt, kompetanse
 from domene.typer import VAKTTYPER, Datafeil, Kandidat, Kandidatvurdering, Utelukket, Vakt
 
 
@@ -49,6 +49,12 @@ REGLER: tuple[Regel, ...] = (
         bryter=kompetanse.bryter_kompetanse,
         vaktkrav=_minstenivå_krav,
         kandidatkrav=kompetanse.kompetansedatafeil,
+    ),
+    Regel(
+        årsak=kolliderende_vakt.ÅRSAK,
+        bryter=kolliderende_vakt.bryter_kollisjon,
+        vaktkrav=lambda _vakt: [],
+        kandidatkrav=kolliderende_vakt.kollisjonsdatafeil,
     ),
 )
 

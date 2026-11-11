@@ -1,15 +1,15 @@
-"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1).
+"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1 og 2.2).
 
-Fasiten kommer fra `testdata.FASIT` (AV-07). I 2.1 er bare kompetanse-minstekravet
-på plass, så de gyldige er alle unntatt dem fasiten utelukker på kompetanse. De
-andre reglene kommer i 2.2–2.4.
+Fasiten kommer fra `testdata.FASIT` (AV-07). Med kompetanse-minstekravet og
+kolliderende vakt på plass er de gyldige alle unntatt dem fasiten utelukker på
+`kompetanse` eller `kolliderende`. De to andre reglene kommer i 2.3 og 2.4.
 """
 
 from datetime import datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine, update
+from sqlalchemy import Engine, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.modeller import OSLO, AnsattRad, TurnusRad, VaktRad
@@ -27,11 +27,18 @@ def hent(klient: TestClient, nummer: int) -> dict:
     return respons.json()
 
 
+IMPLEMENTERTE_REGLER = {"kompetanse", "kolliderende"}
+
+
 def forventet_gyldige(nummer: int) -> set[str]:
-    return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall != "kompetanse"}
+    return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall not in IMPLEMENTERTE_REGLER}
 
 
-@pytest.mark.parametrize("nummer,antall", [(4127, 16), (4189, 21)])
+def forventet_utelukket(nummer: int) -> set[str]:
+    return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall in IMPLEMENTERTE_REGLER}
+
+
+@pytest.mark.parametrize("nummer,antall", [(4127, 9), (4189, 19)])
 def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: int) -> None:
     svar = hent(klient, nummer)
 
@@ -46,13 +53,37 @@ def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: in
 def test_bare_gyldige_sendes_nfr2(klient: TestClient, nummer: int) -> None:
     logg_inn(klient)
     respons_tekst = klient.get(f"/api/vakter/{nummer}/kandidater").text
-    utelukket = {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall == "kompetanse"}
+    utelukket = forventet_utelukket(nummer)
     satt_opp = NAVN[MANGLER_BEMANNING[nummer][0]]
 
-    assert len(utelukket) == {4127: 8, 4189: 3}[nummer]
+    # 4127: 8 kompetanse + 7 kollisjon. 4189: 3 kompetanse + 2 kollisjon.
+    assert len(utelukket) == {4127: 15, 4189: 5}[nummer]
     for navn in utelukket | {satt_opp}:
         assert navn not in respons_tekst
     assert "kompetanse-minstekrav" not in respons_tekst
+    assert "kolliderende" not in respons_tekst
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
+    svar = hent(klient, nummer)
+
+    for k in svar["kandidater"]:
+        assert set(k) == {"id", "navn", "kompetansenivå"}
+    tekst = str(svar)
+    for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
+        assert ord_ not in tekst
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_ingen_med_kolliderende_vakt_i_fasiten_er_med(klient: TestClient, nummer: int) -> None:
+    navn = {k["navn"] for k in hent(klient, nummer)["kandidater"]}
+    kolliderende = {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall == "kolliderende"}
+
+    assert len(kolliderende) == {4127: 7, 4189: 2}[nummer]
+    assert not navn & kolliderende
+    # De to andre reglene er ikke på plass ennå, så de som bare brytes av dem, er med.
+    assert {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall in {"elleve-timer", "trettifem-timer"}} <= navn
 
 
 def test_silje_er_ikke_med_på_4127_og_utelukket_på_4189(klient: TestClient) -> None:
@@ -142,6 +173,36 @@ def test_halvapen_periode_ved_grensene(klient: TestClient, engine: Engine, start
         assert_ingen_navn(respons.text)
 
 
+# --- Kandidatens egne vakter fra databasen ---------------------------------------
+
+
+def legg_til_tildelt_vakt(engine: Engine, ansatt_id: int, start: datetime, slutt: datetime) -> None:
+    """En ekstra bemannet vakt for én Ansatt, i samme turnus som #4127."""
+    with lag_sessionmaker(engine).begin() as session:
+        turnus_id = session.scalars(select(VaktRad.turnus_id).where(VaktRad.vaktnummer == 4127)).one()
+        session.add(VaktRad(
+            turnus_id=turnus_id, vaktnummer=99001, vakttype="natt", start=start, slutt=slutt,
+            minstenivå=1, tildelt_ansatt_id=ansatt_id, mangler_bemanning=False,
+        ))
+
+
+def gyldig_på_4127() -> tuple[int, str]:
+    navn = sorted(forventet_gyldige(4127))[0]
+    (ansatt_id,) = [i for i, n in NAVN.items() if n == navn]
+    return ansatt_id, navn
+
+
+def test_egen_vakt_før_periodestart_som_overlapper_utelukker(klient: TestClient, engine: Engine) -> None:
+    # Kandidatens vakter hentes uavhengig av periode. En vakt som starter før
+    # periodestart og overlapper en Vakt ved periodestart, skal utelukke.
+    endre_vakt(engine, start=PERIODE_START, slutt=PERIODE_START + timedelta(hours=8))
+    ansatt_id, navn = gyldig_på_4127()
+    assert navn in {k["navn"] for k in hent(klient, 4127)["kandidater"]}
+
+    legg_til_tildelt_vakt(engine, ansatt_id, PERIODE_START - timedelta(hours=2), PERIODE_START + timedelta(hours=1))
+    assert navn not in {k["navn"] for k in hent(klient, 4127)["kandidater"]}
+
+
 # --- Datafeil (P-08) med endret testdatabase -----------------------------------
 
 
@@ -179,6 +240,15 @@ def test_vakt_som_slutter_etter_datagrensen_gir_datafeil(
 def test_start_ikke_før_slutt_gir_datafeil(klient: TestClient, engine: Engine) -> None:
     start = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
     endre_vakt(engine, slutt=start)
+    assert_datafeil(hent(klient, 4127))
+
+
+def test_tildelt_vakt_med_start_ikke_før_slutt_gir_datafeil(klient: TestClient, engine: Engine) -> None:
+    # Ugyldig historikk hos en Kandidat er ikke fri tid (P-08). Vakten ligger
+    # samtidig med #4127, så den er relevant for regelen uansett avgrensning.
+    ansatt_id, _ = gyldig_på_4127()
+    start = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
+    legg_til_tildelt_vakt(engine, ansatt_id, start, start)
     assert_datafeil(hent(klient, 4127))
 
 

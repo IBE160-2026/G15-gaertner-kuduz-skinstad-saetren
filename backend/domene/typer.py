@@ -34,21 +34,38 @@ class Vakt:
 
 
 @dataclass(frozen=True)
+class Tidsrom:
+    """Et halvåpent tidsrom `[start, slutt)`, for eksempel en tildelt vakt.
+
+    Brukes for Kandidatens egne vakter (story 2.2), som ikke trenger vaktnummer,
+    vakttype eller minstenivå. Tidene skal ha tidssone, og regelmotoren sjekker det.
+    """
+
+    start: datetime
+    slutt: datetime
+
+
+@dataclass(frozen=True)
 class Kandidat:
     """En Ansatt som vurderes for Vakten.
 
     `kompetanse` er nivå per vakttype (`dag`, `kveld`, `natt`). Mangler nøkkelen,
     er den ansatte ikke opplært for vakttypen. Kopien er skrivebeskyttet, slik at
     en vurdering ikke kan endre grunnlaget for den neste.
+
+    `vakter` er Kandidatens egne tildelte vakter, uavhengig av periode. Standard er
+    tom, så kall som bare trenger kompetanse virker uendret.
     """
 
     id: int
     navn: str
     kompetanse: Mapping[str, object] = field(compare=False)
+    vakter: tuple[Tidsrom, ...] = field(default=(), compare=False)
 
     def __post_init__(self) -> None:
         if isinstance(self.kompetanse, Mapping):
             object.__setattr__(self, "kompetanse", MappingProxyType(dict(self.kompetanse)))
+        object.__setattr__(self, "vakter", tuple(self.vakter))
 
 
 @dataclass(frozen=True)
