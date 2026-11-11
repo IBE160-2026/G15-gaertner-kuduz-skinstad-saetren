@@ -25,3 +25,30 @@
 - Nettleserkontrollen i spec-ens Verification gjenstår: logg inn, velg #4127 og #4189 og kontroller at listene har 9 og 19 kandidater. Implementeringsagenten fikk ikke starte utviklingsserverne.
 - Commit `605c52e` er ikke pushet, og det finnes ingen PR. Branch eller PR er Johannes' valg (AGENTS.md Policy).
 - AGENTS.md sier at regelmotoren bare har kompetanse-minstekrav (utsatt, ført i `deferred-work.md`).
+
+## 2026-11-11 kl. 16:39 — johagartnerHiMolde
+
+### Oppgave
+`/bmad-review` av arbeidet Sonnet 5.5 gjorde på story 2.2, kjørt etter `/model` tilbake til Opus 5.5, som en andre og uavhengig gjennomgang.
+
+### Plan
+- Diffen for branchen mot `main` (0fc10f0..HEAD) og commit-meldingene ble lagt som filer.
+- Tre Opus-linser kjørte parallelt uten å ha sett den forrige gjennomgangen: adversarial, edge-case-hunter (med commit-meldingene) og verification-gap.
+
+### Resultat
+- 21 funn: 16 fra adversarial, 3 fra edge-case og 2 fra verification-gap. Ingenting er rettet. Arbeidstreet er rent etter mutasjonene som linsene gjorde.
+- Viktigste funn:
+  - **Ingen test sikrer «uavhengig av periode».** VG la inn `VaktRad.start >= periode_start` i adapteren, og alle 273 tester var fortsatt grønne.
+  - **Ugyldig tildelt vakt er ikke testet ende til ende.** Det finnes ingen API-test for dette, bare domenetester.
+  - **Kollisjon med egen vakt ved Godkjenning.** Når Epic 3 kjører reglene på nytt ved Godkjenning og Vakten har fått `tildelt_ansatt_id`, kolliderer Kandidaten med sin egen vakt.
+  - **Dokumentasjonen spriker.**
+    - Vurderingsmatrisen og KI-loggen sier at gjennomgangen gjenstår.
+    - Spec-en står som `done`, mens sprint-status sier `review`.
+    - Mutasjonstallet 13 stemmer ikke lenger (nå 14).
+    - Testtallet er 271 i triage og 273 i dokumentasjonen.
+  - **`epic-2-context.md` er delvis utdatert.** Den beskriver tilstanden før 2.2, og omkompileringen fjernet noen punkter uten at det er begrunnet.
+  - **Merknaden bruker et annet navn på regelen.** Den sier «kompetanse», mens årsaken heter «kompetanse-minstekrav».
+  - **Gjentatte funn.** Datafeil på all historikk, spørringen uten avgrensning og datafeilgrunnen med listeposisjon ble avvist i den første gjennomgangen og kom opp igjen.
+
+### Åpne punkter
+- Johannes velger hvilke funn fra Opus-gjennomgangen som skal rettes før PR. Funnlisten står i chat-rapporten, og hovedpunktene står over.
