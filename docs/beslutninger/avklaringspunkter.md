@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-10 (P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12; dokumentvedtak er skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -642,7 +642,7 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 | P-10 | Kjerneflyten bruker faste preferanser i testdata. **P-10B planlegges som egen story etter fungerende kjerneflyt**: turnusansvarlig kan redigere tekst, med lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. | B er planlagt v1-tillegg, ikke forutsetning for kjerneflyten; dokumenter som utsatt hvis tiden ikke rekker. Manuell kategori-overstyring er ikke valgt. Johannes' individuelle ønske om høyere prioritet i kilden endrer ikke Kims senere gruppeavklaring. |
 | P-11 | Ved null gyldige vises egen tomtilstand, utelukkelsesoppsummering og teksten «Innleie av personell kan vurderes», uten innleieknapp. | Skill tomtilstanden fra datafeil og lasting i UI-test. |
 | P-12 | Godkjenning lagres varig; vist forklaring lagres ikke historisk i kjerneversjonen. | Historisk forklaringslagring er **ikke v1-krav**. Eventuelt senere valg krever egen story for forklaring og beregningsgrunnlag. |
-| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende nå. Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 er ferdig. | Felles ansvar: dokumenter oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. Testen er ikke utført. |
+| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende nå. Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 er ferdig. | Felles ansvar: dokumenter en enkel oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. **Avgrensning:** én testperson og ett operativsystem og én skjermflate holder; mobil-/nettbrettavklaringen krever ingen egen forståelsestest. **Akseptmål:** testpersonen løser alle tre oppgavene uten hint. Står hen fast på én, rettes det som skapte misforståelsen, og funnet og rettingen noteres. Dokumenter testperson, operativsystem og skjermflate, svar per oppgave og eventuelle rettinger. Presisert av Johannes 2026-11-11 i godkjenningen av PR #12. Testen er ikke utført. |
 | E-01 | Faglærers muntlige opplysning er gjengitt: KI i produktet er ikke et formelt emnekrav; KI beholdes som valgt produktscope. | Lukket som dokumentasjonspunkt 2026-11-08; forelesningsdato er ukjent. |
 | E-02 | Commit `ee6d798` er identifisert som godkjent proposal; planavvikene er listet i beslutningsgrunnlaget. | Avklart som dokumentpunkt 2026-11-09. Kontroller faktisk levert app mot proposal og forklar avvik ved innlevering. |
 

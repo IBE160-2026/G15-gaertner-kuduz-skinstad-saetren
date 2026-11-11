@@ -2,7 +2,7 @@
 title: "PRD: Turnushjelperen"
 status: final
 created: 2026-09-26
-updated: 2026-11-10
+updated: 2026-11-11
 ---
 
 # PRD: Turnushjelperen
@@ -406,7 +406,7 @@ Produktvalgene over er vedtatt, men følgende **kontroller/oppgaver** gjenstår:
 2. P-05–P-07: Fastsett KI-kontrakten i stories/arkitektur og test ventende/feilet tolkning, nye forsøk, faktakontroll og referanseregelen mot falsk OpenRouter. Manuell kontroll av norsk og mening kommer i tillegg.
 3. P-08/P-09/P-11: Test manglende datadekning, særlig #4261–#4265 etter seedgrensen, gammelt svar/endret beslutningsgrunnlag og tydelig forskjell mellom datafeil og null gyldige.
 4. P-10B: Story 5.9 er planlagt i backlog; prioriter implementasjon først etter fungerende kjerneflyt. Hvis tiden ikke rekker, før den som utsatt. P-12B krever først senere valg og er ikke v1-krav.
-5. P-13/OP-02: Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Gjennomfør og dokumenter en liten oppgavebasert forståelsestest: forklar nr. 1 uten hint, finn en annen gyldig Kandidat, skill datafeil fra null gyldige. Testen er besluttet, ikke utført.
+5. P-13/OP-02: Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Gjennomfør og dokumenter en liten oppgavebasert forståelsestest: forklar nr. 1 uten hint, finn en annen gyldig Kandidat, skill datafeil fra null gyldige. Én testperson og ett operativsystem og én skjermflate holder. Akseptmål: alle tre oppgavene løses uten hint. Ellers rettes og noteres det som skapte misforståelsen. Testen er besluttet, ikke utført.
 6. E-02: Kontroller levert funksjonalitet mot den godkjente proposalen i `ee6d798` ved innlevering, og forklar planavvik. E-01 er lukket: KI i produktet er et valgt produktscope, ikke et formelt emnekrav ifølge Johannes' gjengivelse av faglærers muntlige utsagn; forelesningsdato er ukjent.
 
 **Vedtak innarbeidet 2026-11-10:** P-01–P-13 bygger på [beslutningsgrunnlaget](../../../../docs/beslutninger/prd-beslutningsgrunnlag-2026-11-07.md) og er ført i [referatet §12](../../../../docs/beslutninger/avklaringspunkter.md#12-prd-vedtak-2026-11-09-og-status-ved-dokumentsamordning). Dette er samordning av krav, ikke dokumentasjon på implementasjon eller beståtte apptester. KS-02s #4127-fasit og KS-04s begrensede datagodkjenning for #4127/#4189 består.

@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-10-2026 19:30
+last_updated: 11-11-2026 12:20
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -81,7 +81,7 @@ development_status:
   epic-5-retrospective: optional
 action_items:
   - epic: 4
-    action: "P-13/OP-02: Etter fungerende kandidatvisning og før story 4.6 ferdigstilles, avklar mobil/nettbrett og dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige."
+    action: "P-13/OP-02: Etter fungerende kandidatvisning og før story 4.6 ferdigstilles, avklar mobil/nettbrett og dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige. Én testperson og ett operativsystem og én skjermflate holder; akseptmålet er alle tre uten hint (referatet §12)."
     owner: "gruppa"
     status: open
   - epic: 2
