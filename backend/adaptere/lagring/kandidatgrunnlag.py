@@ -4,15 +4,16 @@ Konverteringen fra SQLAlchemy til `domene.typer` skjer bare her. Regelmotoren f�
 ferdige domenetyper og vet ikke at det finnes en database.
 """
 
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from adaptere.lagring.modeller import AnsattRad
+from adaptere.lagring.modeller import AnsattRad, VaktRad
 from adaptere.lagring.vaktdetaljer import finn_ubemannet_vakt
-from domene.typer import Kandidat, Vakt
+from domene.typer import Kandidat, Tidsrom, Vakt
 
 
 @dataclass(frozen=True)
@@ -26,6 +27,10 @@ class Kandidatgrunnlag:
 def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> Kandidatgrunnlag | None:
     """Vakten, alle Ansatte og datagrensen, eller None når vakten ikke er synlig.
 
+    Alle rader i `vakt` med tildelt Ansatt hentes i én spørring, uavhengig av periode,
+    og legges på Kandidaten som `vakter`. Vakten som skal bemannes, har ingen tildelt
+    Ansatt og er derfor aldri med.
+
     Alle rader i `ansatt` er med. Tabellen har ingen `turnus_id`, og v1 har én
     turnus (AV-06). Regelmotoren tar selv bort den som var satt opp.
     """
@@ -34,6 +39,13 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
         return None
     vaktrad, turnus = funnet
     ansatte = session.scalars(select(AnsattRad).order_by(AnsattRad.id)).all()
+    egne: defaultdict[int, list[Tidsrom]] = defaultdict(list)
+    for tildelt_id, start, slutt in session.execute(
+        select(VaktRad.tildelt_ansatt_id, VaktRad.start, VaktRad.slutt)
+        .where(VaktRad.tildelt_ansatt_id.is_not(None))
+        .order_by(VaktRad.start, VaktRad.id)
+    ):
+        egne[tildelt_id].append(Tidsrom(start=start, slutt=slutt))
     return Kandidatgrunnlag(
         vakt=Vakt(
             vaktnummer=vaktrad.vaktnummer,
@@ -43,6 +55,9 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
             minstenivå=vaktrad.minstenivå,
             satt_opp_ansatt_id=vaktrad.satt_opp_ansatt_id,
         ),
-        ansatte=tuple(Kandidat(id=rad.id, navn=rad.navn, kompetanse=rad.kompetanse) for rad in ansatte),
+        ansatte=tuple(
+            Kandidat(id=rad.id, navn=rad.navn, kompetanse=rad.kompetanse, vakter=tuple(egne[rad.id]))
+            for rad in ansatte
+        ),
         datagrense=turnus.periode_slutt,
     )

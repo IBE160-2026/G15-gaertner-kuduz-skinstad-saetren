@@ -169,10 +169,10 @@ bemanning står øverst under «Krever handling» (#4127 og #4189 i testdataene)
 periodestart, vises ikke (AV-03). «Velg vakt — finn erstatter →» går til
 `/vakt/<nr>/kandidater`. Her vises avdeling, vakttype, tidspunkt og minstenivå,
 og under dem de gyldige kandidatene alfabetisk med kompetansenivå («Nivå 3/4»).
-Listen hentes automatisk. I story 2.1 er den bare filtrert på
-kompetanse-minstekravet (FR2), og det står i en merknad under overskriften. Story
-2.2–2.4 legger til de andre harde reglene. Med bare kompetansekravet gir #4127 16
-gyldige og #4189 21 i testdataene. Direkte URL og
+Listen hentes automatisk. Etter story 2.2 er den filtrert på
+kompetanse-minstekravet (FR2) og kolliderende vakt (FR3), og det står i en merknad
+under overskriften. Story 2.3 og 2.4 legger til 11- og 35-timersregelen. Med de to
+reglene gir #4127 9 gyldige og #4189 19 i testdataene. Direkte URL og
 nettleserens tilbakeknapp virker. En bemannet, ukjent eller utenforliggende vakt
 gir en nøytral feilmelding (AV-03). Feil ved lasting kan prøves på nytt.
 

@@ -1,8 +1,8 @@
-"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1).
+"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1 og 2.2).
 
-Fasiten kommer fra `testdata.FASIT` (AV-07). I 2.1 er bare kompetanse-minstekravet
-på plass, så de gyldige er alle unntatt dem fasiten utelukker på kompetanse. De
-andre reglene kommer i 2.2–2.4.
+Fasiten kommer fra `testdata.FASIT` (AV-07). Med kompetanse-minstekravet og
+kolliderende vakt på plass er de gyldige alle unntatt dem fasiten utelukker på
+`kompetanse` eller `kolliderende`. De to andre reglene kommer i 2.3 og 2.4.
 """
 
 from datetime import datetime, timedelta
@@ -27,11 +27,18 @@ def hent(klient: TestClient, nummer: int) -> dict:
     return respons.json()
 
 
+IMPLEMENTERTE_REGLER = {"kompetanse", "kolliderende"}
+
+
 def forventet_gyldige(nummer: int) -> set[str]:
-    return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall != "kompetanse"}
+    return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall not in IMPLEMENTERTE_REGLER}
 
 
-@pytest.mark.parametrize("nummer,antall", [(4127, 16), (4189, 21)])
+def forventet_utelukket(nummer: int) -> set[str]:
+    return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall in IMPLEMENTERTE_REGLER}
+
+
+@pytest.mark.parametrize("nummer,antall", [(4127, 9), (4189, 19)])
 def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: int) -> None:
     svar = hent(klient, nummer)
 
@@ -46,13 +53,37 @@ def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: in
 def test_bare_gyldige_sendes_nfr2(klient: TestClient, nummer: int) -> None:
     logg_inn(klient)
     respons_tekst = klient.get(f"/api/vakter/{nummer}/kandidater").text
-    utelukket = {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall == "kompetanse"}
+    utelukket = forventet_utelukket(nummer)
     satt_opp = NAVN[MANGLER_BEMANNING[nummer][0]]
 
-    assert len(utelukket) == {4127: 8, 4189: 3}[nummer]
+    # 4127: 8 kompetanse + 7 kollisjon. 4189: 3 kompetanse + 2 kollisjon.
+    assert len(utelukket) == {4127: 15, 4189: 5}[nummer]
     for navn in utelukket | {satt_opp}:
         assert navn not in respons_tekst
     assert "kompetanse-minstekrav" not in respons_tekst
+    assert "kolliderende" not in respons_tekst
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
+    svar = hent(klient, nummer)
+
+    for k in svar["kandidater"]:
+        assert set(k) == {"id", "navn", "kompetansenivå"}
+    tekst = str(svar)
+    for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
+        assert ord_ not in tekst
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_ingen_med_kolliderende_vakt_i_fasiten_er_med(klient: TestClient, nummer: int) -> None:
+    navn = {k["navn"] for k in hent(klient, nummer)["kandidater"]}
+    kolliderende = {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall == "kolliderende"}
+
+    assert len(kolliderende) == {4127: 7, 4189: 2}[nummer]
+    assert not navn & kolliderende
+    # De to andre reglene er ikke på plass ennå, så de som bare brytes av dem, er med.
+    assert {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall in {"elleve-timer", "trettifem-timer"}} <= navn
 
 
 def test_silje_er_ikke_med_på_4127_og_utelukket_på_4189(klient: TestClient) -> None:
