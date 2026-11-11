@@ -37,4 +37,4 @@ Kontroller:
 ## Gjenstår
 
 - Uavhengig kodegjennomgang (underagenter i `bmad-build`) og menneskelig PR-gjennomgang av et gruppemedlem.
-- Nettleserkontroll: #4127 skal vise 5 kandidater og #4189 1, med ny merknad. Ikke utført av implementeringsagenten.
+- Nettleserkontroll: ikke utført av implementeringsagenten. Mithad gjorde nettleserkontrollen 2026-11-11 mot en midlertidig testdatabase og godkjente den. #4127 viste 5 kandidater (Anders Strand, Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård), #4189 viste Line Moe, og merknaden var ny. API-svaret ga de samme navnene.

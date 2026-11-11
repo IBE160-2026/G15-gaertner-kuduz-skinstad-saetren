@@ -118,7 +118,7 @@ context:
 
 - 2026-11-11: En underagent implementerte storyen, med spesifikasjonen som eneste kilde. Avvik fra Code Map: når Vakten er ugyldig, samles kompetansefeilene likevel, men vinduet regnes ikke ut. Det holder en eksisterende test grønn og er ikke i strid med rekkefølgen.
 - 2026-11-11: Etter kodegjennomgangen er seks funn rettet, ett utsatt og resten avvist (se Review Triage Log). 337 backendtester og 26 frontendtester består, og bygget går gjennom.
-- Nettleserkontrollen gjenstår: #4127 skal vise 5 kandidater og #4189 1, med ny merknad.
+- 2026-11-11: Mithad gjorde nettleserkontrollen 2026-11-11 mot en midlertidig testdatabase og godkjente den. #4127 viste 5 kandidater (Anders Strand, Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård), #4189 viste Line Moe, og merknaden var ny.
 
 ## Spec Change Log
 
