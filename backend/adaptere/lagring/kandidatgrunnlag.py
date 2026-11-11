@@ -6,7 +6,7 @@ ferdige domenetyper og vet ikke at det finnes en database.
 
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -22,10 +22,18 @@ class Kandidatgrunnlag:
     ansatte: tuple[Kandidat, ...]
     # Der turnusgrunnlaget slutter: `turnus.periode_slutt` (P-08).
     datagrense: datetime
+    # Der turnusgrunnlaget starter: `turnus.periode_start` − 672 faktiske timer,
+    # samme vindu som ulempemålingen (AV-09, beslutning 2A i story 2.3).
+    historikkstart: datetime
+
+
+# 672 faktiske timer. Trekkes fra i UTC: `- timedelta` på en `ZoneInfo`-tid
+# regner på veggklokka og gir feil over sommertidsskiftet.
+HISTORIKK = timedelta(hours=672)
 
 
 def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> Kandidatgrunnlag | None:
-    """Vakten, alle Ansatte og datagrensen, eller None når vakten ikke er synlig.
+    """Vakten, alle Ansatte og datadekningen, eller None når vakten ikke er synlig.
 
     Alle rader i `vakt` med tildelt Ansatt hentes i én spørring, uavhengig av periode,
     og legges på Kandidaten som `vakter`. Vakten som skal bemannes, har ingen tildelt
@@ -60,4 +68,5 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
             for rad in ansatte
         ),
         datagrense=turnus.periode_slutt,
+        historikkstart=turnus.periode_start.astimezone(UTC) - HISTORIKK,
     )

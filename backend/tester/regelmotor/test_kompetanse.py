@@ -15,6 +15,8 @@ from domene.typer import Datafeil, Kandidat, Kandidatvurdering, Vakt
 
 OSLO = ZoneInfo("Europe/Oslo")
 DATAGRENSE = datetime(2026, 10, 5, 0, 0, tzinfo=OSLO)
+# Periodestart 21.09 − 672 t, som i seeden (story 2.3, beslutning 2A).
+HISTORIKKSTART = datetime(2026, 8, 24, 0, 0, tzinfo=OSLO)
 DAG_START = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
 
 
@@ -32,7 +34,7 @@ def kandidat(id: int, kompetanse: dict, navn: str | None = None) -> Kandidat:
 
 
 def vurder(v: Vakt, *kandidater: Kandidat, **kw) -> Kandidatvurdering:  # type: ignore[no-untyped-def]
-    resultat = vurder_kandidater(v, kandidater, DATAGRENSE, **kw)
+    resultat = vurder_kandidater(v, kandidater, DATAGRENSE, HISTORIKKSTART, **kw)
     assert isinstance(resultat, Kandidatvurdering), resultat
     return resultat
 
@@ -122,7 +124,8 @@ def test_alle_årsaker_samles_uten_å_stoppe_ved_første_brudd() -> None:
         kall.append(k.id)
         return True
 
-    ekstra = Regel(årsak="testregel", bryter=alltid_brudd, vaktkrav=lambda _v: [], kandidatkrav=lambda _k, _v: [])
+    ekstra = Regel(årsak="testregel", bryter=alltid_brudd, vaktkrav=lambda _v: [], kandidatkrav=lambda _k, _v: [],
+                   vindu=lambda _v: None)
     resultat = vurder(vakt("dag", 3), kandidat(1, {"dag": 1}), kandidat(2, {"dag": 4}), regler=REGLER + (ekstra,))
 
     assert resultat.gyldige == ()
@@ -164,10 +167,10 @@ def test_utelukkede_er_også_sortert() -> None:
 def test_samme_input_gir_samme_output_uansett_rekkefølge_inn() -> None:
     kandidater = [kandidat(i, {"dag": 1 + i % 4, "natt": 4}, f"Navn {chr(80 - i)}") for i in range(1, 13)]
     v = vakt("dag", 3)
-    forste = vurder_kandidater(v, kandidater, DATAGRENSE)
+    forste = vurder_kandidater(v, kandidater, DATAGRENSE, HISTORIKKSTART)
     for _ in range(3):
-        assert vurder_kandidater(v, kandidater, DATAGRENSE) == forste
-        assert vurder_kandidater(v, list(reversed(kandidater)), DATAGRENSE) == forste
+        assert vurder_kandidater(v, kandidater, DATAGRENSE, HISTORIKKSTART) == forste
+        assert vurder_kandidater(v, list(reversed(kandidater)), DATAGRENSE, HISTORIKKSTART) == forste
 
 
 def test_vurderingen_endrer_ikke_grunnlaget() -> None:
@@ -183,20 +186,47 @@ def test_vurderingen_endrer_ikke_grunnlaget() -> None:
 
 
 def datafeil(v: Vakt, *kandidater: Kandidat, datagrense: datetime = DATAGRENSE) -> Datafeil:
-    resultat = vurder_kandidater(v, kandidater or (kandidat(1, {"dag": 4}),), datagrense)
+    resultat = vurder_kandidater(v, kandidater or (kandidat(1, {"dag": 4}),), datagrense, HISTORIKKSTART)
     assert isinstance(resultat, Datafeil), resultat
     assert resultat.datagrense == datagrense
     assert resultat.grunner
     return resultat
 
 
-def test_vakt_som_slutter_ved_datagrensen_er_gyldig_og_ett_minutt_etter_er_datafeil() -> None:
-    ved = vakt("kveld", 1, start=DATAGRENSE - timedelta(hours=8))
-    assert isinstance(vurder_kandidater(ved, [kandidat(1, {"kveld": 1})], DATAGRENSE), Kandidatvurdering)
+# Fra story 2.3 er det vinduet `[start − 11 t, slutt + 11 t)` som må ligge innenfor
+# datadekningen, ikke bare Vakten (P-08, A5). En Vakt som slutter 04.10 kl. 13:00,
+# har vindusslutt nøyaktig ved datagrensen 05.10 kl. 00:00.
+SISTE_GYLDIGE_SLUTT = DATAGRENSE - timedelta(hours=11)
 
+
+def test_vindu_som_slutter_ved_datagrensen_er_gyldig_og_ett_minutt_etter_er_datafeil() -> None:
+    ved = vakt("dag", 1, start=SISTE_GYLDIGE_SLUTT - timedelta(hours=8))
+    assert ved.slutt == datetime(2026, 10, 4, 13, 0, tzinfo=OSLO)
+    assert isinstance(vurder_kandidater(ved, [kandidat(1, {"dag": 1})], DATAGRENSE, HISTORIKKSTART), Kandidatvurdering)
+
+    etter = vakt("dag", 1, start=SISTE_GYLDIGE_SLUTT - timedelta(hours=8) + timedelta(minutes=1))
+    assert etter.slutt == datetime(2026, 10, 4, 13, 1, tzinfo=OSLO)
+    assert "datagrensen" in datafeil(etter, kandidat(1, {"dag": 1})).grunner[0]
+
+
+def test_kveld_04_10_er_datafeil_etter_story_2_3() -> None:
+    # Kvelden 04.10 15–23 slutter før datagrensen, men hvilen etter kan ikke
+    # kontrolleres. Det godtok KS-04 tidligere. Nå gir det datafeil, slik P-08 krever.
+    kveld = vakt("kveld", 1, start=datetime(2026, 10, 4, 15, 0, tzinfo=OSLO))
+    datafeil(kveld, kandidat(1, {"kveld": 1}))
+
+
+def test_bare_kompetanseregel_sjekker_likevel_datagrensen() -> None:
+    # Vinduet dekker alltid Vakten, også når ingen regel har eget vindu.
+    bare_kompetanse = REGLER[:1]
+    ved = vakt("kveld", 1, start=DATAGRENSE - timedelta(hours=8))
+    assert isinstance(
+        vurder_kandidater(ved, [kandidat(1, {"kveld": 1})], DATAGRENSE, HISTORIKKSTART, regler=bare_kompetanse),
+        Kandidatvurdering,
+    )
     etter = vakt("kveld", 1, start=DATAGRENSE - timedelta(hours=8) + timedelta(minutes=1))
-    assert etter.slutt == datetime(2026, 10, 5, 0, 1, tzinfo=OSLO)
-    assert "datagrensen" in datafeil(etter, kandidat(1, {"kveld": 1})).grunner[0]
+    resultat = vurder_kandidater(etter, [kandidat(1, {"kveld": 1})], DATAGRENSE, HISTORIKKSTART, regler=bare_kompetanse)
+    assert isinstance(resultat, Datafeil)
 
 
 def test_nattevakt_over_datagrensen_er_datafeil() -> None:
@@ -208,8 +238,8 @@ def test_nattevakt_over_datagrensen_er_datafeil() -> None:
 def test_datagrensen_sammenlignes_på_tidspunkt_ikke_offset() -> None:
     # 05.10 00:00 i Oslo er 04.10 22:00 UTC.
     grense_utc = DATAGRENSE.astimezone(timezone.utc)
-    ved = vakt("kveld", 1, start=DATAGRENSE - timedelta(hours=8))
-    assert isinstance(vurder_kandidater(ved, [kandidat(1, {"kveld": 1})], grense_utc), Kandidatvurdering)
+    ved = vakt("dag", 1, start=SISTE_GYLDIGE_SLUTT - timedelta(hours=8))
+    assert isinstance(vurder_kandidater(ved, [kandidat(1, {"dag": 1})], grense_utc, HISTORIKKSTART), Kandidatvurdering)
 
 
 @pytest.mark.parametrize("minstenivå", [0, 5, -1, True])
@@ -238,7 +268,8 @@ def test_start_før_slutt_regnes_på_faktisk_tid_over_sommertidsskiftet() -> Non
     start = datetime(2026, 10, 25, 2, 30, tzinfo=OSLO, fold=0)
     slutt = datetime(2026, 10, 25, 2, 10, tzinfo=OSLO, fold=1)
     grense = datetime(2026, 11, 1, tzinfo=OSLO)
-    resultat = vurder_kandidater(vakt("natt", 1, start=start, slutt=slutt), [kandidat(1, {"natt": 1})], grense)
+    resultat = vurder_kandidater(vakt("natt", 1, start=start, slutt=slutt), [kandidat(1, {"natt": 1})], grense,
+                                 HISTORIKKSTART)
     assert isinstance(resultat, Kandidatvurdering)
 
 

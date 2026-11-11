@@ -23,5 +23,9 @@
   evidence: Edge-case-hunter (Opus) 2026-11-11. `hent_kandidatgrunnlag` henter alle rader med `tildelt_ansatt_id`, og i dag kan Vakten ikke ha det, fordi `finn_ubemannet_vakt` krever `mangler_bemanning`. Filtrer på `VaktRad.id != vaktrad.id` når kontrollen bygges.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-2-filtrere-bort-kandidater-med-kolliderende-vakt.md`
-  summary: Story 2.3 bygger vinduet per regel og avgrenser datafeilsjekken for Kandidatens vakter til vakter innenfor vinduet (vedtak A5, alternativ B).
-  evidence: Vedtatt av Johannes på vegne av gruppa 2026-11-11 (avklaringspunktene, §11, og P-08). I dag gir én ugyldig tildelt vakt hvor som helst datafeil for alle kandidatlister (`kollisjonsdatafeil` validerer alle `Kandidat.vakter`, og `hent_kandidatgrunnlag` henter alle tildelte vakter).
+  summary: "[UTFØRT i story 2.3, 2026-11-11] Story 2.3 bygger vinduet per regel og avgrenser datafeilsjekken for Kandidatens vakter til vakter innenfor vinduet (vedtak A5, alternativ B)."
+  evidence: Vedtatt av Johannes på vegne av gruppa 2026-11-11 (avklaringspunktene, §11, og P-08). Før story 2.3 ga én ugyldig tildelt vakt hvor som helst datafeil for alle kandidatlister (`kollisjonsdatafeil` validerte alle `Kandidat.vakter`, og `hent_kandidatgrunnlag` henter alle tildelte vakter). Story 2.3 implementerte vinduet, og bare vakter i vinduet valideres nå. Utført: `Regel.vindu` og `kandidatvaktdatafeil` i `domene/regelmotor/vurdering.py`, `kollisjonsdatafeil` fjernet, grensetester i `tester/regelmotor/test_11_timersregelen.py` og API-testen `test_tildelt_vakt_med_start_ikke_før_slutt_langt_unna_ignoreres`.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md`
+  summary: epics.md sier fortsatt «Grensetester i story 2.3 gjenstår» (ÅB-5, l.116) og «Grensetester gjenstår» i AV-04-sitatet i Story 2.3 (l.~502). Story 2.3 har levert grensetestene.
+  evidence: Blind-hunter 2026-11-11. Endring i planleggingsdokumentet gjør `epic-2-context.md` ugyldig før 2.4 og hører til gruppas samordning av epics.

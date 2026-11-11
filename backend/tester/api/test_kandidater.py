@@ -1,18 +1,20 @@
-"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1 og 2.2).
+"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1–2.3).
 
-Fasiten kommer fra `testdata.FASIT` (AV-07). Med kompetanse-minstekravet og
-kolliderende vakt på plass er de gyldige alle unntatt dem fasiten utelukker på
-`kompetanse` eller `kolliderende`. De to andre reglene kommer i 2.3 og 2.4.
+Fasiten kommer fra `testdata.FASIT` (AV-07). Med kompetanse-minstekravet,
+kolliderende vakt og 11-timersregelen på plass er de gyldige alle unntatt dem
+fasiten utelukker på `kompetanse`, `kolliderende` eller `elleve-timer`.
+35-timersregelen kommer i 2.4.
 """
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import Engine, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
-from adaptere.lagring.modeller import OSLO, AnsattRad, TurnusRad, VaktRad
+from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
+from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
 from adaptere.lagring.testdata import ANSATTE, FASIT, MANGLER_BEMANNING, PERIODE_SLUTT, PERIODE_START
 from tester.api.test_innlogging import engine, feilsvar, klient, logg_inn  # noqa: F401
 
@@ -27,7 +29,7 @@ def hent(klient: TestClient, nummer: int) -> dict:
     return respons.json()
 
 
-IMPLEMENTERTE_REGLER = {"kompetanse", "kolliderende"}
+IMPLEMENTERTE_REGLER = {"kompetanse", "kolliderende", "elleve-timer"}
 
 
 def forventet_gyldige(nummer: int) -> set[str]:
@@ -38,7 +40,7 @@ def forventet_utelukket(nummer: int) -> set[str]:
     return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall in IMPLEMENTERTE_REGLER}
 
 
-@pytest.mark.parametrize("nummer,antall", [(4127, 9), (4189, 19)])
+@pytest.mark.parametrize("nummer,antall", [(4127, 5), (4189, 1)])
 def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: int) -> None:
     svar = hent(klient, nummer)
 
@@ -56,12 +58,13 @@ def test_bare_gyldige_sendes_nfr2(klient: TestClient, nummer: int) -> None:
     utelukket = forventet_utelukket(nummer)
     satt_opp = NAVN[MANGLER_BEMANNING[nummer][0]]
 
-    # 4127: 8 kompetanse + 7 kollisjon. 4189: 3 kompetanse + 2 kollisjon.
-    assert len(utelukket) == {4127: 15, 4189: 5}[nummer]
+    # 4127: 8 kompetanse + 7 kollisjon + 4 på 11 t. 4189: 3 + 2 + 18.
+    assert len(utelukket) == {4127: 19, 4189: 23}[nummer]
     for navn in utelukket | {satt_opp}:
         assert navn not in respons_tekst
     assert "kompetanse-minstekrav" not in respons_tekst
     assert "kolliderende" not in respons_tekst
+    assert "11-timersregelen" not in respons_tekst
 
 
 @pytest.mark.parametrize("nummer", [4127, 4189])
@@ -82,8 +85,17 @@ def test_ingen_med_kolliderende_vakt_i_fasiten_er_med(klient: TestClient, nummer
 
     assert len(kolliderende) == {4127: 7, 4189: 2}[nummer]
     assert not navn & kolliderende
-    # De to andre reglene er ikke på plass ennå, så de som bare brytes av dem, er med.
-    assert {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall in {"elleve-timer", "trettifem-timer"}} <= navn
+    # 35-timersregelen er ikke på plass ennå, så de som bare bryter den, er med.
+    assert {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall == "trettifem-timer"} <= navn
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_ingen_med_brudd_på_11_timersregelen_i_fasiten_er_med(klient: TestClient, nummer: int) -> None:
+    navn = {k["navn"] for k in hent(klient, nummer)["kandidater"]}
+    elleve = {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall == "elleve-timer"}
+
+    assert len(elleve) == {4127: 4, 4189: 18}[nummer]
+    assert not navn & elleve
 
 
 def test_silje_er_ikke_med_på_4127_og_utelukket_på_4189(klient: TestClient) -> None:
@@ -110,7 +122,9 @@ def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer
     # Seeden har ingen navn med æ, ø eller å først, så vanlig sortering er nok her.
     # Den norske rekkefølgen testes i domenet.
     assert navn == sorted(navn)
-    assert navn[0] == "Anders Strand"
+    # Fasiten: Anders Strand (#4127) og Line Moe (#4189) bryter bare
+    # 35-timersregelen, som kommer i 2.4.
+    assert navn[0] == {4127: "Anders Strand", 4189: "Line Moe"}[nummer]
 
 
 def test_samme_svar_hver_gang(klient: TestClient) -> None:
@@ -219,17 +233,22 @@ def assert_datafeil(svar: dict) -> None:
     }
 
 
-def test_vakt_som_slutter_ved_datagrensen_vurderes(klient: TestClient, engine: Engine) -> None:
-    start = datetime(2026, 10, 4, 16, 0, tzinfo=OSLO)
-    endre_vakt(engine, vakttype="kveld", start=start, slutt=start + timedelta(hours=8))
+# Fra story 2.3 må vinduet `[start − 11 t, slutt + 11 t)` ligge innenfor
+# datadekningen (P-08, A5). En Vakt som slutter 04.10 kl. 13:00, når akkurat
+# datagrensen 05.10 kl. 00:00.
+
+
+def test_vindu_som_slutter_ved_datagrensen_vurderes(klient: TestClient, engine: Engine) -> None:
+    start = datetime(2026, 10, 4, 5, 0, tzinfo=OSLO)
+    endre_vakt(engine, start=start, slutt=start + timedelta(hours=8))
     assert hent(klient, 4127)["status"] == "ok"
 
 
-def test_vakt_som_slutter_etter_datagrensen_gir_datafeil(
+def test_vindu_som_slutter_etter_datagrensen_gir_datafeil(
     klient: TestClient, engine: Engine, caplog: pytest.LogCaptureFixture,
 ) -> None:
-    start = datetime(2026, 10, 4, 16, 1, tzinfo=OSLO)
-    endre_vakt(engine, vakttype="kveld", start=start, slutt=start + timedelta(hours=8))
+    start = datetime(2026, 10, 4, 5, 1, tzinfo=OSLO)
+    endre_vakt(engine, start=start, slutt=start + timedelta(hours=8))
     with caplog.at_level("WARNING", logger="adaptere.api.main"):
         assert_datafeil(hent(klient, 4127))
     # Grunnen logges for feilsøking, men sendes ikke i svaret.
@@ -250,6 +269,50 @@ def test_tildelt_vakt_med_start_ikke_før_slutt_gir_datafeil(klient: TestClient,
     start = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
     legg_til_tildelt_vakt(engine, ansatt_id, start, start)
     assert_datafeil(hent(klient, 4127))
+
+
+@pytest.mark.parametrize("start,vakttype", [
+    (datetime(2026, 10, 4, 7, 0, tzinfo=OSLO), "dag"),
+    (datetime(2026, 10, 4, 15, 0, tzinfo=OSLO), "kveld"),
+    (datetime(2026, 10, 4, 23, 0, tzinfo=OSLO), "natt"),
+])
+def test_vakter_04_10_gir_datafeil(klient: TestClient, engine: Engine, start: datetime, vakttype: str) -> None:
+    # Som #4261–#4265: hvilen etter kan ikke kontrolleres, så P-08 krever datafeil.
+    endre_vakt(engine, vakttype=vakttype, start=start, slutt=start + timedelta(hours=8))
+    assert_datafeil(hent(klient, 4127))
+
+
+def test_tildelt_vakt_med_start_ikke_før_slutt_langt_unna_ignoreres(klient: TestClient, engine: Engine) -> None:
+    # Vedtak A5 (PR #14): ugyldig historikk utenfor vinduet rundt #4127 kan ikke
+    # påvirke noen regel og gir ikke datafeil.
+    ansatt_id, navn = gyldig_på_4127()
+    uke_35 = datetime(2026, 8, 26, 7, 0, tzinfo=OSLO)
+    legg_til_tildelt_vakt(engine, ansatt_id, uke_35, uke_35)
+    svar = hent(klient, 4127)
+    assert svar["status"] == "ok"
+    assert navn in {k["navn"] for k in svar["kandidater"]}
+
+
+def test_historikkstart_er_periodestart_minus_672_timer(engine: Engine) -> None:
+    with lag_sessionmaker(engine)() as session:
+        bruker_id = session.scalars(select(BrukerRad.id)).first()
+        grunnlag = hent_kandidatgrunnlag(session, bruker_id, 4127)
+    assert grunnlag is not None
+    assert grunnlag.historikkstart == datetime(2026, 8, 24, 0, 0, tzinfo=OSLO)
+    assert grunnlag.historikkstart == PERIODE_START.astimezone(UTC) - timedelta(hours=672)
+    assert grunnlag.datagrense == PERIODE_SLUTT
+
+
+def test_historikkstart_regnes_i_faktisk_tid_over_vårskiftet(engine: Engine) -> None:
+    # 672 faktiske timer før 13.04 00:00 CEST krysser vårskiftet 29.03 og havner
+    # 15.03 kl. 23:00 CET. På veggklokka ville det blitt 16.03 kl. 00:00.
+    with lag_sessionmaker(engine).begin() as session:
+        session.execute(update(TurnusRad).values(periode_start=datetime(2026, 4, 13, tzinfo=OSLO)))
+    with lag_sessionmaker(engine)() as session:
+        bruker_id = session.scalars(select(BrukerRad.id)).first()
+        grunnlag = hent_kandidatgrunnlag(session, bruker_id, 4127)
+    assert grunnlag is not None
+    assert grunnlag.historikkstart == datetime(2026, 3, 15, 23, 0, tzinfo=OSLO)
 
 
 @pytest.mark.parametrize("verdi", [0, 5, "3"])
