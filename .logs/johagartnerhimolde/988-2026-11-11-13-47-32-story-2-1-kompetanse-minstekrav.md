@@ -36,10 +36,10 @@ Storien er implementert, gjennomgått og committet lokalt i `61c8dd0` på `story
   - 229 backendtester og 26 frontendtester består, og bygget går gjennom.
   - Import-linter og P-09-vernet ble kontrollert med bevisste feil.
   - Tre gjennomgangsagenter (Opus) fant til sammen 25 funn. 12 er rettet som patcher, 2 er utsatt og 11 er avvist med begrunnelse, se Review Triage Log i spec-en.
+- **Nettleserkontroll:** gjort manuelt og godkjent av Johannes 2026-11-11. KI-loggen, vurderingsmatrisen og spec-en er oppdatert.
 - **Status:** spec-en står som `done`. I sprintstatus står 2.1 som `review`, i påvente av PR-gjennomgangen.
 
 ### Åpne punkter
-- Nettleserkontroll av 2.1: logg inn, velg #4127 og #4189, og kontroller listene (16 og 21, uten Silje og Eirik), taggen «Nivå N/4» og merknaden. Den ble ikke gjort, fordi agenten ikke fikk starte utviklingsserverne.
 - Gruppa gjennomgår PR-en for 2.1. Sett storien til `done` i sprintstatus etterpå.
 - AGENTS.md sier fortsatt «ingen domenelogikk ennå» og nevner ikke `tester/regelmotor/` eller arkitekturtesten. Det er en agentkontekstfil (AV-08), så et gruppemedlem må velge å endre den.
 - Story 2.3: at overlappende vakter bare teller som kollisjon og ikke under 11-timersregelen, er en tolkning fra testhjelperne i story 1.2, ikke et gruppevedtak. Det må avklares med gruppa før 2.3.
