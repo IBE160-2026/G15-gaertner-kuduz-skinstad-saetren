@@ -14,7 +14,9 @@ Planlagt stack er React/TypeScript med Vite, Python/FastAPI og SQLite via
 SQLAlchemy. KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
 Haiku 5.5). Appen har et skjelett fra story 1.1 i `backend/` og `frontend/` og
 lagring med fiktive testdata fra story 1.2 i `backend/adaptere/lagring/` og
-innlogging med designtokens og appskall fra story 1.3, men ingen domenelogikk ennå; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+innlogging med designtokens og appskall fra story 1.3. Domenekjernen i `backend/domene/`
+har regelmotoren med den første harde regelen (kompetanse-minstekrav) fra story 2.1, ren
+Python uten KI; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
@@ -110,7 +112,10 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
      logges ut ved omstart, også ved `--reload`. `TURNUSHJELPEREN_JWT_MINUTTER`
      (standard 480) må være et positivt heltall, ellers starter ikke API-et.
   - Test: `.venv\Scripts\python -m pytest`. Testene bygger appen med `lag_app` mot en
-    database i `tmp_path` og rører ikke `backend/turnushjelperen.db`.
+    database i `tmp_path` og rører ikke `backend/turnushjelperen.db`. Hver hard regel har
+    egen testmodul i `tester/regelmotor/`. `tester/test_arkitektur.py` kjører
+    import-linter-kontrakten i `pyproject.toml`, som forbyr `domene` å importere
+    `adaptere` (AD-1, AD-2). Nye moduler under `domene/` faller inn under kontrakten.
 - Frontend (Node 22.12 eller nyere), fra `frontend/` i en egen terminal mens backend
   kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
   `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker og bygger.

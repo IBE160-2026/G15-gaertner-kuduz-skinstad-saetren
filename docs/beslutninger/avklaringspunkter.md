@@ -620,6 +620,23 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Grunnlag:** `.logs/mithad-kuduz/993-2026-11-08-13-12-18-gjennomgang-pr-8.md`.
 - **Ikke endret:** OP-06 (rekkefølgen er fortsatt ikke bindende) og de andre AV-, K-, OP- og KS-punktene.
 
+### 2026-11-11 – Godkjenning av PR #13 (Story 2.1): datafeilformen og AGENTS.md
+
+- **Hvem:** Johannes W. Gaertner godkjente PR #13 på vegne av gruppa og merget den 2026-11-11 (`bdfd1a4`). Et annet gruppemedlem går gjennom PR-en i etterkant, slik det ble gjort for PR #11. Johannes avgjorde datafeilformen da spesifikasjonen ble godkjent.
+- **Grunnlag:**
+  - Tre uavhengige gjennomgangsagenter gikk gjennom koden. Funnene står i Review Triage Log i [spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-2-1-gyldige-kandidater-filtrert-pa-kompetanse-minstekrav.md).
+  - Johannes gjorde nettleserkontrollen manuelt.
+  - 229 backendtester og 26 frontendtester bestod, og CI var grønn.
+  - KI-loggen er [2026-11-11-kompetanse-minstekrav.md](../ki-logg/2026-11-11-kompetanse-minstekrav.md).
+- **Vedtatt:**
+  - **Datafeilformen (P-08, AD-4):** når kandidatvurderingen stopper med datafeil, svarer API-et 200 med `status: "datafeil"`, `kode: "mangler_turnusgrunnlag"` og `datagrense` (ISO 8601 med offset), uten kandidatliste. Feilformen `{kode, melding}` er uendret. Datafeilen holdes atskilt fra `ingen_gyldige_kandidater`, og valget binder story 2.6. Det er også ført inn i P-08/P-09-presiseringen under AD-4 i `ARCHITECTURE-SPINE.md`.
+  - **Datagrensen i 2.1** er `turnus.periode_slutt` (05.10.2026 kl. 00:00 i seeden). Story 2.3 og 2.4 utvider sjekken til nabovakter og hele uker og avgjør da hvor historikken starter.
+  - **`AGENTS.md`** (AV-08), endret 2026-11-11 på oppdrag fra Johannes:
+    - Prosjektbeskrivelsen sier ikke lenger «ingen domenelogikk ennå». Den nevner nå domenekjernen i `backend/domene/`.
+    - Testavsnittet for backend nevner nå `tester/regelmotor/` og arkitekturtesten med import-linter.
+- **Ikke vedtatt, egen sak:** At overlappende vakter bare teller som kolliderende vakt og ikke under 11-timersregelen, er en tolkning fra testhjelperne i Story 1.2. Gruppa må avklare det før Story 2.3.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
 ---
 
 **Dokumentvedlikehold:** Endre status til «Vedtatt», «Utsatt» eller «Løst» for et åpent punkt **bare etter faktisk avklaring**, med dato, beslutning og kilde/henvisning. Behold opprinnelig beslutnings-ID for sporbarhet. Nye punkter gis nye ID-er uten å omskrive historiske vedtak.
@@ -637,7 +654,7 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 | P-05 / OP-03 | Ventende eller feilet tolkning av registrert tekst gir midlertidig 50 preferansepoeng med egen status og beholdt råtekst. Avgrensede automatiske forsøk ved forbigående feil; brukeren kan prøve igjen etter endelig feil. Ny tolkning oppdaterer rangeringen før bekreftelse. | Skill manglende tekst, nøytral tolkning, venting og feil i story 5.1/5.2 og tester. KI-feil utelukker ikke kandidaten. |
 | P-06 | KI foreslår strukturerte begrunnelser; koden validerer referanser og retning mot beregnede fakta og setter inn navn/tall. Ugyldig påstand gir tydelig merket reservetekst. | KI-kontrakt, falsk-OpenRouter-tester og manuell språkkontroll gjenstår. |
 | P-07 / K-04 | Forklaring kan sammenligne med én forhåndsberegnet, gyldig referanse: nr. 1 mot nr. 2, øvrige mot nr. 1; én gyldig kandidat får ingen referanse. | Kontrakt og kontrollerte sammenligninger gjenstår. Valgfri sammenligning av to merkede kandidater er strekkmål **etter** fungerende v1. |
-| P-08 | Stopp vurdering og godkjenning når nødvendig turnusdekning, tid, vaktkrav eller kostnadsgrunnlag er ukjent/ugyldig. Dokumentert fri er null timer; ukjent historikk er ikke det. | #4127/#4189 beholder KS-04-godkjenningen. Ved ny vurdering av #4261–#4265 må appen opplyse om seeddata-grensen 2026-10-05 kl. 00:00 og ikke vise rangering/godkjenning. Denne og andre periodekanter må testes. |
+| P-08 | Stopp vurdering og godkjenning når nødvendig turnusdekning, tid, vaktkrav eller kostnadsgrunnlag er ukjent/ugyldig. Dokumentert fri er null timer; ukjent historikk er ikke det. | #4127/#4189 beholder KS-04-godkjenningen. Ved ny vurdering av #4261–#4265 må appen opplyse om seeddata-grensen 2026-10-05 kl. 00:00 og ikke vise rangering/godkjenning. Denne og andre periodekanter må testes. Story 2.1 (PR #13, 2026-11-11): datafeilen stopper kandidatvurderingen ved ugyldig vakt- eller kompetansegrunnlag, eller når vakten slutter etter `turnus.periode_slutt`. Svaret er 200 med `status: "datafeil"` og `datagrense` (se §11). Det er testet i domenet og med en endret testdatabase. Nabovakter og hele uker kommer i 2.3/2.4, og godkjenningen i Epic 3. |
 | P-09 | Forkast forsinkede svar for tidligere vakt/kandidat. Ved endret beslutningsgrunnlag vises nye beregninger og kreves ny bekreftelse før lagring. | Klientflyt og kontroll ved godkjenning gjenstår. |
 | P-10 | Kjerneflyten bruker faste preferanser i testdata. **P-10B planlegges som egen story etter fungerende kjerneflyt**: turnusansvarlig kan redigere tekst, med lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. | B er planlagt v1-tillegg, ikke forutsetning for kjerneflyten; dokumenter som utsatt hvis tiden ikke rekker. Manuell kategori-overstyring er ikke valgt. Johannes' individuelle ønske om høyere prioritet i kilden endrer ikke Kims senere gruppeavklaring. |
 | P-11 | Ved null gyldige vises egen tomtilstand, utelukkelsesoppsummering og teksten «Innleie av personell kan vurderes», uten innleieknapp. | Skill tomtilstanden fra datafeil og lasting i UI-test. |

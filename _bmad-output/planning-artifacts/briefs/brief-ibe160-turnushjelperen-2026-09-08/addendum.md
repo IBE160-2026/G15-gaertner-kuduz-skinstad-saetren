@@ -143,7 +143,7 @@ Emnet handler om at **KI genererer koden** — ikke om at applikasjonen innehold
 **Konsekvenser:**
 - KI i selve produktet er et *produktvalg*, ikke et karakterkrav. Beholdes fordi det gir substans til refleksjonsrapporten.
 - Brukerautentisering er ikke nevnt i emnebeskrivelsen og er ikke et minstekrav for bestått. Den felles briefen tar likevel enkel innlogging (brukernavn/passord) for turnusansvarlig inn i første versjon som et produktvalg, slik at løsningen ikke er åpen for alle. Flere roller, tilgangsnivåer og SSO er eksplisitt utenfor omfang.
-- **Bør bekreftes med faglærer** før proposal leveres. Muntlige føringer i undervisningen veier tyngre enn en lesning av nettsiden.
+- **Bekreftet av faglærer (E-01, lukket 2026-11-08):** Faglærer har sagt muntlig i en forelesning at KI i produktet ikke er et formelt emnekrav, og KI beholdes som et valgt produktscope. Opplysningen er gjengitt av Johannes, og datoen for forelesningen er ukjent. Se [beslutningsreferatet](../../../../docs/beslutninger/avklaringspunkter.md) §12. Muntlige føringer i undervisningen veier tyngre enn en lesning av nettsiden.
 
 ### Praktiske konsekvenser for arbeidsformen
 
