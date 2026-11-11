@@ -19,10 +19,14 @@ class Vaktdetaljer:
     minstenivå: int
 
 
-def hent_vaktdetaljer(session: Session, bruker_id: int, vaktnummer: int) -> Vaktdetaljer | None:
-    """Returner None også ved annen turnus, bemanning og utenfor perioden."""
+def finn_ubemannet_vakt(session: Session, bruker_id: int, vaktnummer: int) -> tuple[VaktRad, TurnusRad] | None:
+    """Vakten og Turnusen, eller None ved annen turnus, bemanning og utenfor perioden.
+
+    Felles filter for vaktdetaljene (story 1.6) og kandidatgrunnlaget (story 2.1),
+    slik at begge endepunktene gir 404 for nøyaktig de samme vaktene.
+    """
     rad = session.execute(
-        select(VaktRad, TurnusRad.avdeling)
+        select(VaktRad, TurnusRad)
         .join(TurnusRad, VaktRad.turnus_id == TurnusRad.id)
         .join(BrukerRad, BrukerRad.turnus_id == TurnusRad.id)
         .where(
@@ -35,9 +39,18 @@ def hent_vaktdetaljer(session: Session, bruker_id: int, vaktnummer: int) -> Vakt
     ).one_or_none()
     if rad is None:
         return None
-    vakt, avdeling = rad
+    vakt, turnus = rad
+    return vakt, turnus
+
+
+def hent_vaktdetaljer(session: Session, bruker_id: int, vaktnummer: int) -> Vaktdetaljer | None:
+    """Returner None også ved annen turnus, bemanning og utenfor perioden."""
+    funnet = finn_ubemannet_vakt(session, bruker_id, vaktnummer)
+    if funnet is None:
+        return None
+    vakt, turnus = funnet
     return Vaktdetaljer(
-        avdeling=avdeling,
+        avdeling=turnus.avdeling,
         vaktnummer=vakt.vaktnummer,
         vakttype=vakt.vakttype,
         start=vakt.start,

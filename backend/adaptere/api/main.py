@@ -5,6 +5,7 @@ database. `app` er appen uvicorn starter, med tilfeldig nøkkel, utløpstid fra
 miljøet og databasen fra `lag_engine()`.
 """
 
+import logging
 import secrets
 from collections.abc import Iterator
 from datetime import datetime
@@ -21,8 +22,12 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from adaptere.api import sesjon
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
+from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
+from domene.regelmotor.kompetanse import kompetansenivå
+from domene.regelmotor.vurdering import vurder_kandidater
+from domene.typer import Datafeil
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -36,6 +41,8 @@ MELDINGER: dict[str, str] = {
     "ukjent_feil": "Forespørselen kunne ikke behandles.",
 }
 RUTEKODER = {404: "ikke_funnet", 405: "metode_ikke_tillatt"}
+
+logger = logging.getLogger(__name__)
 
 
 def feil(status: int, kode: str, headers: dict[str, str] | None = None) -> JSONResponse:
@@ -109,6 +116,32 @@ class VaktdetaljerUt(BaseModel):
     start: datetime
     slutt: datetime
     minstenivå: int
+
+
+class KandidatUt(BaseModel):
+    id: int
+    navn: str
+    # Nivået for Vaktens vakttype, 1–4. Vises som tag (UX-DR11).
+    kompetansenivå: int
+
+
+class KandidaterUt(BaseModel):
+    """Bare Gyldige kandidater, alfabetisk (NFR2). Utelukkede sendes ikke ennå."""
+
+    status: Literal["ok"]
+    kandidater: list[KandidatUt]
+
+
+class DatafeilUt(BaseModel):
+    """Grunnlaget mangler eller er ugyldig, så ingen Kandidat er vurdert (P-08).
+
+    Et 200-svar, ikke en feil: vurderingen har kjørt og stoppet med vilje. Frontend
+    viser egen tekst ut fra `status` og `kode` og oppgir datagrensen.
+    """
+
+    status: Literal["datafeil"]
+    kode: Literal["mangler_turnusgrunnlag"]
+    datagrense: datetime
 
 
 def lag_app(
@@ -198,6 +231,26 @@ def lag_app(
         if detaljer is None:
             return feil(404, "ikke_funnet")
         return VaktdetaljerUt.model_validate(detaljer, from_attributes=True)
+
+    @app.get("/api/vakter/{vaktnummer}/kandidater", response_model=KandidaterUt | DatafeilUt)
+    def kandidater(vaktnummer: int, request: Request, okt: Okt) -> KandidaterUt | DatafeilUt | JSONResponse:
+        # Samme filter som vaktdetaljer: ukjent, bemannet, annen turnus og
+        # utenfor perioden gir samme 404.
+        grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
+        if grunnlag is None:
+            return feil(404, "ikke_funnet")
+        vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense)
+        if isinstance(vurdering, Datafeil):
+            # Grunnene sendes ikke til frontend, men må kunne ses ved feilsøking.
+            logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
+            return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
+        return KandidaterUt(
+            status="ok",
+            kandidater=[
+                KandidatUt(id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt))
+                for k in vurdering.gyldige
+            ],
+        )
 
     @app.post("/api/utlogging", status_code=204)
     def utlogging(respons: Response) -> None:

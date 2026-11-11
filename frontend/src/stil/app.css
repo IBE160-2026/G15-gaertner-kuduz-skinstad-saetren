@@ -392,7 +392,7 @@ button {
   text-align: right;
 }
 
-/* Vaktdetaljer og ærlig kandidatplassholder (story 1.6). */
+/* Vaktdetaljer (story 1.6). */
 .kandidatflate {
   overflow-wrap: anywhere;
 }
@@ -414,7 +414,44 @@ button {
   font-weight: var(--font-weight-bold);
 }
 
-.kandidatplassholder {
+/* Gyldige kandidater (story 2.1). */
+.kandidater {
   margin-top: var(--space-4);
+}
+
+.kandidater-status {
+  margin-top: var(--space-3);
+}
+
+.kandidatliste {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.kandidatliste li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--row-padding);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.kandidatliste li:nth-child(even) {
+  background: var(--color-row-alt);
+}
+
+/* Datafeil er ikke en utelukkelse og ikke en lastefeil (P-08): nøytral kant
+   til venstre, aldri `danger` eller `warn` (DESIGN.md). */
+.datafeil {
+  border-left: var(--alert-border-left-width) solid var(--color-text-mute);
   background: var(--color-breadcrumb-bg);
+}
+
+.datafeil-tekst {
+  margin-top: var(--space-3);
+  font-weight: var(--font-weight-bold);
 }

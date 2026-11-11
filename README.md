@@ -168,7 +168,11 @@ bemanning står øverst under «Krever handling» (#4127 og #4189 i testdataene)
 164 bemannede vaktene i perioden står i tabellen under. Vakter som starter før
 periodestart, vises ikke (AV-03). «Velg vakt — finn erstatter →» går til
 `/vakt/<nr>/kandidater`. Her vises avdeling, vakttype, tidspunkt og minstenivå,
-med en tydelig plassholder for kandidatlisten fram til Epic 2. Direkte URL og
+og under dem de gyldige kandidatene alfabetisk med kompetansenivå («Nivå 3/4»).
+Listen hentes automatisk. I story 2.1 er den bare filtrert på
+kompetanse-minstekravet (FR2), og det står i en merknad under overskriften. Story
+2.2–2.4 legger til de andre harde reglene. Med bare kompetansekravet gir #4127 16
+gyldige og #4189 21 i testdataene. Direkte URL og
 nettleserens tilbakeknapp virker. En bemannet, ukjent eller utenforliggende vakt
 gir en nøytral feilmelding (AV-03). Feil ved lasting kan prøves på nytt.
 
@@ -180,15 +184,24 @@ skjules innholdet og du kan prøve igjen. API-et krever sesjon for alle `/api`-k
 unntatt `GET /api/helse`, `POST /api/innlogging` og `GET /api/innloggingsinfo`.
 `GET /api/vaktoversikt` gir dataene til Vaktvalg. `GET /api/vakter/{vaktnummer}`
 gir bare detaljer for en ubemannet vakt i innlogget brukers turnus og visningsperiode.
+`GET /api/vakter/{vaktnummer}/kandidater` gir de gyldige kandidatene for samme
+vakter, med samme 401 og 404. Svaret er `{"status": "ok", "kandidater": [{id, navn,
+kompetansenivå}]}` med bare gyldige kandidater. Mangler eller er turnusgrunnlaget
+ugyldig, for eksempel fordi vakten slutter etter datagrensen 05.10.2026 kl. 00:00,
+er svaret fortsatt 200, men `{"status": "datafeil", "kode": "mangler_turnusgrunnlag",
+"datagrense": "2026-10-05T00:00:00+02:00"}` uten liste (P-08). Reglene beregnes i
+`backend/domene/regelmotor/` uten KI.
 API-dokumentasjon er deaktivert.
 
 ### Tester
 
 Fra `backend/`: `.venv\Scripts\python -m pytest`. Testene bruker egne databaser i en
-midlertidig mappe og rører ikke `backend/turnushjelperen.db`. Fra `frontend/`:
+midlertidig mappe og rører ikke `backend/turnushjelperen.db`. `tester/test_arkitektur.py`
+kjører import-linter-kontrakten i `pyproject.toml`, som forbyr hele `domene`, også
+`domene.regelmotor` og `domene.porter`, å importere `adaptere` (AD-1, AD-2). Fra `frontend/`:
 `npm run test` kjører `node --test`, som finner alle `*.test.mjs` og andre
 testfiler i hele `frontend/` utenom `node_modules`. I dag er det
-`tester/sesjon.test.mjs` og `tester/format.test.mjs`. Formateringstestene kjøres
+`tester/sesjon.test.mjs`, `tester/format.test.mjs` og `tester/kandidater.test.mjs`. Formateringstestene kjøres
 også en gang til i en underprosess med `TZ=America/New_York`, så de ikke består
 bare fordi maskinen går i Oslo-tid. `npm run build` typesjekker og bygger
 (`npm.cmd run test` og `npm.cmd run build` i PowerShell hvis skript er blokkert,

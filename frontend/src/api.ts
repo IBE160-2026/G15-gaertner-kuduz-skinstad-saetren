@@ -44,6 +44,14 @@ export type Vaktdetaljer = {
   minstenivå: number;
 };
 
+// GET /api/vakter/{nr}/kandidater (story 2.1). Bare Gyldige kandidater,
+// alfabetisk. Datafeil er et 200-svar uten liste (P-08).
+export type Kandidat = { id: number; navn: string; kompetansenivå: number };
+
+export type Kandidatsvar =
+  | { status: "ok"; kandidater: Kandidat[] }
+  | { status: "datafeil"; kode: string; datagrense: string };
+
 /** API-et svarte med feilformen `{ kode, melding }`. */
 export class ApiFeil extends Error {
   readonly status: number;
@@ -147,4 +155,8 @@ export function hentVaktoversikt(): Promise<Vaktoversikt> {
 
 export function hentVaktdetaljer(vaktnummer: number): Promise<Vaktdetaljer> {
   return kall<Vaktdetaljer>(`/api/vakter/${vaktnummer}`, {}, true);
+}
+
+export function hentKandidater(vaktnummer: number): Promise<Kandidatsvar> {
+  return kall<Kandidatsvar>(`/api/vakter/${vaktnummer}/kandidater`, {}, true);
 }
