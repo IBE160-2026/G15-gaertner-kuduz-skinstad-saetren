@@ -112,6 +112,25 @@ Uavhengig gjennomgang 2026-11-11: blind-hunter (BH), edge-case-hunter (ECH) og v
 | BH | `_vakt` i `kollisjonsdatafeil` er ubrukt | false: parameteren kreves av `Regel.kandidatkrav`, og `kompetansedatafeil` har samme form. | avvist |
 | BH | Diff-filen er ødelagt av git-advarsler | false for koden: arbeidsfilene parser og 271 tester består. Feilen lå i hvordan jeg skrev diff-filen. | avvist |
 
+Andre gjennomgang 2026-11-11 med `bmad-review`: adversarial (A), edge-case-hunter (EC) og verification-gap (VG), alle med Opus og uten å ha sett gjennomgangen over. Tallet 271 i første gjennomgang gjaldt før de to `fold`-testene, som ga 273.
+
+| Lag | Funn | Dom og bevis | Rute |
+|---|---|---|---|
+| VG | Ingen test viser at egne vakter hentes uavhengig av periode | medium: reviewer avgrenset spørringen til perioden og 273 var grønne. Ny API-test, og mutasjonen gir nå 1 rød. | patch |
+| VG | Datafeil for ugyldig tildelt vakt er ikke testet ende til ende | medium: bare domenetester. Ny API-test, og et filter på `start < slutt` i adapteren gir nå 1 rød. | patch |
+| EC | Vaktens egen rad blir egen vakt ved ny kontroll i Epic 3 | low nå: CHECK-kravet gjør at en vakt med tildelt Ansatt ikke mangler bemanning, og `finn_ubemannet_vakt` krever det. Gjelder 3.2. | defer |
+| EC | `kompetanse={}` blir full kompetanse i testhjelperen | low: ingen test bruker det, men rettingen er én linje. | patch |
+| EC, A | Mutasjonstallet 13 og «gjennomgang gjenstår» i KI-logg og vurderingsmatrise | low: kjørt på nytt, 14 av 124. Tekstene oppdatert. | patch |
+| A | Spec `done` mot sprint-status `review` | false: samme mønster som 2.1. Spec-en er `done` når `bmad-build` er ferdig, og sprint-status går til `done` etter PR-godkjenning. | avvist |
+| A | All historikk valideres, mens P-08 sier «nødvendig» grunnlag | maybe-false: avhenger av hvordan gruppa leser P-08. Lagt fram for gruppa i PR-en. | avklaring |
+| A | NFR2-testene forbyr årsaker som 2.5 skal vise | low: 2.5 avgjør formen. Testene beskriver kontrakten fram til da. | avvist |
+| A | `compare=False` på alt regelgrunnlag | low: dekket av `vakter_i` i testene. Kan tas opp i 2.3 når flere regler leser `vakter`. | avvist |
+| A | `epic-2-context.md` beskriver tilstanden før 2.2 og mistet punkter | low: konteksten kompileres på nytt når planleggingsfilene endres, og 2.3 leser også spec-en for 2.2. | avvist |
+| A | Spørringen er uten avgrensning, og datafeilgrunnen har listeposisjon | low: samme som i første gjennomgang. | avvist |
+| A | Regelnøkler skrevet inn direkte i API-testen, og grensetabellen kaller `bryter_kollisjon` direkte | low: 2.3 endrer `IMPLEMENTERTE_REGLER` uansett. Koblingen dekkes av fasit- og rekkefølgetestene. | avvist |
+| A | «kompetanse» i merknaden mot «kompetanse-minstekrav» | low: merknaden fjernes i 2.4. | avvist |
+| A | AGENTS.md er utdatert, og `lambda` i `REGLER` | low: AGENTS.md er allerede utsatt. `lambda` er kosmetisk. | avvist |
+
 ## Design Notes
 
 `Tidsrom` er egen type, ikke `Vakt`, fordi Kandidatens vakter ikke trenger vaktnummer, vakttype eller minstenivå, og fordi 2.3 og 2.4 trenger samme type for nabovakter og uker. Da 2.3 og 2.4 utvider grunnlaget, kan `Kandidat.vakter` brukes direkte.

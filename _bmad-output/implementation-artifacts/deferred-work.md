@@ -17,3 +17,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-2-filtrere-bort-kandidater-med-kolliderende-vakt.md`
   summary: AGENTS.md sier at regelmotoren har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter story 2.2 er det to regler.
   evidence: Blind-hunter 2026-11-11. `domene/regelmotor/kolliderende_vakt.py` og `REGLER` har to regler. Rettingen gjelder en agentkontekstfil og rutes derfor til utsatt arbeid.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-2-filtrere-bort-kandidater-med-kolliderende-vakt.md`
+  summary: Når reglene kjøres på nytt ved Godkjenning (story 3.2), må Vaktens egen rad holdes utenfor Kandidatens `vakter`, ellers kolliderer den godkjente med sin egen vakt.
+  evidence: Edge-case-hunter (Opus) 2026-11-11. `hent_kandidatgrunnlag` henter alle rader med `tildelt_ansatt_id`, og i dag kan Vakten ikke ha det, fordi `finn_ubemannet_vakt` krever `mangler_bemanning`. Filtrer på `VaktRad.id != vaktrad.id` når kontrollen bygges.

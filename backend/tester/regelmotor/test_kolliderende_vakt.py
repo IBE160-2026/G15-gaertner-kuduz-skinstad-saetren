@@ -30,7 +30,7 @@ def vakt(vakttype: str = "dag", *, start: datetime = DAG_START, slutt: datetime 
 
 
 def kandidat(*egne: Tidsrom, id: int = 1, kompetanse: dict | None = None) -> Kandidat:
-    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse=kompetanse or {"dag": 4, "natt": 4}, vakter=egne)
+    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse={"dag": 4, "natt": 4} if kompetanse is None else kompetanse, vakter=egne)
 
 
 def vurder(v: Vakt, *kandidater: Kandidat) -> Kandidatvurdering:

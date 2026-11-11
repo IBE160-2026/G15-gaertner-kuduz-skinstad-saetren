@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine, update
+from sqlalchemy import Engine, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.modeller import OSLO, AnsattRad, TurnusRad, VaktRad
@@ -173,6 +173,36 @@ def test_halvapen_periode_ved_grensene(klient: TestClient, engine: Engine, start
         assert_ingen_navn(respons.text)
 
 
+# --- Kandidatens egne vakter fra databasen ---------------------------------------
+
+
+def legg_til_tildelt_vakt(engine: Engine, ansatt_id: int, start: datetime, slutt: datetime) -> None:
+    """En ekstra bemannet vakt for én Ansatt, i samme turnus som #4127."""
+    with lag_sessionmaker(engine).begin() as session:
+        turnus_id = session.scalars(select(VaktRad.turnus_id).where(VaktRad.vaktnummer == 4127)).one()
+        session.add(VaktRad(
+            turnus_id=turnus_id, vaktnummer=99001, vakttype="natt", start=start, slutt=slutt,
+            minstenivå=1, tildelt_ansatt_id=ansatt_id, mangler_bemanning=False,
+        ))
+
+
+def gyldig_på_4127() -> tuple[int, str]:
+    navn = sorted(forventet_gyldige(4127))[0]
+    (ansatt_id,) = [i for i, n in NAVN.items() if n == navn]
+    return ansatt_id, navn
+
+
+def test_egen_vakt_før_periodestart_som_overlapper_utelukker(klient: TestClient, engine: Engine) -> None:
+    # Kandidatens vakter hentes uavhengig av periode. En vakt som starter før
+    # periodestart og overlapper en Vakt ved periodestart, skal utelukke.
+    endre_vakt(engine, start=PERIODE_START, slutt=PERIODE_START + timedelta(hours=8))
+    ansatt_id, navn = gyldig_på_4127()
+    assert navn in {k["navn"] for k in hent(klient, 4127)["kandidater"]}
+
+    legg_til_tildelt_vakt(engine, ansatt_id, PERIODE_START - timedelta(hours=2), PERIODE_START + timedelta(hours=1))
+    assert navn not in {k["navn"] for k in hent(klient, 4127)["kandidater"]}
+
+
 # --- Datafeil (P-08) med endret testdatabase -----------------------------------
 
 
@@ -210,6 +240,15 @@ def test_vakt_som_slutter_etter_datagrensen_gir_datafeil(
 def test_start_ikke_før_slutt_gir_datafeil(klient: TestClient, engine: Engine) -> None:
     start = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
     endre_vakt(engine, slutt=start)
+    assert_datafeil(hent(klient, 4127))
+
+
+def test_tildelt_vakt_med_start_ikke_før_slutt_gir_datafeil(klient: TestClient, engine: Engine) -> None:
+    # Ugyldig historikk hos en Kandidat er ikke fri tid (P-08). Vakten ligger
+    # samtidig med #4127, så den er relevant for regelen uansett avgrensning.
+    ansatt_id, _ = gyldig_på_4127()
+    start = datetime(2026, 9, 27, 7, 0, tzinfo=OSLO)
+    legg_til_tildelt_vakt(engine, ansatt_id, start, start)
     assert_datafeil(hent(klient, 4127))
 
 

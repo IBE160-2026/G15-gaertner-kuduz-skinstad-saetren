@@ -24,12 +24,23 @@ Kontroller:
 
 - **Fasiten (AV-07):** API-testene leser `testdata.FASIT` og tilpasser den ikke. De gyldige er alle som ikke har `kompetanse` eller `kolliderende` i fasiten: #4127 gir 9 (16 fra 2.1 minus 7) og #4189 19 (21 minus 2). En egen test viser at ingen med `kolliderende` er med, og at de som bare brytes av 11 t og 35 t fortsatt er med, siden de reglene kommer i 2.3 og 2.4. Regelmotoren importerer ikke testhjelperne.
 - **Ingen lekkasje (NFR2):** svaret har bare `id`, `navn` og `kompetansenivå`, og inneholder verken vakter, tider eller årsaken «kolliderende vakt».
-- **Mutasjon (akseptansekrav 3), gjort én gang 2026-11-11:** begge sammenligningene i `overlapper` ble endret fra `<` til `<=`, altså lukkede intervall. `pytest tester/regelmotor tester/api/test_kandidater.py` ga **13 røde tester** (blant annet «møtes» på begge sider, natt over midnatt, sommertidsnatten og begge fasittestene for #4127 og #4189). Endringen ble reversert, og de samme testene var grønne igjen (120 bestått).
+- **Mutasjon (akseptansekrav 3), gjort én gang 2026-11-11:** begge sammenligningene i `overlapper` ble endret fra `<` til `<=`, altså lukkede intervall. `pytest tester/regelmotor tester/api/test_kandidater.py` ga **13 røde tester** (blant annet «møtes» på begge sider, natt over midnatt, sommertidsnatten og begge fasittestene for #4127 og #4189). Endringen ble reversert, og de samme testene var grønne igjen (120 bestått). Etter rettelsene fra gjennomgangene ble samme mutasjon kjørt på nytt: **14 røde av 124**, fordi determinismetesten nå også ser vaktene. Reversert, 124 grønne.
 - **Mutasjon av UTC-omregningen, gjort én gang etter gjennomgangen:** den uavhengige gjennomgangen viste at `astimezone(UTC)` kunne fjernes fra `overlapper` uten at noen test feilet. Sommertidstestene i første utkast gir samme svar på veggklokke og er derfor ikke bevis for omregningen. To nye tester dekker den: `test_overlapp_på_veggklokka_men_ikke_på_faktisk_tid_utelukker_ikke` (Vakten slutter 02:30 med `fold=0`, 00:30 UTC, og egen vakt starter 02:15 med `fold=1`, 01:15 UTC) og det speilvendte tilfellet. Veggklokka sier overlapp, faktisk tid sier 45 minutter mellom dem, og sluttidene er bygget via UTC. Med `.astimezone(UTC)` fjernet fra begge sammenligningene i `overlapper` (bare der) feilet nøyaktig disse to testene (2 røde, 38 grønne). Endringen ble reversert, og alle 40 var grønne igjen. Testen `test_egen_vakt_med_start_etter_slutt_på_veggklokka_er_gyldig_og_kolliderer` dekker bare at start før slutt regnes på faktisk tid i datasjekken, ikke overlappsjekken.
 - **Determinisme og vakter:** `Kandidat.vakter` har `compare=False`, så likhet på resultatet ser ikke vaktene. Testene for determinisme og for at vurderingen ikke endrer grunnlaget sammenligner derfor `(id, vakter)` for gyldige og utelukkede eksplisitt, så en endret eller fjernet vakt gir rød test.
-- **Resultater:** full `pytest` i `backend/` ga **273 bestått** (229 før storyen, pluss 44 nye), inkludert import-linter-kontrakten for den nye modulen. `npm.cmd run build` bestod, og `npm.cmd test` ga **26 bestått**.
+- **Resultater:** full `pytest` i `backend/` ga **273 bestått** etter første gjennomgang (229 før storyen, pluss 44 nye) og **275** etter andre gjennomgang, inkludert import-linter-kontrakten for den nye modulen. `npm.cmd run build` bestod, og `npm.cmd test` ga **26 bestått**.
 
-Ikke gjort av implementeringsagenten:
+## Uavhengige gjennomganger
 
-- Nettleserkontrollen (logg inn, velg #4127 og #4189 og se 9 og 19 kandidater) ble ikke gjort av agenten.
-- Uavhengig kodegjennomgang med egne agenter (`bmad-build`, OP-04) og menneskelig PR-gjennomgang gjenstår.
+1. **Under `bmad-build` (Sonnet 5.5):** blind-hunter, edge-case-hunter og verification-gap, uten å ha sett implementeringen. 15 funn, tre rettet: UTC-omregningen var ikke vernet av noen test, determinismetestene så ikke `Kandidat.vakter`, og et testnavn var misvisende. Alle funn med dom står i Review Triage Log i spesifikasjonen. Antallet 271 der er før de to `fold`-testene ble lagt til.
+2. **`bmad-review` (Opus 5.5) av hele branchen:** adversarial, edge-case-hunter og verification-gap, uten å ha sett den første gjennomgangen. 21 funn. Rettet:
+   - Ingen test viste at Kandidatens vakter hentes uavhengig av periode. Reviewer avgrenset spørringen til perioden, og alle 273 tester var grønne. Ny API-test: en tildelt vakt som starter før periodestart og overlapper en Vakt ved periodestart, utelukker.
+   - Datafeil for en ugyldig tildelt vakt var bare testet i domenet. Ny API-test: en tildelt vakt med `start = slutt` gir `datafeil`.
+   - Begge testene er kontrollert med mutasjon av adapteren (periodefilter og filter på `start < slutt`), og hver mutasjon ga nøyaktig én rød test. Adapteren er tilbakestilt.
+   - Testhjelperen `kandidat()` gjorde `kompetanse={}` om til full kompetanse. Rettet med `is None`.
+   - Mutasjonstallet og statusen for gjennomgangen i denne loggen og vurderingsmatrisen var utdatert.
+   - Ikke rettet her: Vaktens egen rad blir en «egen vakt» når Epic 3 kjører reglene på nytt etter Godkjenning. Det kan ikke skje i dag, fordi databasen krever at en vakt med tildelt Ansatt ikke mangler bemanning, og kandidatgrunnlaget henter bare ubemannede vakter. Ført i `deferred-work.md` for story 3.2. Om datafeilsjekken skal gjelde all historikk eller bare vakter som kan påvirke regelen (P-08, «nødvendig»), er lagt fram for gruppa i PR-en.
+
+## Gjenstår
+
+- Nettleserkontrollen (logg inn, velg #4127 og #4189 og se 9 og 19 kandidater).
+- Menneskelig PR-gjennomgang av et gruppemedlem.
