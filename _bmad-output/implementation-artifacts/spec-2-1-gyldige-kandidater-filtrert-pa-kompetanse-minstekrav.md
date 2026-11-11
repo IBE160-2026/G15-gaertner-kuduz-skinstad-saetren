@@ -99,6 +99,7 @@ context:
 
 - 2026-11-11: Implementert av en underagent fra spec-en alene. Resultat: 224 backendtester (74 nye), 25 frontendtester (8 nye) og bygg består. Import-linter-kontrakten ble kontrollert med en bevisst direkte og en indirekte import av `adaptere`, og vernet for P-09 med mutasjon. Begge er dokumentert i [KI-loggen](../../docs/ki-logg/2026-11-11-kompetanse-minstekrav.md). Utelukkelsen av den som var satt opp, skjer i domenet. Tider sammenlignes i UTC på grunn av den doble timen når sommertiden slutter.
 - 2026-11-11: Nettleserkontrollen i Verification gjenstår. Implementeringsagenten fikk ikke starte utviklingsserverne.
+- 2026-11-11: Johannes gjorde nettleserkontrollen i Verification manuelt og godkjente den.
 
 ## Spec Change Log
 

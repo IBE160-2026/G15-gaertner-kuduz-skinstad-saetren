@@ -62,5 +62,5 @@ Rettet etter den uavhengige gjennomgangen:
 
 Ikke gjort av implementeringsagenten:
 
-- Nettleserkontrollen i specen (logg inn, velg #4127 og #4189 og se listene) er ikke gjort. Agenten fikk ikke lov til å starte utviklingsserverne på standardportene.
+- Nettleserkontrollen i specen (logg inn, velg #4127 og #4189 og se listene) ble ikke gjort av agenten, som ikke fikk starte utviklingsserverne på standardportene. Johannes gjorde den manuelt 2026-11-11 og godkjente den.
 - Uavhengig kodegjennomgang med egne agenter (`bmad-build`, OP-04) og menneskelig PR-gjennomgang gjenstår. Funnene føres i spesifikasjonens Review Triage Log.
