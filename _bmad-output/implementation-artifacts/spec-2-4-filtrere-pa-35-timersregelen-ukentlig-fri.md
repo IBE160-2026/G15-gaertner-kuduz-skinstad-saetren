@@ -98,6 +98,10 @@ context:
 **Manual checks:**
 - Nettleserkontroll: #4127 viser Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad. #4189 viser «Ingen gyldige kandidater for denne vakten.» uten ikon og rødfarge.
 
+## Implementation Notes
+
+- 2026-11-12: Ragnhild gjorde nettleserkontrollen 2026-11-12: #4127 viste Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad, og #4189 viste «Ingen gyldige kandidater for denne vakten.»
+
 ## Spec Change Log
 
 ## Review Triage Log

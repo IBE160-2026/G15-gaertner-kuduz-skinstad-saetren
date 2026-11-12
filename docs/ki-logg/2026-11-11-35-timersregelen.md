@@ -37,8 +37,9 @@ Kontroller:
 - **Uavhengig kodegjennomgang 2026-11-12:** tre gjennomgangsagenter (blind-hunter, edge-case-hunter og verification-gap, alle Opus 5.5) leste diffen uten å ha sett implementeringen. Elleve funn: to rettet (unionstesten og `role="status"`, se over), to utsatt til `deferred-work.md` (ingen test rendrer `Kandidatliste`, og AGENTS.md er utdatert) og sju avvist. Påstanden om at seeden ikke gir noen Ansatt flere årsaker, ble kontrollert manuelt med `vurder_kandidater` på seeden: #4127 4 gyldige og 20 utelukket, #4189 0 og 24, ingen med mer enn én årsak. Alle funn med dom står i spesifikasjonens Review Triage Log.
 - **Resultater 2026-11-12, macOS, etter gjennomgangen:** full `pytest` i `backend/` ga **382 bestått**, inkludert import-linter-kontrakten. `npm run build` bestod, og `npm test` ga **28 bestått**.
 
+- **Nettleserkontroll:** Ragnhild gjorde nettleserkontrollen 2026-11-12: #4127 viste Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad, og #4189 viste «Ingen gyldige kandidater for denne vakten.»
+
 ## Gjenstår
 
 - Menneskelig PR-gjennomgang av et gruppemedlem.
-- Nettleserkontroll: ikke utført av implementeringsagenten. Forventet: #4127 viser Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad, og #4189 viser «Ingen gyldige kandidater for denne vakten.» uten ikon og rødfarge.
 - Testene er kjørt på macOS. Fysisk test på Windows (OP-05) er ikke gjort.
