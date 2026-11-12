@@ -22,8 +22,15 @@ Starte Story 3.1 med `bmad-build` på egen branch, parallelt med Ragnhilds Story
   - 3A: Egen tekst ved 404, «Kandidaten kan ikke velges for denne vakten.»
   - Spesifikasjonen er på omtrent 2 900 tokens og beholdes hel.
 - Det nye endepunktet `GET /api/vakter/{nr}/kandidater/{ansatt_id}` er lesende. Utelukket og ukjent Ansatt gir samme 404 `ikke_funnet`.
-- Implementeringen pågår i en underagent. Spesifikasjonen og kontekstfilen er ikke committet ennå.
+- Implementeringen er gjort av en underagent som bare hadde spesifikasjonen å gå etter. Hovedøkten leste hele diffen og kjørte testene selv.
+- Tre uavhengige gjennomganger (Blind Hunter, Edge Case Hunter og Verification Gap, alle på Opus) ga 20 funn. To var det samme funnet, så det ble 19 rader i Review Triage Log i spesifikasjonen: 7 rettet, 2 utsatt til `deferred-work.md` og 10 avvist med begrunnelse.
+  - Utsatt: koblingen i komponentene er bare kontrollert manuelt, fordi det mangler en komponentrigg. Brødsmulestien har heller ikke lenker. Begge fantes før denne storyen.
+- Etter rettingene ga `pytest` 359 bestått og `npm.cmd test` 39 bestått, og `npm.cmd run build` bestod.
+- Implementeringsagenten gjorde en nettleserkontroll mot en egen testdatabase i scratchpad.
+- KI-loggen er `docs/ki-logg/2026-11-12-godkjenningsflaten.md`, og vurderingsmatrisen har fått milepælen for 3.1.
+- Spesifikasjonen er `done`, og storyen står som `review` i sprintstatus.
+- Committet lokalt i `a2d4e47`, ikke pushet. Bare oppstartscommiten `c7df2a3` ligger på origin.
 
 ### Åpne punkter
-- Story 3.1: implementering, uavhengig gjennomgang, nettleserkontroll og PR gjenstår.
+- Story 3.1: Johannes' nettleserkontroll gjenstår (#4127, «Velg» for Jonas og Mette, Avbryt, Godkjenn, direkte URL for en utelukket id, tilbakeknappen og tastatur), og deretter PR og gjennomgang av et annet gruppemedlem.
 - Si fra til Ragnhild at spesifikasjonen for 2.4 bruker OP-12 (Mithads 2.3), og at OP-13 nå er brukt for 3.1. Neste ledige er OP-14.
