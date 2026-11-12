@@ -29,8 +29,11 @@ Starte Story 3.1 med `bmad-build` på egen branch, parallelt med Ragnhilds Story
 - Implementeringsagenten gjorde en nettleserkontroll mot en egen testdatabase i scratchpad.
 - KI-loggen er `docs/ki-logg/2026-11-12-godkjenningsflaten.md`, og vurderingsmatrisen har fått milepælen for 3.1.
 - Spesifikasjonen er `done`, og storyen står som `review` i sprintstatus.
-- Committet lokalt i `a2d4e47`, ikke pushet. Bare oppstartscommiten `c7df2a3` ligger på origin.
+- Committet i `a2d4e47`.
+- Johannes gjorde nettleserkontrollen 2026-11-12 og godkjente den. Knappene oppførte seg som forventet. Kontrollen er ført i spesifikasjonen, KI-loggen og vurderingsmatrisen.
+- Ragnhild er varslet om OP-ID-en for 2.4.
+- Branchen er pushet, og PR-en er opprettet etter ønske fra Johannes.
 
 ### Åpne punkter
-- Story 3.1: Johannes' nettleserkontroll gjenstår (#4127, «Velg» for Jonas og Mette, Avbryt, Godkjenn, direkte URL for en utelukket id, tilbakeknappen og tastatur), og deretter PR og gjennomgang av et annet gruppemedlem.
-- Si fra til Ragnhild at spesifikasjonen for 2.4 bruker OP-12 (Mithads 2.3), og at OP-13 nå er brukt for 3.1. Neste ledige er OP-14.
+- Story 3.1: et annet gruppemedlem går gjennom PR-en. Etter merge settes storyen til `done` i sprintstatus og vurderingsmatrisen.
+- Den som merger sist av 3.1 og 2.4, løser konflikten i `Kandidatflate.tsx` og `tekster.ts`.
