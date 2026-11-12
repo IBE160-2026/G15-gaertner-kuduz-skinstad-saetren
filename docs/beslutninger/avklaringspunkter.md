@@ -679,7 +679,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **AV-04:** Grensetestene for 35 t finnes nå: 35:00 og 34:59, ukeskiftet, Vakt som slutter mandag 00:00, fri over ukeskiftet og begge sommertidsskiftene (167 og 169 timer).
 - **Vedtak A5 gjennomført for 2.4:** Vinduet for 35-timersregelen er hele berørte kalenderuker, `[mandag i første berørte uke, mandag etter siste berørte uke)` i UTC.
 - **P-08 gjennomført for 2.4:** Merknaden `[ASSUMPTION]` i story 2.4 i epics («testdataene dekker hele kalenderuker») er erstattet av datafeil: ligger en berørt uke utenfor `[historikkstart, datagrense]`, stoppes vurderingen med datafeil. Uka for #4189 slutter nøyaktig på datagrensen 05.10 kl. 00:00 og er gyldig. KS-04 står uendret. Planleggingsdokumentene er ikke endret, så merknaden står fortsatt i epics.
-- **Rettet henvisning:** Spesifikasjonen for Story 2.4 oppgir beslutningene som «OP-12». OP-12 er Mithads Story 2.3. Riktig er OP-14.
+- **Rettet henvisning:** Spesifikasjonen for Story 2.4 oppga beslutningene som «OP-12». OP-12 er Mithads Story 2.3. Riktig er OP-14, og Ragnhild rettet det i den frosne delen av spesifikasjonen 2026-11-12.
 - **Grunnlag:** [spesifikasjonen for Story 2.4](../../_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md) og [KI-loggen](../ki-logg/2026-11-11-35-timersregelen.md).
 - **Ikke endret:** 1A for 11 t, vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
 

@@ -29,7 +29,7 @@ context:
 - Vindu: `[mandag i første berørte uke, mandag etter siste berørte uke)`, i UTC. Det erstatter `[ASSUMPTION]` i epics: ligger en berørt uke utenfor `[historikkstart, datagrense]`, gir det `Datafeil` (P-08). Ukeslutt nøyaktig på datagrensen er gyldig. Det gjelder #4189 (uka slutter 05.10 kl. 00:00).
 - Ren regelmotor, samme input gir samme output, og fasiten tilpasses aldri koden (AV-07). Reglene er ikke full juridisk kontroll (AV-04, OP-01).
 
-**Beslutninger (Ragnhild, 2026-11-11, OP-12):**
+**Beslutninger (Ragnhild, 2026-11-11, OP-14):**
 - **Overlapp og 35 t (A):** En egen vakt som overlapper Vakten, telles med i unionen, som fasithjelperen `bryter_trettifem_timer`. En Kandidat med kolliderende vakt kan da også få «35-timersregelen». Det skiller seg fra 1A for 11 t, men følger fasiten (AV-07). Seeden har ingen slike tilfeller.
 - **Tom liste før 2.6 (B):** Når listen er tom, viser flaten teksten «Ingen gyldige kandidater for denne vakten.» i `meta`-stil, uten ikon og uten `danger`. API-et er uendret (`status: "ok"`, tom liste). 2.6 erstatter teksten med tomtilstanden og API-statusen.
 - **Lengde:** Spesifikasjonen er på omtrent 2 800 tokens. Den beholdes hel, fordi den har ett mål.
@@ -100,7 +100,7 @@ context:
 
 ## Implementation Notes
 
-- 2026-11-12: Ragnhild gjorde nettleserkontrollen 2026-11-12: #4127 viste Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad, og #4189 viste «Ingen gyldige kandidater for denne vakten.»
+- 2026-11-12: Ragnhild gjorde nettleserkontrollen 2026-11-12: #4127 viste Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad, og #4189 viste «Ingen gyldige kandidater for denne vakten.» uten ikon og rødfarge.
 
 ## Spec Change Log
 
