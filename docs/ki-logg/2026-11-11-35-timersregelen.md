@@ -38,6 +38,7 @@ Kontroller:
 - **Resultater 2026-11-12, macOS, etter gjennomgangen:** full `pytest` i `backend/` ga **382 bestått**, inkludert import-linter-kontrakten. `npm run build` bestod, og `npm test` ga **28 bestått**.
 
 - **Nettleserkontroll:** Ragnhild gjorde nettleserkontrollen 2026-11-12: #4127 viste Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad, og #4189 viste «Ingen gyldige kandidater for denne vakten.» uten ikon og rødfarge.
+- **Docstring i `bryter_kollisjon` (story 2.2), 2026-11-12:** Ragnhild noterte i gjennomgangen av PR #15 at forutsetningen i regelen fra story 2.2 ikke står i docstringen, slik den gjør i 11- og 35-timersregelen. Claude Code skrev den. Forslaget var først å bruke samme ordlyd som i `bryter_elleve_timer` («ugyldige vakter hoppes over»). Det ville vært feil, fordi `bryter_kollisjon` ikke sjekker vaktene selv. Det ble kontrollert ved å kalle regelen direkte: en vakt som ikke er et tidsrom, ga `AttributeError`; en vakt 14–15 uten tidssone ga kollisjon med Vakten 05–13 UTC, fordi den ble tolket som Oslo-tid; en vakt 12→06 (start etter slutt) ga kollisjon. Docstringen beskriver nå disse tre tilfellene. Ingen kode er endret, og full `pytest` ga **382 bestått**.
 
 ## Gjenstår
 
