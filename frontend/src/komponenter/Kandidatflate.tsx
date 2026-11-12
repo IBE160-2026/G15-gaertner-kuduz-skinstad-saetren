@@ -99,10 +99,7 @@ function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
 
   if (tilstand.type === "avvist") return null;
 
-  const overskrift = <>
-    <h2 id="kandidater-tittel" className="overskrift">{t.kandidaterOverskrift}</h2>
-    <p className="meta">{t.midlertidigMerknad}</p>
-  </>;
+  const overskrift = <h2 id="kandidater-tittel" className="overskrift">{t.kandidaterOverskrift}</h2>;
 
   if (tilstand.type === "laster") return (
     <section className="panel kandidater" aria-labelledby="kandidater-tittel">
@@ -128,6 +125,14 @@ function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
         <p className="brodtekst datafeil-tekst">{t.datafeil}</p>
         <p className="meta">{t.datagrense(datoOgKlokke(tilstand.datagrense))}</p>
       </div>
+    </section>
+  );
+
+  // Tom liste: nøytral tekst i meta-stil til story 2.6 (beslutning B).
+  if (tilstand.kandidater.length === 0) return (
+    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+      {overskrift}
+      <p className="meta kandidater-status" role="status">{t.ingenGyldige}</p>
     </section>
   );
 

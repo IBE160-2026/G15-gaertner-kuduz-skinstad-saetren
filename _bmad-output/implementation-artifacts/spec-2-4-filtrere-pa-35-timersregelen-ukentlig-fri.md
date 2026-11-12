@@ -2,7 +2,7 @@
 title: 'Story 2.4: Filtrere på 35-timersregelen (ukentlig fri)'
 type: 'feature'
 created: '2026-11-11'
-status: 'ready-for-dev'
+status: 'done'
 baseline_commit: 'd4a0b1a1b3966a808893551180f67b495e912950'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -71,13 +71,13 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/domene/regelmotor/trettifem_timer.py` og `elleve_timer.py`: regel, årsak, ukeberegning og vindu i UTC (FR5).
-- [ ] `backend/domene/regelmotor/vurdering.py`: regel fire i `REGLER`.
-- [ ] `backend/tester/regelmotor/test_35_timersregelen.py`: hele matrisen. Det er kravet i AC-en i epics.
-- [ ] `backend/tester/api/test_kandidater.py` og de andre regelmotortestene: fasiten 4/0 mot `FASIT` (AV-07) og datafeil når uka slutter etter datagrensen.
-- [ ] `frontend/src/tekster.ts`, `Kandidatflate.tsx`, `frontend/tester/kandidater.test.mjs` og `README.md`: merknaden fjernes, teksten for tom liste legges til, og regelstatusen oppdateres.
-- [ ] `docs/ki-logg/2026-11-11-35-timersregelen.md`, `docs/emne/vurderingsmatrise.md` og `epic-2-context.md`: KI-logg med mutasjonene, bevis og at 2.4 er implementert.
-- [ ] `docs/beslutninger/avklaringspunkter.md` (AV-04 og §11): grensetestene for 35 t finnes nå. Uke som vindu er bygget etter A5. `[ASSUMPTION]` i epics er erstattet av datafeil (P-08). Planleggingsdokumentene endres ikke.
+- [x] `backend/domene/regelmotor/trettifem_timer.py` og `elleve_timer.py`: regel, årsak, ukeberegning og vindu i UTC (FR5).
+- [x] `backend/domene/regelmotor/vurdering.py`: regel fire i `REGLER`.
+- [x] `backend/tester/regelmotor/test_35_timersregelen.py`: hele matrisen. Det er kravet i AC-en i epics.
+- [x] `backend/tester/api/test_kandidater.py` og de andre regelmotortestene: fasiten 4/0 mot `FASIT` (AV-07) og datafeil når uka slutter etter datagrensen.
+- [x] `frontend/src/tekster.ts`, `Kandidatflate.tsx`, `frontend/tester/kandidater.test.mjs` og `README.md`: merknaden fjernes, teksten for tom liste legges til, og regelstatusen oppdateres.
+- [x] `docs/ki-logg/2026-11-11-35-timersregelen.md`, `docs/emne/vurderingsmatrise.md` og `epic-2-context.md`: KI-logg med mutasjonene, bevis og at 2.4 er implementert.
+- [x] `docs/beslutninger/avklaringspunkter.md` (AV-04 og §11): grensetestene for 35 t finnes nå. Uke som vindu er bygget etter A5. `[ASSUMPTION]` i epics er erstattet av datafeil (P-08). Planleggingsdokumentene endres ikke.
 
 **Acceptance Criteria:**
 - Given en valgt vakt, when kandidatflaten lastes, then listen er filtrert på alle fire reglene, og merknaden er borte.
@@ -97,3 +97,23 @@ context:
 
 **Manual checks:**
 - Nettleserkontroll: #4127 viser Ingrid Dahl, Jonas Bakke, Mette Solberg og Thomas Nygård uten merknad. #4189 viser «Ingen gyldige kandidater for denne vakten.» uten ikon og rødfarge.
+
+## Spec Change Log
+
+## Review Triage Log
+
+Tre uavhengige gjennomgangsagenter (blind-hunter, edge-case-hunter og verification-gap, alle Opus 5.5) gikk gjennom diffen fra `d4a0b1a` 2026-11-12. Ingen av funnene ga intent_gap eller bad_spec, så det ble ingen ny runde.
+
+| # | Funn | Dom | Rute |
+|---|---|---|---|
+| 1 | Ingen test har en egen vakt som ligger helt inne i en annen. Mutasjonen `fri_fra = slutt` i `lengste_fri` overlever (verification-gap, blind-hunter) | medium: med beslutning A kan en Kandidat med kolliderende vakt mangle «35-timersregelen» i årsakene som 2.5 bygger på. Ingen eksisterende test sorterer en vakt først som slutter etter den neste | patch |
+| 2 | Teksten for tom liste mangler `role="status"`, mens lastingen i samme klasse har den (blind-hunter, edge-case-hunter) | low: `Kandidatflate.tsx:107` har `role="status"`, den nye grenen ikke. Skjermlesere kunngjør da ikke at listen er tom. Rettelsen er ett attributt | patch |
+| 3 | Grenen for tom liste i React testes bare ved å lese kildeteksten (verification-gap, blind-hunter) | medium: ingen test rendrer komponenter (`kandidater-bunt.ts` bunter bare `src/kandidater` og `src/api`). Snudd betingelse ville gått gjennom | defer: krever oppsett for komponenttester. Nettleserkontrollen må gjøres før `done` |
+| 4 | AGENTS.md sier fortsatt «den første harde regelen (kompetanse-minstekrav)» (blind-hunter) | low: stemmer, men filen er agentkontekst | defer |
+| 5 | Ingen test viser at seeden aldri gir én Ansatt flere årsaker (blind-hunter) | low: kontrollert manuelt 2026-11-12 med `vurder_kandidater` på seeden: #4127 4/20 og #4189 0/24, ingen med mer enn én årsak. Hører til 2.5, som teller per regel | avvist |
+| 6 | `hent(...)["kandidater"][0]` i `test_egen_vakt_før_periodestart_som_overlapper_utelukker` gir `IndexError` ved tom liste (blind-hunter, edge-case-hunter) | low: testen feiler uansett høylytt. En vakt-guard tilfører bare kompleksitet | avvist |
+| 7 | `gyldig_på_4127()` brukes i tester som kan ha flyttet vakten (blind-hunter) | false: testene på l.300 og l.320 flytter ikke #4127, bare tildelte vakter legges til | avvist |
+| 8 | `bryter_trettifem_timer` sjekker ikke selve Vakten ved direkte kall (edge-case-hunter) | low: `vurder_kandidater` gir datafeil for ugyldig Vakt før reglene kjører. Direkte kall fra Epic 3 er hypotetisk og er nevnt i docstringen, som i `bryter_elleve_timer` | avvist |
+| 9 | Ny ID hopper over OP-13 (blind-hunter) | false: OP-13 er tatt av Johannes for story 3.1 (Ragnhild, 2026-11-12) | avvist |
+| 10 | «OP-12» står fortsatt i sesjonsloggen fra 2026-11-11 og i spesifikasjonen (blind-hunter) | low: §11 i avklaringspunktene retter det. Historiske logger og den frosne delen endres ikke av agenten | avvist |
+| 11 | Ingen sesjonslogg for implementeringen, `issues.md` er ikke oppdatert, sprintstatus og spesifikasjonen har ulik status, og triageloggen mangler (blind-hunter) | false: dette er senere steg i samme `bmad-build`-økt, ikke feil i diffen | avvist |
