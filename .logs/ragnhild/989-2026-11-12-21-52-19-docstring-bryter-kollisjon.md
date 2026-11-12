@@ -23,5 +23,7 @@ Følge opp punkt 12 i `issues.md` fra gjennomgangen av PR #15: forutsetningen i 
 - **Funn: PR #17 er i konflikt med `main`.** En prøvemerge med `git merge-tree` gir konflikt i `.logs/ragnhild/issues.md` og `docs/beslutninger/avklaringspunkter.md`. Begge filene har fått nye oppføringer i dag, både på `main` (OP-05, K-01, OP-09) og på branchen (OP-14 og punktene for 2.4).
 - **Funn: gjennomgangen av de åpne punktene tidligere i dag var ufullstendig.** Den ble gjort på `main`, og der mangler punktene for story 2.4 i `issues.md`, fordi de bare finnes på branchen.
 
+- **Merge av `main` inn i branchen, etter at Ragnhild godkjente det (`99e7107`):** Konflikten i `avklaringspunkter.md` §11 og `issues.md` ble løst ved å beholde begge sidene. Begge hadde bare lagt til oppføringer. Fra `main` kom bare dokumentasjon og logger, ingen kode. `pytest` ga 382 bestått etter merge. Punktet om merge-en er lukket i `issues.md`.
+
 ### Åpne punkter
-- Merge `main` inn i `story-2.4-trettifem-timer` og løs konflikten i `issues.md` og `avklaringspunkter.md` før PR #17 merges.
+- Merge `main` inn i `story-2.4-trettifem-timer` og løs konflikten i `issues.md` og `avklaringspunkter.md` før PR #17 merges. (løst 2026-11-12 i `99e7107`)
