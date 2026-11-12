@@ -60,7 +60,10 @@ Dato: 2026-11-12. Grunnlag: [spesifikasjonen](../../_bmad-output/implementation-
   7. Denne KI-loggen og vurderingsmatrisen manglet.
 - **Resultater etter rettingene:** `pytest` i `backend/` ga **359 bestått**, inkludert import-linter. `npm.cmd test` ga **39 bestått**, og `npm.cmd run build` bestod.
 
+## Nettleserkontroll ved Johannes
+
+Johannes gjorde nettleserkontrollen 2026-11-12 og godkjente den. Knappene oppførte seg som forventet, og flaten så bra ut.
+
 ## Gjenstår
 
-- Nettleserkontroll ved Johannes: #4127, «Velg» for Jonas og Mette, Avbryt, Godkjenn (`meta`-linjen), en direkte URL for en utelukket id, tilbakeknappen og tastatur.
 - PR-gjennomgang av et annet gruppemedlem. Den som merger sist av 3.1 og 2.4, løser konflikten i `Kandidatflate.tsx` og `tekster.ts`.

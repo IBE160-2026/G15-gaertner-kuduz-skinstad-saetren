@@ -94,9 +94,10 @@ context:
 ## Implementation Notes
 
 - 2026-11-12: Endepunktet henter i tillegg `hent_vaktdetaljer` for `avdeling`. Datafeil besvares før oppslaget på id, så alle id-er får samme datafeilsvar. Nye hjelpere: `vaktlinje` og `datoOgTidsrom` i `format.ts`, og `kandidatsti`, `godkjenningssti` og `godkjenningFraSti` i `navigasjon.ts`. Brødsmulen for vakten er kort (`Vakt #4127`), som i UX-DR3.
-- 2026-11-12: Testdekning av matrisen. Backend: 22 tester i `test_godkjenningsgrunnlag.py` for gyldig, utelukket (regeluavhengig for #4127 og #4189), ukjent eller satt opp, vakt som ikke er ubemannet, datafeil, 401, 405 og DB uendret. Frontend: 13 tester i `godkjenning.test.mjs` for ruteparseren, tilstandene, sene svar og tekstene. Radene «Velg fra listen», «Godkjenn i 3.1» og «Avbryt» kan bare delvis testes automatisk, fordi det ikke finnes en komponentrigg (kjent i `deferred-work.md`). Stien og tekstene er testet. Klikket og at det ikke skjer noe kall, er kontrollert i nettleseren av implementeringsagenten mot en egen testdatabase i scratchpad. Nettleserkontrollen til Johannes gjenstår.
+- 2026-11-12: Testdekning av matrisen. Backend: 22 tester i `test_godkjenningsgrunnlag.py` for gyldig, utelukket (regeluavhengig for #4127 og #4189), ukjent eller satt opp, vakt som ikke er ubemannet, datafeil, 401, 405 og DB uendret. Frontend: 13 tester i `godkjenning.test.mjs` for ruteparseren, tilstandene, sene svar og tekstene. Radene «Velg fra listen», «Godkjenn i 3.1» og «Avbryt» kan bare delvis testes automatisk, fordi det ikke finnes en komponentrigg (kjent i `deferred-work.md`). Stien og tekstene er testet. Klikket og at det ikke skjer noe kall, er kontrollert i nettleseren av implementeringsagenten mot en egen testdatabase i scratchpad, og av Johannes 2026-11-12.
 - 2026-11-12: Verifisert av hovedøkten: `pytest` 359 passed, `npm.cmd test` 39 av 39 og `npm.cmd run build` grønn.
 - 2026-11-12: Etter kodegjennomgangen er 7 funn rettet, 2 utsatt til `deferred-work.md` og 10 avvist (se Review Triage Log). KI-loggen er [2026-11-12-godkjenningsflaten.md](../../docs/ki-logg/2026-11-12-godkjenningsflaten.md). 359 backendtester og 39 frontendtester består, og bygget går gjennom.
+- 2026-11-12: Johannes gjorde nettleserkontrollen og godkjente den. Knappene oppførte seg som forventet.
 
 ## Spec Change Log
 
