@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -48,7 +48,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 
 | ID | Tema | Status | Kort registrering | Ansvarlig |
 |---|---|---|---|---|
-| K-01 | Feil regneeksempel | Åpent | `22 + 2 × 21 + 3 × 29 = 151`, ikke 136; konkret retting ikke avtalt. | Ikke bestemt |
+| K-01 | Feil regneeksempel | Løst 2026-11-02 (registrert 2026-11-12) | `22 + 2 × 21 + 3 × 29 = 151`, ikke 136. Eksempelet er byttet til 182 p = kveld 16 t · helg 32 t · natt 34 t i `1a7ad04`, før merge av PR #4 (§11). | Ragnhild Sætren |
 | K-02 | Høy timebelastning | Vedtatt 2026-11-09 (P-04) | Terskel minst 32,4 t før visningsavrunding. Ingrid beholdes på 32 t og er under grensen; retting av forventning i Story 1.2 er dokumentarbeid, visning/test gjenstår. | Gruppen |
 | K-03 | Avrunding | Vedtatt | Beregn/sorter uavrundet; vis én desimal. | Ikke bestemt |
 | K-04 | `RangertKandidat`/KI-kontrakt | Produktvalg vedtatt 2026-11-09 (P-06/P-07); kontrakt og tester gjenstår | Strukturerte, faktakontrollerte begrunnelser og én forhåndsberegnet referansekandidat; se §12. | Gruppen |
@@ -62,7 +62,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
 | OP-07 | PR #4 | Vedtatt | Ragnhild Sætren ansvarlig for oppfølging og retting av PR #4. | Ragnhild Sætren |
 | OP-08 | Story 1.2 | Vedtatt | Mithad Kuduz ansvarlig for oppdatering av Story 1.2. | Mithad Kuduz |
-| OP-09 | Frist PR-review | Åpent | Ingen frist avtalt. | Ikke bestemt (PR-ansvar: Ragnhild) |
+| OP-09 | Frist PR-review | Bortfalt 2026-11-02 (registrert 2026-11-12) | Ingen frist avtalt. PR #4 ble merget 02.11 (`7eabb81`) uten ny review etter rettingen (§11). | Ikke bestemt (PR-ansvar: Ragnhild) |
 | KS-01 | Åpne punkter ved merge | Vedtatt | K-01/K-02/K-04/K-06 kan være åpne etter merge; øvrige godkjenningskrav gjelder. | Ikke bestemt |
 | KS-02 | Kontroller rangeringsformel | Utført for fasiten i Story 1.2 (2026-11-04) | Fasiten for #4127 er kontrollert og godkjent med PR #5 (§11). Gjelder ny fasit på nytt. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 | KS-03 | Kontroller tidskategorier | Kontroll vedtatt; ikke utført | Kontroller fire vakttyper før implementasjon av Story 4.7 og ferdigstilling av fasit. | Ikke bestemt |
@@ -249,6 +249,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Status:** Åpent. Det er ikke avtalt ansvarlig, frist eller konkret retting.
 - **Codex-/faglig kontrollbehov:** Undersøk hvor 136 brukes i PR #4, PRD, Story 4.7, eksempler og eventuell fasit; vurder konsekvens av feilverdien.
 - **Ikke vedtatt:** Ingen automatisk retting eller ny merge-blokkering er besluttet gjennom K-01.
+- **Oppdatering 2026-11-12 – Løst:** Rettet 2026-11-02 i `1a7ad04`, før merge av PR #4. Statusen over ble skrevet etter rettingen, men fulgte møtet. Se §11.
 
 ### K-02 – Terskel for høy timebelastning
 
@@ -358,6 +359,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Møteopplysning:** **Ingen frist ble avtalt** for ny review av PR #4. Dette betyr ikke at review er unødvendig.
 - **Konsekvens:** Ingen kalenderfrist innføres; eksisterende godkjenningskrav gjelder.
 - **Ansvarlig:** Ikke bestemt for review; Ragnhild er ansvarlig for oppfølging av PR #4 (OP-07).
+- **Oppdatering 2026-11-12 – Bortfalt:** PR #4 ble merget 2026-11-02 (`7eabb81`) uten ny review etter rettingen. Det er ikke det samme som at en ny review er gjort. Se §11.
 
 ## 6. Konsistenskontroller (KS-01–KS-04)
 
@@ -447,7 +449,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. |
 | Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | Ren klone testet på macOS 2026-11-12 med Python 3.12.14: 337 av 337 backendtester og 26 av 26 frontendtester bestått (§11). macOS testet også 2026-11-11 (275 av 275). Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). Linux kjøres bare i CI. |
 | Fastsett eventuell bindende arbeidsrekkefølge. | OP-06 | Codex-rekkefølgen er kun et forslag. |
-| Avtal frist for ny PR-review. | OP-09 | Ingen frist vedtatt. |
+| Avtal frist for ny PR-review. | OP-09 | Bortfalt: PR #4 ble merget 2026-11-02 uten ny review etter rettingen (§11). |
 | Eventuell videreføring av tariff-, fraværs-, stillingsprosent-, helligdags- og omfattende lovmodell. | OP-01 | **Utenfor v1**; krever nytt vedtak før eventuell utvikling. |
 
 ## 9. Instruksjoner til Codex, Claude og andre KI-agenter
@@ -685,6 +687,17 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Konsekvens:** Det som sto åpent i OP-05 etter 07.11, test fra ren klone, er gjennomført, og appen er testet på macOS. Linux kjøres bare i CI. Fysisk test skjer fortsatt først og fremst på Windows, fordi sensor ikke har Mac.
 - **Endret:** OP-05 i tabellen og i §5, raden for OP-05 i §8.4, `AGENTS.md`, `README.md` og vurderingsmatrisen.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-12 – K-01 løst og OP-09 bortfalt (PR #4)
+
+- **Hvem:** Registrert av Ragnhild Sætren, som er ansvarlig for oppfølging av PR #4 (OP-07). Statusendringene registrerer det som skjedde 02.11. De er ingen nye vedtak.
+- **K-01 – Løst 2026-11-02:** Funnet kom fra Mithad Kuduz' gjennomgang av PR #4 30.10. Visningseksempelet «136 p» med «kveld 22 t · helg 21 t · natt 29 t» gikk ikke opp: det gir 151. Det er byttet til profil E, regnet med `scripts/ulempe_regneeksempler.py`: 182 p = kveld 16 t · helg 32 t · natt 34 t (16 + 2 × 32 + 3 × 34). Rettet i `1a7ad04` 2026-11-02 kl. 21:45, før merge av PR #4. Kilder:
+  - UX-DR28 og Story 4.7 i `epics.md`, og `DESIGN.md` (Ulempeindikator), har det nye eksempelet. «136» finnes ikke lenger i planleggingsdokumentene.
+  - [KI-loggen for ÅB-3](../ki-logg/2026-11-02-ab-3-ulempebelastning.md) og PRD-ens `.memlog.md` beskriver rettingen.
+  - Referatet ble skrevet etter rettingen (`07dc80a`, kl. 23:29), men gjenga statusen fra møtet. Derfor sto K-01 som åpent.
+- **OP-09 – Bortfalt 2026-11-02:** Punktet gjaldt frist for ny review av PR #4. Ragnhild Sætren merget PR #4 2026-11-02 kl. 21:51 (`7eabb81`). Mithads gjennomgang 30.10 var før rettingen, og GitHub har ingen registrert review etter den. KS-01 tillot merge med åpne K-punkter. Det fantes ingen frist å avtale etter merge, men en ny review av rettingen er ikke gjort.
+- **Endret:** K-01 og OP-09 i tabellen, i §4 og §5, og raden for OP-09 i §8.4.
+- **Ikke endret:** KS-01, raden for PR #4 i §7 og kontrollen av K-punktene i §8. De gjengir beslutningene fra møtet. K-02, K-04, K-06 og de andre AV-, K-, OP- og KS-punktene er heller ikke endret.
 
 ---
 
