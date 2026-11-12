@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -58,7 +58,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-02 | UX og mobil | Vedtatt | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. | Ikke bestemt |
 | OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); implementasjon gjenstår | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. | Gruppen |
 | OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
-| OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07 | Fysisk test på macOS/Linux strykes: verken sensor eller noen i gruppa har Mac. Koden skrives for å virke på tvers av operativsystem og testes fysisk på Windows. Test fra ren klone er fortsatt ikke avtalt (§11). | Johannes W. Gaertner |
+| OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07; macOS og ren klone testet 2026-11-11 og 2026-11-12 | Koden skrives for å virke på tvers av operativsystem og testes fysisk først og fremst på Windows. Begrunnelsen 07.11 om at ingen i gruppa har Mac, var feil: Ragnhild har Mac. Appen er testet på macOS (275 av 275 backendtester 11.11) og fra ren klone på macOS (337 av 337 backendtester og 26 av 26 frontendtester 12.11). Linux kjøres bare i CI (§11). | Johannes W. Gaertner |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
 | OP-07 | PR #4 | Vedtatt | Ragnhild Sætren ansvarlig for oppfølging og retting av PR #4. | Ragnhild Sætren |
 | OP-08 | Story 1.2 | Vedtatt | Mithad Kuduz ansvarlig for oppdatering av Story 1.2. | Mithad Kuduz |
@@ -326,7 +326,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### OP-05 – Ren klone og plattformtesting
 
-- **Status:** Delvis vedtatt 2026-11-07 (§11). Fysisk test på macOS/Linux er strøket. Test fra ren klone er fortsatt ikke avtalt.
+- **Status:** Delvis vedtatt 2026-11-07 (§11). Fysisk test på macOS/Linux ble strøket 07.11. **Oppdatering 2026-11-12:** Appen er likevel testet på macOS 11.11 og fra ren klone på macOS 12.11, med alle tester bestått (§11). Linux kjøres bare i CI.
 - **Codex-anbefaling (ikke vedtak):** Test fra ren GitHub-klone, Python 3.12 og macOS/Linux før Story 1.2 er `done`; oppdater vurderingsmatrise ved milepæler.
 - **Konsekvens:** OP-05 innfører **ingen nye** ferdigkriterier. Eksisterende tester og vedtatte AV-/KS-krav gjelder fortsatt.
 - **Ansvarlig/frist:** Ikke bestemt.
@@ -445,7 +445,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Kontrollér om eksisterende logging dekker sporbarhet og begrunnelse for tak 300. | K-05 | Kontroll åpen; ingen loggendringer vedtatt. |
 | Gjennomgå agentpraksis/underagenter og bevar reviewfunn. | OP-04 | Gjennomført og godkjent 2026-11-04; regelen om underagenter står i `AGENTS.md` (§11). |
 | Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. |
-| Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | macOS/Linux strøket 2026-11-07; ren klone fortsatt åpen. Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). |
+| Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | Ren klone testet på macOS 2026-11-12 med Python 3.12.14: 337 av 337 backendtester og 26 av 26 frontendtester bestått (§11). macOS testet også 2026-11-11 (275 av 275). Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). Linux kjøres bare i CI. |
 | Fastsett eventuell bindende arbeidsrekkefølge. | OP-06 | Codex-rekkefølgen er kun et forslag. |
 | Avtal frist for ny PR-review. | OP-09 | Ingen frist vedtatt. |
 | Eventuell videreføring av tariff-, fraværs-, stillingsprosent-, helligdags- og omfattende lovmodell. | OP-01 | **Utenfor v1**; krever nytt vedtak før eventuell utvikling. |
@@ -565,6 +565,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kontrollert i stedet:** bash-kommandoene for passordvariantene i README er kjørt i Git Bash på Windows 2026-11-07, mot en midlertidig database. `IFS= read -rsp` beholdt mellomrom først og sist i passordet, og innloggingen virket med det. Variant B ga et tilfeldig passord på 12 tegn.
 - **Fortsatt åpent i OP-05:** om og når det skal testes fra en ren klone.
 - **Endret:** `AGENTS.md`, `README.md`, vurderingsmatrisen, KI-loggen for Story 1.3 og handlingspunktet for PR #3 i `sprint-status.yaml`.
+- **Senere:** Begrunnelsen om at ingen i gruppa har Mac, var feil, og testen fra ren klone er gjennomført. Se oppføringen 2026-11-12 under.
 
 ### 2026-11-08 – Godkjenning av PR #6 (speiling av skills i CI, AV-08 og regelen for branch og PR)
 
@@ -668,6 +669,22 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kjente begrensninger, godtatt av Mithad 2026-11-11:** `datagrense` i datafeilsvaret er `turnus.periode_slutt` også når det er historikkstarten som ikke holder, og en egen vakt som starter før historikkstarten og slutter etter den, regnes som kjent data. Ingen vakt i perioden treffer den nedre grensen.
 - **Grunnlag:** [spesifikasjonen for Story 2.3](../../_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md) og [KI-loggen](../ki-logg/2026-11-11-11-timersregelen.md).
 - **Ikke endret:** Vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-12 – Test på macOS og fra ren klone (OP-05)
+
+- **Hvem:** Ragnhild Sætren, på egen Mac.
+- **Rettet grunnlag:** Oppføringen 2026-11-07 sier at verken sensor eller noen i gruppa har Mac. Det stemmer ikke for gruppa: Ragnhild har Mac. Den historiske oppføringen står, men begrunnelsen gjelder bare sensor.
+- **Test på macOS 2026-11-11:** mot `main` på `f218810`, med Python 3.15.2 og nytt Python-miljø og `node_modules`, men ikke fra ren klone. `pytest` 275 av 275 bestått, `npm test` 26 av 26 bestått, `npm run build` uten feil, og manuell akseptansetest av Story 1.6 i nettleseren. Se [nettleserkontrollen for Story 1.6](../ki-logg/2026-11-09-vaktdetaljer-nettleserkontroll.md).
+- **Test fra ren klone 2026-11-12:** ny klone fra GitHub i en egen mappe, på `a289598`, med Python 3.12.14 (laveste versjon vi lover) og Node 26.8.1. Fulgte stegene i README for macOS:
+  - `pip install -r requirements-dev.txt` virket.
+  - `pytest` 337 av 337 bestått.
+  - Testdatakommandoen lagde 1 turnus, 25 ansatte, 506 vakter (166 i perioden, 340 i historikken) og brukeren `kari.vestby` med tilfeldig testpassord.
+  - `npm install` virket, `npm run test` 26 av 26 bestått, og `npm run build` (typesjekk og Vite) gikk gjennom.
+  - Innlogging som `kari.vestby` og Vaktvalg virket i nettleseren.
+  - `git status` var ren etter kjøringen.
+- **Konsekvens:** Det som sto åpent i OP-05 etter 07.11, test fra ren klone, er gjennomført, og appen er testet på macOS. Linux kjøres bare i CI. Fysisk test skjer fortsatt først og fremst på Windows, fordi sensor ikke har Mac.
+- **Endret:** OP-05 i tabellen og i §5, raden for OP-05 i §8.4, `AGENTS.md`, `README.md` og vurderingsmatrisen.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ---
 

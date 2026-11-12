@@ -45,8 +45,12 @@ testdata. Kandidatlisten kommer i Epic 2. Du trenger Python 3.12 eller nyere og
 Node 22.12 eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
 (2026-11-04). Kommandoene under er for Windows PowerShell. På macOS/Linux bytter du
 `.venv\Scripts\python` med `.venv/bin/python`. Der det står en egen bash-kommando, er
-den for macOS/Linux og Git Bash. Appen er laget for å virke på alle tre, men er bare
-testet på Windows. Bash-kommandoene er kontrollert i Git Bash (OP-05).
+den for macOS/Linux og Git Bash. Appen er laget for å virke på alle tre. Den er testet
+på Windows og på macOS. På macOS bestod 275 av 275 backendtester 2026-11-11. Fra en ren
+klone på macOS 2026-11-12, med Python 3.12.14 og Node 26.8.1, bestod 337 av 337
+backendtester og 26 av 26 frontendtester, `npm run build` gikk gjennom, og innlogging og
+Vaktvalg virket. Linux kjøres bare i CI. Bash-kommandoene er kontrollert i Git Bash
+(OP-05).
 
 På Windows er en filsti begrenset til 260 tegn, med mindre lange stier er slått på. Den
 lengste filen i repoet har en sti på 125 tegn, så stien du kloner til, bør være kortere
