@@ -77,6 +77,16 @@ export function tidsrom(start: string, slutt: string): string {
   return `${klokke(deler(start))}–${klokke(deler(slutt))} (${varighet} ${TEKSTER.format.timer})`;
 }
 
+/** «Søndag 27.09.2026 · 07:00–15:00 (8 t)», vaktlinja på godkjenningsflaten. */
+export function vaktlinje(start: string, slutt: string): string {
+  return `${ukedagOgDato(start)} · ${tidsrom(start, slutt)}`;
+}
+
+/** «27.09.2026, 07:00–15:00» i bekreftelsesboksen på godkjenningsflaten. */
+export function datoOgTidsrom(start: string, slutt: string): string {
+  return `${dato(deler(start))}, ${klokke(deler(start))}–${klokke(deler(slutt))}`;
+}
+
 /** «27.09.2026 06:20» */
 export function datoOgKlokke(iso: string): string {
   const d = deler(iso);

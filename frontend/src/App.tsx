@@ -7,7 +7,11 @@ import Appbar from "./komponenter/Appbar";
 import LoggInn from "./komponenter/LoggInn";
 import Vaktvalg from "./komponenter/Vaktvalg";
 import Kandidatflate from "./komponenter/Kandidatflate";
-import { INNLOGGING_STI, OVERSIKT_STI, maalEtterBekreftetSesjon, naviger, vaktnummerFraSti } from "./navigasjon";
+import Godkjenningsflate from "./komponenter/Godkjenningsflate";
+import {
+  INNLOGGING_STI, OVERSIKT_STI, godkjenningFraSti, godkjenningssti, kandidatsti,
+  maalEtterBekreftetSesjon, naviger, vaktnummerFraSti,
+} from "./navigasjon";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "./tekster";
 
 export default function App() {
@@ -21,6 +25,7 @@ export default function App() {
   const utloggingVenter = useRef(false);
   const retryknapp = useRef<HTMLButtonElement>(null);
   const vaktnummer = vaktnummerFraSti(sti);
+  const godkjenning = godkjenningFraSti(sti);
 
   useEffect(() => {
     if (kontrollfeil || navigasjonsfeil) retryknapp.current?.focus();
@@ -88,7 +93,14 @@ export default function App() {
   }
 
   function velgVakt(vaktnummer: number) {
-    const nySti = `/vakt/${vaktnummer}/kandidater`;
+    const nySti = kandidatsti(vaktnummer);
+    naviger(nySti);
+    setSti(nySti);
+  }
+
+  // Første steg i godkjenningen (story 3.1): bare navigasjon, ingen kall.
+  function velgKandidat(vaktnummer: number, ansattId: number) {
+    const nySti = godkjenningssti(vaktnummer, ansattId);
     naviger(nySti);
     setSti(nySti);
   }
@@ -136,8 +148,16 @@ export default function App() {
       )}
       {bruker === null && <LoggInn onInnlogget={innlogget} onForsinketInnlogging={kontroller} startfeil={startfeil} />}
       {bruker && sti === OVERSIKT_STI && <Vaktvalg onVelgVakt={velgVakt} />}
-      {bruker && vaktnummer !== null && <Kandidatflate key={vaktnummer} vaktnummer={vaktnummer} />}
-      {bruker && sti !== OVERSIKT_STI && vaktnummer === null && (
+      {bruker && vaktnummer !== null && <Kandidatflate key={vaktnummer} vaktnummer={vaktnummer} onVelg={velgKandidat} />}
+      {bruker && godkjenning !== null && (
+        <Godkjenningsflate
+          key={`${godkjenning.vaktnummer}/${godkjenning.ansattId}`}
+          vaktnummer={godkjenning.vaktnummer}
+          ansattId={godkjenning.ansattId}
+          onTilbake={() => velgVakt(godkjenning.vaktnummer)}
+        />
+      )}
+      {bruker && sti !== OVERSIKT_STI && vaktnummer === null && godkjenning === null && (
         <main className="innhold"><section className="panel">
           <h1 className="overskrift">{TEKSTER.sideIkkeFunnet}</h1>
         </section></main>

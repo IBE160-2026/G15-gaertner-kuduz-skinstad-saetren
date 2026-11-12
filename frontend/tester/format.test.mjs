@@ -28,6 +28,12 @@ const V4189 = {
   satt_opp: "Eirik Moen", meldt_fra: "2026-09-26T21:40:00+02:00", grunn: "sykemeldt",
 };
 
+test("vaktlinja og tidsrommet på godkjenningsflaten vises i Oslo-tid", () => {
+  assert.equal(f.vaktlinje(V4127.start, V4127.slutt), "Søndag 27.09.2026 · 07:00–15:00 (8 t)");
+  assert.equal(f.datoOgTidsrom(V4127.start, V4127.slutt), "27.09.2026, 07:00–15:00");
+  assert.equal(f.datoOgTidsrom("2026-09-28T21:00:00Z", "2026-09-29T05:00:00Z"), "28.09.2026, 23:00–07:00");
+});
+
 test("brødsmule for valgt vakt bruker dato i Oslo", () => {
   assert.equal(f.vaktBrodsmule(4127, "dag", V4127.start), "Vakt #4127 — Dagvakt 27.09.2026");
   assert.equal(f.vaktBrodsmule(4189, "natt", "2026-09-28T21:00:00Z"), "Vakt #4189 — Nattevakt 28.09.2026");

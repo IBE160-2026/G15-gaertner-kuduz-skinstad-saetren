@@ -52,6 +52,12 @@ export type Kandidatsvar =
   | { status: "ok"; kandidater: Kandidat[] }
   | { status: "datafeil"; kode: string; datagrense: string };
 
+// GET /api/vakter/{nr}/kandidater/{ansatt_id} (story 3.1). Bare for en Gyldig
+// kandidat. Utelukket eller ukjent Ansatt gir 404 `ikke_funnet` (NFR2).
+export type Godkjenningssvar =
+  | { status: "ok"; vakt: Vaktdetaljer; kandidat: Kandidat }
+  | { status: "datafeil"; kode: string; datagrense: string };
+
 /** API-et svarte med feilformen `{ kode, melding }`. */
 export class ApiFeil extends Error {
   readonly status: number;
@@ -159,4 +165,8 @@ export function hentVaktdetaljer(vaktnummer: number): Promise<Vaktdetaljer> {
 
 export function hentKandidater(vaktnummer: number): Promise<Kandidatsvar> {
   return kall<Kandidatsvar>(`/api/vakter/${vaktnummer}/kandidater`, {}, true);
+}
+
+export function hentGodkjenningsgrunnlag(vaktnummer: number, ansattId: number): Promise<Godkjenningssvar> {
+  return kall<Godkjenningssvar>(`/api/vakter/${vaktnummer}/kandidater/${ansattId}`, {}, true);
 }
