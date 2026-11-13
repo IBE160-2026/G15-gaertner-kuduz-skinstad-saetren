@@ -23,7 +23,7 @@ from domene.typer import Kandidat, Tidsrom, Vakt
 MINSTE_HVILE = timedelta(hours=11)
 
 
-def _gyldig_tidsrom(egen: object) -> bool:
+def gyldig_tidsrom(egen: object) -> bool:
     """Bare tidsrom med tidssone og start før slutt kan gi en hvileperiode.
 
     Ugyldige vakter innenfor vinduet stopper vurderingen med datafeil før reglene
@@ -47,7 +47,7 @@ def bryter_elleve_timer(kandidat: Kandidat, vakt: Vakt) -> bool:
     """
     start, slutt = vakt.start.astimezone(UTC), vakt.slutt.astimezone(UTC)
     for egen in kandidat.vakter:
-        if not _gyldig_tidsrom(egen) or overlapper(egen.start, egen.slutt, vakt.start, vakt.slutt):
+        if not gyldig_tidsrom(egen) or overlapper(egen.start, egen.slutt, vakt.start, vakt.slutt):
             continue
         egen_start, egen_slutt = egen.start.astimezone(UTC), egen.slutt.astimezone(UTC)
         if egen_slutt <= start and start - egen_slutt < MINSTE_HVILE:

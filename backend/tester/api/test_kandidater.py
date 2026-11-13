@@ -1,9 +1,8 @@
-"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1–2.3).
+"""GET /api/vakter/{vaktnummer}/kandidater (story 2.1–2.4).
 
-Fasiten kommer fra `testdata.FASIT` (AV-07). Med kompetanse-minstekravet,
-kolliderende vakt og 11-timersregelen på plass er de gyldige alle unntatt dem
-fasiten utelukker på `kompetanse`, `kolliderende` eller `elleve-timer`.
-35-timersregelen kommer i 2.4.
+Fasiten kommer fra `testdata.FASIT` (AV-07). Med alle fire harde regler på plass
+er de gyldige alle som fasiten ikke utelukker: 4 for #4127 og 0 for #4189. En tom
+liste gir `status: "ok"` til story 2.6 innfører `ingen_gyldige_kandidater`.
 """
 
 from datetime import UTC, datetime, timedelta
@@ -29,7 +28,7 @@ def hent(klient: TestClient, nummer: int) -> dict:
     return respons.json()
 
 
-IMPLEMENTERTE_REGLER = {"kompetanse", "kolliderende", "elleve-timer"}
+IMPLEMENTERTE_REGLER = {"kompetanse", "kolliderende", "elleve-timer", "trettifem-timer"}
 
 
 def forventet_gyldige(nummer: int) -> set[str]:
@@ -40,7 +39,7 @@ def forventet_utelukket(nummer: int) -> set[str]:
     return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall in IMPLEMENTERTE_REGLER}
 
 
-@pytest.mark.parametrize("nummer,antall", [(4127, 5), (4189, 1)])
+@pytest.mark.parametrize("nummer,antall", [(4127, 4), (4189, 0)])
 def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: int) -> None:
     svar = hent(klient, nummer)
 
@@ -58,13 +57,14 @@ def test_bare_gyldige_sendes_nfr2(klient: TestClient, nummer: int) -> None:
     utelukket = forventet_utelukket(nummer)
     satt_opp = NAVN[MANGLER_BEMANNING[nummer][0]]
 
-    # 4127: 8 kompetanse + 7 kollisjon + 4 på 11 t. 4189: 3 + 2 + 18.
-    assert len(utelukket) == {4127: 19, 4189: 23}[nummer]
+    # 4127: 8 kompetanse + 7 kollisjon + 4 på 11 t + 1 på 35 t. 4189: 3 + 2 + 18 + 1.
+    assert len(utelukket) == {4127: 20, 4189: 24}[nummer]
     for navn in utelukket | {satt_opp}:
         assert navn not in respons_tekst
     assert "kompetanse-minstekrav" not in respons_tekst
     assert "kolliderende" not in respons_tekst
     assert "11-timersregelen" not in respons_tekst
+    assert "35-timersregelen" not in respons_tekst
 
 
 @pytest.mark.parametrize("nummer", [4127, 4189])
@@ -85,8 +85,6 @@ def test_ingen_med_kolliderende_vakt_i_fasiten_er_med(klient: TestClient, nummer
 
     assert len(kolliderende) == {4127: 7, 4189: 2}[nummer]
     assert not navn & kolliderende
-    # 35-timersregelen er ikke på plass ennå, så de som bare bryter den, er med.
-    assert {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall == "trettifem-timer"} <= navn
 
 
 @pytest.mark.parametrize("nummer", [4127, 4189])
@@ -96,6 +94,20 @@ def test_ingen_med_brudd_på_11_timersregelen_i_fasiten_er_med(klient: TestClien
 
     assert len(elleve) == {4127: 4, 4189: 18}[nummer]
     assert not navn & elleve
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_ingen_med_brudd_på_35_timersregelen_i_fasiten_er_med(klient: TestClient, nummer: int) -> None:
+    navn = {k["navn"] for k in hent(klient, nummer)["kandidater"]}
+    trettifem = {n for n, utfall in FASIT[nummer]["utfall"].items() if utfall == "trettifem-timer"}
+
+    assert trettifem == {4127: {"Anders Strand"}, 4189: {"Line Moe"}}[nummer]
+    assert not navn & trettifem
+
+
+def test_4189_gir_tom_liste_med_status_ok_til_story_2_6(klient: TestClient) -> None:
+    # Alle 24 er utelukket. API-et er uendret til 2.6 (beslutning B).
+    assert hent(klient, 4189) == {"status": "ok", "kandidater": []}
 
 
 def test_silje_er_ikke_med_på_4127_og_utelukket_på_4189(klient: TestClient) -> None:
@@ -122,9 +134,7 @@ def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer
     # Seeden har ingen navn med æ, ø eller å først, så vanlig sortering er nok her.
     # Den norske rekkefølgen testes i domenet.
     assert navn == sorted(navn)
-    # Fasiten: Anders Strand (#4127) og Line Moe (#4189) bryter bare
-    # 35-timersregelen, som kommer i 2.4.
-    assert navn[0] == {4127: "Anders Strand", 4189: "Line Moe"}[nummer]
+    assert navn == {4127: ["Ingrid Dahl", "Jonas Bakke", "Mette Solberg", "Thomas Nygård"], 4189: []}[nummer]
 
 
 def test_samme_svar_hver_gang(klient: TestClient) -> None:
@@ -210,8 +220,10 @@ def test_egen_vakt_før_periodestart_som_overlapper_utelukker(klient: TestClient
     # Kandidatens vakter hentes uavhengig av periode. En vakt som starter før
     # periodestart og overlapper en Vakt ved periodestart, skal utelukke.
     endre_vakt(engine, start=PERIODE_START, slutt=PERIODE_START + timedelta(hours=8))
-    ansatt_id, navn = gyldig_på_4127()
-    assert navn in {k["navn"] for k in hent(klient, 4127)["kandidater"]}
+    # Den første som er gyldig på det nye tidspunktet. Fasiten for #4127 gjelder
+    # ikke her: med 35-timersregelen er Ingrid ikke gyldig mandag 21.09 00–08.
+    kandidat = hent(klient, 4127)["kandidater"][0]
+    ansatt_id, navn = kandidat["id"], kandidat["navn"]
 
     legg_til_tildelt_vakt(engine, ansatt_id, PERIODE_START - timedelta(hours=2), PERIODE_START + timedelta(hours=1))
     assert navn not in {k["navn"] for k in hent(klient, 4127)["kandidater"]}
@@ -235,7 +247,8 @@ def assert_datafeil(svar: dict) -> None:
 
 # Fra story 2.3 må vinduet `[start − 11 t, slutt + 11 t)` ligge innenfor
 # datadekningen (P-08, A5). En Vakt som slutter 04.10 kl. 13:00, når akkurat
-# datagrensen 05.10 kl. 00:00.
+# datagrensen 05.10 kl. 00:00. Fra story 2.4 må også de berørte kalenderukene
+# ligge innenfor. Uka 28.09–05.10 slutter nøyaktig på datagrensen.
 
 
 def test_vindu_som_slutter_ved_datagrensen_vurderes(klient: TestClient, engine: Engine) -> None:
@@ -253,6 +266,25 @@ def test_vindu_som_slutter_etter_datagrensen_gir_datafeil(
         assert_datafeil(hent(klient, 4127))
     # Grunnen logges for feilsøking, men sendes ikke i svaret.
     assert "Datafeil for vakt 4127" in caplog.text
+    assert "datagrensen" in caplog.text
+
+
+def test_uke_som_slutter_ved_datagrensen_vurderes(klient: TestClient) -> None:
+    # #4189 (mandag 28.09 23–07) berører uka [28.09, 05.10), som slutter på datagrensen.
+    assert hent(klient, 4189)["status"] == "ok"
+
+
+def test_uke_som_slutter_etter_datagrensen_gir_datafeil(
+    klient: TestClient, engine: Engine, caplog: pytest.LogCaptureFixture,
+) -> None:
+    # Datagrensen flyttes til lørdag 03.10. #4189 har 11-timersvinduet til 29.09
+    # kl. 18:00, men uka går til 05.10, så grunnlaget dekker ikke hele uka.
+    grense = datetime(2026, 10, 3, 0, 0, tzinfo=OSLO)
+    with lag_sessionmaker(engine).begin() as session:
+        session.execute(update(TurnusRad).values(periode_slutt=grense))
+    with caplog.at_level("WARNING", logger="adaptere.api.main"):
+        svar = hent(klient, 4189)
+    assert svar == {"status": "datafeil", "kode": "mangler_turnusgrunnlag", "datagrense": "2026-10-03T00:00:00+02:00"}
     assert "datagrensen" in caplog.text
 
 

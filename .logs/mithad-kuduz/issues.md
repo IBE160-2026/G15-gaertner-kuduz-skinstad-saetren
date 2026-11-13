@@ -33,3 +33,4 @@
 - [ ] 2026-11-11 [story-2-3-elleve-timer](986-2026-11-11-17-44-34-story-2-3-elleve-timer.md) — Story 2.3: gjennomgang fra et annet gruppemedlem av PR #15 (opprettet 2026-11-11). Implementering, agentgjennomgang og nettleserkontroll er ferdig (9f2f536, 9af4cc9)
 - [ ] 2026-11-13 [prd-tilbakemelding-bard](985-2026-11-13-17-25-11-prd-tilbakemelding-bard.md) — Gjennomgang av PR #18 (PRD-rettingene etter Bårds tilbakemelding) fra et annet gruppemedlem
 - [ ] 2026-11-13 [prd-tilbakemelding-bard](985-2026-11-13-17-25-11-prd-tilbakemelding-bard.md) — Spør Bård om technology.md i arkitekturmappen (gjelder pytagoras-website-v2) er lagt der med vilje
+- [x] 2026-11-13 [gjennomgang-pr-17](984-2026-11-13-17-38-36-gjennomgang-pr-17.md) — PR #17 (story 2.4): avgjør godkjenning og tekst på GitHub (løst 2026-11-13: godkjent på GitHub)

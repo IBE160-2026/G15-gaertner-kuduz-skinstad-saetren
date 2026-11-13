@@ -15,7 +15,7 @@ import pytest
 
 from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse
 from domene.regelmotor.elleve_timer import ÅRSAK, bryter_elleve_timer
-from domene.regelmotor.vurdering import REGLER, vurder_kandidater
+from domene.regelmotor.vurdering import REGLER, Regel, vurder_kandidater
 from domene.typer import Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Vakt
 
 OSLO = ZoneInfo("Europe/Oslo")
@@ -60,8 +60,8 @@ def starter_ved(start: datetime, timer: int = 8) -> Tidsrom:
 
 
 def vurder(v: Vakt, *kandidater: Kandidat, historikkstart: datetime = HISTORIKKSTART,
-           datagrense: datetime = DATAGRENSE) -> Kandidatvurdering:
-    resultat = vurder_kandidater(v, kandidater, datagrense, historikkstart)
+           datagrense: datetime = DATAGRENSE, regler: tuple[Regel, ...] = REGLER) -> Kandidatvurdering:
+    resultat = vurder_kandidater(v, kandidater, datagrense, historikkstart, regler)
     assert isinstance(resultat, Kandidatvurdering), resultat
     return resultat
 
@@ -72,8 +72,8 @@ def årsaker(v: Vakt, k: Kandidat, **kw: datetime) -> tuple[str, ...]:
 
 
 def datafeil(v: Vakt, *kandidater: Kandidat, historikkstart: datetime = HISTORIKKSTART,
-             datagrense: datetime = DATAGRENSE) -> Datafeil:
-    resultat = vurder_kandidater(v, kandidater or (kandidat(),), datagrense, historikkstart)
+             datagrense: datetime = DATAGRENSE, regler: tuple[Regel, ...] = REGLER) -> Datafeil:
+    resultat = vurder_kandidater(v, kandidater or (kandidat(),), datagrense, historikkstart, regler)
     assert isinstance(resultat, Datafeil), resultat
     assert resultat.grunner
     # Svaret oppgir alltid datagrensen, også når historikkstarten er årsaken.
@@ -173,9 +173,9 @@ def test_for_lavt_nivå_og_for_kort_hvile_gir_begge_årsakene_i_fast_rekkefølge
     assert årsaker(vakt(minstenivå=3), k) == (kompetanse.ÅRSAK, ÅRSAK)
 
 
-def test_regelen_ligger_som_nummer_tre_i_regellisten() -> None:
+def test_regelen_ligger_som_nummer_tre_av_fire_i_regellisten() -> None:
     assert ÅRSAK == "11-timersregelen"
-    assert [r.årsak for r in REGLER] == ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen"]
+    assert [r.årsak for r in REGLER] == ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen", "35-timersregelen"]
     assert REGLER[2].bryter is elleve_timer.bryter_elleve_timer
     assert REGLER[2].vindu is elleve_timer.vindu
 
@@ -231,8 +231,8 @@ def test_vinduet_regnes_i_utc_over_vårskiftet() -> None:
     assert elleve_timer.vindu(v).start == datetime(2026, 3, 28, 18, 0, tzinfo=UTC)
     grense = datetime(2026, 4, 30, tzinfo=OSLO)
     ved = datetime(2026, 3, 28, 19, 0, tzinfo=OSLO)
-    assert vurder(v, kandidat(), historikkstart=ved, datagrense=grense).gyldige
-    datafeil(v, historikkstart=ved + MINUTT, datagrense=grense)
+    assert vurder(v, kandidat(), historikkstart=ved, datagrense=grense, regler=ELLEVE_REGLER).gyldige
+    datafeil(v, historikkstart=ved + MINUTT, datagrense=grense, regler=ELLEVE_REGLER)
 
 
 # --- Determinisme ---------------------------------------------------------------
@@ -250,7 +250,10 @@ def test_samme_input_gir_samme_output() -> None:
 
 
 # --- Vinduet og datadekningen (P-08, vedtak A5) ---------------------------------
-# Vakten 27.09 07–15 har vinduet [26.09 20:00, 28.09 02:00).
+# Vakten 27.09 07–15 har vinduet [26.09 20:00, 28.09 02:00). Fra story 2.4 starter
+# det samlede vinduet ved mandag 21.09 (35-timersregelen), så testene av
+# startgrensen til 11-timersvinduet kjører uten regel fire.
+ELLEVE_REGLER = REGLER[:3]
 V_START = DAG_START - ELLEVE
 V_SLUTT = DAG_SLUTT + ELLEVE
 
@@ -284,11 +287,11 @@ def test_vakter_04_10_er_datafeil_som_p08_krever(start: datetime, vakttype: str)
 
 def test_vindu_nøyaktig_ved_historikkstart_vurderes() -> None:
     # start − 11 t == historikkstart
-    assert vurder(vakt(), kandidat(), historikkstart=V_START).gyldige
+    assert vurder(vakt(), kandidat(), historikkstart=V_START, regler=ELLEVE_REGLER).gyldige
 
 
 def test_vindu_ett_minutt_før_historikkstart_er_datafeil() -> None:
-    resultat = datafeil(vakt(), historikkstart=V_START + MINUTT)
+    resultat = datafeil(vakt(), historikkstart=V_START + MINUTT, regler=ELLEVE_REGLER)
     assert "historikkstarten" in resultat.grunner[0]
 
 
@@ -329,7 +332,7 @@ def test_ugyldig_vakt_i_vinduet_hos_den_som_var_satt_opp_gir_ikke_datafeil() -> 
 
 
 def test_punkt_i_vinduets_start_er_innenfor() -> None:
-    datafeil(vakt(), kandidat(rom(V_START, V_START)))
+    datafeil(vakt(), kandidat(rom(V_START, V_START)), regler=ELLEVE_REGLER)
 
 
 def test_punkt_i_vinduets_slutt_er_utenfor() -> None:
@@ -338,12 +341,12 @@ def test_punkt_i_vinduets_slutt_er_utenfor() -> None:
 
 def test_omvendt_vakt_rett_før_vinduet_er_utenfor() -> None:
     # Det lukkede tidsrommet [V_START − 3 t, V_START − 1 min] berører ikke vinduet.
-    assert vurder(vakt(), kandidat(rom(V_START - MINUTT, V_START - timedelta(hours=3)))).gyldige
+    assert vurder(vakt(), kandidat(rom(V_START - MINUTT, V_START - timedelta(hours=3))), regler=ELLEVE_REGLER).gyldige
 
 
 def test_omvendt_vakt_som_slutter_i_vinduets_start_er_innenfor() -> None:
     # Det lukkede tidsrommet [V_START − 3 t, V_START] når vinduets start.
-    datafeil(vakt(), kandidat(rom(V_START, V_START - timedelta(hours=3))))
+    datafeil(vakt(), kandidat(rom(V_START, V_START - timedelta(hours=3))), regler=ELLEVE_REGLER)
 
 
 def test_omvendt_vakt_som_spenner_over_hele_vinduet_er_innenfor() -> None:

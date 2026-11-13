@@ -173,12 +173,14 @@ bemanning står øverst under «Krever handling» (#4127 og #4189 i testdataene)
 periodestart, vises ikke (AV-03). «Velg vakt — finn erstatter →» går til
 `/vakt/<nr>/kandidater`. Her vises avdeling, vakttype, tidspunkt og minstenivå,
 og under dem de gyldige kandidatene alfabetisk med kompetansenivå («Nivå 3/4»).
-Listen hentes automatisk. Etter story 2.3 er den filtrert på
-kompetanse-minstekravet (FR2), kolliderende vakt (FR3) og 11-timersregelen (FR4),
-og det står i en merknad under overskriften. Story 2.4 legger til
-35-timersregelen. Med de tre reglene gir #4127 5 gyldige og #4189 1 i testdataene.
-En vakt der hvilen før eller etter ikke kan kontrolleres fordi testdataene slutter
-05.10 kl. 00:00, gir en melding om manglende turnusgrunnlag (P-08). Det kan ikke nås
+Listen hentes automatisk. Etter story 2.4 er den filtrert på alle fire harde
+regler: kompetanse-minstekravet (FR2), kolliderende vakt (FR3), 11-timersregelen
+(FR4) og 35-timersregelen (FR5). I testdataene gir #4127 4 gyldige (Ingrid Dahl,
+Jonas Bakke, Mette Solberg og Thomas Nygård) og #4189 0. Når ingen er gyldige, står
+det «Ingen gyldige kandidater for denne vakten.», til story 2.6 innfører
+tomtilstanden. En vakt der hvilen før eller etter eller en berørt kalenderuke ikke
+kan kontrolleres fordi testdataene slutter 05.10 kl. 00:00, gir en melding om
+manglende turnusgrunnlag (P-08). Det kan ikke nås
 gjennom vanlig bruk, fordi bare #4127 og #4189 mangler bemanning, og begge ligger
 innenfor dekningen. Det er dekket av API-tester med endret testdatabase. Direkte URL og
 nettleserens tilbakeknapp virker. En bemannet, ukjent eller utenforliggende vakt

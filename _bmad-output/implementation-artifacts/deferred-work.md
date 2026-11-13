@@ -29,3 +29,11 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md`
   summary: epics.md sier fortsatt «Grensetester i story 2.3 gjenstår» (ÅB-5, l.116) og «Grensetester gjenstår» i AV-04-sitatet i Story 2.3 (l.~502). Story 2.3 har levert grensetestene.
   evidence: Blind-hunter 2026-11-11. Endring i planleggingsdokumentet gjør `epic-2-context.md` ugyldig før 2.4 og hører til gruppas samordning av epics.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md`
+  summary: Ingen frontendtest rendrer `Kandidatliste`, så grenen for tom liste (beslutning B) og de andre tilstandene er bare dekket av tester på tekstene og kildeteksten.
+  evidence: Verification-gap 2026-11-12. `frontend/tester/kandidater-bunt.ts` bunter bare `src/kandidater` og `src/api`. En snudd betingelse (`!== 0`) ville gått gjennom alle 28 testene. Inntil videre dekker den manuelle nettleserkontrollen dette. Bør løses senest i 2.6, som erstatter grenen med tomtilstanden.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md`
+  summary: AGENTS.md sier at domenekjernen har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter 2.4 er alle fire harde regler på plass.
+  evidence: Blind-hunter 2026-11-12. AGENTS.md er agentkontekst for hele gruppa og oppdateres utenom storyen.
