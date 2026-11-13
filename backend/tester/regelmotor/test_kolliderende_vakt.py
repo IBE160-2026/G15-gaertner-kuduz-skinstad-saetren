@@ -254,7 +254,7 @@ def test_kollisjon_og_for_lavt_nivå_gir_begge_årsaker_i_fast_rekkefølge() -> 
 
 
 def test_regelen_ligger_som_nummer_to_i_regellisten() -> None:
-    assert [r.årsak for r in REGLER] == ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen"]
+    assert [r.årsak for r in REGLER] == ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen", "35-timersregelen"]
     assert REGLER[1].bryter is kolliderende_vakt.bryter_kollisjon
 
 
