@@ -21,7 +21,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse
+from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse, trettifem_timer
 from domene.typer import VAKTTYPER, Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Utelukket, Vakt
 
 
@@ -73,6 +73,13 @@ REGLER: tuple[Regel, ...] = (
         vaktkrav=lambda _vakt: [],
         kandidatkrav=lambda _kandidat, _vakt: [],
         vindu=elleve_timer.vindu,
+    ),
+    Regel(
+        årsak=trettifem_timer.ÅRSAK,
+        bryter=trettifem_timer.bryter_trettifem_timer,
+        vaktkrav=lambda _vakt: [],
+        kandidatkrav=lambda _kandidat, _vakt: [],
+        vindu=trettifem_timer.vindu,
     ),
 )
 

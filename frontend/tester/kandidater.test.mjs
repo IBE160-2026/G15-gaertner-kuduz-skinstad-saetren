@@ -66,13 +66,32 @@ test("feil gir egen tekst fra tekstlista, og 401 viser ingenting", async () => {
   assert.deepEqual(meldt.at(-1), { type: "feil", tekst: INGEN_KONTAKT });
 });
 
-test("laster, feil og datafeil har ulik tekst", () => {
+test("laster, feil, datafeil og tom liste har ulik tekst", () => {
   // To feilkoder deler tekst med vilje, så feiltekstene telles som én mengde.
   const feil = new Set([INGEN_KONTAKT, ...Object.values(FEILTEKSTER)]);
-  for (const tekst of [t.kandidaterLaster, t.datafeil]) assert.ok(!feil.has(tekst), tekst);
-  assert.notEqual(t.kandidaterLaster, t.datafeil);
+  const tilstander = [t.kandidaterLaster, t.datafeil, t.ingenGyldige];
+  for (const tekst of tilstander) assert.ok(!feil.has(tekst), tekst);
+  assert.equal(new Set(tilstander).size, tilstander.length);
   assert.equal(t.datafeil, "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.");
-  assert.equal(t.midlertidigMerknad, "Filtrert på kompetanse, kolliderende vakt og 11-timersregelen. Flere regler kommer.");
+  assert.equal(t.ingenGyldige, "Ingen gyldige kandidater for denne vakten.");
+});
+
+test("den midlertidige merknaden er fjernet (story 2.4)", async () => {
+  assert.equal(t.midlertidigMerknad, undefined);
+  const { readFile } = await import("node:fs/promises");
+  const flate = await readFile(new URL("../src/komponenter/Kandidatflate.tsx", import.meta.url), "utf-8");
+  assert.ok(!flate.includes("midlertidigMerknad"));
+  assert.ok(flate.includes("t.ingenGyldige"));
+});
+
+test("tom liste fra API-et blir klar med tom liste, ikke datafeil", async () => {
+  // Til story 2.6 svarer API-et status ok med tom liste når ingen er gyldige.
+  const svar = styrtFetch();
+  const meldt = [];
+  k.lastKandidater(4189, (tilstand) => meldt.push(tilstand));
+  svar("/api/vakter/4189/kandidater", json({ status: "ok", kandidater: [] }));
+  await nesteTick();
+  assert.deepEqual(meldt.at(-1), { type: "klar", kandidater: [] });
 });
 
 test("taggen viser nivået av fire", () => {

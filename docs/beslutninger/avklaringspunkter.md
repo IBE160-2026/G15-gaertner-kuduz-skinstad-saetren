@@ -77,6 +77,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
+| OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12, PR-gjennomgang gjenstår | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -131,6 +132,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Avgrensning:** **Ikke** markedsfør som full juridisk arbeidsmiljølovkontroll. Omfattende lovtolkning er utenfor v1 (OP-01).
 - **Ansvarlig/frist:** Ikke bestemt.
 - **Status:** Vedtatt.
+- **Oppdatering 2026-11-12 (Story 2.4, ikke merget):** Begge delene av vedtaket er nå implementert i regelmotoren: 11 t i Story 2.3 og 35 t i berørt kalenderuke i Story 2.4. Grensetestene for 35 t finnes i `backend/tester/regelmotor/test_35_timersregelen.py`. Se §11.
 
 ### AV-05 – Min–maks-normalisering og håndtering av like verdier
 
@@ -671,6 +673,18 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kjente begrensninger, godtatt av Mithad 2026-11-11:** `datagrense` i datafeilsvaret er `turnus.periode_slutt` også når det er historikkstarten som ikke holder, og en egen vakt som starter før historikkstarten og slutter etter den, regnes som kjent data. Ingen vakt i perioden treffer den nedre grensen.
 - **Grunnlag:** [spesifikasjonen for Story 2.3](../../_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md) og [KI-loggen](../ki-logg/2026-11-11-11-timersregelen.md).
 - **Ikke endret:** Vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-12 – Story 2.4 (OP-14): 35-timersregelen, uke som vindu og beslutning A og B
+
+- **Hvem:** Ragnhild Sætren tar Story 2.4 (OP-14) og avgjorde 2026-11-11 de to spørsmålene i spesifikasjonen, som eier av storyen. Det er avgjørelser i storyen, ikke gruppevedtak. Gruppa kan ta dem opp igjen. Implementert 2026-11-12 på branchen `story-2.4-trettifem-timer`. PR-gjennomgang gjenstår.
+- **A – Overlapp og 35 t:** En egen vakt som overlapper Vakten, telles med i unionen når fria i uka regnes ut, som fasithjelperen `bryter_trettifem_timer` fra Story 1.2. En Kandidat med kolliderende vakt kan da også få «35-timersregelen». Det skiller seg fra 1A for 11 t, men følger fasiten (AV-07). Seeden har ingen slike tilfeller.
+- **B – Tom liste før 2.6:** Når listen er tom, viser flaten «Ingen gyldige kandidater for denne vakten.» i `meta`-stil, uten ikon og uten `danger`. API-et er uendret (`status: "ok"`, tom liste). Story 2.6 erstatter teksten med tomtilstanden og API-statusen (P-11).
+- **AV-04:** Grensetestene for 35 t finnes nå: 35:00 og 34:59, ukeskiftet, Vakt som slutter mandag 00:00, fri over ukeskiftet og begge sommertidsskiftene (167 og 169 timer).
+- **Vedtak A5 gjennomført for 2.4:** Vinduet for 35-timersregelen er hele berørte kalenderuker, `[mandag i første berørte uke, mandag etter siste berørte uke)` i UTC.
+- **P-08 gjennomført for 2.4:** Merknaden `[ASSUMPTION]` i story 2.4 i epics («testdataene dekker hele kalenderuker») er erstattet av datafeil: ligger en berørt uke utenfor `[historikkstart, datagrense]`, stoppes vurderingen med datafeil. Uka for #4189 slutter nøyaktig på datagrensen 05.10 kl. 00:00 og er gyldig. KS-04 står uendret. Planleggingsdokumentene er ikke endret, så merknaden står fortsatt i epics.
+- **Rettet henvisning:** Spesifikasjonen for Story 2.4 oppga beslutningene som «OP-12». OP-12 er Mithads Story 2.3. Riktig er OP-14, og Ragnhild rettet det i den frosne delen av spesifikasjonen 2026-11-12.
+- **Grunnlag:** [spesifikasjonen for Story 2.4](../../_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md) og [KI-loggen](../ki-logg/2026-11-11-35-timersregelen.md).
+- **Ikke endret:** 1A for 11 t, vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
 
 ### 2026-11-12 – Test på macOS og fra ren klone (OP-05)
 

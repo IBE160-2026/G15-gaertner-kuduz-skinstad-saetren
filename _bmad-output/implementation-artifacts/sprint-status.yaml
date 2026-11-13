@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-11-2026 20:41
+last_updated: 12-11-2026 19:00
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -48,7 +48,7 @@ development_status:
   2-1-gyldige-kandidater-filtrert-på-kompetanse-minstekrav: done
   2-2-filtrere-bort-kandidater-med-kolliderende-vakt: done
   2-3-filtrere-på-11-timersregelen-daglig-hvile: done
-  2-4-filtrere-på-35-timersregelen-ukentlig-fri: backlog
+  2-4-filtrere-på-35-timersregelen-ukentlig-fri: review
   2-5-ekskludert-boks-med-oppsummering-av-utelukkelser: backlog
   2-6-tydelig-melding-når-ingen-kandidater-er-gyldige: backlog
   epic-2-retrospective: optional

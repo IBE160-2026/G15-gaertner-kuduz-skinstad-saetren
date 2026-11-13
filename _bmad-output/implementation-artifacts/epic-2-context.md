@@ -39,7 +39,7 @@ Etter vaktvalg ser turnusansvarlig hvem som faktisk kan ta vakten. Fire harde re
 
 1. **Overlappende vakter og 11 t:** avgjort av Mithad som eier av story 2.3 (beslutning 1A, 2026-11-11, OP-12): en overlappende vakt teller bare som kolliderende vakt, og nærmeste ikke-overlappende vakt avgjør 11 t, som testhjelperne fra story 1.2. Implementert i 2.3.
 2. **#4261–#4265 som datafeileksempel:** story 2.1 i epics nevner dem, men de er bemannede og gir 404 fra vaktdetaljene, så datafeilen nås ikke gjennom vanlig flyt. Den testes i domenet og med endret testdatabase. Story 2.3 valgte at historikken starter ved `periode_start − 672 t` (beslutning 2A).
-3. **Merknaden `[ASSUMPTION]` i story 2.4** («testdataene dekker hele kalenderuker») er erstattet av P-08 og KS-04, men står fortsatt i epics.
+3. **Merknaden `[ASSUMPTION]` i story 2.4** («testdataene dekker hele kalenderuker») er erstattet av P-08 og KS-04, men står fortsatt i epics. Implementert i 2.4: ligger en berørt uke utenfor `[historikkstart, datagrense]`, gir det datafeil. Planleggingsdokumentene er ikke endret.
 4. **Eksempeltallene** i UX og story 2.5 («21 utelukket», «9 under kompetanse-minstekrav · 7 kolliderende vakt») stemmer ikke med fasiten for #4127. Tester og tekst følger fasiten.
 5. **Nivåbegrepet:** ordlisten i PRD sier at nivåene går «fra delvis opplært», mens seeden har fire nivåer fra «Under opplæring». Tag-teksten følger seeden.
 
@@ -57,7 +57,7 @@ Etter vaktvalg ser turnusansvarlig hvem som faktisk kan ta vakten. Fire harde re
 
 ## UX & Interaction Patterns
 
-- Kandidatflaten ligger på `/vakt/<nr>/kandidater`. Filtreringen starter automatisk, og hver Kandidat vises med navn og Kompetansenivå som nøytral tag. Story 2.1 la inn en midlertidig merknad om at bare kompetanse er filtrert, som fjernes i 2.4.
+- Kandidatflaten ligger på `/vakt/<nr>/kandidater`. Filtreringen starter automatisk, og hver Kandidat vises med navn og Kompetansenivå som nøytral tag. Story 2.1 la inn en midlertidig merknad om at bare kompetanse er filtrert. Den er fjernet i 2.4.
 - Ekskludert-boksen står under listen med stiplet kant og bakgrunn `#f7f9fb`. Den viser total og antall per regel, og «Vis full liste ▾» viser hver utelukket Ansatt med alle årsaker og kan lukkes igjen. Den skal ikke skjule at avdelingen har over 20 ansatte.
 - Tomtilstanden har et sirkulært «!»-ikon i `danger` og teksten «Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.» Ekskludert-boksen vises fortsatt.
 - Lasting, feil, datafeil og ingen gyldige har ulik tekst og ulikt utseende, og en test viser at ingen er like. Datafeilen sier «Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.» og oppgir datagrensen.
@@ -68,7 +68,8 @@ Etter vaktvalg ser turnusansvarlig hvem som faktisk kan ta vakten. Fire harde re
 ## Cross-Story Dependencies
 
 - Epicet bygger på story 1.2 (seed, fasit, kompetanse per vakttype, `satt_opp_ansatt_id`), 1.4 (sesjon) og 1.6 (kandidatflaten og vaktdetaljene).
-- Story 2.3 er implementert: 11-timersregelen er regel nummer tre, og vinduet per regel avgrenser datafeilsjekken. 2.4 legger til hele berørte uker som vindu i samme mønster og fjerner den midlertidige merknaden.
+- Story 2.3 er implementert: 11-timersregelen er regel nummer tre, og vinduet per regel avgrenser datafeilsjekken.
+- Story 2.4 er implementert: 35-timersregelen er regel nummer fire, med hele berørte uker som vindu (A5). En egen vakt som overlapper Vakten, telles med i unionen (beslutning A, Ragnhild 2026-11-11, OP-14). Listen er filtrert på alle fire reglene, merknaden er fjernet, og en tom liste viser «Ingen gyldige kandidater for denne vakten.» i `meta`-stil til 2.6 (beslutning B). API-et svarer fortsatt `status: "ok"` med tom liste.
 - Story 2.1 er implementert og la grunnmønsteret: domenetyper, regelliste, import-linter, API-kontrakt og datafeil-stopp. 2.2–2.4 legger nye regler inn i samme løp, og etter hver story er listen filtrert på alle reglene så langt.
 - Story 2.5 forutsetter at alle årsaker samles. Seeden har ingen Ansatt med flere brudd, så telling med flere brudd må testes med enhetsdata i domenet. Story 2.6 bygger på at datafeil og ingen gyldige holdes adskilt.
 - Nedstrøms: Epic 3 kjører regelkontrollen på nytt ved Godkjenning, Epic 4 rangerer bare gyldige Kandidater, og lekkasjetesten i story 5.6 bruker ID-ene til utelukkede Kandidater fra regelmotoren.
