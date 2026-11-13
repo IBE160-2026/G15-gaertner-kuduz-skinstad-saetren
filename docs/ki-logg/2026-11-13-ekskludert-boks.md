@@ -45,8 +45,18 @@ Etter rettingene: full `pytest` i `backend/` — fortsatt 390 bestått (testene 
 
 Etter rettingene over gikk tre uavhengige agenter (blind-hunter, edge-case-hunter, verification-gap, alle Sonnet) gjennom den ferdige implementeringen uten å ha sett den selv — se spesifikasjonens Review Triage Log for hele tabellen. Verification-gap fant ingen hull. De sju funnene over kommer fra denne gjennomgangen (blind-hunter og edge-case-hunter fant delvis samme sak, slått sammen). To funn ble avvist: manglende `aria-controls` (UX-DR24 sier uttrykkelig at prosjektet ikke har noe utvidet ARIA-program) og manglende automatisk test av to UI-tilstander (tomtilstanden og full listens åpen/lukket, som dekkes av nettleserkontroll i alle stories fra 1.5 til 2.4, ikke av en komponenttestrigg prosjektet ikke har).
 
+## Nettleserkontroll (2026-11-13)
+
+Mot en midlertidig testdatabase i scratchpad (ikke `backend/turnushjelperen.db`), med en headless, ekte Chrome drevet av Playwright. 13 kontroller, alle bestått:
+
+- **#4127:** boksteksten var nøyaktig «20 utelukket av harde regler · 8 under kompetanse-minstekrav · 7 kolliderende vakt · 4 brudd på 11-timersregelen · 1 brudd på 35-timersregelen». Knappen startet lukket (`aria-expanded="false"`), og full listen fantes ikke i DOM-en før åpning.
+- Tastaturbetjening: fokusert knapp og `Enter` åpnet full listen (`aria-expanded="true"`, 20 rader, alfabetisk med riktig årsak hver) og lukket den igjen ved nytt `Enter`.
+- **#4189:** boksteksten var «24 utelukket av harde regler · 3 under kompetanse-minstekrav · 2 kolliderende vakt · 18 brudd på 11-timersregelen · 1 brudd på 35-timersregelen», vist under tomtekst-linjen fra 2.4, med samme tastaturbetjening og 24 rader i full listen.
+- **360 px bredde:** `document.documentElement.scrollWidth` var lik `clientWidth`, altså ingen vannrett siderulling, og innholdet var lesbart på skjermbildet.
+- Ingen konsollfeil utover forventede 401 (før innlogging) og en manglende favicon.
+- Skriptet og skjermbildene ligger i [`2026-11-13-ekskludert-boks/`](2026-11-13-ekskludert-boks/) (`nettleserkontroll.mjs`, `vakt-4127-apen.png`, `vakt-4189-apen.png`, `vakt-4127-360px.png`), kjørt med en ekte, lokal Chrome via `playwright-core` (ikke installert i prosjektets egne `package.json`).
+
 ## Gjenstår
 
 - Menneskelig PR-gjennomgang av et gruppemedlem.
-- Nettleserkontroll (#4127 og #4189, tastaturbetjening av «Vis full liste», lesbarhet ved 360 px) er ikke utført i denne økten — bare automatiserte tester.
 - Testene er kjørt på Windows i denne økten (ikke bekreftet på macOS/Linux for denne storyen spesifikt; CI dekker Linux).

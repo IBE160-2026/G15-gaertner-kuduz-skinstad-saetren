@@ -98,6 +98,7 @@ context:
 - 2026-11-13: En underagent implementerte storyen fra spesifikasjonen alene. Verifisert: 390 backendtester, 29 frontendtester og build grønt.
 - 2026-11-13, orkestratorens egen kontroll (Matrix Test Audit): grensetabellens to tekstrader («#4127 → boks med …», «#4189 → boks med …») hadde ingen test av selve den sammensatte teksten, bare av dataene bak den. Hovedlinjen ble derfor flyttet ut som en ren funksjon, `ekskludertBoksTekst`, i `frontend/src/kandidater.ts`, brukt av komponenten i stedet for en innebygd `.join`. Tre nye tester i `kandidater.test.mjs` dekker nå begge vaktene med de ekte fasittallene (20/8/7/4/1 og 24/3/2/18/1) og at en regel med 0 utelukkede ikke tas med. 32 frontendtester består etter rettingen.
 - De to gjenstående radene i grensetabellen (ingen boks ved 0 utelukkede; full liste lukket→åpen→lukket med `aria-expanded`) er UI-tilstander uten noen komponenttestrigg i prosjektet, slik praksis har vært i 1.5–2.4. De dekkes av nettleserkontroll før PR, ikke av automatiske tester.
+- 2026-11-13: Nettleserkontroll utført mot en midlertidig testdatabase med en ekte, headless Chrome via Playwright. 13 kontroller besto: boksteksten for #4127 og #4189 stemte eksakt med fasiten, «Vis full liste» kunne åpnes og lukkes med tastaturet alene (`aria-expanded` fulgte), full listen hadde riktig antall rader, og 360 px ga ingen vannrett siderulling. Se [KI-loggen](../../docs/ki-logg/2026-11-13-ekskludert-boks.md) for skjermbilder og skript.
 
 ## Spec Change Log
 
