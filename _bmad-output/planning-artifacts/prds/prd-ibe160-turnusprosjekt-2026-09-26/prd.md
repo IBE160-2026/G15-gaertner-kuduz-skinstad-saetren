@@ -76,7 +76,7 @@ Ansatte er **ikke** brukere av Turnushjelperen i v1 — de kan verken logge inn,
 - **Ulempescore** — Ulempepoengene omregnet til 0–100 poeng på fast skala, til bruk i Rangeringen (§4.4).
 - **Ansattpreferanse** — Tekstbasert informasjon om en ansatts ønsker eller begrensninger, tolket av KI-laget som del av Rangeringen.
 - **Rangering** — Den sorterte listen over Gyldige kandidater, ordnet etter Myke faktorer.
-- **Avveining** — KI-generert forklaring av hvorfor én Kandidat rangeres over en annen.
+- **Avveining** — Forklaring av beregnede forhold for en Gyldig kandidat og, når en Gyldig referansekandidat finnes, sammenligning med denne.
 - **Vaktkostnad** — Økningen i forenklet, modellberegnet lønnskostnad når den vurderte Vakten legges til, summert over berørte kalenderuker.
 - **Godkjenning** — Turnusansvarliges eksplisitte, endelige valg av Kandidat. Ingen endring anses gjennomført før Godkjenning er gitt.
 - **Datafeil** — Tilstanden når nødvendig turnusgrunnlag for den valgte Vakten mangler eller er ugyldig, for eksempel ukjent historikk rundt Vakten. Systemet beregner da ingen Kandidater og tilbyr verken Rangering eller Godkjenning. En Datafeil er ikke det samme som at ingen Kandidater er gyldige (FR-6).
@@ -105,13 +105,13 @@ Turnusansvarlig kan velge én Vakt fra en eksisterende Turnus. Realiserer UJ-1.
 
 ### 4.2 Regelmotor (harde regler)
 
-**Beskrivelse:** Et lite, godt testet utvalg harde regler filtrerer bort Kandidater som ikke kan ta Vakten. Utvalget følger addendumets anbefaling og er bekreftet av gruppen: kompetanse-minstekrav, kolliderende vakt, 11-timersregelen (daglig hvile) og 35-timersregelen (ukentlig fri). Maks arbeidstid per døgn/uke og overtidsgrenser er bevisst utelatt fra v1 — addendum anbefaler et lite utvalg som beviselig fungerer, fremfor et stort utvalg som bare er halvveis på plass. **[ASSUMPTION]** Utvalget revurderes bare hvis gruppen ønsker et bredere regelsett (§9).
+**Beskrivelse:** Et lite, godt testet utvalg harde regler filtrerer bort Kandidater som ikke kan ta Vakten. Utvalget følger addendumets anbefaling og er bekreftet av gruppen: kompetanse-minstekrav, kolliderende vakt, 11-timersregelen (daglig hvile) og 35-timersregelen (ukentlig fri). Maks arbeidstid per døgn/uke og overtidsgrenser er bevisst utelatt fra v1 — addendum anbefaler et lite utvalg som beviselig fungerer, fremfor et stort utvalg som bare er halvveis på plass. Utvalget revurderes bare hvis gruppen ønsker et bredere regelsett.
 
 **Kandidatgrunnlag:** Alle Ansatte i Turnusen vurderes, bortsett fra den Ansatte som opprinnelig var satt opp på Vakten som skal bemannes på nytt. Øvrige Ansatte antas tilgjengelige med mindre planlagte Vakter eller Harde regler utelukker dem. **[ASSUMPTION]** Dette er en fast demonstrasjonsforutsetning, ikke en garanti for faktisk tilgjengelighet; v1 har ingen separat fraværsmodell (§9).
 
 **Avgrenset hvilekontroll:** v1 bruker prototypemodellen i FR-4 og FR-5. Kontrollen krever relevante nabovakter og komplette berørte kalenderuker, også utenfor perioden som vises. Modellen skal ikke fremstilles som full juridisk kontroll av arbeidsmiljøloven.
 
-**Nødvendig datadekning:** Ukjent historikk er ikke dokumentert fri. Mangler nødvendig historikk eller fremtidige nabovakter, gyldige start- og sluttider, Vaktens kompetansekrav eller Kandidatens kostnadsgrunnlag, stopper vurderingen med Datafeil. Manglende Kompetansenivå hos en Kandidat er ikke Datafeil, men utelukkelse etter FR-2. Testdataene har planlagte Vakter til 2026-10-05 kl. 00:00 i `Europe/Oslo`. En Vakt der hvilen etter den ikke kan kontrolleres fordi dataene slutter, gir derfor Datafeil og ikke en kandidatliste. Vaktene som brukes i demonstrasjonen, ligger innenfor dataene.
+**Nødvendig datadekning:** Ukjent historikk er ikke dokumentert fri. Mangler nødvendig historikk eller fremtidige nabovakter, gyldige start- og sluttider, Vaktens kompetansekrav eller Kandidatens kostnadsgrunnlag, stopper vurderingen med Datafeil. Manglende Kompetansenivå hos en Kandidat er ikke Datafeil, men utelukkelse etter FR-2. En Vakt der hvilen etter den ikke kan kontrolleres fordi dataene slutter, gir derfor Datafeil og ikke en kandidatliste.
 
 **Funksjonelle krav:**
 
@@ -191,7 +191,7 @@ Systemet skal informere Turnusansvarlig med en eksplisitt melding når ingen Kan
 - Tiden regnes i faktisk forløpt tid i `Europe/Oslo` med sommertid og med minuttoppløsning. En halv time kveld gir 0,5 poeng. Poengene avrundes først ved visning.
 - Måleperioden er de 672 faktiske timene bakover fra Vaktens starttidspunkt, som halvåpent intervall [start − 672 t, start). Over et sommertidsskifte er det ikke det samme som 28 kalenderdøgn (gruppevedtak AV-09, 2026-11-02). Vakten som vurderes, er ikke med. En Vakt som krysser grensen for måleperioden, telles bare for delen innenfor. Perioden regnes fra Vaktens start og ikke fra dagens dato, slik at samme input alltid gir samme resultat (SM-5).
 - Helligdager regnes som vanlige ukedager i v1 (bekreftet av gruppa 2026-11-02).
-- **Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)).** Vedtatt v1-tak er **300 Ulempepoeng**, omtrent 100 nattetimer på fire uker. Taket er én navngitt parameter, sammen med vektene i §4.4, og er det samme på alle maskiner, slik at samme input alltid gir samme resultat.
+- **Ulempescore = maks(0, 100 × (1 − Ulempepoeng / tak)).** Vedtatt v1-tak er **300 Ulempepoeng**, omtrent 100 nattetimer på fire uker. Samme faste tak gjelder for alle vurderinger i v1, slik at samme input alltid gir samme resultat.
 - **[ASSUMPTION]** Taket bygger på regneeksempler med antatte, typiske turnusprofiler, ikke på en kilde (§9).
 - Skalaen er fast, ikke relativ til de Gyldige kandidatene, slik at små forskjeller gir små utslag. 40 mot 42 Ulempepoeng gir 0,1 poeng forskjell i totalscoren, mens en skala relativ til kandidatene kunne gitt opptil 15. Lik Ulempebelastning gir alltid lik Ulempescore, og en ny Kandidat endrer ikke de andres score. Taket på 300 er valgt fremfor 240 og 432 ut fra regneeksempler med typiske turnuser: vanlige turnuser gir omtrent 50–180 poeng over fire uker, nattunge 250–320. Regneeksemplene bruker vakttidene dag 07–15, kveld 15–23 og natt 23–07 og kan kjøres på nytt (§10). 432 er ikke et teoretisk maksimum, fordi overtid er tillatt, og faste nattevakter (ca. 320 poeng) får bevisst Ulempescore 0.
 - Timebelastning og Ulempebelastning vises separat. Ulempebelastningen vises med samlet poengsum og fordeling på kveld-, helg- og nattetimer, uten terskel eller fargeskifte. 90 %-grensen i FR-8 gjelder bare Timebelastningen.
@@ -341,6 +341,7 @@ Systemet kan generere en KI-basert forklaring for hver Kandidat i Rangeringen: h
 - Ved feil, tomt eller ubrukelig svar fra språkmodellen viser systemet en forhåndsdefinert reservetekst eller feilmelding i stedet for KI-forklaringen — aldri en anbefaling uten gyldig grunnlag — og systemet fortsetter å fungere uten å krasje.
 - KI returnerer strukturerte begrunnelser fra et avgrenset sett. Koden validerer kandidat-/faktareferanser og sammenligningens retning mot beregnet, uavrundet grunnlag og setter inn beregnede navn og tall. Ett ugyldig påstandsfelt forkaster hele forklaringen til fordel for tydelig merket Reservetekst. Rangering og Godkjenning forblir tilgjengelig.
 - Tillatte begrunnelsestyper i v1 er at Kandidaten oppfyller de fire prototypereglene, at en navngitt beregnet faktor trekker opp eller ned, og at en faktor/totalscore er høyere, lavere eller lik den forhåndsberegnede referansens. «Lik» krever lik uavrundet verdi. KI leverer type og referanse, ikke egne tall eller navn.
+- En gyldig KI-forklaring må inneholde minst én relevant, verifisert påstand om en beregnet Myk faktor. Et svar uten en slik påstand er ubrukelig og erstattes av tydelig merket Reservetekst.
 - Forklaringen kan bruke én forhåndsberegnet, Gyldig referansekandidat: nr. 1 sammenlignes med nr. 2, øvrige med nr. 1. Ved én Gyldig kandidat er ingen referanse tilgjengelig. KI kan ikke velge referansen, finne på sammenligninger eller nevne utelukkede kandidater. Valgfri sammenligning av to merkede kandidater er Strekk.
 
 **Feature-spesifikke NFR-er:**
@@ -459,7 +460,7 @@ Disse spørsmålene er ikke avgjort. Hvert har eier og frist.
 |---|---|---|
 | Skal Turnushjelperen støtte mobil og nettbrett, og i så fall med hvilken visning? Desktop er bindende nå. | Hele gruppa (AV-16) | Etter at kandidatvisningen virker, og før story 4.6 ferdigstilles |
 | Hvilken OpenRouter-nøkkel får sensor, hvem betaler, og hvor mye kreditt får den? Den felles utviklingsnøkkelen eller en egen sensornøkkel. | Hele gruppa (AV-16) | Før innlevering, ut fra faktisk forbruk |
-| Hvilket tidsbudsjett, hvor mange nye forsøk og hvilken sluttstatus skal preferansetolkning ha ved nettverks-/serverfeil og 429? P-05 krever avgrensede forsøk og egen status; AD-7s 90 sekunder og `avveining_feilet` beskriver Avveining. | Hele gruppa | Før story 5.1 starter |
+| Hvilke ventetrinn, hvor mange nye forsøk, hvilket tidsbudsjett og startpunkt for målingen, samt hvilken sluttstatus skal preferansetolkning ha ved nettverks-/serverfeil og 429? P-05 krever avgrensede forsøk og egen status; AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver Avveining. | Hele gruppa | Før story 5.1 starter |
 
 ### 8.1 Gjennomføring og kontroll (ikke krav)
 
@@ -481,8 +482,7 @@ Spørsmål som er løst underveis, med dato og grunnlag, står i [`.memlog.md`](
 ## 9. Antakelser-indeks
 
 - Fra §2.3 (UJ-1): Persona-navnet «Kari» er oppdiktet for å gjøre brukerreisen konkret — representerer ingen reell bruker, i tråd med at Turnusen er fiktiv.
-- Fra §4.2/§8: Regelutvalget (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen) er bekreftet av bruker; maks arbeidstid per døgn/uke og overtidsgrenser er bevisst utelatt fra v1 — revurderes bare hvis gruppen ønsker et bredere regelsett.
-- Fra §4.3 (Ulempemodell): Taket på 300 Ulempepoeng bygger på regneeksempler med antatte, typiske turnusprofiler, ikke på en kilde, og kan justeres i én parameter. Helligdager som vanlige ukedager var en antakelse til gruppa bekreftet det 2026-11-02.
+- Fra §4.3 (Ulempemodell): Taket på 300 Ulempepoeng bygger på regneeksempler med antatte, typiske turnusprofiler, ikke på en kilde.
 - Fra §7 (SM-9): Antakelse om at «kjører fra et rent klonet repo» er det addendum mener med teknisk kvalitetskriterium fra emnekravet — ikke eksplisitt bekreftet av gruppen, men utledet direkte fra addendum §6.
 - Fra §4.2: Tilgjengelighet utover planlagte Vakter er en uttrykkelig demonstrasjonsforutsetning (AV-06), ikke en påstand om virkelig tilgjengelighet. Ukjent nødvendig historikk behandles som datafeil (P-08), aldri som dokumentert fri.
 
@@ -493,7 +493,7 @@ Kravene i §4 står alene. Tabellen viser hvor de kommer fra, slik at den som sk
 | Krav | Bygger på | Stories |
 |---|---|---|
 | FR-1 | P-08 (Datafeil), P-09 (forsinkede svar) | 1.5, 1.6 |
-| §4.2 Kandidatgrunnlag, hvilekontroll og datadekning | AV-06, AV-04, P-08, KS-04. Testdataene slutter 05.10. Vaktene #4261–#4265 og andre som slutter etter 04.10 kl. 13:00, gir Datafeil. #4127 og #4189 er kontrollert. | 2.1–2.4 |
+| §4.2 Kandidatgrunnlag, hvilekontroll og datadekning | AV-06, AV-04, P-08, KS-04. Testdataene har planlagte vakter til 2026-10-05 kl. 00:00 i `Europe/Oslo`; #4261–#4265 og andre vakter som slutter etter 04.10 kl. 13:00, gir Datafeil. #4127 og #4189 er kontrollert. | 2.1–2.4 |
 | FR-2 | AV-02 (mellomvakt bruker dag-nivå), P-08 | 2.1 |
 | FR-3 | AV-02 | 2.2 |
 | FR-4, FR-5 | AV-04 | 2.3, 2.4 |
@@ -502,7 +502,7 @@ Kravene i §4 står alene. Tabellen viser hvor de kommer fra, slik at den som sk
 | §4.3 Ulempemodell, FR-14 | ÅB-3 (utvidet), AV-09 (672 t), AV-11 (tak 300). Regneeksemplene: `scripts/ulempe_regneeksempler.py`. | 4.7 |
 | FR-8 | P-02, P-04 (32,4 t). Ingrid i testdataene har 32 t og er under grensen. | 4.1, 4.2 |
 | §4.4, FR-9 | AV-05, K-03, AV-12 (#4127: Jonas og Mette, 7,0 totalpoeng), KS-02 | 4.4 |
-| FR-10 | P-05, OP-03, AV-06. AD-7 gir felles takt og 429-venting; tolkningens tidsbudsjett og sluttstatus avklares før story 5.1. | 5.1, 5.2 |
+| FR-10 | P-05, OP-03, AV-06. AD-7 gir felles takt og 429-venting; tolkningens ventetrinn, antall forsøk, tidsbudsjett/startpunkt og sluttstatus avklares før story 5.1. | 5.1, 5.2 |
 | FR-11 | P-06, P-07, K-04, AD-6 (Demo-modus) | 5.3–5.7 |
 | FR-12 | P-08, P-09, P-12, AD-5 | 3.1, 3.2 |
 | FR-13 | Brief (én rolle), OP-10/AD-3. Bygd i story 1.3 og 1.4: scrypt med salt, standardøkt 480 minutter som kan overstyres med `TURNUSHJELPEREN_JWT_MINUTTER`, ny kontroll og utlogging. | 1.3, 1.4 |
