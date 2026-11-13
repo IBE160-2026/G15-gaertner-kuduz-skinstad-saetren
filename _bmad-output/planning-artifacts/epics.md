@@ -86,7 +86,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 
 **KI-integrasjon**
 - OpenRouter, med `openai/gpt-6-luna` som standardmodell i `OPENROUTER_MODEL` (valgt 2026-10-16, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
-- AD-7: `adaptere/ki` holder seg under 18 kall per minutt og 5 samtidige, venter til `X-RateLimit-Reset` ved 429 og gir opp etter 90 s. Lukkede Avveininger hentes når raden åpnes.
+- AD-7: `adaptere/ki` holder seg under 18 kall per minutt og 5 samtidige og venter til `X-RateLimit-Reset` ved 429. En live Avveining gir faktakontrollert svar eller reservetekst innen 90 s fra første kall (AV-15); tolkningens eget feilbudsjett avklares før story 5.1. Lukkede Avveininger hentes når raden åpnes.
 - AD-6: `KI_MODUS=openrouter|demo`. Uten `OPENROUTER_API_KEY` starter appen i demo-modus. Valget skjer bare i oppstartslaget til `adaptere/api`.
 - Norskkvaliteten er testet før story 5.1 (`docs/ki-logg/2026-10-15-*` og `2026-10-16-*`). Luna tolket alle 15 fasittekstene i PRD §4.5 riktig i 5 av 5 runder.
 
@@ -123,7 +123,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 UX-DR1: Designtokens. Farger (`bg-app`, `bg-panel`, `bg-header`/`accent`, `border`, `text-main`, `text-mute`, `ok`, `warn`, `danger`, `row-alt`, `tag-bg`), typografiroller (`brand` 14,5/700, `heading` 15/700, `section-label` 12/700 versaler, `column-header` 10,5/700 versaler, `body` 12,5/400/1,55, `meta` 11/400), spacing-skala (4/8/12/16/22/32, `content-padding` 22px, `row-padding` 9px 12px) og radius (`sm` 3px, `DEFAULT` 4px, `full`) implementeres som CSS-variabler etter DESIGN.md. Skriftstørrelser skrives i `rem`, resten i `px`, og komponentene bruker ingen rå størrelser utenfor tokenene (AV-13, 2026-11-06). Innholdet får `max-width: 1180px` under en appbar over hele bredden (AV-14). Systemfont `Segoe UI, Arial, sans-serif`. Ingen skygger (bare 1px kantlinjer), ingen gradienter, ingen farger utover paletten og ikke dark-mode-først.
 UX-DR2: Appbar. Bakgrunn `bg-header` med hvit tekst. Til venstre står «TURNUSHJELPEREN» i `brand`-typografi. Til høyre står innlogget bruker + avdeling, eller «Ikke innlogget» på innloggingssiden. Innholdet endres bare ved inn- og utlogging.
 UX-DR3: Brødsmulesti ligger fast under appbar på alle skjermer etter innlogging. Etter mockupene er den `Turnus > Avdeling > Periode` på Vaktvalg (for eksempel «Uke 39–40, 2026»), `Turnus > Avdeling > Vakt #<nr> — <vakttype> <dato>` på kandidatflaten og `Turnus > Avdeling > Vakt #<nr> > Kandidater > Godkjenning` på Godkjenning. Det finnes ingen sidemeny eller fanenavigasjon, og flyten er lineær.
-UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px (`min(360px, 100% - 32px)`, AV-14) på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord» uten kontosperring [ASSUMPTION]. Det finnes ingen registrering og ingen passordgjenoppretting.
+UX-DR4: Innloggingsflate. Sentrert `login-card` på 360px (`min(360px, 100% - 32px)`, AV-14) på tom `bg-app`-flate, med felt for brukernavn og passord og et rollenotat om at bare turnusansvarlig har tilgang. Mislykket innlogging gir inline «Feil brukernavn eller passord.» (FR-13). Ingen kontosperring er spesifisert. Det finnes ingen registrering og ingen passordgjenoppretting.
 UX-DR5: Vaktvalg-flate etter `mockups/key-vaktvalg.html`. Seksjonen «Krever handling» (`section-label`) ligger øverst. Hver vakt som mangler bemanning, vises i en `alert-box` med 4px venstrekant i `danger` og sirkulært «!»-ikon. Boksen har overskriften «Vakt #<nr> — <vakttype>, <avdeling>» og en linje med dato, tidsrom og varighet, «Mangler bemanning» i fet `danger` og hvem som meldte fra og når (for eksempel «Silje Amundsen meldt fra sykemeldt kl. 06:14»). Primærknappen «Velg vakt — finn erstatter →» er eneste vei inn i kandidatrangeringen for vakten. Under står seksjonen «Øvrige vakter denne perioden — bemannet» som tabell med kolonnene Vakt (#nr i `accent`, fet), Dato, Tid (tidsrom og varighet, med vakttype som undertekst), Ansatt (navn, med stilling og ansiennitet som `meta`) og Status (tag «Bemannet»). En fotnote nederst til høyre viser når Turnusen sist ble oppdatert og antall ansatte i avdelingen. Mockupens «Se detaljer»-lenke og grønne «Bemannet»-tag er ikke tatt med (se story 1.5).
 UX-DR6: Tilstanden «Ingen vakter krever handling» på Vaktvalg. Seksjonen skjules, eller den viser nøytral tekst («Ingen vakter krever handling nå»), aldri en tom «!»-boks [ASSUMPTION].
 UX-DR7: Rangeringstabell. Kolonnene er rangeringsnummer, kandidat (navn + `meta`-undertekst), Kompetansenivå (+ tag), kostnad, timebelastning, ulempe (UX-DR28), preferanse (tag) og ekspander-lenke. Én rad per Gyldig kandidat, sortert etter rangering, med `row-alt` på annenhver rad. Nøkkeltallene er synlige direkte i raden, uten klikk. Kompetansenivå vises som informasjon og påvirker ikke rekkefølgen (FR9).
@@ -146,7 +146,7 @@ UX-DR23: Mikrotekst og tone. All brukertekst ligger i en norsk tekstliste i fron
 UX-DR24: Tilgjengelighetsgulv. Kontrasten skal være tilstrekkelig for tekst og fargekodede statuser. Alle knapper, ekspander-lenker og skjemafelt skal kunne nås og aktiveres med tastatur (tab/enter), og HTML-en skal være semantisk. Det finnes ikke noe utvidet WCAG- eller ARIA-program.
 UX-DR25: Desktop og gjeldende tilgjengelighetskrav er bindende nå (P-13). Nettbrett-/mobilmønsteret med stabling er et forslag som gruppen avklarer etter fungerende kandidatvisning og før story 4.6 ferdigstilles (OP-02). Vaktoversiktens kontroll ved 360 px beviser ikke kandidatflatens tilpasning. Samme milepæl krever dokumentert oppgavebasert forståelsestest, med én testperson og ett operativsystem og én skjermflate. Akseptmålet står i referatet §12 (P-13).
 UX-DR26: Bevisst utelatt. Det finnes ingen SMS eller automatisk varsling til valgt Kandidat etter godkjenning, ingen tastatursnarveier utover tab/enter, ingen swipe- eller dra-mønstre og ingen PWA-forpliktelse i v1.
-UX-DR27: Merking av KI-kilde. Hvert forklaringspanel har en kildelinje i `meta`: «KI-generert · <modellnavn>» (live), «Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>» eller «Satt sammen fra beregnede tall, ikke KI-generert» (mal). I demo-modus viser appbaren også en nøytral tag, «Demo-modus». Ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand (NFR14, AD-6).
+UX-DR27: Merking av KI-kilde. Hvert forklaringspanel har en kildelinje i `meta`: «KI-generert · <modellnavn>» (godkjent live-forklaring), «Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>», «Satt sammen fra beregnede tall, ikke KI-generert» (mal), eller «Reservetekst · KI-forklaring utilgjengelig» ved `avveining_feilet` (story 5.4). Et forkastet svar merkes aldri som godkjent KI-forklaring. I demo-modus viser appbaren også en nøytral tag, «Demo-modus». Ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand (NFR14, AD-6).
 UX-DR28: Ulempeindikator (lagt til 2026-10-30). Egen kolonne i rangeringstabellen, rett etter timebelastning, med overskriften «Ulempe». Samlet poengsum står i `body`, for eksempel «182 p», og fordelingen står under i `meta`, for eksempel «kveld 16 t · helg 32 t · natt 34 t». Fordelingen bruker samme prioritet som poengene (natt > helg > kveld), så en nattetime i helgen vises som natt. En Kandidat uten Vakter i måleperioden viser «0 p», ikke tom. Indikatoren har ingen terskel, ingen linje og ingen fargeskifte, og bruker aldri `warn` eller `danger`. Den brukes i rangeringstabellen, kandidatkortet på Godkjenning og avviksnotatet (FR14).
 
 ### FR-dekningskart
@@ -295,7 +295,7 @@ So that Turnushjelperen ikke er åpen for alle (FR13).
 
 **Given** feil brukernavn eller passord
 **When** jeg prøver å logge inn
-**Then** skjemaet viser «Feil brukernavn eller passord» inline, uten kontosperring [ASSUMPTION, UX-DR4]
+**Then** skjemaet viser «Feil brukernavn eller passord.» inline (FR-13, UX-DR4)
 **And** API-et svarer med feilformen `{ "kode", "melding" }` (AD-4), og frontend henter teksten fra sin egen norske tekstliste, ikke fra `melding` (UX-DR23, NFR13)
 
 **Given** brukerkontoen for turnusansvarlig
@@ -825,6 +825,15 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 **And** annenhver rad har `row-alt` (UX-DR7)
 **And** den alfabetiske listen fra story 2.1 er erstattet av tabellen
 
+**Given** at nødvendig turnusgrunnlag er komplett
+**When** kandidatberegningen er ferdig etter vaktvalg
+**Then** vises inntil fem høyest rangerte Gyldige kandidater og antall utelukkede per Hard regel uten flere handlinger (SM-3, AV-15)
+**And** null Gyldige kandidater gir FR-6s tomtilstand
+
+**Given** at nødvendig turnusgrunnlag mangler eller er ugyldig
+**When** kandidatvurderingen stopper med Datafeil
+**Then** vises ingen Rangering eller Godkjenning (FR-1, P-08)
+
 ### Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten
 
 ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06. Storien bygger på Rangeringen i 4.4 og nøkkeltallene i 4.2 og 4.3, og kan implementeres når de er ferdige.
@@ -945,6 +954,8 @@ Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avve
 
 ### Story 5.1: Tolke tekstbaserte ansattpreferanser med KI
 
+> **Åpent før start (P-05/AD-7, PRD §8):** Felles takt og 429-venting er bestemt. Ventetrinn ved 5xx/nettverksfeil, antall automatiske forsøk, tidsbudsjett og startpunkt for målingen, samt sluttstatus for preferansetolkning ved 429, 5xx og nettverksfeil må avklares før implementasjon. Avveiningens 2/4/8 sekunder, 90 sekunder og `avveining_feilet` er ikke automatisk tolkningens kontrakt.
+
 As a turnusansvarlig,
 I want at de skrevne preferansene til de ansatte blir tolket til noe systemet kan bruke,
 So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
@@ -1023,6 +1034,8 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 **And** forklaringen kan vise til Timebelastning og Ulempebelastning med fordeling på kveld, helg og natt, men bare med tallene i `RangertKandidat`. KI regner dem aldri ut selv (NFR3, story 4.7).
 **And** KI returnerer strukturerte begrunnelser fra et avgrenset sett; koden validerer faktareferanser og retning mot uavrundede beregninger og setter inn navn/tall, uten at KI beregner dem (P-06)
 **And** kontrakten tillater bare påstandstypene i PRD FR-11: oppfyller de fire prototypereglene, navngitt faktor trekker opp/ned, eller faktor/totalscore er høyere/lavere/lik den angitte referansens. Navn, tall og sammenligningsretning kommer fra kontrollert grunnlag; «lik» krever lik uavrundet verdi
+**And** hver gyldige forklaring har minst én relevant, faktakontrollert påstand om en Myk faktor; ved én Gyldig kandidat brukes kandidatens egne faktorer uten referansesammenligning (SM-4, AV-15)
+**And** Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori/-status med poeng vises ved forklaringen, også når den erstattes med reservetekst
 
 **Given** rangeringstabellen
 **When** siden lastes
@@ -1034,7 +1047,7 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 **Given** Godkjenning-flaten
 **When** kandidatkortet vises
 **Then** Avveiningen for valgt Kandidat vises i forklaringspanelet (UX-DR12, UX-DR17)
-**And** hvert forklaringspanel, både i tabellen og på Godkjenning, viser kildelinjen «KI-generert · <modellnavn>» i live-modus (UX-DR27)
+**And** hvert panel med en godkjent live-forklaring, både i tabellen og på Godkjenning, viser kildelinjen «KI-generert · <modellnavn>» (UX-DR27)
 
 **Given** en Avveining
 **When** den er generert
@@ -1054,11 +1067,12 @@ So that jeg aldri får en anbefaling uten grunnlag, og aldri står fast (FR11, N
 **When** Avveiningen hentes
 **Then** API-et svarer med 200 og `status: "avveining_feilet"` for den Kandidaten, ikke en HTTP-feil (AD-4)
 **And** forklaringspanelet viser tydelig merket reservetekst fra frontendens tekstliste i stedet for Avveiningen (P-06, UX-DR14/23)
+**And** kildelinjen for `avveining_feilet` merker innholdet som Reservetekst og ikke som en godkjent KI-forklaring (UX-DR27)
 **And** resten av raden, Rangeringen og godkjenningen fungerer som normalt
 
-**Given** at OpenRouter svarer 429
-**When** `adaptere/ki` henter en Avveining eller tolker en preferanse
-**Then** adapteren venter til `X-RateLimit-Reset` og prøver igjen, og gir `avveining_feilet` først når 90 s er brukt (AD-7)
+**Given** at OpenRouter svarer 429 under en live Avveining
+**When** `adaptere/ki` henter forklaringen
+**Then** adapteren venter til `X-RateLimit-Reset` og prøver igjen innen tidsbudsjettet; innen 90 s fra første live-kall vises faktakontrollert forklaring eller tydelig merket reservetekst (AD-7, SM-C2, AV-15)
 **And** en felles begrenser holder adapteren under 18 kall per minutt og 5 samtidige
 
 **Given** en Avveining som nevner navnet på en Ansatt som er utelukket av en Hard regel
