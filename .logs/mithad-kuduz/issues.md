@@ -31,4 +31,4 @@
 - [x] 2026-11-11 [gjennomgang-pr-14-og-op-12](987-2026-11-11-17-20-53-gjennomgang-pr-14-og-op-12.md) — PR #14: avgjør om gjennomgangen skal postes og PR-en godkjennes på GitHub (løst 2026-11-11: godkjent på GitHub)
 - [x] 2026-11-11 [gjennomgang-pr-14-og-op-12](987-2026-11-11-17-20-53-gjennomgang-pr-14-og-op-12.md) — Story 2.3 (OP-12): start når PR #14 er merget og gruppa har avklart om overlapp også teller under 11-timersregelen (løst 2026-11-11: PR #14 merget av Mithad, e4bba2f. Overlappspørsmålet avgjort av Mithad som eier: 1A.)
 - [ ] 2026-11-11 [story-2-3-elleve-timer](986-2026-11-11-17-44-34-story-2-3-elleve-timer.md) — Story 2.3: gjennomgang fra et annet gruppemedlem av PR #15 (opprettet 2026-11-11). Implementering, agentgjennomgang og nettleserkontroll er ferdig (9f2f536, 9af4cc9)
-- [ ] 2026-11-13 [gjennomgang-pr-17](984-2026-11-13-17-38-36-gjennomgang-pr-17.md) — PR #17 (story 2.4): avgjør godkjenning og tekst på GitHub
+- [x] 2026-11-13 [gjennomgang-pr-17](984-2026-11-13-17-38-36-gjennomgang-pr-17.md) — PR #17 (story 2.4): avgjør godkjenning og tekst på GitHub (løst 2026-11-13: godkjent på GitHub)
