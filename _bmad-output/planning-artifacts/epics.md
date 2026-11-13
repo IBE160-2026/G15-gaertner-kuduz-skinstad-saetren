@@ -86,7 +86,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 
 **KI-integrasjon**
 - OpenRouter, med `openai/gpt-6-luna` som standardmodell i `OPENROUTER_MODEL` (valgt 2026-10-16, se `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`). Strukturert output brukes, og resonnering er av. Fartsgrense (429) og tom kreditt (402) gir `avveining_feilet`, ikke krasj.
-- AD-7: `adaptere/ki` holder seg under 18 kall per minutt og 5 samtidige, venter til `X-RateLimit-Reset` ved 429 og gir opp etter 90 s. Lukkede Avveininger hentes når raden åpnes.
+- AD-7: `adaptere/ki` holder seg under 18 kall per minutt og 5 samtidige og venter til `X-RateLimit-Reset` ved 429. En live Avveining gir faktakontrollert svar eller reservetekst innen 90 s fra første kall (AV-15); tolkningens eget feilbudsjett avklares før story 5.1. Lukkede Avveininger hentes når raden åpnes.
 - AD-6: `KI_MODUS=openrouter|demo`. Uten `OPENROUTER_API_KEY` starter appen i demo-modus. Valget skjer bare i oppstartslaget til `adaptere/api`.
 - Norskkvaliteten er testet før story 5.1 (`docs/ki-logg/2026-10-15-*` og `2026-10-16-*`). Luna tolket alle 15 fasittekstene i PRD §4.5 riktig i 5 av 5 runder.
 
@@ -825,6 +825,15 @@ So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3
 **And** annenhver rad har `row-alt` (UX-DR7)
 **And** den alfabetiske listen fra story 2.1 er erstattet av tabellen
 
+**Given** at nødvendig turnusgrunnlag er komplett
+**When** kandidatberegningen er ferdig etter vaktvalg
+**Then** vises inntil fem høyest rangerte Gyldige kandidater og antall utelukkede per Hard regel uten flere handlinger (SM-3, AV-15)
+**And** null Gyldige kandidater gir FR-6s tomtilstand
+
+**Given** at nødvendig turnusgrunnlag mangler eller er ugyldig
+**When** kandidatvurderingen stopper med Datafeil
+**Then** vises ingen Rangering eller Godkjenning (FR-1, P-08)
+
 ### Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten
 
 ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06. Storien bygger på Rangeringen i 4.4 og nøkkeltallene i 4.2 og 4.3, og kan implementeres når de er ferdige.
@@ -945,6 +954,8 @@ Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avve
 
 ### Story 5.1: Tolke tekstbaserte ansattpreferanser med KI
 
+> **Åpent før start (P-05/AD-7, PRD §8):** Felles takt og 429-venting er bestemt. Antall automatiske forsøk, tidsbudsjett og sluttstatus for preferansetolkning ved 429, 5xx og nettverksfeil må avklares før implementasjon. Avveiningens 90 sekunder og `avveining_feilet` er ikke automatisk tolkningens kontrakt.
+
 As a turnusansvarlig,
 I want at de skrevne preferansene til de ansatte blir tolket til noe systemet kan bruke,
 So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
@@ -1023,6 +1034,8 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 **And** forklaringen kan vise til Timebelastning og Ulempebelastning med fordeling på kveld, helg og natt, men bare med tallene i `RangertKandidat`. KI regner dem aldri ut selv (NFR3, story 4.7).
 **And** KI returnerer strukturerte begrunnelser fra et avgrenset sett; koden validerer faktareferanser og retning mot uavrundede beregninger og setter inn navn/tall, uten at KI beregner dem (P-06)
 **And** kontrakten tillater bare påstandstypene i PRD FR-11: oppfyller de fire prototypereglene, navngitt faktor trekker opp/ned, eller faktor/totalscore er høyere/lavere/lik den angitte referansens. Navn, tall og sammenligningsretning kommer fra kontrollert grunnlag; «lik» krever lik uavrundet verdi
+**And** hver gyldige forklaring har minst én relevant, faktakontrollert påstand om en Myk faktor; ved én Gyldig kandidat brukes kandidatens egne faktorer uten referansesammenligning (SM-4, AV-15)
+**And** Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori/-status med poeng vises ved forklaringen, også når den erstattes med reservetekst
 
 **Given** rangeringstabellen
 **When** siden lastes
@@ -1056,9 +1069,9 @@ So that jeg aldri får en anbefaling uten grunnlag, og aldri står fast (FR11, N
 **And** forklaringspanelet viser tydelig merket reservetekst fra frontendens tekstliste i stedet for Avveiningen (P-06, UX-DR14/23)
 **And** resten av raden, Rangeringen og godkjenningen fungerer som normalt
 
-**Given** at OpenRouter svarer 429
-**When** `adaptere/ki` henter en Avveining eller tolker en preferanse
-**Then** adapteren venter til `X-RateLimit-Reset` og prøver igjen, og gir `avveining_feilet` først når 90 s er brukt (AD-7)
+**Given** at OpenRouter svarer 429 under en live Avveining
+**When** `adaptere/ki` henter forklaringen
+**Then** adapteren venter til `X-RateLimit-Reset` og prøver igjen innen tidsbudsjettet; innen 90 s fra første live-kall vises faktakontrollert forklaring eller tydelig merket reservetekst (AD-7, SM-C2, AV-15)
 **And** en felles begrenser holder adapteren under 18 kall per minutt og 5 samtidige
 
 **Given** en Avveining som nevner navnet på en Ansatt som er utelukket av en Hard regel

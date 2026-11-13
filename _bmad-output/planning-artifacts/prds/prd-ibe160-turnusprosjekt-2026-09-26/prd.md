@@ -12,7 +12,7 @@ updated: 2026-11-13
 
 Denne PRD-en er skrevet for prosjektgruppen selv (4 medlemmer) og bygger videre på `product-brief.md` og dens `addendum.md`. Den definerer *hva* Turnushjelperen skal gjøre og *hvorfor*, som grunnlag for arkitektur, epics/stories og den godkjente proposalen til IBE160. Krav er gruppert per funksjon med globalt nummererte FR-er; antakelser er merket `[ASSUMPTION]` inline og samlet i §9.
 
-**Hva `status: final` betyr:** Kravene er låst og endres bare etter gruppevedtak. Implementasjonen er ikke ferdig. Status for hver story står i `sprint-status.yaml`, og kontroller som gjenstår, står i epics. De få spørsmålene som fortsatt er åpne, står i §8 med eier og frist.
+**Hva `status: final` betyr:** Vedtatte krav og suksessmål endres bare etter gruppevedtak. Implementasjonen er ikke ferdig. Status for hver story står i `sprint-status.yaml`, og kontroller som gjenstår, står i epics. De få spørsmålene som fortsatt er åpne, står i §8 med eier og frist.
 
 **Lesemåte:** Kravene skal kunne leses uten andre filer. Hvor kravene kommer fra (beslutnings-ID-er, stories og arkitekturvalg), står samlet i §10. Hvert FR er merket med prioritet:
 - **Kjerne:** må virke for at produktet virker.
@@ -257,7 +257,7 @@ Kostnad vektes med 40 %, arbeidsbelastning med 35 % og Ansattpreferanse med 25 %
 
 Totalscore = 0,40 × kostnadspoeng + 0,20 × timebelastningspoeng + 0,15 × Ulempescore + 0,25 × preferansepoeng. Kompetanse vurderes utelukkende som Hard regel i FR-2.
 
-Kostnad og Timebelastning bruker en skala relativ til de Gyldige kandidatene. Ulempebelastning bruker fast skala, slik at små forskjeller i Ulempepoeng ikke gir store utslag (begrunnelse i §4.3). Vektene og taket for Ulempescore ligger samlet som navngitte parametere i domenekjernen.
+Kostnad og Timebelastning bruker en skala relativ til de Gyldige kandidatene. Ulempebelastning bruker fast skala, slik at små forskjeller i Ulempepoeng ikke gir store utslag (begrunnelse i §4.3). Vektene og taket for Ulempescore er faste for samme beslutningsgrunnlag.
 
 **Like verdier og avrunding:** Hvis alle Gyldige kandidater har samme kostnad eller samme Timebelastning, får alle 50 poeng for den aktuelle faktoren. Dette gjelder også når bare én Kandidat er gyldig. Faktorpoeng og totalscore beregnes og sorteres uavrundet; ved identisk totalscore sorteres Kandidatene på stigende ansatt-ID. Faktorpoeng og totalscore avrundes bare ved visning, til én desimal. Lik visningsscore betyr derfor ikke nødvendigvis lik totalscore.
 
@@ -295,7 +295,7 @@ Registrerte Ansattpreferanser gjelder hele demonstrasjonsperioden. v1 har ikke p
 - Alle de 15 definerte preferansetekstene under skal tolkes til forventet kategori. Eksakt ordlyd i KI-forklaringen er ikke en del av fasiten.
 - Manglende registrert preferanse gir 50 poeng og merkes «ingen registrert preferanse». Det skal ikke fremstilles som et uttrykkelig nøytralt ønske.
 - Registrert tekst som venter på første tolkning gir midlertidig 50 poeng med «Preferanse venter på tolkning»; feilet/ugyldig tolkning gir midlertidig 50 med «Preferanse kunne ikke tolkes». Råteksten og status beholdes, uten oppdiktet nøytral tolkning. Kandidaten utelukkes ikke, og brukeren ser at rangeringen kan endres.
-- Ved forbigående feil (nettverksfeil, serverfeil eller for mange kall) gjør systemet høyst tre automatiske nye forsøk. Senest 90 sekunder etter første kall får tolkningen status feilet. Etter endelig feil kan Turnusansvarlig be om nytt forsøk. Vellykket tolkning lagres for den aktuelle teksten og oppdaterer rangeringen før bekreftelse; endret tekst bruker aldri gammel tolkning. En gyldig kategori som oppdages som semantisk feil følger feilflyten. Ukjent tekst i Demo-modus er ikke «ingen registrert».
+- Ved forbigående feil (nettverksfeil, serverfeil eller for mange kall) gjør systemet avgrensede automatiske nye forsøk. Etter endelig feil kan Turnusansvarlig be om nytt forsøk. Vellykket tolkning lagres for den aktuelle teksten og oppdaterer rangeringen før bekreftelse; endret tekst bruker aldri gammel tolkning. En gyldig kategori som oppdages som semantisk feil følger feilflyten. Ukjent tekst i Demo-modus er ikke «ingen registrert». Tidsbudsjett, antall forsøk og sluttstatus for preferansetolkning avklares før story 5.1 (§8); avveiningens 90-sekundersgrense i SM-C2 overføres ikke automatisk til tolkning.
 
 **Preferansekategorier og poeng:**
 
@@ -386,7 +386,7 @@ Turnusansvarlig kan logge inn med brukernavn og passord for å få tilgang til T
 - Ingen funksjonalitet i §4.1–§4.6 er tilgjengelig uten gyldig innlogging. Det gjelder både sidene og API-et.
 - Feil brukernavn og feil passord gir samme melding, «Feil brukernavn eller passord.», slik at meldingen ikke røper hvilket som var feil.
 - Passord lagres aldri i klartekst, bare som saltet hash.
-- En økt varer i 480 minutter (én vakt). Når økten er utløpt, sendes Turnusansvarlig til innloggingen, og ingen data vises. Turnusansvarlig kan også logge ut selv.
+- En økt varer som standard i 480 minutter (én vakt); varigheten kan overstyres med `TURNUSHJELPEREN_JWT_MINUTTER`. Når økten er utløpt, sendes Turnusansvarlig til innloggingen, og ingen data vises. Turnusansvarlig kan også logge ut selv.
 - API-nøkler og andre hemmeligheter ligger aldri i repoet, i testdataene eller i grensesnittet.
 
 **Out of Scope:**
@@ -429,18 +429,18 @@ Alle FR-ene i §4 er Kjerne.
 
 **Strekk (bare hvis det er tid igjen):**
 - Valgfri sammenligning av to merkede Kandidater i forklaringen (FR-11). *Begrunnelse:* Standardsammenligningen med én referanse dekker brukerreisen.
-- Historisk lagring av nøyaktig vist forklaring og beregningsgrunnlag ved Godkjenning (FR-12). *Begrunnelse:* Ikke krav i v1, og det trenger egen beslutning og story før det kan bygges.
 
 **Utenfor v1:**
 - Alt listet i §5 Ikke-mål. Ansattportal og mer avansert autentisering er senere muligheter.
+- Historisk lagring av nøyaktig vist forklaring og beregningsgrunnlag ved Godkjenning (P-12B) er en senere mulighet, ikke et v1-krav. Et eventuelt arbeid krever eget vedtak og story.
 
 ## 7. Suksesskriterier
 
 **Primære**
 - **SM-1**: 100 % av Kandidatene som bryter en implementert Hard regel filtreres bort i definerte testscenarioer. Validerer FR-2 til FR-5.
 - **SM-2**: En Kandidat utelukket av en Hard regel blir aldri anbefalt av KI — testbar invariant. Validerer FR-9, FR-11.
-- **SM-3**: Turnusansvarlig får presentert inntil fem av de høyest rangerte Gyldige kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. *Forslag til målbar form (Mithad, 2026-11-13), ikke vedtatt av gruppa:* Rett etter vaktvalg, uten flere handlinger, vises inntil fem høyest rangerte Gyldige kandidater sammen med antall utelukkede per Hard regel. Validerer FR-1, FR-9.
-- **SM-4**: Systemet forklarer hvilke faktorer som påvirker Rangeringen av hver Kandidat. *Forslag til målbar form (Mithad, 2026-11-13), ikke vedtatt av gruppa:* Hver forklaring nevner minst den Myke faktoren som bidrar mest til forskjellen mot referansekandidaten, med tall fra regelmotoren. Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori vises alltid med tall ved siden av forklaringen, også når Reservetekst vises. Validerer FR-11.
+- **SM-3**: Når kandidatberegningen for en Vakt er ferdig, vises inntil fem høyest rangerte Gyldige kandidater og antall utelukkede per Hard regel uten flere handlinger fra Turnusansvarlig. Ved null Gyldige kandidater vises FR-6s tomtilstand; ved Datafeil vises ingen rangering. Testes på fiktiv Turnus med 20–30 Ansatte. Validerer FR-1, FR-6 og FR-9. Vedtatt av Kim på vegne av gruppa 2026-11-13 (AV-15).
+- **SM-4**: Hver gyldige KI-forklaring inneholder minst én relevant, faktakontrollert påstand om en Myk faktor. Sammenligning bruker bare den forhåndsberegnede referansekandidaten; ved én Gyldig kandidat forklares kandidatens egne faktorer uten sammenligning. Ved feil vises tydelig merket Reservetekst i stedet for en KI-forklaring. Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori/-status med poeng vises ved forklaringen, også ved Reservetekst. Krav om at en bestemt faktor må bidra mest inngår ikke. Validerer FR-11. Vedtatt av Kim på vegne av gruppa 2026-11-13 (AV-15).
 - **SM-5**: Samme strukturerte input gir samme resultat hver gang for Harde regler, kostnadsberegninger, Timebelastning og Ulempebelastning (reproduserbarhet). Validerer FR-2 til FR-9 og FR-14.
 - **SM-6**: Minst ett scenario demonstrerer at den billigste Kandidaten ikke nødvendigvis rangeres høyest. Validerer FR-9.
 - **SM-7**: KI tolker alle 15 definerte preferansetekster i §4.5 til forventet kategori og bruker tolkningen i forklaringen. Manglende registrert preferanse gir 50 poeng og vises som «ingen registrert preferanse». Validerer FR-10, FR-11.
@@ -449,7 +449,7 @@ Alle FR-ene i §4 er Kjerne.
 
 **Motmetrikker (skal ikke optimeres)**
 - **SM-C1**: Antall implementerte Harde regler skal ikke maksimeres på bekostning av testdekning per regel — addendums anbefaling («fire regler som beviselig fungerer er verdt mer enn tolv som er halvveis») veier tyngre enn regelmengde. Motvirker en eventuell trang til å utvide §4.2 uten tilsvarende testarbeid.
-- **SM-C2**: Rask responstid på KI-forklaringen skal ikke optimeres på bekostning av at forklaringen faktisk er korrekt og aldri nevner en utelukket Kandidat. Motvirker SM-3/SM-4 ved å hindre at hastighet trumfer den testbare invarianten i SM-2. *Forslag til målbar form (Mithad, 2026-11-13), ikke vedtatt av gruppa:* Ingen KI-forklaring vises før faktakontrollen i FR-11 er bestått, og senest 90 sekunder etter første kall vises Reservetekst i stedet.
+- **SM-C2**: Korrekthet går foran responstid: Ingen live KI-forklaring vises før faktakontrollen i FR-11 er bestått. Innen 90 sekunder fra første live-kall for en Avveining vises enten en godkjent forklaring eller tydelig merket Reservetekst (AD-7). Grensen regnes ikke fra vaktvalget; lukkede forklaringer hentes når raden åpnes. Demo-modus gjør ikke live-kall. Validerer FR-11 og SM-2. Vedtatt av Kim på vegne av gruppa 2026-11-13 (AV-15).
 
 ## 8. Åpne spørsmål
 
@@ -457,17 +457,17 @@ Disse spørsmålene er ikke avgjort. Hvert har eier og frist.
 
 | Spørsmål | Eier | Frist |
 |---|---|---|
-| Skal Turnushjelperen støtte mobil og nettbrett, og i så fall med hvilken visning? Desktop er bindende nå. | Hele gruppa | Etter at kandidatvisningen virker, og før story 4.6 ferdigstilles |
-| Hvilken OpenRouter-nøkkel får sensor, hvem betaler, og hvor mye kreditt får den? Den felles utviklingsnøkkelen eller en egen sensornøkkel. | Ikke bestemt | Før innlevering, ut fra faktisk forbruk |
-| Skal de målbare formene av SM-3, SM-4 og SM-C2 i §7 vedtas, endres eller strykes? | Hele gruppa | Før story 5.3 (Avveining per kandidat) starter |
+| Skal Turnushjelperen støtte mobil og nettbrett, og i så fall med hvilken visning? Desktop er bindende nå. | Hele gruppa (AV-16) | Etter at kandidatvisningen virker, og før story 4.6 ferdigstilles |
+| Hvilken OpenRouter-nøkkel får sensor, hvem betaler, og hvor mye kreditt får den? Den felles utviklingsnøkkelen eller en egen sensornøkkel. | Hele gruppa (AV-16) | Før innlevering, ut fra faktisk forbruk |
+| Hvilket tidsbudsjett, hvor mange nye forsøk og hvilken sluttstatus skal preferansetolkning ha ved nettverks-/serverfeil og 429? P-05 krever avgrensede forsøk og egen status; AD-7s 90 sekunder og `avveining_feilet` beskriver Avveining. | Hele gruppa | Før story 5.1 starter |
 
 ### 8.1 Gjennomføring og kontroll (ikke krav)
 
-Kravene over er vedtatt. Kontrollene under er arbeid som gjenstår i stories og tester, ikke åpne spørsmål. Status står i `sprint-status.yaml` og epics.
+Produktkravene i §4 og suksessmålene i §7 er vedtatt. Spørsmålene i tabellen over er fortsatt åpne. Kontrollene under er arbeid som gjenstår i stories og tester, ikke åpne spørsmål. Status står i `sprint-status.yaml` og epics.
 
 1. P-01–P-04: Implementer og test merkostnad per berørt uke, ukeskifte/sommertid, detaljert kostnadsvisning og 32:23/32:24-grensen. Ingrid beholdes på 32 timer. Forventningen i spesifikasjonen for story 1.2 er rettet 2026-11-10, og fasiten for #4127 er uendret.
 2. P-05–P-07: Fastsett KI-kontrakten i stories/arkitektur og test ventende/feilet tolkning, nye forsøk, faktakontroll og referanseregelen mot falsk OpenRouter. Manuell kontroll av norsk og mening kommer i tillegg.
-3. P-08/P-09/P-11: Datafeil ved periodekanten, også for #4261–#4265, er bygd og testet i story 2.1–2.3. Gjenstår: gammelt svar og endret beslutningsgrunnlag (Epic 3), og tydelig forskjell mellom Datafeil og null gyldige (story 2.6).
+3. P-08/P-09/P-11: Datafeil ved periodekanten, også for #4261–#4265, er bygd og testet i story 2.1–2.4. Gjenstår: gammelt svar og endret beslutningsgrunnlag (Epic 3), og tydelig forskjell mellom Datafeil og null gyldige (story 2.6).
 4. P-10B: Story 5.9 er planlagt i backlog; prioriter implementasjon først etter fungerende kjerneflyt. Hvis tiden ikke rekker, før den som utsatt. P-12B krever først senere valg og er ikke v1-krav.
 5. P-13/OP-02: Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Gjennomfør og dokumenter en liten oppgavebasert forståelsestest: forklar nr. 1 uten hint, finn en annen gyldig Kandidat, skill datafeil fra null gyldige. Én testperson og ett operativsystem og én skjermflate holder. Akseptmål: alle tre oppgavene løses uten hint. Ellers rettes og noteres det som skapte misforståelsen. Testen er besluttet, ikke utført.
 6. E-02: Kontroller levert funksjonalitet mot den godkjente proposalen i `ee6d798` ved innlevering, og forklar planavvik. E-01 er lukket: KI i produktet er et valgt produktscope, ikke et formelt emnekrav ifølge Johannes' gjengivelse av faglærers muntlige utsagn; forelesningsdato er ukjent.
@@ -502,9 +502,10 @@ Kravene i §4 står alene. Tabellen viser hvor de kommer fra, slik at den som sk
 | §4.3 Ulempemodell, FR-14 | ÅB-3 (utvidet), AV-09 (672 t), AV-11 (tak 300). Regneeksemplene: `scripts/ulempe_regneeksempler.py`. | 4.7 |
 | FR-8 | P-02, P-04 (32,4 t). Ingrid i testdataene har 32 t og er under grensen. | 4.1, 4.2 |
 | §4.4, FR-9 | AV-05, K-03, AV-12 (#4127: Jonas og Mette, 7,0 totalpoeng), KS-02 | 4.4 |
-| FR-10 | P-05, OP-03, AV-06. Tre nye forsøk og 90 sekunder er fra AD-7. | 5.1, 5.2 |
+| FR-10 | P-05, OP-03, AV-06. AD-7 gir felles takt og 429-venting; tolkningens tidsbudsjett og sluttstatus avklares før story 5.1. | 5.1, 5.2 |
 | FR-11 | P-06, P-07, K-04, AD-6 (Demo-modus) | 5.3–5.7 |
 | FR-12 | P-08, P-09, P-12, AD-5 | 3.1, 3.2 |
-| FR-13 | Brief (én rolle). Bygd i story 1.3 og 1.4: scrypt med salt, økt i 480 minutter (`TURNUSHJELPEREN_JWT_MINUTTER`), ny kontroll og utlogging. | 1.3, 1.4 |
-| §6.2 | P-10B, P-07 (valgfri sammenligning), P-12B | 5.9 |
-| §8 Åpne spørsmål | OP-02 og P-13 (mobil og nettbrett), ÅB-8 (sensornøkkel) | 4.6, 5.8 |
+| FR-13 | Brief (én rolle), OP-10/AD-3. Bygd i story 1.3 og 1.4: scrypt med salt, standardøkt 480 minutter som kan overstyres med `TURNUSHJELPEREN_JWT_MINUTTER`, ny kontroll og utlogging. | 1.3, 1.4 |
+| §6.2 | P-10B, P-07 (valgfri sammenligning), P-12B (utenfor v1) | 5.9 |
+| §7 SM-3/SM-4/SM-C2 | AV-15, P-06/P-07, AD-7. SM-3 avklart før story 4.4; SM-4/SM-C2 før story 5.3. | 4.4, 5.3, 5.4 |
+| §8 Åpne spørsmål | OP-02/P-13 og AV-16 (mobil og nettbrett), ÅB-8/AV-16 (sensornøkkel), P-05/AD-7 (tolkningens feilbudsjett) | 4.6, 5.1, 5.8 |
