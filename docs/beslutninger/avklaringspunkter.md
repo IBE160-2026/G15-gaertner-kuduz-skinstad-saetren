@@ -77,7 +77,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
-| OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12, PR-gjennomgang gjenstår | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
+| OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12; PR #17 godkjent og merget av Mithad 2026-11-13 | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
 
 ## 3. Detaljerte hovedbeslutninger
 
