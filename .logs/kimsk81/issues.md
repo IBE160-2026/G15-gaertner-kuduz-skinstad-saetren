@@ -1,5 +1,9 @@
 # Åpne punkter
 
+- [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett #4189-testen for tom gyldigliste, løs fire dokumentkonflikter mot gjeldende `main`, og kjør tester på faktisk sammenslåingsresultat før godkjenning.
+- [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett eller avklar misvisende tekst om «Godkjenn erstatning» i 3.1 og vis sluttdato for nattvakter i bekreftelsen.
+- [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Avklar «Avbryt uten kall» mot de to GET-kallene ved retur, og følg opp den utsatte komponenttesten.
+
 - [x] 2026-11-09 [Story 1.6 – mergehistorikk](985-2026-11-09-18-33-00-story-1-6-vaktdetaljer.md) — Bekreft på GitHub om PR #11 hadde menneskelig gjennomgang og om CI var kontrollert før merge; lokal git-historikk gir ikke dette beviset. (løst 2026-11-09: brukeren opplyste at han selv godkjente PR-en og at CI bestod)
 
 - [ ] 2026-11-08 [Gjennomgang av PR #10](988-2026-11-08-18-44-03-gjennomgang-pr-10.md) — Kontroller tomtilstanden og feil-/prøv-igjen-tilstanden i Vaktvalg i nettleser. Også dokumentert i `deferred-work.md` og Mithads `issues.md`.
