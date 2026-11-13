@@ -439,8 +439,8 @@ Alle FR-ene i §4 er Kjerne.
 **Primære**
 - **SM-1**: 100 % av Kandidatene som bryter en implementert Hard regel filtreres bort i definerte testscenarioer. Validerer FR-2 til FR-5.
 - **SM-2**: En Kandidat utelukket av en Hard regel blir aldri anbefalt av KI — testbar invariant. Validerer FR-9, FR-11.
-- **SM-3**: Turnusansvarlig får presentert inntil fem av de høyest rangerte Gyldige kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. *Forslag til målbar form, ikke vedtatt:* Rett etter vaktvalg, uten flere handlinger, vises inntil fem høyest rangerte Gyldige kandidater sammen med antall utelukkede per Hard regel. Validerer FR-1, FR-9.
-- **SM-4**: Systemet forklarer hvilke faktorer som påvirker Rangeringen av hver Kandidat. *Forslag til målbar form, ikke vedtatt:* Hver forklaring, også Reserveteksten, viser Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori med tallene regelmotoren har beregnet. Validerer FR-11.
+- **SM-3**: Turnusansvarlig får presentert inntil fem av de høyest rangerte Gyldige kandidatene for en fiktiv Turnus (20–30 ansatte) uten å måtte kontrollere alle manuelt. *Forslag til målbar form (Mithad, 2026-11-13), ikke vedtatt av gruppa:* Rett etter vaktvalg, uten flere handlinger, vises inntil fem høyest rangerte Gyldige kandidater sammen med antall utelukkede per Hard regel. Validerer FR-1, FR-9.
+- **SM-4**: Systemet forklarer hvilke faktorer som påvirker Rangeringen av hver Kandidat. *Forslag til målbar form (Mithad, 2026-11-13), ikke vedtatt av gruppa:* Hver forklaring nevner minst den Myke faktoren som bidrar mest til forskjellen mot referansekandidaten, med tall fra regelmotoren. Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori vises alltid med tall ved siden av forklaringen, også når Reservetekst vises. Validerer FR-11.
 - **SM-5**: Samme strukturerte input gir samme resultat hver gang for Harde regler, kostnadsberegninger, Timebelastning og Ulempebelastning (reproduserbarhet). Validerer FR-2 til FR-9 og FR-14.
 - **SM-6**: Minst ett scenario demonstrerer at den billigste Kandidaten ikke nødvendigvis rangeres høyest. Validerer FR-9.
 - **SM-7**: KI tolker alle 15 definerte preferansetekster i §4.5 til forventet kategori og bruker tolkningen i forklaringen. Manglende registrert preferanse gir 50 poeng og vises som «ingen registrert preferanse». Validerer FR-10, FR-11.
@@ -449,7 +449,7 @@ Alle FR-ene i §4 er Kjerne.
 
 **Motmetrikker (skal ikke optimeres)**
 - **SM-C1**: Antall implementerte Harde regler skal ikke maksimeres på bekostning av testdekning per regel — addendums anbefaling («fire regler som beviselig fungerer er verdt mer enn tolv som er halvveis») veier tyngre enn regelmengde. Motvirker en eventuell trang til å utvide §4.2 uten tilsvarende testarbeid.
-- **SM-C2**: Rask responstid på KI-forklaringen skal ikke optimeres på bekostning av at forklaringen faktisk er korrekt og aldri nevner en utelukket Kandidat. Motvirker SM-3/SM-4 ved å hindre at hastighet trumfer den testbare invarianten i SM-2. *Forslag til målbar form, ikke vedtatt:* Ingen KI-forklaring vises før faktakontrollen i FR-11 er bestått, og senest 90 sekunder etter første kall vises Reservetekst i stedet.
+- **SM-C2**: Rask responstid på KI-forklaringen skal ikke optimeres på bekostning av at forklaringen faktisk er korrekt og aldri nevner en utelukket Kandidat. Motvirker SM-3/SM-4 ved å hindre at hastighet trumfer den testbare invarianten i SM-2. *Forslag til målbar form (Mithad, 2026-11-13), ikke vedtatt av gruppa:* Ingen KI-forklaring vises før faktakontrollen i FR-11 er bestått, og senest 90 sekunder etter første kall vises Reservetekst i stedet.
 
 ## 8. Åpne spørsmål
 
