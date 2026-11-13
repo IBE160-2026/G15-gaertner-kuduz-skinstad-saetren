@@ -28,6 +28,7 @@ Bård Pettersen la inn formativ tilbakemelding på PRD-en 12.11 (`tilbakemelding
   - Lenkemålene og storynumrene i §10 er kontrollert mot epics og filene.
   - PRD-en er cirka 7 000 ord. Den var cirka 6 500 før, så sporingstabellen og ordlisten veier opp for historikken som ble flyttet ut.
 - **Funn utenfor PRD-en:** Bårds fil `technology.md` i arkitekturmappen gjelder et annet prosjekt (pytagoras-website-v2).
+- **SM-tallene:** Mithad gikk gjennom forslagene og valgte dem som anbefalt. SM-4 ble endret til «minst den viktigste faktoren med tall, og alle fire nøkkeltall vises ved siden av», fordi det første forslaget kolliderte med P-06. Forslagene er merket som Mithads, ikke vedtatt av gruppa.
 - Ikke pushet, og ingen PR ennå.
 
 ### Åpne punkter
