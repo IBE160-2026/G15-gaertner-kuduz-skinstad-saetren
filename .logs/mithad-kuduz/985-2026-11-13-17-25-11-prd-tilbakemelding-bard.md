@@ -29,10 +29,10 @@ Bård Pettersen la inn formativ tilbakemelding på PRD-en 12.11 (`tilbakemelding
   - PRD-en er cirka 7 000 ord. Den var cirka 6 500 før, så sporingstabellen og ordlisten veier opp for historikken som ble flyttet ut.
 - **Funn utenfor PRD-en:** Bårds fil `technology.md` i arkitekturmappen gjelder et annet prosjekt (pytagoras-website-v2).
 - **SM-tallene:** Mithad gikk gjennom forslagene og valgte dem som anbefalt. SM-4 ble endret til «minst den viktigste faktoren med tall, og alle fire nøkkeltall vises ved siden av», fordi det første forslaget kolliderte med P-06. Forslagene er merket som Mithads, ikke vedtatt av gruppa.
-- Ikke pushet, og ingen PR ennå.
+- Branchen er pushet, og PR #18 er opprettet mot `main` med teksten Mithad godkjente.
 
 ### Åpne punkter
 
-- PR for PRD-rettingene, og gjennomgang fra et annet gruppemedlem.
+- Gjennomgang av PR #18 fra et annet gruppemedlem.
 - Gruppa må ta stilling til forslagene for SM-3, SM-4 og SM-C2 og til de tre åpne spørsmålene i §8.
 - Spør Bård om `technology.md` i arkitekturmappen er lagt der med vilje.
