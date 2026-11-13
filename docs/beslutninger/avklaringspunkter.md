@@ -78,6 +78,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
 | OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12; PR #17 godkjent og merget av Mithad 2026-11-13 | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
+| OP-15 | Story 2.5 | Meldt 2026-11-13 | Mithad Kuduz tar Story 2.5, Ekskludert-boks med oppsummering av utelukkelser. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -673,6 +674,17 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kjente begrensninger, godtatt av Mithad 2026-11-11:** `datagrense` i datafeilsvaret er `turnus.periode_slutt` også når det er historikkstarten som ikke holder, og en egen vakt som starter før historikkstarten og slutter etter den, regnes som kjent data. Ingen vakt i perioden treffer den nedre grensen.
 - **Grunnlag:** [spesifikasjonen for Story 2.3](../../_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md) og [KI-loggen](../ki-logg/2026-11-11-11-timersregelen.md).
 - **Ikke endret:** Vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-13 – Story 2.5 (OP-15)
+
+- **Hvem:** Mithad Kuduz meldte 2026-11-13 at han tar Story 2.5. Det er en melding om ansvar, ikke et gruppevedtak. Gruppa kan si fra hvis noen allerede er i gang.
+- **OP-15 – Story 2.5, Ekskludert-boks med oppsummering av utelukkelser:**
+  - Mithad Kuduz er ansvarlig.
+  - Implementeringen starter fra `main` etter at story 2.4 (PR #17) er merget. Alle fire harde reglene er nå på plass.
+  - Bygges med Claude Sonnet 5, etter anbefalingen i `docs/modellvalg-stories.md` (UI over regelmotorens ferdige resultat).
+  - Kjent avvik fra §11-vedtaket om Story 2.4: beslutning A der lar en overlappende vakt telle som brudd på både kollisjon og 35-timersregelen. Oppsummeringen i 2.5 må telle en Ansatt riktig selv om vedkommende har flere årsaker (epics, story 2.5).
+- **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 2.5.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ### 2026-11-12 – Story 2.4 (OP-14): 35-timersregelen, uke som vindu og beslutning A og B
 
