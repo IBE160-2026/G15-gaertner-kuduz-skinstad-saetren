@@ -25,8 +25,9 @@ from adaptere.lagring.database import lag_engine, lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
+from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
-from domene.regelmotor.vurdering import vurder_kandidater
+from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
 from domene.typer import Datafeil
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
@@ -125,11 +126,31 @@ class KandidatUt(BaseModel):
     kompetansenivå: int
 
 
+class RegelAntallUt(BaseModel):
+    årsak: str
+    antall: int
+
+
+class EkskludertKandidatUt(BaseModel):
+    id: int
+    navn: str
+    årsaker: tuple[str, ...]
+
+
+class UtelukkelsesOppsummeringUt(BaseModel):
+    """Ekskludert-boksen (UX-DR15): totalt, per hard regel og hele listen."""
+
+    totalt: int
+    per_regel: tuple[RegelAntallUt, ...]
+    utelukkede: tuple[EkskludertKandidatUt, ...]
+
+
 class KandidaterUt(BaseModel):
-    """Bare Gyldige kandidater, alfabetisk (NFR2). Utelukkede sendes ikke ennå."""
+    """Bare Gyldige kandidater, alfabetisk (NFR2). `utelukkelser` dekker resten."""
 
     status: Literal["ok"]
     kandidater: list[KandidatUt]
+    utelukkelser: UtelukkelsesOppsummeringUt
 
 
 class DatafeilUt(BaseModel):
@@ -244,12 +265,14 @@ def lag_app(
             # Grunnene sendes ikke til frontend, men må kunne ses ved feilsøking.
             logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
             return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
+        oppsummering: UtelukkelsesOppsummering = lag_utelukkelsesoppsummering(vurdering)
         return KandidaterUt(
             status="ok",
             kandidater=[
                 KandidatUt(id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt))
                 for k in vurdering.gyldige
             ],
+            utelukkelser=UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True),
         )
 
     @app.post("/api/utlogging", status_code=204)

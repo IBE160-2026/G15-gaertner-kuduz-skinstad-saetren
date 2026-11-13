@@ -178,7 +178,14 @@ regler: kompetanse-minstekravet (FR2), kolliderende vakt (FR3), 11-timersregelen
 (FR4) og 35-timersregelen (FR5). I testdataene gir #4127 4 gyldige (Ingrid Dahl,
 Jonas Bakke, Mette Solberg og Thomas Nygård) og #4189 0. Når ingen er gyldige, står
 det «Ingen gyldige kandidater for denne vakten.», til story 2.6 innfører
-tomtilstanden. En vakt der hvilen før eller etter eller en berørt kalenderuke ikke
+tomtilstanden. Under listen (eller under tomteksten) viser Ekskludert-boksen
+(story 2.5, UX-DR15) hvor mange som er utelukket og av hvilken regel, for eksempel
+«20 utelukket av harde regler · 8 under kompetanse-minstekrav · 7 kolliderende
+vakt · 4 brudd på 11-timersregelen · 1 brudd på 35-timersregelen» for #4127 og
+«24 utelukket …» for #4189. «Vis full liste ▾» viser hver utelukket ansatt med
+navn og alle årsakene. Boksen vises bare når minst én kandidat er utelukket, og en
+kandidat som bryter flere regler telles én gang i totalen og under hver regel den
+bryter. En vakt der hvilen før eller etter eller en berørt kalenderuke ikke
 kan kontrolleres fordi testdataene slutter 05.10 kl. 00:00, gir en melding om
 manglende turnusgrunnlag (P-08). Det kan ikke nås
 gjennom vanlig bruk, fordi bare #4127 og #4189 mangler bemanning, og begge ligger
@@ -196,7 +203,10 @@ unntatt `GET /api/helse`, `POST /api/innlogging` og `GET /api/innloggingsinfo`.
 gir bare detaljer for en ubemannet vakt i innlogget brukers turnus og visningsperiode.
 `GET /api/vakter/{vaktnummer}/kandidater` gir de gyldige kandidatene for samme
 vakter, med samme 401 og 404. Svaret er `{"status": "ok", "kandidater": [{id, navn,
-kompetansenivå}]}` med bare gyldige kandidater. Mangler eller er turnusgrunnlaget
+kompetansenivå}], "utelukkelser": {"totalt", "per_regel": [{"årsak", "antall"}],
+"utelukkede": [{"id", "navn", "årsaker"}]}}`. `kandidater` er fortsatt bare
+gyldige kandidater; `utelukkelser` er bygd av regelmotoren fra alle utelukkede, til
+Ekskludert-boksen (story 2.5). Mangler eller er turnusgrunnlaget
 ugyldig, for eksempel fordi vakten slutter etter datagrensen 05.10.2026 kl. 00:00,
 er svaret fortsatt 200, men `{"status": "datafeil", "kode": "mangler_turnusgrunnlag",
 "datagrense": "2026-10-05T00:00:00+02:00"}` uten liste (P-08). Reglene beregnes i
