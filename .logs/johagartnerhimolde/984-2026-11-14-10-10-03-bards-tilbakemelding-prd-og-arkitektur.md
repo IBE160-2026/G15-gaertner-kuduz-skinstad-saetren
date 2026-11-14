@@ -20,3 +20,21 @@ Johannes ba (via `bmad-help`) om å bli tatt gjennom Bårds tilbakemelding på P
 ### Åpne punkter
 - Gruppa bør svare på Bårds to refleksjonsspørsmål (regneeksemplene for taket på 300 og hvilke KI-forslag som ble godtatt uten å kutte). Det er godt materiale for KI-dokumentasjonen.
 - Vurder om en komponentrigg (Vitest + Testing Library, eventuelt Playwright for e2e) skal inn i arkitekturen, siden den mangler i 2.4, 2.5 og 3.1 (`deferred-work.md`).
+
+## 2026-11-14 kl. 10:16 — johagartnerHiMolde
+
+### Oppgave
+Johannes ba om fordeler og ulemper, arbeidsmengde og konsekvenser ved å innføre et testoppsett for frontend-komponenter.
+
+### Plan
+- Kartla dagens oppsett: `node --test` med `rolldown`-bunting av rene moduler (5 testfiler, 48 tester), ingen rendring av komponenter.
+- Talte utsatte punkter som skyldes manglende rigg i `deferred-work.md` og spesifikasjonene: 1.5, 2.1, 2.4, 3.1 og to avviste rader i 2.5.
+- Sjekket Testing-raden i ARCHITECTURE-SPINE (bare pytest) og kriterium 3 i sensorveiledningen.
+
+### Resultat
+- Anbefaling til Johannes: Vitest + Testing Library + jsdom i en egen liten PR før 3.2, cirka en halv til én dag. De eksisterende testene beholdes. Testene som mangler skrives når komponentene endres likevel (2.6, 3.2), pluss noen få utvalgte nå. Playwright venter, eventuelt til 4.6 eller en røyktest før innlevering.
+- Vitest-versjonen må prøves mot Vite 8, React 19.3 og TypeScript 7. Kompatibiliteten er ikke kontrollert.
+- Ingen filer er endret.
+
+### Åpne punkter
+- Beslutningen om rigg står som åpent punkt i `issues.md` fra økten over.
