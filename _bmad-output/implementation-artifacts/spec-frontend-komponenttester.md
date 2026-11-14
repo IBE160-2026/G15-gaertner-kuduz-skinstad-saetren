@@ -100,6 +100,8 @@ context:
 
 ## Implementation Notes
 
+- **Presisering etter gjennomgang av PR #20 (2026-11-14):** Den godkjente hensikten over beskrev fem utsatte punkter. Formuleringen i den låste beslutningsblokken om at «koblingen i komponentene dekkes» gjelder disse punktene, ikke alle flyter i appen. Gjeldende regel for nye stories og manuell kontroll står i `docs/testing.md` og OP-16 i beslutningsreferatet etter samordning med AV-17. Kontroll ved 360 px i den opprinnelige oppgavelisten var et historisk testmål; v1-kontrollen bruker nå representative smale datamaskinvinduer.
+
 - 2026-11-14, implementeringsagenten (Opus 5.5):
   - Endret filer: se diffen. `tsconfig.test.json` tar også med `vitest.config.ts`.
   - `falskFetch` feiler testen i `afterEach` ved kall til en URL uten svar.

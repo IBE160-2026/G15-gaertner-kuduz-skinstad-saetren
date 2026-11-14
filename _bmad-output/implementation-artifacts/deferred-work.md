@@ -55,5 +55,9 @@
   evidence: Blind-hunter 2026-11-14. Sårbarheten fantes før komponenttestene og gjelder utviklingsserveren. Oppgraderingen endrer en eksakt låst avhengighet for hele gruppa og bør tas i egen endring med `npm run build` og `npm run test` på Node 22.12. Vurdert 2026-11-14: `npm audit` samler seks varsler (GHSA-587h-7wmj-h5pm, GHSA-698v-4r3x-3vcv, GHSA-r825-w8mm-5pxw, GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22 og GHSA-vfpm-58rq-9qcg). Alle gjelder bare utviklingsserveren, ikke `npm run build`. De som krever `--host`, et annet OS enn Windows eller `middlewareMode`, gjelder ikke oss. Det som gjenstår, er `launch-editor` på Windows, mens `npm run dev` kjører lokalt. Johannes valgte bevisst å ikke oppgradere, fordi risikoen er lav og serveren bare kjører lokalt (OP-16, §11). Tas opp igjen hvis serveren eksponeres med `--host`, eller hvis det kommer et nytt varsel.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-frontend-komponenttester.md`
-  summary: AGENTS.md sier «P-13 én gang (OP-16)», men OP-16 avgjorde ikke P-13. Henvisningen bør peke på P-13 i §12 i avklaringspunktene.
-  evidence: Blind-hunter 2026-11-14. Linjen ble lagt inn i AGENTS.md med OP-16, men P-13 er vedtatt i §12 og har ingen frist (avklaringspunktene l.783). AGENTS.md er agentkontekst, så rettingen avgjøres i PR-gjennomgangen.
+  summary: "[LØST 2026-11-14, PR #20] AGENTS.md sa «P-13 én gang (OP-16)», men OP-16 avgjorde ikke P-13."
+  evidence: Blind-hunter 2026-11-14. P-13 er vedtatt i §12 i avklaringspunktene, ikke i OP-16. Rettet i PR-gjennomgangen: `AGENTS.md` peker nå til beslutningsreferatet §12. Forståelsestesten er fortsatt ikke utført.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-pr-20-samordning-testplan.md`
+  summary: Fristen for P-13s forståelsestest er ikke samordnet mellom beslutningsreferatet og planfilene.
+  evidence: P-13-raden i `docs/beslutninger/avklaringspunkter.md` beskriver testen uten frist, og Review Triage Log B13 i `spec-frontend-komponenttester.md` avviste «før story 4.6» som ikke vedtatt. Gjeldende `epics.md` story 4.6, PRD og sprintstatus sier likevel at testen må dokumenteres før story 4.6 ferdigstilles. Krever avklaring om dette er et arbeidsmål eller et bindende gruppevedtak før filene samordnes.

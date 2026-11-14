@@ -105,7 +105,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 
 ### Åpne beslutninger
 
-> **Status 2026-11-10:** ÅB-1–ÅB-6 er avklart som produktvalg, inkludert P-01–P-04/P-10 og AV-04. ÅB-7 (mobil/nettbrett) behandles ved milepælen i P-13/OP-02; ÅB-8 gjelder sensornøkkel nær innlevering. Avklarte krav er ikke dermed implementert eller testet.
+> **Status 2026-11-10:** ÅB-1–ÅB-6 er avklart som produktvalg, inkludert P-01–P-04/P-10 og AV-04. ÅB-7 (mobil/nettbrett) er avklart 2026-11-14 (AV-17); ÅB-8 gjelder sensornøkkel nær innlevering. Avklarte krav er ikke dermed implementert eller testet.
 
 | ID | Beslutning | Kilde | Blokkerer | Status |
 |---|---|---|---|---|
@@ -115,7 +115,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 | **ÅB-4** | Faste preferanser i testdata for kjerneflyten. P-10B er story 5.9 etter fungerende kjerneflyt; manuell kategorioverstyring er ikke valgt. | PRD §2.2, P-10 | Kjerneflyten blokkeres ikke. | **Avklart 2026-11-09; implementasjon av B gjenstår** |
 | **ÅB-5** | Avgrenset prototypetolkning: minst 11 t hvile både før og etter vurdert Vakt. | AV-04, PRD FR-4 | Grensetester i story 2.3 gjenstår. | Vedtatt 2026-11-02; implementasjon gjenstår |
 | **ÅB-6** | Avgrenset prototypetolkning: minst 35 t sammenhengende fri i hver berørt kalenderuke. | AV-04, PRD FR-5 | Grensetester i story 2.4 gjenstår. | Vedtatt 2026-11-02; implementasjon gjenstår |
-| **ÅB-7** | Responsiv tilpasning: breakpoints og stablingsmønster for nettbrett og mobil. Bare én fast desktopbredde (1180px) er vist i mockupene. | DESIGN.md, EXPERIENCE.md § Responsive & Platform, arkitektur § Deferred | Ingenting. Midlertidig løsning: forslaget i EXPERIENCE.md (story 4.6). Velger gruppa noe annet, må story 4.6 skrives om. | Åpen, blokkerer ikke |
+| **ÅB-7** | ~~Responsiv tilpasning: breakpoints og stablingsmønster for nettbrett og mobil~~ — **avklart 2026-11-14 (AV-17).** Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer på en datamaskin (skjerm på høykant, flere vinduer side om side). Story 4.6 er skrevet om tilsvarende. | DESIGN.md, EXPERIENCE.md § Responsive & Platform, arkitektur § Deferred, referatet §11 | Ingenting. | **Avklart 2026-11-14; implementasjon i story 4.6 gjenstår** |
 | **ÅB-8** | Hvilken nøkkel sensor bruker for live KI: (1) den felles utviklingsnøkkelen, hvis det som er igjen av kreditt holder, eller (2) en egen sensornøkkel med kredittgrense. Avgjøres nær innlevering, når modellen er valgt etter modelltesten og gruppa kjenner det faktiske forbruket. Velges (1), må utviklingsnøkkelen byttes ut etter sensur, og utviklingsbruken på den stoppes etter innlevering. Forbruket per nøkkel kan leses i OpenRouters aktivitetsoversikt. | Faglærers tilbakemelding pkt. 3, PRD §8 | Bare den delen av story 5.8 som gjelder levering av nøkkel. Demo-modus (5.7) og README-oppsettet blokkeres ikke. | Åpen, blokkerer ikke |
 
 ### UX-designkrav
@@ -144,8 +144,8 @@ UX-DR21: Utløpt eller manglende sesjon. Alle flater unntatt Logg inn sender bru
 UX-DR22: Knapper. `button-primary` (fylt `accent`, hvit tekst) brukes for hovedhandlingen per skjerm, og `button-secondary` (hvit med kant) for avbryt. Det finnes ingen tertiær- eller ghost-variant.
 UX-DR23: Mikrotekst og tone. All brukertekst ligger i en norsk tekstliste i frontend, slått opp på API-ets `kode`/`status`. Teksten skal være kort, presis og tallbasert, uten utropstegn, formaning, feiring eller gamification, og uten språk som antyder at systemet har valgt eller utført noe.
 UX-DR24: Tilgjengelighetsgulv. Kontrasten skal være tilstrekkelig for tekst og fargekodede statuser. Alle knapper, ekspander-lenker og skjemafelt skal kunne nås og aktiveres med tastatur (tab/enter), og HTML-en skal være semantisk. Det finnes ikke noe utvidet WCAG- eller ARIA-program.
-UX-DR25: Desktop og gjeldende tilgjengelighetskrav er bindende nå (P-13). Nettbrett-/mobilmønsteret med stabling er et forslag som gruppen avklarer etter fungerende kandidatvisning og før story 4.6 ferdigstilles (OP-02). Vaktoversiktens kontroll ved 360 px beviser ikke kandidatflatens tilpasning. Samme milepæl krever dokumentert oppgavebasert forståelsestest, med én testperson og ett operativsystem og én skjermflate. Akseptmålet står i referatet §12 (P-13).
-UX-DR26: Bevisst utelatt. Det finnes ingen SMS eller automatisk varsling til valgt Kandidat etter godkjenning, ingen tastatursnarveier utover tab/enter, ingen swipe- eller dra-mønstre og ingen PWA-forpliktelse i v1.
+UX-DR25: Desktop og gjeldende tilgjengelighetskrav er bindende (P-13). Mobil og nettbrett er v2 (AV-17, 2026-11-14). V1 skal fungere godt i smale nettleservinduer på en datamaskin, for eksempel på en skjerm på høykant eller med flere vinduer side om side. Siden ruller aldri vannrett, og brede tabeller ruller i sin egen beholder (AV-14). Vaktoversiktens kontroll ved 360 px beviser ikke kandidatflatens tilpasning. Før story 4.6 ferdigstilles, kreves dokumentert oppgavebasert forståelsestest, med én testperson og ett operativsystem og én skjermflate. Akseptmålet står i referatet §12 (P-13).
+UX-DR26: Bevisst utelatt. Det finnes ingen SMS eller automatisk varsling til valgt Kandidat etter godkjenning, ingen tastatursnarveier utover tab/enter, ingen swipe- eller dra-mønstre, ingen egen mobil- eller nettbrettvisning (AV-17) og ingen PWA-forpliktelse i v1.
 UX-DR27: Merking av KI-kilde. Hvert forklaringspanel har en kildelinje i `meta`: «KI-generert · <modellnavn>» (godkjent live-forklaring), «Forhåndsgenerert KI-forklaring · <modellnavn>, <dato>», «Satt sammen fra beregnede tall, ikke KI-generert» (mal), eller «Reservetekst · KI-forklaring utilgjengelig» ved `avveining_feilet` (story 5.4). Et forkastet svar merkes aldri som godkjent KI-forklaring. I demo-modus viser appbaren også en nøytral tag, «Demo-modus». Ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand (NFR14, AD-6).
 UX-DR28: Ulempeindikator (lagt til 2026-10-30). Egen kolonne i rangeringstabellen, rett etter timebelastning, med overskriften «Ulempe». Samlet poengsum står i `body`, for eksempel «182 p», og fordelingen står under i `meta`, for eksempel «kveld 16 t · helg 32 t · natt 34 t». Fordelingen bruker samme prioritet som poengene (natt > helg > kveld), så en nattetime i helgen vises som natt. En Kandidat uten Vakter i måleperioden viser «0 p», ikke tom. Indikatoren har ingen terskel, ingen linje og ingen fargeskifte, og bruker aldri `warn` eller `danger`. Den brukes i rangeringstabellen, kandidatkortet på Godkjenning og avviksnotatet (FR14).
 
@@ -862,13 +862,15 @@ So that jeg tar et bevisst valg når jeg avviker fra anbefalingen (FR12).
 
 ### Story 4.6: Rangeringstabellen på smalere skjermer
 
-> **P-13/OP-02:** Desktop og gjeldende tilgjengelighetskrav er bindende nå. Nettbrett-/mobilkriteriene under er forslag som gruppen må bekrefte eller endre etter fungerende kandidatvisning og før denne storien ferdigstilles. Den oppgavebaserte forståelsestesten må dokumenteres ved samme milepæl. Den er enkel: én testperson og ett operativsystem og én skjermflate holder, og akseptmålet er at testpersonen løser alle tre oppgavene uten hint (referatet §12, P-13); vaktoversikt kontrollert ved 360 px er ikke bevis for kandidatflaten.
+> **Skrevet om 2026-11-14 (AV-17):** Mobil og nettbrett er v2. Appen kjører lokalt og krever en datamaskin, så storien gjelder smale nettleservinduer, ikke telefon eller nettbrett. De tidligere kriteriene om nettbrettrader og mobilkort er fjernet; forslaget står som v2-innspill i EXPERIENCE.md § Responsive & Platform. Kontrollbreddene under er avledet fra gruppas eksempler og kan justeres i spesifikasjonen.
+
+> **P-13/OP-02:** Desktop og gjeldende tilgjengelighetskrav er bindende. Den oppgavebaserte forståelsestesten må dokumenteres før denne storien ferdigstilles. Den er enkel: én testperson og ett operativsystem og én skjermflate holder, og akseptmålet er at testpersonen løser alle tre oppgavene uten hint (referatet §12, P-13); vaktoversikt kontrollert ved 360 px er ikke bevis for kandidatflaten.
 
 > **Avhengighet (2026-10-30):** Tabellen har fått ulempekolonnen fra **story 4.7** (UX-DR28), som også må vises på smalere skjermer. Storien krever at 4.4 og 4.7 er ferdige.
 
 As a turnusansvarlig,
-I want å kunne bruke Turnushjelperen på nettbrett og mobil,
-So that jeg kan finne en erstatter også når jeg ikke sitter ved PC-en.
+I want at Turnushjelperen fungerer godt i et smalt nettleservindu,
+So that jeg kan ha den på en skjerm på høykant eller ved siden av andre vinduer mens jeg finner en erstatter.
 
 **Acceptance Criteria:**
 
@@ -876,17 +878,21 @@ So that jeg kan finne en erstatter også når jeg ikke sitter ved PC-en.
 **When** kandidatflaten vises
 **Then** hele rangeringstabellen vises med alle kolonner (UX-DR25)
 
-**Given** en nettbrettbredde
-**When** kandidatflaten vises
-**Then** tabellen beholder radform, men mindre kritiske opplysninger flyttes inn i raden i stedet for å ha egen kolonne (UX-DR25)
-
-**Given** en mobilbredde
-**When** kandidatflaten vises
-**Then** hver kandidat vises som et stablet kort med rangering, navn og kostnad øverst og arbeidsbelastning (timebelastningslinje og ulempeindikator med fordeling) under, uten horisontal scroll (UX-DR25, UX-DR28)
-
 **Given** alle flatene (Logg inn, Vaktvalg, kandidatflaten og Godkjenning)
-**When** de vises på mobilbredde
-**Then** de kan brukes uten horisontal scroll
+**When** vinduet er 1080 px (Full HD på høykant), 960 px (halv Full HD-skjerm) eller 680 px (halv bærbar skjerm på 1366 px) bredt
+**Then** siden som helhet ruller ikke vannrett, ingen tekst klippes eller overlapper, og alle handlinger kan nås med mus og tastatur (UX-DR24, UX-DR25, AV-14)
+
+**Given** at rangeringstabellen er bredere enn vinduet
+**When** brukeren ruller tabellen vannrett i beholderen
+**Then** er det hele tiden synlig hvilken Kandidat hver rad gjelder (rangering og navn), også i ulempekolonnen fra story 4.7 (UX-DR25, UX-DR28)
+
+**Given** at brukeren gjør vinduet smalere eller bredere mens kandidatflaten er åpen
+**When** layouten tilpasser seg
+**Then** beholder flaten valgt vakt, åpne begrunnelser og valgt Kandidat
+
+**Given** at storien er implementert
+**When** den kontrolleres manuelt
+**Then** finnes skjermbilder av kandidatflaten og Godkjenning ved de tre kontrollbreddene, lenket fra vurderingsmatrisen
 
 ### Story 4.7: Ulempebelastning per kandidat
 
@@ -896,7 +902,7 @@ So that jeg kan finne en erstatter også når jeg ikke sitter ved PC-en.
 > - **Bygger på story 1.2:** vakthistorikk fra minst 672 timer før periodestart, faste vakttider og turnusprofiler med spredning. Datamodellen får ingen nye felt i denne storien. Alt beregnes fra vaktenes start- og sluttidspunkt.
 > - **Brukes av story 4.4:** Ulempescoren inngår i totalscoren med 15 %. 4.4 kan ikke ferdigstilles før denne storien er ferdig.
 > - **Brukes av story 4.5:** ulempeindikatoren vises på kandidatkortet og i avviksnotatet.
-> - **Brukes av story 4.6:** ulempekolonnen må tilpasses nettbrett og mobil.
+> - **Brukes av story 4.6:** ulempekolonnen må fungere i smale nettleservinduer (AV-17).
 > - **Påvirker story 5.3 og 5.7:** feltene i `RangertKandidat` endres, så forklaringen og demo-malen kan vise til ulempe. Forhåndsgenererte Avveininger må lages etter denne storien, fordi de er nøklet på en hash av `RangertKandidat`.
 
 As a turnusansvarlig,

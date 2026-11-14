@@ -132,8 +132,10 @@ og de røde meldingene står i [KI-loggen](ki-logg/2026-11-14-komponenttester.md
 jsdom bygger DOM-en, men gjør ingen layout, beregner ikke CSS og viser ingenting. Derfor
 kan komponenttestene ikke kontrollere:
 
-- **Layout og bredde:** vannrett siderulling ved 360 px, at innholdet får plass ved
-  1600 px, og at flaten tåler større rotskrift (AV-14, DESIGN.md).
+- **Layout og bredde:** at v1 fungerer i smale nettleservinduer på en datamaskin
+  (AV-17), at siden ikke ruller vannrett og at brede tabeller ruller i sin egen
+  beholder (AV-14), samt at flaten tåler større skrift. Story 4.6 foreslår 1080,
+  960 og 680 px som kontrollbredder; de kan justeres når storien spesifiseres.
 - **Farger og fokusmarkering:** at nye elementer bruker designtokens (AV-13), at
   varselfarger og kontrast er riktige, og at fokusrammen synes når man går med tab
   (UX-DR24).
@@ -143,17 +145,26 @@ kan komponenttestene ikke kontrollere:
 - **Forståelse (P-13):** om en testperson uten hint forstår kandidatvisningen. Det er en
   brukertest, ikke en kodekontroll, og gjøres én gang, ikke per story.
 
-Alt annet i koblingen i komponentene, som tilstander, knapper, ruter og hvilke kall som
-gjøres, dekkes av komponenttestene og skal ikke kontrolleres for hånd (OP-16, alternativ
-A).
+De 12 komponenttestene dekker flytene som er listet i tabellen over, ikke alle
+tilstander, knapper, ruter og API-kall i appen. Når en story legger til eller endrer en slik kobling,
+må den legge til en komponenttest for flyten. Dersom testen ikke kan skrives i den
+aktuelle storyen, dokumenteres en målrettet manuell kontroll som et åpent punkt.
+Automatisk dekkede flyter trenger ikke samme manuelle kontroll (OP-16, alternativ A).
 
 ## Manuell sjekkliste for nye flater
 
-«Manual checks» i nye spesifikasjoner tar bare med punkter herfra. Kontrollen gjøres i
+«Manual checks» i nye spesifikasjoner tar med relevante punkter herfra og eventuelle
+målrettede kontroller av flyter som ennå ikke har komponenttest. Kontrollen gjøres i
 nettleseren mot ekte backend med testdata (README steg 2–4), før PR.
+Egne akseptkriterier i storyen kontrolleres i tillegg. For story 4.6 gjelder blant
+annet synlig kandidatidentitet ved vannrett rulling i rangeringstabellen, bevaring av
+valgt vakt, åpne begrunnelser og valgt kandidat ved vindusendring, og skjermbilder ved
+de tre smale kontrollbreddene (AV-17, epics).
 
-1. **360 px og 1600 px** i enhetsverktøylinjen: ingen vannrett siderulling, og alt
-   innhold er lesbart.
+1. **1080, 960 og 680 px** i et datamaskinvindu, samt 1600 px: ingen vannrett
+   siderulling, ingen tekst som klippes eller overlapper, og alle handlinger kan nås.
+   Brede tabeller ruller bare i sin egen beholder (AV-14, AV-17). 360 px kan brukes
+   som ekstra regresjonskontroll, men er ikke et mobilkrav i v1.
 2. **Tastatur:** gå gjennom den nye flaten med tab og enter alene. Fokusrammen synes på
    hvert element, og rekkefølgen følger siden.
 3. **Farger:** nye elementer bruker tokens fra `frontend/src/stil/tokens.css`, ikke rå
@@ -168,11 +179,12 @@ arbeidet ikke har en spesifikasjon. Bruk denne malen:
 
 ```markdown
 **Manuell kontroll (docs/testing.md):** <navn>, <dato>, <nettleser og versjon> på <OS>, story <nr>
-1. 360 px og 1600 px: bestått / avvik: <hva>
+1. 1080, 960, 680 og 1600 px: bestått / avvik: <hva>
 2. Tastatur og fokus: bestått / avvik: <hva>
 3. Farger: bestått / avvik: <hva>
 4. Større skrift: bestått / avvik: <hva>
 5. Ekte backend: bestått / avvik: <hva>
+Målrettet kontroll av flyt uten komponenttest: <flyt, resultat eller ikke relevant>
 Ikke relevant: <punkt og hvorfor>
 ```
 

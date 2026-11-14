@@ -458,7 +458,6 @@ Disse spørsmålene er ikke avgjort. Hvert har eier og frist.
 
 | Spørsmål | Eier | Frist |
 |---|---|---|
-| Skal Turnushjelperen støtte mobil og nettbrett, og i så fall med hvilken visning? Desktop er bindende nå. | Hele gruppa (AV-16) | Etter at kandidatvisningen virker, og før story 4.6 ferdigstilles |
 | Hvilken OpenRouter-nøkkel får sensor, hvem betaler, og hvor mye kreditt får den? Den felles utviklingsnøkkelen eller en egen sensornøkkel. | Hele gruppa (AV-16) | Før innlevering, ut fra faktisk forbruk |
 | Hvilke ventetrinn, hvor mange nye forsøk, hvilket tidsbudsjett og startpunkt for målingen, samt hvilken sluttstatus skal preferansetolkning ha ved nettverks-/serverfeil og 429? P-05 krever avgrensede forsøk og egen status; AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver Avveining. | Hele gruppa | Før story 5.1 starter |
 
@@ -470,7 +469,7 @@ Produktkravene i §4 og suksessmålene i §7 er vedtatt. Spørsmålene i tabelle
 2. P-05–P-07: Fastsett KI-kontrakten i stories/arkitektur og test ventende/feilet tolkning, nye forsøk, faktakontroll og referanseregelen mot falsk OpenRouter. Manuell kontroll av norsk og mening kommer i tillegg.
 3. P-08/P-09/P-11: Datafeil ved periodekanten, også for #4261–#4265, er bygd og testet i story 2.1–2.4. Gjenstår: gammelt svar og endret beslutningsgrunnlag (Epic 3), og tydelig forskjell mellom Datafeil og null gyldige (story 2.6).
 4. P-10B: Story 5.9 er planlagt i backlog; prioriter implementasjon først etter fungerende kjerneflyt. Hvis tiden ikke rekker, før den som utsatt. P-12B krever først senere valg og er ikke v1-krav.
-5. P-13/OP-02: Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Gjennomfør og dokumenter en liten oppgavebasert forståelsestest: forklar nr. 1 uten hint, finn en annen gyldig Kandidat, skill datafeil fra null gyldige. Én testperson og ett operativsystem og én skjermflate holder. Akseptmål: alle tre oppgavene løses uten hint. Ellers rettes og noteres det som skapte misforståelsen. Testen er besluttet, ikke utført.
+5. P-13/OP-02: Mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer på en datamaskin (AV-17, 2026-11-14; story 4.6). Etter fungerende kandidatvisning og før story 4.6 ferdigstilles: gjennomfør og dokumenter en liten oppgavebasert forståelsestest: forklar nr. 1 uten hint, finn en annen gyldig Kandidat, skill datafeil fra null gyldige. Én testperson og ett operativsystem og én skjermflate holder. Akseptmål: alle tre oppgavene løses uten hint. Ellers rettes og noteres det som skapte misforståelsen. Testen er besluttet, ikke utført.
 6. E-02: Kontroller levert funksjonalitet mot den godkjente proposalen i `ee6d798` ved innlevering, og forklar planavvik. E-01 er lukket: KI i produktet er et valgt produktscope, ikke et formelt emnekrav ifølge Johannes' gjengivelse av faglærers muntlige utsagn; forelesningsdato er ukjent.
 
 ### 8.2 Løste spørsmål (historikk)
@@ -508,4 +507,5 @@ Kravene i §4 står alene. Tabellen viser hvor de kommer fra, slik at den som sk
 | FR-13 | Brief (én rolle), OP-10/AD-3. Bygd i story 1.3 og 1.4: scrypt med salt, standardøkt 480 minutter som kan overstyres med `TURNUSHJELPEREN_JWT_MINUTTER`, ny kontroll og utlogging. | 1.3, 1.4 |
 | §6.2 | P-10B, P-07 (valgfri sammenligning), P-12B (utenfor v1) | 5.9 |
 | §7 SM-3/SM-4/SM-C2 | AV-15, P-06/P-07, AD-7. SM-3 avklart før story 4.4; SM-4/SM-C2 før story 5.3. | 4.4, 5.3, 5.4 |
-| §8 Åpne spørsmål | OP-02/P-13 og AV-16 (mobil og nettbrett), ÅB-8/AV-16 (sensornøkkel), P-05/AD-7 (tolkningens feilbudsjett) | 4.6, 5.1, 5.8 |
+| §8 Åpne spørsmål | ÅB-8/AV-16 (sensornøkkel), P-05/AD-7 (tolkningens feilbudsjett) | 5.1, 5.8 |
+| §8.1 punkt 5 | OP-02/P-13, AV-17 (mobil og nettbrett er v2; smale nettleservinduer i v1) | 4.6 |

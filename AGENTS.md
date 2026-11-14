@@ -126,9 +126,10 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     Testing Library). Komponenttestene finner elementer etter rolle og tekstene i
     `src/tekster.ts`, og stubber `fetch` per URL med `falskFetch` i
     `tester/komponenter/hjelpere.ts`. jsdom må være 28.x så lenge vi lover Node 22.12.
-  - Koblingen i komponentene dekkes av komponenttester, ikke nettleserkontroll.
-    Manuelt gjøres bare sjekklisten i `docs/testing.md` (layout, farger, fokus, ekte
-    backend), og P-13 én gang (OP-16).
+  - Komponenttestene dekker flytene som er listet i `docs/testing.md`. Nye eller
+    endrede flyter trenger egne tester; udekkede flyter får målrettet manuell kontroll
+    som åpent punkt. Bruk sjekklisten for layout, farger, fokus og ekte backend
+    (OP-16). P-13s forståelsestest gjøres én gang (beslutningsreferatet §12).
 - CI kjører tre workflows på hver push til alle brancher, på Linux:
   - `.github/workflows/skills-speiling.yml`: speilingstesten for skills. Lokalt:
     `python -m unittest discover -s scripts -p "test_skills*.py"`.
