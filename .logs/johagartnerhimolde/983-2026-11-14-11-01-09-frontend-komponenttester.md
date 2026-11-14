@@ -60,7 +60,9 @@ Johannes ba om to ting. Informasjonen om RAM og CPU fra testkjøringene skulle d
 - `npm run build` består. `npm run test` gir 48 av 48 og 12 av 12.
 - Lukket i issues.md: punktet om Vite.
 
+- Branchen er pushet, og [PR #20](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/20) er opprettet. Johannes sa at det holder at én i gruppa går gjennom den.
+
 ### Åpne punkter
-- Push branchen og opprett PR. Avklar hvem i gruppa som gjennomgår den.
+- Ett gruppemedlem går gjennom og godkjenner PR #20.
 - Kontroller at CI er grønn på Node 22.12 og `lts/*`.
 - Henvisningen til P-13 i AGENTS.md avgjøres i PR-gjennomgangen.
