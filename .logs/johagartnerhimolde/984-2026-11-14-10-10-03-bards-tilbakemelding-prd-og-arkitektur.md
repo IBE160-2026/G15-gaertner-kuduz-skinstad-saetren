@@ -60,3 +60,18 @@ Sjekke om et oppsett for komponenttester virker med versjonene vi bruker (Vite 8
 
 ### Åpne punkter
 - Gruppa velger om oppsettet skal innføres (OP-ID, egen PR). Punktet står allerede i `issues.md`.
+
+## 2026-11-14 kl. 10:49 — johagartnerHiMolde
+
+### Oppgave
+Lage en handoff til en ny økt som skal innføre komponenttester for frontend i en egen branch. Målene er å spare manuell testing og diskusjoner om feil i gruppa, og å gi bedre dokumentasjon av testing (kriterium 3 i sensorveiledningen).
+
+### Plan
+- Samlet dagens tilstand (testoppsett, CI, README, arkitektur), de utsatte punktene som skyldes manglende rigg, resultatet fra prøveoppsettet og kravene i AGENTS.md.
+
+### Resultat
+- [`handoff-frontendtesting-2026-11-14.md`](../../_bmad-output/implementation-artifacts/handoff-frontendtesting-2026-11-14.md) inneholder mål, oppstart, dagens tilstand, de fem utsatte punktene med kilder, versjoner og konfigurasjon fra prøveoppsettet, foreslått omfang i tre deler (oppsett, tester, dokumentasjon), fem beslutninger å avklare, fallgruver og når arbeidet er ferdig. OP-16 er foreslått som ID.
+- Handoffen er ikke committet. Den skal tas med i første commit på den nye branchen.
+
+### Åpne punkter
+- Neste økt: innføre komponenttester etter handoffen. Punktet om komponentrigg i `issues.md` dekker dette.
