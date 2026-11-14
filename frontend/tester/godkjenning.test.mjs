@@ -1,6 +1,6 @@
-// Godkjenningsflaten (story 3.1). Det finnes ingen komponenttestrigg, så testene
-// går mot den rene logikken i src/godkjenning.ts og src/navigasjon.ts med en
-// falsk fetch, som kandidater.test.mjs.
+// Godkjenningsflaten (story 3.1). Testene går mot den rene logikken i
+// src/godkjenning.ts og src/navigasjon.ts med en falsk fetch, som
+// kandidater.test.mjs. Komponenten testes i komponenter/godkjenningsflate.test.tsx.
 import assert from "node:assert/strict";
 import test, { afterEach } from "node:test";
 import { fileURLToPath } from "node:url";

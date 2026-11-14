@@ -1,0 +1,6 @@
+{
+  // Typesjekker komponenttestene i tester/komponenter (og src, som de importerer).
+  // Kjøres av `npm run build`, så en typefeil i en test stopper bygget.
+  "extends": "./tsconfig.json",
+  "include": ["src", "tester/komponenter", "vitest.config.ts"]
+}

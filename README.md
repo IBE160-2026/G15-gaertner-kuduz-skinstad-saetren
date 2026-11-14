@@ -162,6 +162,11 @@ PowerShell, er det Windows' standardpolicy som stopper skriptet `npm.ps1`. Bruk 
 `npm.cmd install` og `npm.cmd run dev`. Det endrer ingenting på maskinen. Git Bash og
 `cmd` har ikke denne begrensningen.
 
+`npm install` melder «1 high severity vulnerability». Den gjelder Vite 8.3.1 og bare
+utviklingsserveren mens den kjører lokalt. Gruppa har vurdert den og valgt å ikke oppgradere
+nå (OP-16 i [avklaringspunktene](docs/beslutninger/avklaringspunkter.md)). Ikke kjør
+`npm audit fix`. Den endrer de låste versjonene.
+
 Åpne http://localhost:5173 og logg inn som `kari.vestby` med passordet fra steg 2.
 Utviklingsserveren sender `/api` videre til backend på http://127.0.0.1:8000, så
 backend må kjøre samtidig. Svarer den ikke, viser innloggingssiden «Får ikke kontakt
@@ -235,14 +240,23 @@ Fra `backend/`: `.venv\Scripts\python -m pytest`. Testene bruker egne databaser 
 midlertidig mappe og rører ikke `backend/turnushjelperen.db`. `tester/test_arkitektur.py`
 kjører import-linter-kontrakten i `pyproject.toml`, som forbyr hele `domene`, også
 `domene.regelmotor` og `domene.porter`, å importere `adaptere` (AD-1, AD-2). Fra `frontend/`:
-`npm run test` kjører `node --test`, som finner alle `*.test.mjs` og andre
-testfiler i hele `frontend/` utenom `node_modules`. I dag er det
-`tester/sesjon.test.mjs`, `tester/format.test.mjs`, `tester/kandidater.test.mjs` og
-`tester/godkjenning.test.mjs`. Formateringstestene kjøres
-også en gang til i en underprosess med `TZ=America/New_York`, så de ikke består
-bare fordi maskinen går i Oslo-tid. `npm run build` typesjekker og bygger
-(`npm.cmd run test` og `npm.cmd run build` i PowerShell hvis skript er blokkert,
-se steg 4).
+`npm run test` kjører to sett tester etter hverandre:
+
+- `node --test` finner alle `*.test.mjs` og andre testfiler i hele `frontend/` utenom
+  `node_modules`. I dag er det `tester/sesjon.test.mjs`, `tester/format.test.mjs`,
+  `tester/kandidater.test.mjs` og `tester/godkjenning.test.mjs`, som tester den rene
+  logikken i `src/`. Formateringstestene kjøres også en gang til i en underprosess med
+  `TZ=America/New_York`, så de ikke består bare fordi maskinen går i Oslo-tid.
+- `vitest run` kjører komponenttestene i `tester/komponenter/*.test.tsx`. De rendrer
+  komponentene i jsdom med Testing Library og en falsk `fetch`, og trykker på knappene
+  som en bruker.
+
+`npm run build` typesjekker koden og komponenttestene og bygger (`npm.cmd run test`
+og `npm.cmd run build` i PowerShell hvis skript er blokkert, se steg 4). Hva som
+testes automatisk, og hva som kontrolleres for hånd og hvorfor, står i
+[docs/testing.md](docs/testing.md). Komponenttestene bruker mye minne. På en maskin med
+lite ledig RAM tar de rundt 20 sekunder, og de kan få tidsavbrudd hvis flere kjøringer
+går samtidig. Se «Trege maskiner og tidsavbrudd» i samme fil.
 
 GitHub Actions kjører de samme testene på Linux ved hver push: backend med Python
 3.12 og nyeste 3.x, frontend (`npm run build` og `npm run test`) med Node 22.12 og
