@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-14 (OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -82,6 +82,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-13 | Story 3.1 | Meldt 2026-11-12 | Johannes W. Gaertner tar Story 3.1, Velge kandidat og se godkjenningsflaten. Arbeidet går parallelt med Story 2.4 (Ragnhild Sætren), fordi 3.1 bruker listen over gyldige kandidater uansett hvor mange regler som finnes (§11). | Johannes W. Gaertner |
 | OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12; PR #17 godkjent og merget av Mithad 2026-11-13 | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
 | OP-15 | Story 2.5 | Meldt 2026-11-13 | Mithad Kuduz tar Story 2.5, Ekskludert-boks med oppsummering av utelukkelser. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
+| OP-16 | Komponenttester for frontend | Vedtatt 2026-11-14; implementert på branchen `frontend-komponenttester`, PR-gjennomgang gjenstår | Vitest 5.1.0 med Testing Library og jsdom 28.1.0 ved siden av `node --test`, én kommando (`npm run test`). De fem utsatte punktene fra 1.5, 2.1, 2.4, 2.5 og 3.1 er dekket. Manuell kontroll bare der testene ikke kan kontrollere det aktuelle (alternativ A), etter sjekklisten i `docs/testing.md` (§11). | Johannes W. Gaertner |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -703,6 +704,20 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Kjent avvik fra §11-vedtaket om Story 2.4: beslutning A der lar en overlappende vakt telle som brudd på både kollisjon og 35-timersregelen. Oppsummeringen i 2.5 må telle en Ansatt riktig selv om vedkommende har flere årsaker (epics, story 2.5).
 - **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 2.5.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-14 – Komponenttester for frontend (OP-16)
+
+- **Hvem:** Johannes W. Gaertner avgjorde valgene 2026-11-14, etter et prøveoppsett i samme økt ([handoff](../../_bmad-output/implementation-artifacts/handoff-frontendtesting-2026-11-14.md)). Arbeidet binder hele gruppa (nytt felles oppsett og ny testkonvensjon), så det går i branchen `frontend-komponenttester` med PR. Hvem som gjennomgår PR-en, avklares når den opprettes.
+- **Bakgrunn:** Ingen frontendtest rendret en komponent. Tilstander, knapper og ruter ble kontrollert for hånd i nettleseren i hver story, og feil ble funnet sent, ofte i PR-gjennomgang. Fem punkter i `deferred-work.md` og spesifikasjonen for 2.5 var utsatt av denne grunnen.
+- **Vedtatt:**
+  - jsdom 28.1.0, ikke happy-dom. jsdom 29 krever Node ^22.13.0, og 30 og 31 krever ^22.22.2. 28.x er derfor siste jsdom som støtter Node 22.12, som vi lover.
+  - De 48 eksisterende testene blir værende i `node:test`. `npm run test` kjører `node --test` og deretter `vitest run`, så CI og README får ingen ny kommando.
+  - Alle fem utsatte punkter (1.5, 2.1, 2.4, 2.5 og 3.1) dekkes, og hver test er vist å kunne feile med en mutasjon.
+  - Testoversikten og den manuelle sjekklisten ligger i én fil, [`docs/testing.md`](../testing.md).
+  - **Manuell kontroll (alternativ A):** manuell kontroll trengs bare når de automatiske testene ikke kan kontrollere det aktuelle. «Manual checks» i nye spesifikasjoner tar bare med punkter fra sjekklisten i `docs/testing.md`. Koblingen i komponentene dekkes av tester i `frontend/tester/komponenter/`. Et `persistent_facts`-punkt i `_bmad/custom/bmad-build.toml` sier dette til `bmad-build`.
+- **Gjennomføring:** [spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-frontend-komponenttester.md) og [KI-loggen](../ki-logg/2026-11-14-komponenttester.md) med mutasjonstabellen.
+- **Endret:** `frontend/package.json` og `package-lock.json`, `vitest.config.ts`, `tsconfig.test.json`, `frontend/tester/komponenter/`, `docs/testing.md`, README, AGENTS.md, Testing-raden i ARCHITECTURE-SPINE, `deferred-work.md`, vurderingsmatrisen, `docs/modellvalg-stories.md` og `_bmad/custom/bmad-build.toml`.
+- **Ikke endret:** Komponentene i `frontend/src/`, CI-workflowen og punktet fra 1.3 om at `FEILTEKSTER` skal stemme med backend, som står igjen i `deferred-work.md`. De andre AV-, K-, OP- og KS-punktene er heller ikke endret.
 
 ### 2026-11-12 – Story 2.4 (OP-14): 35-timersregelen, uke som vindu og beslutning A og B
 

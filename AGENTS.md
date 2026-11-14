@@ -118,8 +118,17 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     `adaptere` (AD-1, AD-2). Nye moduler under `domene/` faller inn under kontrakten.
 - Frontend (Node 22.12 eller nyere), fra `frontend/` i en egen terminal mens backend
   kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
-  `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker og bygger.
-  Rå størrelser og fargekoder står bare i `frontend/src/stil/tokens.css` (AV-13).
+  `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker kode og
+  komponenttester (`tsconfig.test.json`) og bygger. Rå størrelser og fargekoder står
+  bare i `frontend/src/stil/tokens.css` (AV-13).
+  - Test: `npm run test` kjører `node --test` (rene moduler, `tester/*.test.mjs`) og
+    deretter `vitest run` (komponenttester i `tester/komponenter/*.test.tsx`, jsdom og
+    Testing Library). Komponenttestene finner elementer etter rolle og tekstene i
+    `src/tekster.ts`, og stubber `fetch` per URL med `falskFetch` i
+    `tester/komponenter/hjelpere.ts`. jsdom må være 28.x så lenge vi lover Node 22.12.
+  - Koblingen i komponentene dekkes av komponenttester, ikke nettleserkontroll.
+    Manuelt gjøres bare sjekklisten i `docs/testing.md` (layout, farger, fokus, ekte
+    backend), og P-13 én gang (OP-16).
 - CI kjører tre workflows på hver push til alle brancher, på Linux:
   - `.github/workflows/skills-speiling.yml`: speilingstesten for skills. Lokalt:
     `python -m unittest discover -s scripts -p "test_skills*.py"`.

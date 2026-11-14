@@ -1,5 +1,6 @@
-// Tilstandene til kandidatlisten (story 2.1). Det finnes ingen komponenttestrigg,
-// så testene går mot den rene logikken i src/kandidater.ts med en falsk fetch.
+// Tilstandene til kandidatlisten (story 2.1). Testene går mot den rene logikken i
+// src/kandidater.ts med en falsk fetch. Komponenten testes i
+// komponenter/kandidatflate.test.tsx.
 import assert from "node:assert/strict";
 import test, { afterEach } from "node:test";
 import { fileURLToPath } from "node:url";
