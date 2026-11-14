@@ -38,3 +38,25 @@ Johannes ba om fordeler og ulemper, arbeidsmengde og konsekvenser ved å innfør
 
 ### Åpne punkter
 - Beslutningen om rigg står som åpent punkt i `issues.md` fra økten over.
+
+## 2026-11-14 kl. 10:42 — johagartnerHiMolde
+
+### Oppgave
+Sjekke om et oppsett for komponenttester virker med versjonene vi bruker (Vite 8.3.1, React 19.3.0, TypeScript 7.0.2, Node 22.12 som laveste versjon), før gruppa bestemmer seg.
+
+### Plan
+- Kopierte `frontend/` (uten `node_modules`) til scratchpad og installerte kandidatene med eksakte versjoner. Repoet er ikke rørt.
+- Skrev to komponenttester: Godkjenningsflate (Godkjenn gjør ingen kall og viser linjen fra 2A, Avbryt kaller `onTilbake`) og Kandidatflate («Velg» sender vakt og id).
+- Kjørte dem med jsdom og happy-dom på Node 26.7 og 22.12, prøvde en mutasjon, typesjekket med TypeScript 7 og kjørte de eksisterende testene og bygget.
+
+### Resultat
+- Vitest 5.1.0 (peer: Vite ^6–^8) og @testing-library/react 16.3.3 (peer: React ^18–^19) passer til versjonene våre. `npm ls` viser ingen ugyldige peer-avhengigheter, bare valgfrie som mangler.
+- **Nyeste jsdom (30 og 31) krever Node ^22.22.2.** jsdom 28.1.0 (^22.12.0) og happy-dom 21.0.4 (>=20) holder løftet om Node 22.12.
+- Begge testene bestod med jsdom 28.1.0 og happy-dom 21.0.4, både på Node 26.7 og på Node 22.12 (`npx -p node@22.12.0`). Tid: cirka 4 s med jsdom og 2 s med happy-dom.
+- Mutasjonen der «Godkjenn» henter data på nytt, ga rød test («called 1 times, but got 2 times»).
+- `tsc` med TypeScript 7.0.2 godtok testfilene etter én retting i testkoden (type på `vi.fn`).
+- `node --test` kjører fortsatt bare de 48 eksisterende testene, fordi Vitest-filene er `.test.tsx` og `include` er avgrenset. `npm run build` bestod.
+- Prøveoppsettet ligger i scratchpad og er ikke tatt inn i repoet.
+
+### Åpne punkter
+- Gruppa velger om oppsettet skal innføres (OP-ID, egen PR). Punktet står allerede i `issues.md`.
