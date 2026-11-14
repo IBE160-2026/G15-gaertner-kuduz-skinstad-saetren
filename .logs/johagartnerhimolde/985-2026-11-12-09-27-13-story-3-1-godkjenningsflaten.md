@@ -57,3 +57,22 @@ Hente siste oppdateringer, gå gjennom Ragnhilds review av PR #16 og rette det s
 
 ### Åpne punkter
 - Ragnhild må godkjenne PR #16 på nytt etter rettingen. Etter merge settes storyen til `done` i sprintstatus og vurderingsmatrisen.
+
+## 2026-11-14 kl. 09:57 — johagartnerHiMolde
+
+### Oppgave
+Vurdere Kims gjennomgang av PR #16 (13.11, ført i hans sesjonslogg) og sjekke om story 2.5, som Mithad nettopp merget, krever flere endringer før push.
+
+### Plan
+- Kontrollerte Kims tre funn mot koden, mockupen og spesifikasjonen. Johannes godtok anbefalingen: PR3 og PR4 avvises med begrunnelse, og PR5 presiseres i Spec Change Log.
+- Prøvemerget ny `main` med 2.5 i en midlertidig worktree, og tok den deretter inn i branchen.
+
+### Resultat
+- `7238f0c`: `main` med Story 2.5 (PR #19) er tatt inn. Konfliktene i `app.css`, `tekster.ts` og `avklaringspunkter.md` var blokker begge hadde lagt til, og begge sider er beholdt. Den forrige mergen (`84dbf58`) hadde delt OP-tabellen i avklaringspunkter §2 med en tom linje, og det er rettet. Endepunktet for 3.1 er uendret. `/kandidater` har fått `utelukkelser`, og «Velg» står sammen med Ekskludert-boksen.
+- `d15c6cc`: Kims funn er ført som PR3–PR5 i spesifikasjonen. «Uten kall» er presisert i Spec Change Log uten å endre den låste teksten. Vurderingsmatrisen og KI-loggen er oppdatert.
+- Kontroll: `pytest` 412 av 412, `npm.cmd test` 48 av 48 og `npm.cmd run build` bestått.
+- Ikke pushet.
+
+### Åpne punkter
+- Ny godkjenning av PR #16 etter push. Kim kan lukke sine tre punkter i `issues.md` når han har sett vurderingen.
+- PR4: om nattevakter skal vises med sluttdato, bør gruppa eventuelt avgjøre for alle flatene samlet. Ikke en forutsetning for merge.
