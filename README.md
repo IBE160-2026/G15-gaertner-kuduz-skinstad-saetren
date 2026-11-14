@@ -162,6 +162,11 @@ PowerShell, er det Windows' standardpolicy som stopper skriptet `npm.ps1`. Bruk 
 `npm.cmd install` og `npm.cmd run dev`. Det endrer ingenting på maskinen. Git Bash og
 `cmd` har ikke denne begrensningen.
 
+`npm install` melder «1 high severity vulnerability». Den gjelder Vite 8.3.1 og bare
+utviklingsserveren mens den kjører lokalt. Gruppa har vurdert den og valgt å ikke oppgradere
+nå (OP-16 i [avklaringspunktene](docs/beslutninger/avklaringspunkter.md)). Ikke kjør
+`npm audit fix`. Den endrer de låste versjonene.
+
 Åpne http://localhost:5173 og logg inn som `kari.vestby` med passordet fra steg 2.
 Utviklingsserveren sender `/api` videre til backend på http://127.0.0.1:8000, så
 backend må kjøre samtidig. Svarer den ikke, viser innloggingssiden «Får ikke kontakt

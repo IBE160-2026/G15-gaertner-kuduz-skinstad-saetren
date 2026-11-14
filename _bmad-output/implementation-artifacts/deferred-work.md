@@ -51,8 +51,8 @@
   evidence: Review Triage Log i spesifikasjonen for 2.5 avviste funnet fordi prosjektet ikke hadde komponenttestrigg, og radene ble dekket av nettleserkontroll 2026-11-13. Ført her 2026-11-14 for å samle de utsatte punktene. Løst: `frontend/tester/komponenter/kandidatflate.test.tsx` (Ekskludert-boksen). Mutasjonene M5 (`totalt === 0`-sjekken fjernet) og M5b (`aria-expanded` alltid false) i [KI-loggen](../../docs/ki-logg/2026-11-14-komponenttester.md) ga røde tester.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-frontend-komponenttester.md`
-  summary: Vite 8.3.1 har en høy sårbarhet i `npm audit`, rettet i 8.3.8, og er ikke oppgradert.
-  evidence: Blind-hunter 2026-11-14. Sårbarheten fantes før komponenttestene og gjelder utviklingsserveren. Oppgraderingen endrer en eksakt låst avhengighet for hele gruppa og bør tas i egen endring med `npm run build` og `npm run test` på Node 22.12.
+  summary: "[BEVISST VALGT BORT 2026-11-14, OP-16] Vite 8.3.1 har en høy sårbarhet i `npm audit`, rettet i 8.3.8, og er ikke oppgradert."
+  evidence: Blind-hunter 2026-11-14. Sårbarheten fantes før komponenttestene og gjelder utviklingsserveren. Oppgraderingen endrer en eksakt låst avhengighet for hele gruppa og bør tas i egen endring med `npm run build` og `npm run test` på Node 22.12. Vurdert 2026-11-14: `npm audit` samler seks varsler (GHSA-587h-7wmj-h5pm, GHSA-698v-4r3x-3vcv, GHSA-r825-w8mm-5pxw, GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22 og GHSA-vfpm-58rq-9qcg). Alle gjelder bare utviklingsserveren, ikke `npm run build`. De som krever `--host`, et annet OS enn Windows eller `middlewareMode`, gjelder ikke oss. Det som gjenstår, er `launch-editor` på Windows, mens `npm run dev` kjører lokalt. Johannes valgte bevisst å ikke oppgradere, fordi risikoen er lav og serveren bare kjører lokalt (OP-16, §11). Tas opp igjen hvis serveren eksponeres med `--host`, eller hvis det kommer et nytt varsel.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-frontend-komponenttester.md`
   summary: AGENTS.md sier «P-13 én gang (OP-16)», men OP-16 avgjorde ikke P-13. Henvisningen bør peke på P-13 i §12 i avklaringspunktene.
