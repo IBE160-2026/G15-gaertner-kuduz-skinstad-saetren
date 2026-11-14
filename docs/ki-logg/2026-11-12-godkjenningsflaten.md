@@ -72,6 +72,9 @@ Johannes gjorde nettleserkontrollen 2026-11-12 og godkjente den. Knappene oppfø
 - **Sammenslåing:** `main` med Story 2.4 er tatt inn i branchen. `Kandidatflate.tsx` og `tekster.ts` ble slått sammen automatisk. Konfliktene i `sprint-status.yaml`, `deferred-work.md`, `avklaringspunkter.md` og `vurderingsmatrise.md` var linjer begge hadde lagt til, og alle er beholdt. Merknaden om «OP-12» i §11 er rettet til OP-14.
 - **Kvalitetssikring:** Før rettingen ga sammenslåingen 1 feil av 404 backendtester, den samme som Ragnhild fant. Etter rettingen bestod 404 av 404 (`pytest` i `backend/`, med import-linter), `npm.cmd test` ga 41 bestått, og `npm.cmd run build` bestod.
 
+- **Kims gjennomgang (2026-11-13):** Kim O. Skinstad fant samme testfeil og tre funn til, ført som PR3–PR5 i spesifikasjonens Review Triage Log. Bekreftelsesteksten om «Godkjenn erstatning» (PR3) og datoen for nattevakter (PR4) er avvist med begrunnelse. At «Avbryt» går tilbake «uten kall» (PR5), er presisert i Spec Change Log: knappen gjør ingen kall, men kandidatflaten henter data på nytt.
+- **Story 2.5:** `main` med Story 2.5 er også tatt inn. Konfliktene i `app.css`, `tekster.ts` og `avklaringspunkter.md` var blokker begge hadde lagt til. Den forrige sammenslåingen hadde delt tabellen i avklaringspunkter §2 med en tom linje, og det er rettet. Etterpå bestod 412 backendtester og 48 frontendtester, og bygget bestod.
+
 ## Gjenstår
 
-- Ny godkjenning av PR #16 fra Ragnhild etter rettingen.
+- Ny godkjenning av PR #16 etter rettingen.

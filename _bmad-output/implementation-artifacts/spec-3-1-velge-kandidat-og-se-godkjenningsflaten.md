@@ -99,8 +99,11 @@ context:
 - 2026-11-12: Etter kodegjennomgangen er 7 funn rettet, 2 utsatt til `deferred-work.md` og 10 avvist (se Review Triage Log). KI-loggen er [2026-11-12-godkjenningsflaten.md](../../docs/ki-logg/2026-11-12-godkjenningsflaten.md). 359 backendtester og 39 frontendtester består, og bygget går gjennom.
 - 2026-11-12: Johannes gjorde nettleserkontrollen og godkjente den. Knappene oppførte seg som forventet.
 - 2026-11-14: `main` med Story 2.4 (PR #17) er tatt inn i branchen. Konfliktene var bare i dokumenter der begge hadde lagt til linjer. Testen `test_alle_i_listen_gir_200_og_alle_andre_404` er rettet etter PR-gjennomgangen (PR1 i Review Triage Log). Etterpå bestod 404 backendtester og 41 frontendtester, og bygget bestod.
+- 2026-11-14: `main` med Story 2.5 (PR #19) er tatt inn. Konfliktene i `app.css`, `tekster.ts` og `avklaringspunkter.md` var blokker begge hadde lagt til. «Velg»-knappen står sammen med Ekskludert-boksen i kandidatlisten. Endepunktet for godkjenningsgrunnlaget er uendret, og `/kandidater` har fått feltet `utelukkelser`, som testene for 3.1 ikke sammenligner med. Etterpå bestod 412 backendtester og 48 frontendtester, og bygget bestod.
 
 ## Spec Change Log
+
+- 2026-11-14, presisering etter Kims gjennomgang av PR #16 (PR5): «uten kall» om «Avbryt» i Boundaries betyr uten skrivekall og uten kall fra selve knappen. Når kandidatflaten vises igjen, henter den Vakten og listen på nytt med to GET-kall, som ved vanlig visning. Det er ønsket, fordi listen kan ha endret seg (P-09). UX-DR19 krever «uten tilstandsendring», og det er oppfylt. Den låste teksten er ikke endret.
 
 ## Review Triage Log
 
@@ -134,6 +137,14 @@ PR-gjennomgang 2026-11-12 av Ragnhild Sætren (PR #16), med 3.1 og 2.4 slått sa
 |---|---|---|---|---|
 | PR1 | `assert gyldige` i den regeluavhengige 404-testen krever minst én Gyldig kandidat for #4189. Med 35-timersregelen har #4189 ingen, så testen feiler etter 2.4 | high | Testen var lovet å tåle 2.4 (OP-13), men bandt seg til at listen ikke er tom. 0 for #4189 stemmer med `FASIT` og `test_kandidater.py` | patch 2026-11-14: krever ikke-tom liste bare for #4127; for #4189 gir alle Ansatte 404 |
 | PR2 | Merknaden i §11 om at 2.4 bruker «OP-12» er utdatert | low | 2.4 bruker OP-14 etter `d6c716a` | patch 2026-11-14 i `avklaringspunkter.md` |
+
+Gjennomgang 2026-11-13 av Kim O. Skinstad, ført i hans sesjonslogg og ikke som review på GitHub. Han fant også PR1, og i tillegg:
+
+| # | Funn | Vurdering | Begrunnelse | Utfall |
+|---|---|---|---|---|
+| PR3 | Bekreftelsesteksten sier at turnusen ikke endres «før du trykker Godkjenn erstatning», men knappen lagrer ingenting i 3.1 | low | Setningen er ordrett fra mockupen (`key-godkjenning.html:202`) og er ikke usann. Et trykk viser linjen fra 2A, «Godkjenningen lagres ikke ennå. Ingenting er endret.», og statuslinjen står. Story 3.2 lar knappen lagre, og da stemmer setningen helt. En midlertidig tekst måtte vært fjernet igjen i 3.2 | avvist (Johannes 2026-11-14) |
+| PR4 | `datoOgTidsrom` viser ikke sluttdatoen for nattevakter som går over midnatt | low | Appen skriver nattevakter med startdatoen overalt, også i Vaktvalg (`23:00–07:00`). Vaktlinjen rett over boksen viser varigheten «(8 t)» og vakttypen «Nattevakt». En egen skrivemåte i bekreftelsesboksen ville gitt to skrivemåter i appen. Bør eventuelt avgjøres for alle flatene samlet | avvist (Johannes 2026-11-14) |
+| PR5 | «Avbryt» skal gå tilbake «uten kall», men kandidatflaten gjør to GET-kall når den vises igjen | low | Knappen gjør ingen kall. Kallene kommer fra kandidatflaten, som henter data på nytt slik den alltid gjør. Å lagre listen i hurtigminne ville gitt utdaterte data (P-09) og mer kode | patch 2026-11-14: presisert i Spec Change Log |
 
 ## Verification
 
