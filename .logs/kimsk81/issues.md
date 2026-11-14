@@ -1,6 +1,9 @@
 # Åpne punkter
 
-- [ ] 2026-11-14 [Gjennomgang av PR #19](982-2026-11-14-09-25-33-gjennomgang-pr-19.md) — Rett vurderingsmatrisens foreldede «PR er ikke opprettet», og rett antall nye domenetester fra sju til seks i vurderingsmatrisen og KI-loggen før story 2.5 markeres ferdig.
+- [x] 2026-11-14 [Gjennomgang av PR #19](982-2026-11-14-09-25-33-gjennomgang-pr-19.md) — Rett vurderingsmatrisens foreldede «PR er ikke opprettet», og rett antall nye domenetester fra sju til seks i vurderingsmatrisen og KI-loggen før story 2.5 markeres ferdig. (løst 2026-11-14 i `ff21622`)
+- [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett #4189-testen for tom gyldigliste, løs fire dokumentkonflikter mot gjeldende `main`, og kjør tester på faktisk sammenslåingsresultat før godkjenning.
+- [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett eller avklar misvisende tekst om «Godkjenn erstatning» i 3.1 og vis sluttdato for nattvakter i bekreftelsen.
+- [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Avklar «Avbryt uten kall» mot de to GET-kallene ved retur, og følg opp den utsatte komponenttesten.
 
 - [x] 2026-11-09 [Story 1.6 – mergehistorikk](985-2026-11-09-18-33-00-story-1-6-vaktdetaljer.md) — Bekreft på GitHub om PR #11 hadde menneskelig gjennomgang og om CI var kontrollert før merge; lokal git-historikk gir ikke dette beviset. (løst 2026-11-09: brukeren opplyste at han selv godkjente PR-en og at CI bestod)
 
@@ -53,3 +56,6 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [ ] 2026-11-10 [PRD-samordning](983-2026-11-10-18-10-07-prd-samordning-gruppevedtak.md) — P-13: Avklar mobil/nettbrett og gjennomfør/dokumenter oppgavebasert forståelsestest etter fungerende kandidatvisning og før story 4.6 er ferdig.
 - [ ] 2026-11-10 [PRD-samordning](983-2026-11-10-18-10-07-prd-samordning-gruppevedtak.md) — P-10B: Gjennomfør backlog-story 5.9 etter fungerende kjerneflyt, eller dokumenter den som utsatt. Valgfri to-kandidatsammenligning i P-07 er strekkmål; P-12B er ikke v1-krav.
 - [ ] 2026-11-10 [PRD-samordning](983-2026-11-10-18-10-07-prd-samordning-gruppevedtak.md) — E-02: Sammenhold avvikslisten fra godkjent proposal `ee6d798` med faktisk levert app og tester ved innlevering; begrunn eventuelle utelatelser.
+- [x] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Kontroller PRD mot Bårds tilbakemelding og sammenheng med brief/UX/arkitektur; løs mergekonflikten i Mithads issues-fil med begge oppfølgingslinjer bevart. (løst 2026-11-13: to underagentrapporter, rettede dokumentfunn og mergecommit `51e47c7`)
+- [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før story 5.1 vedta preferansetolkningens ventetrinn, antall automatiske forsøk, tidsbudsjett og startpunkt samt sluttstatus ved 429/5xx/nettverksfeil; oppdater deretter FR-10, AD-7 og story 5.1 med den samme kontrakten.
+- [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før innlevering velge sensornøkkel, ansvar for betaling og kreditt ut fra faktisk forbruk (AV-16/ÅB-8).
