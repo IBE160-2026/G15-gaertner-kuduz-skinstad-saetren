@@ -4,6 +4,7 @@
 persistent_facts = [
   "file:docs/modellvalg-stories.md",
   "Når en story i docs/modellvalg-stories.md har «Sonnet, gjennomgang med Opus», start minst én av gjennomgangsagentene med model: opus. Gjelder bare Claude Code.",
+  "Manuell kontroll trengs bare når de automatiske testene ikke kan kontrollere det aktuelle (Johannes 2026-11-14, alternativ A, OP-16). «Manual checks» i nye spesifikasjoner tar bare med punkter fra den manuelle sjekklisten i docs/testing.md, for eksempel layout ved 360 px, farger og fokusmarkering. Koblingen i komponentene (tilstander, knapper, ruter og hvilke API-kall som gjøres) dekkes av rendrede tester i frontend/tester/komponenter/ (Vitest, Testing Library, jsdom), ikke av nettleserkontroll.",
 ]
 
 activation_steps_append = [

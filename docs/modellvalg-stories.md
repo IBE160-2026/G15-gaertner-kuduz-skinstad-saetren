@@ -20,6 +20,7 @@ av Johannes 2026-11-10. Ikke drøftet i gruppa ennå — er dere uenige, endre t
 | Story | Modell | Hvorfor |
 |---|---|---|
 | Samordning av PRD-vedtakene (correct course) | Opus | Mange dokumenter må holdes konsistente |
+| Komponenttestrigg | Opus | Grunnmønster for alle senere komponenttester (OP-16) |
 | 2.1 Kompetanse og minstekrav | Opus | Første regel, legger mønsteret for regelmotoren |
 | 2.2 Kolliderende vakt | Sonnet | Enkel overlapp, intervallmodellen finnes |
 | 2.3 11-timersregelen | Opus | Sommertid, halvåpne intervaller, grensetilfeller |
