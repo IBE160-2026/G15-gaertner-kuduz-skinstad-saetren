@@ -36,5 +36,31 @@ Innføre automatiske komponenttester for frontend etter [handoffen](../../_bmad-
 ### Åpne punkter
 - Push branchen og opprett PR. Avklar hvem i gruppa som gjennomgår den.
 - Kontroller at CI er grønn på Node 22.12 og `lts/*` (ikke kjørt lokalt).
-- Vite 8.3.1 har en høy sårbarhet (rettet i 8.3.8). Utsatt i `deferred-work.md`.
 - AGENTS.md sier «P-13 én gang (OP-16)», men henvisningen bør være P-13 i §12. Avgjøres i PR-gjennomgangen.
+
+## 2026-11-14 kl. 12:05 — johagartnerHiMolde
+
+### Oppgave
+Johannes ba om to ting. Informasjonen om RAM og CPU fra testkjøringene skulle dokumenteres, fordi andre maskiner kan kreve endringer, og endringer var godkjent på forhånd. Han ville også bli tatt gjennom sårbarheten i Vite for å vurdere om den skulle prioriteres.
+
+### Plan
+- Målte `npx vitest run` med én arbeider og med standard antall arbeidere, alene og i fire samtidige kjøringer.
+- Hentet de seks GitHub-varslene bak `npm audit` med `gh api advisories/…` og vurderte hvert av dem mot oppsettet vårt.
+
+### Resultat
+- **Maskinkrav (`7db5d15`):**
+  - Maskinen er en i3-1115G4 med 7,7 GB RAM. Før start var 0,6 GB ledig, og CPU-en lå på 35–100 %.
+  - Med `maxWorkers: 1` ga fire samtidige kjøringer 12 av 12 på 21–22 s. Før ga de tidsavbrudd og tok 125–154 s. Én kjøring ble ikke tregere.
+  - `vitest.config.ts` har fått `maxWorkers: 1`. `docs/testing.md` har fått seksjonen «Trege maskiner og tidsavbrudd» med målinger og tiltak. README og AGENTS.md («Kjente fallgruver») har fått merknader.
+  - Påstanden i KI-loggen om at fire samtidige kjøringer ikke tåles, er rettet.
+- **Vite:**
+  - Alle seks varslene gjelder bare utviklingsserveren. For oss gjelder bare `launch-editor` på Windows mens `npm run dev` kjører lokalt.
+  - Johannes valgte bevisst å ikke oppgradere, fordi risikoen er lav og serveren bare kjører lokalt. Committet som egen commit.
+  - Valget er ført i OP-16 (§11) og i `deferred-work.md` (merket valgt bort). README steg 4 forklarer advarselen fra `npm install` og ber om at `npm audit fix` ikke kjøres.
+- `npm run build` består. `npm run test` gir 48 av 48 og 12 av 12.
+- Lukket i issues.md: punktet om Vite.
+
+### Åpne punkter
+- Push branchen og opprett PR. Avklar hvem i gruppa som gjennomgår den.
+- Kontroller at CI er grønn på Node 22.12 og `lts/*`.
+- Henvisningen til P-13 i AGENTS.md avgjøres i PR-gjennomgangen.
