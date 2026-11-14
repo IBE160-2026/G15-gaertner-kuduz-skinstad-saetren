@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1, ført i §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -76,6 +76,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-14 | Layoutbredde | Vedtatt 2026-11-06 | Appbar over hele bredden; innholdet får `max-width: 1180px`. Fast bredde på 1180px forkastes (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
 | AV-15 | Målbare suksessmål i PRD §7 | Vedtatt 2026-11-13 | SM-3 etter ferdig kandidatberegning uten ekstra handling; SM-4 med faktakontrollert relevant myk faktor og særtilfeller; SM-C2 med faktakontroll og 90 s for live avveining (§13). | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
 | AV-16 | Beslutningseiere i PRD §8 | Vedtatt 2026-11-13 | Hele gruppa eier åpne valg om mobil/nettbrett og sensors OpenRouter-nøkkel. Fristene og åpne valg står i §13. | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
+| AV-17 | Mobil, nettbrett og smale vinduer | Vedtatt 2026-11-14 | Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer, for eksempel på en skjerm på høykant eller med flere vinduer side om side. Story 4.6 skrives om (§11). | Johannes W. Gaertner, Mithad Kuduz og Ragnhild Sætren |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
@@ -312,6 +313,8 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 **Senere vedtak 2026-11-13 (AV-16, gjeldende ansvar):** Hele gruppa er beslutningseier for mobil-/nettbrettvalget. Valget tas etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Linjen om «Ikke bestemt» nedenfor er historisk status fra 02.11.
 
+**Valget er tatt 2026-11-14 (AV-17, §11):** Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer. Brukerprøvingen i P-13 gjelder fortsatt.
+
 - **Status:** Vedtatt.
 - **Beslutning:** Samordne relevante mockuper og grensesnittbeskrivelser med **fire vakttyper nå**. Detaljert UX, mobiltilpasning og brukerprøving prioriteres etter at en fungerende kandidatvisning finnes.
 - **Konsekvens:** Grunnleggende forståelig kandidatvisning er fortsatt del av kjerneflyten; dette innebærer ikke å utsette hele grensesnittet.
@@ -454,7 +457,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 |---|---|---|
 | Kontrollér om eksisterende logging dekker sporbarhet og begrunnelse for tak 300. | K-05 | Kontroll åpen; ingen loggendringer vedtatt. |
 | Gjennomgå agentpraksis/underagenter og bevar reviewfunn. | OP-04 | Gjennomført og godkjent 2026-11-04; regelen om underagenter står i `AGENTS.md` (§11). |
-| Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. |
+| Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. Mobil og nettbrett er v2, og v1 dekker smale nettleservinduer (AV-17, 2026-11-14). |
 | Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | Ren klone testet på macOS 2026-11-12 med Python 3.12.14: 337 av 337 backendtester og 26 av 26 frontendtester bestått (§11). macOS testet også 2026-11-11 (275 av 275). Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). Linux kjøres bare i CI. |
 | Fastsett eventuell bindende arbeidsrekkefølge. | OP-06 | Codex-rekkefølgen er kun et forslag. |
 | Avtal frist for ny PR-review. | OP-09 | Bortfalt: PR #4 ble merget 2026-11-02 uten ny review etter rettingen (§11). |
@@ -743,6 +746,18 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Endret:** K-01 og OP-09 i tabellen, i §4 og §5, og raden for OP-09 i §8.4.
 - **Ikke endret:** KS-01, raden for PR #4 i §7 og kontrollen av K-punktene i §8. De gjengir beslutningene fra møtet. K-02, K-04, K-06 og de andre AV-, K-, OP- og KS-punktene er heller ikke endret.
 
+### 2026-11-14 – Mobil og nettbrett er v2; smale nettleservinduer gjelder i v1 (AV-17)
+
+- **Hvem:** Johannes W. Gaertner, Mithad Kuduz og Ragnhild Sætren, 2026-11-14. Registrert av Johannes. Kim O. Skinstad er ikke oppgitt som deltaker. AV-16 gjør hele gruppa til beslutningseier, så Kim kan ta vedtaket opp igjen ved uenighet.
+- **AV-17 – Beslutning:**
+  - Alt som gjelder mobil og nettbrett, er v2. Det bygges ingen egne visninger, breakpoints eller stablede kort for telefon eller nettbrett i v1.
+  - V1 skal fungere godt i smale nettleservinduer og når vinduet endrer størrelse. Eksempler: en skjerm på høykant, eller flere nettleservinduer side om side.
+  - AV-14 gjelder fortsatt ved alle bredder: siden som helhet ruller ikke vannrett, og brede tabeller ruller i sin egen beholder.
+- **Begrunnelse:** Appen kjører lokalt og krever en datamaskin. Det finnes ingen hosting (arkitektur § Deferred), så en telefon eller et nettbrett når ikke appen i v1. Det relevante smale tilfellet er et smalt vindu på en datamaskin, også for sensor.
+- **Konsekvens for Story 4.6:** Storien skrives om fra nettbrett og mobil til smale nettleservinduer. Forslaget om nettbrettrader og mobilkort i EXPERIENCE.md blir et innspill til v2, ikke et v1-krav. Kontrollbreddene i storien (1080, 960 og 680 px) er avledet fra eksemplene over og kan justeres i spesifikasjonen.
+- **Ikke endret:** P-13s oppgavebaserte forståelsestest (én testperson, ett operativsystem og én skjermflate) gjelder fortsatt og er ikke utført. AV-14, UX-DR24 og tilgjengelighetsgulvet er uendret.
+- **Endret:** OP-02, AV-16 og P-13-raden i §12 (pekere hit), raden for OP-02 i §8.4, `epic-2-context.md`, PRD §8 og §10, EXPERIENCE.md (Foundation, Responsive & Platform og UJ-1), DESIGN.md (Bredde), arkitektur § Deferred, ÅB-7, UX-DR25, UX-DR26, Story 4.6 og 4.7 i `epics.md`, handlingspunktet i `sprint-status.yaml` og vurderingsmatrisen.
+
 ---
 
 **Dokumentvedlikehold:** Endre status til «Vedtatt», «Utsatt» eller «Løst» for et åpent punkt **bare etter faktisk avklaring**, med dato, beslutning og kilde/henvisning. Behold opprinnelig beslutnings-ID for sporbarhet. Nye punkter gis nye ID-er uten å omskrive historiske vedtak.
@@ -765,7 +780,7 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 | P-10 | Kjerneflyten bruker faste preferanser i testdata. **P-10B planlegges som egen story etter fungerende kjerneflyt**: turnusansvarlig kan redigere tekst, med lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. | B er planlagt v1-tillegg, ikke forutsetning for kjerneflyten; dokumenter som utsatt hvis tiden ikke rekker. Manuell kategori-overstyring er ikke valgt. Johannes' individuelle ønske om høyere prioritet i kilden endrer ikke Kims senere gruppeavklaring. |
 | P-11 | Ved null gyldige vises egen tomtilstand, utelukkelsesoppsummering og teksten «Innleie av personell kan vurderes», uten innleieknapp. | Skill tomtilstanden fra datafeil og lasting i UI-test. |
 | P-12 | Godkjenning lagres varig; vist forklaring lagres ikke historisk i kjerneversjonen. | Historisk forklaringslagring er **ikke v1-krav**. Eventuelt senere valg krever egen story for forklaring og beregningsgrunnlag. |
-| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende nå. Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 er ferdig. | Felles ansvar: dokumenter en enkel oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. **Avgrensning:** én testperson og ett operativsystem og én skjermflate holder; mobil-/nettbrettavklaringen krever ingen egen forståelsestest. **Akseptmål:** testpersonen løser alle tre oppgavene uten hint. Står hen fast på én, rettes det som skapte misforståelsen, og funnet og rettingen noteres. Dokumenter testperson, operativsystem og skjermflate, svar per oppgave og eventuelle rettinger. Presisert av Johannes 2026-11-11 i godkjenningen av PR #12. Testen er ikke utført. |
+| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende nå. Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 er ferdig. | Felles ansvar: dokumenter en enkel oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. **Avgrensning:** én testperson og ett operativsystem og én skjermflate holder; mobil-/nettbrettavklaringen krever ingen egen forståelsestest. **Akseptmål:** testpersonen løser alle tre oppgavene uten hint. Står hen fast på én, rettes det som skapte misforståelsen, og funnet og rettingen noteres. Dokumenter testperson, operativsystem og skjermflate, svar per oppgave og eventuelle rettinger. Presisert av Johannes 2026-11-11 i godkjenningen av PR #12. Testen er ikke utført. Mobil og nettbrett er avklart som v2 2026-11-14 (AV-17, §11). |
 | E-01 | Faglærers muntlige opplysning er gjengitt: KI i produktet er ikke et formelt emnekrav; KI beholdes som valgt produktscope. | Lukket som dokumentasjonspunkt 2026-11-08; forelesningsdato er ukjent. |
 | E-02 | Commit `ee6d798` er identifisert som godkjent proposal; planavvikene er listet i beslutningsgrunnlaget. | Avklart som dokumentpunkt 2026-11-09. Kontroller faktisk levert app mot proposal og forklar avvik ved innlevering. |
 
@@ -784,7 +799,7 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 
 ### AV-16 – Eier for åpne valg
 
-- **Mobil/nettbrett (OP-02/P-13):** Hele gruppa er beslutningseier. Desktop og gjeldende tilgjengelighetskrav gjelder nå. Selve mobil-/nettbrettvalget tas etter fungerende kandidatvisning og før story 4.6 er ferdig. P-13s oppgavebaserte forståelsestest er fortsatt ikke utført.
+- **Mobil/nettbrett (OP-02/P-13):** Hele gruppa er beslutningseier. Desktop og gjeldende tilgjengelighetskrav gjelder nå. Selve mobil-/nettbrettvalget tas etter fungerende kandidatvisning og før story 4.6 er ferdig. P-13s oppgavebaserte forståelsestest er fortsatt ikke utført. **Valget ble tatt tidligere, 2026-11-14 (AV-17, §11):** mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer.
 - **Sensornøkkel (ÅB-8):** Hele gruppa er beslutningseier. Hvilken OpenRouter-nøkkel sensor får, hvem som betaler og hvor mye kreditt som trengs, avgjøres før innlevering ut fra faktisk forbruk. Ingen nøkkel eller verdi skal inn i repoet.
 
 **Fortsatt åpent:** P-05 vedtar avgrensede nye forsøk ved forbigående feil i preferansetolkning, men ventetrinn ved 5xx/nettverksfeil, konkret antall, tidsbudsjett og startpunkt for målingen samt sluttstatus for 429/nettverks-/serverfeil må avklares før story 5.1. AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver avveining; de overføres ikke automatisk til tolkning. FR-13s 480 minutter er en overstyrbar standard etter OP-10/AD-3. P-12B om historisk lagring av forklaring er fortsatt utenfor v1 og krever eget vedtak og story.

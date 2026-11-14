@@ -16,7 +16,7 @@ sources:
 
 ## Foundation
 
-Web-app med desktop som bindende flate nå. Gruppen avklarer mobil/nettbrett etter fungerende kandidatvisning og før story 4.6 ferdigstilles (P-13/OP-02). Ingen egen native app. PWA er en mulighet, ikke v1-forpliktelse.
+Web-app med desktop som bindende flate. Mobil og nettbrett er v2; v1 skal fungere godt i smale nettleservinduer på en datamaskin (AV-17, 2026-11-14). Ingen egen native app. PWA er en mulighet, ikke v1-forpliktelse.
 
 Ingen navngitt UI-komponentbibliotek (ikke shadcn/MUI/Tailwind-system) — et egendefinert, tett "fagsystem"-formspråk bygget for dette produktet. `DESIGN.md` er den visuelle identitetsreferansen; denne spine-filen er atferden. Kun norsk bokmål — ingen i18n i v1.
 
@@ -108,13 +108,15 @@ Mulig tillegg i v2 (2026-11-06): utvidet tilgjengelighet for svaksynte, med skje
 
 ## Responsive & Platform
 
-Desktop og gjeldende tilgjengelighetskrav er bindende. Alle fire mockup-skjermene (`mockups/`) er desktopillustrasjoner; 1180px er en presentasjonsramme, mens appinnholdet har `max-width: 1180px` (AV-14). Breakpoints og kandidatflatens mobil-/nettbrettmønster avklares etter fungerende kandidatvisning og før story 4.6, med oppgavebasert forståelsestest (P-13/OP-02).
+Desktop og gjeldende tilgjengelighetskrav er bindende. Alle fire mockup-skjermene (`mockups/`) er desktopillustrasjoner; 1180px er en presentasjonsramme, mens appinnholdet har `max-width: 1180px` (AV-14).
 
-Besluttet 2026-11-06 (AV-14): 1180px er rammens bredde, ikke produktets. Appbaren går over hele bredden, innholdet får `max-width: 1180px`, og under det ruller brede tabeller vannrett i sin egen beholder fram til story 4.6. Siden som helhet skal ikke rulle vannrett. Breakpoints og stabling under er fortsatt utsatt (OP-02).
+Besluttet 2026-11-06 (AV-14): 1180px er rammens bredde, ikke produktets. Appbaren går over hele bredden, innholdet får `max-width: 1180px`, og under det ruller brede tabeller vannrett i sin egen beholder. Siden som helhet skal ikke rulle vannrett.
 
-**[ASSUMPTION]** Følgende er en rimelig, men ubekreftet, tilpasning avledet fra tettheten i `DESIGN.md` og bør bekreftes med gruppen før implementasjon:
+Besluttet 2026-11-14 (AV-17): Mobil og nettbrett er v2. Appen kjører lokalt og krever en datamaskin, så en telefon eller et nettbrett når den ikke i v1. V1 skal i stedet fungere godt i smale nettleservinduer: på en skjerm på høykant, med flere vinduer side om side, og når vinduet endrer størrelse. Story 4.6 kontrollerer flatene ved 1080, 960 og 680 px. Der skal hele tiden være synlig hvilken Kandidat en rad i rangeringstabellen gjelder, også når tabellen er rullet vannrett. Hvordan det løses (fast første kolonne eller opplysninger flyttet inn i raden), avgjøres i story 4.6.
 
-| Breakpoint | Foreslått behandling |
+**Innspill til v2, ikke v1-krav.** Forslaget under var en ubekreftet tilpasning avledet fra tettheten i `DESIGN.md`. Det bygges ikke i v1 (AV-17), men kan brukes når appen får hosting og mobil og nettbrett tas opp igjen:
+
+| Flate | Foreslått behandling |
 |---|---|
 | Desktop (bred flate) | Full rangeringstabell som i mockupene — alle kolonner synlige samtidig. |
 | Nettbrett (smalere flate) | Tabellen beholder radform, men mindre kritiske kolonner (f.eks. ansiennitet i undertekst) kan flyttes ned i raden fremfor egen kolonne. |
@@ -138,4 +140,4 @@ Ingen plattformspesifikke konvensjoner (iOS/Android native) er relevante — det
 6. **Klimaks:** Kari ser hvorfor Jonas er rangert øverst, men velger bevisst Mette (nr. 2). På Godkjenning vises et nøytralt avviksnotat: Jonas er fortsatt gyldig og rangert øverst, men ikke valgt — «Turnushjelperen anbefaler, den bestemmer aldri selv.»
 7. **Oppløsning:** Kari trykker "Godkjenn erstatning" i bekreftelsesboksen. Ingen endring i turnusen var gjennomført før dette eksplisitte trykket.
 
-**Edge case (samme flyt, annen vakt):** Ingen kandidater er gyldige for Vakt #4189 (nattevakt 28.09) — opprinnelig ansatt vurderes ikke, og de 24 øvrige er utelukket av Harde regler. Tomtilstanden viser utelukkelsesoppsummering og «Innleie av personell kan vurderes» uten knapp (P-11). Ved #4261–#4265 stopper vurderingen derimot med datafeil som opplyser at seeddata slutter 05.10; ingen rangering eller godkjenning vises (P-08). Oppgavebasert forståelsestest og mobil/nettbrettavklaring gjenstår etter fungerende kandidatvisning og før story 4.6 (P-13/OP-02).
+**Edge case (samme flyt, annen vakt):** Ingen kandidater er gyldige for Vakt #4189 (nattevakt 28.09) — opprinnelig ansatt vurderes ikke, og de 24 øvrige er utelukket av Harde regler. Tomtilstanden viser utelukkelsesoppsummering og «Innleie av personell kan vurderes» uten knapp (P-11). Ved #4261–#4265 stopper vurderingen derimot med datafeil som opplyser at seeddata slutter 05.10; ingen rangering eller godkjenning vises (P-08). Oppgavebasert forståelsestest gjenstår etter fungerende kandidatvisning og før story 4.6 (P-13/OP-02). Mobil og nettbrett er avklart som v2 (AV-17).

@@ -62,7 +62,7 @@ Etter vaktvalg ser turnusansvarlig hvem som faktisk kan ta vakten. Fire harde re
 - Tomtilstanden har et sirkulært «!»-ikon i `danger` og teksten «Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.» Ekskludert-boksen vises fortsatt.
 - Lasting, feil, datafeil og ingen gyldige har ulik tekst og ulikt utseende, og en test viser at ingen er like. Datafeilen sier «Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.» og oppgir datagrensen.
 - `danger` brukes bare for faktiske utelukkelser og tomtilstanden. Teksten er kort, uten utropstegn, og antyder aldri at systemet har valgt noe.
-- Alt kan nås med tab og enter, med semantisk HTML. Komponentene bruker bare designtokens (AV-13), og innholdet har `max-width: 1180px` (AV-14). Desktop er bindende nå, mens mobil og nettbrett avklares etter en fungerende kandidatvisning (P-13, OP-02).
+- Alt kan nås med tab og enter, med semantisk HTML. Komponentene bruker bare designtokens (AV-13), og innholdet har `max-width: 1180px` (AV-14). Desktop er bindende. Mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer (AV-17, 2026-11-14; story 4.6).
 - Et forsinket svar for en tidligere valgt vakt skal ikke erstatte visningen av den aktive vakten (P-09).
 
 ## Cross-Story Dependencies

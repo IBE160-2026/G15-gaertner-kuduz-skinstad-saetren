@@ -184,9 +184,9 @@ Skala: 4 / 8 / 12 / 16 / 22 / 32px. Innholdspolstring (`content-padding`, 22px) 
 
 Layouten er én kolonne av tett stablede seksjoner (varselboks → seksjonsoverskrift → tabell → ekskludert-boks → fotnote), ikke et flerkolonne-dashbord. Brødsmulesti (`Turnus > Avdeling > Vakt`) ligger fast øverst under appbar på alle skjermer etter innlogging, som fast stedsforankring i en tett flate.
 
-**Bredde (AV-14, 2026-11-06).** Appbaren går over hele bredden. Innholdsflaten får `max-width: 1180px`, sentreres og har `content-padding` (22px) på sidene. `login-card` får `width: min(360px, 100% - 32px)`. Under 1180px ruller brede tabeller vannrett inne i sin egen beholder fram til story 4.6. Bredden på 1180px i mockupene er bredden på den ytre nettleser-rammen (`.browser`), samme presentasjonsartefakt som skyggen under Elevation & Depth, og ikke en fast produktbredde. Se `docs/beslutninger/avklaringspunkter.md` §11.
+**Bredde (AV-14, 2026-11-06).** Appbaren går over hele bredden. Innholdsflaten får `max-width: 1180px`, sentreres og har `content-padding` (22px) på sidene. `login-card` får `width: min(360px, 100% - 32px)`. Under 1180px ruller brede tabeller vannrett inne i sin egen beholder, og story 4.6 sørger for at det fungerer godt i smale nettleservinduer (AV-17). Bredden på 1180px i mockupene er bredden på den ytre nettleser-rammen (`.browser`), samme presentasjonsartefakt som skyggen under Elevation & Depth, og ikke en fast produktbredde. Se `docs/beslutninger/avklaringspunkter.md` §11.
 
-**[ASSUMPTION]** Eksakte breakpoints for mobil/nettbrett-tilpasning er ikke bestemt i noen av kildene, og er utsatt (OP-02) — se EXPERIENCE.md § Responsive & Platform for hvordan tabelltettheten foreslås tilpasset smalere flater.
+**Smale vinduer (AV-17, 2026-11-14).** Mobil og nettbrett er v2, så det finnes ingen breakpoints for telefon eller nettbrett i v1. Tettheten beholdes i smale nettleservinduer; se EXPERIENCE.md § Responsive & Platform for kontrollbreddene og v2-forslaget for smalere flater.
 
 ## Elevation & Depth
 
