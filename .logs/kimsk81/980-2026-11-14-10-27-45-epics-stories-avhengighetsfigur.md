@@ -18,3 +18,19 @@ Lage en SVG-figur over alle epics og stories med avhengigheter, der forbindelsen
 
 ### Åpne punkter
 Ingen.
+
+## 2026-11-14 kl. 10:30 — Kimsk81
+
+### Oppgave
+Flytte avhengighetsfiguren til en egen mappe under `docs/` og publisere flyttingen på `main`.
+
+### Plan
+- Opprette `docs/figurer/` og flytte SVG-filen dit.
+- Committe og pushe flyttingen.
+
+### Resultat
+- Flyttet figuren til `docs/figurer/epics-stories-avhengigheter.svg`.
+- Committet og pushet flyttingen til `main`.
+
+### Åpne punkter
+Ingen.
