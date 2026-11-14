@@ -189,4 +189,5 @@ Ikke relevant: <punkt og hvorfor>
 ```
 
 P-13s forståelsestest står for seg: én testperson, ett operativsystem og én skjermflate,
-med tre oppgaver uten hint (§12 i avklaringspunktene). Den er ikke utført ennå.
+med tre oppgaver uten hint (§12 i avklaringspunktene). Planlagt arbeidsmål er før
+story 4.6 ferdigstilles; dette er ikke et eget gruppevedtak om frist. Testen er ikke utført ennå.

@@ -25,7 +25,7 @@ context: []
 - `docs/testing.md`, `AGENTS.md`, `_bmad/custom/bmad-build.toml` og beslutningsreferatet presiserer at de 12 testene dekker navngitte flyter. Nye eller endrede flyter får test; udekkede flyter får målrettet manuell kontroll som åpent punkt. `AGENTS.md` viser P-13 til referatets §12.
 - P-13-henvisningen er merket løst i `deferred-work.md` og i konfliktløste `issues.md`; forståelsestesten er fortsatt åpen.
 - `npm.cmd ci` krevde `NODE_OPTIONS=--use-system-ca` på denne maskinen på grunn av registry-sertifikatet. Den låste installasjonen endret ikke `package-lock.json`. `npm.cmd run build` bestod på Node 24.19.0; `npm.cmd run test` gav 48 av 48 `node:test` og 12 av 12 Vitest. CI på PR-ens forrige commit var grønn på Node 22.12 og LTS; etter lokal samordning er CI ikke kjørt ennå.
-- To uavhengige agenter gjennomgikk den sammenslåtte arbeidskopien. De bekreftet at de to konfliktfilene beholder begge siders innhold og fant foreldede formuleringer i OP-16, vurderingsmatrisen, P-13-statusen og den gamle spesifikasjonen. Disse er rettet eller presisert. Fristkonflikten for P-13 er ført i `deferred-work.md` og venter på avklaring.
+- To uavhengige agenter gjennomgikk den sammenslåtte arbeidskopien. De bekreftet at de to konfliktfilene beholder begge siders innhold og fant foreldede formuleringer i OP-16, vurderingsmatrisen, P-13-statusen og den gamle spesifikasjonen. Disse er rettet eller presisert. Kim avklarte deretter at «før story 4.6» beholdes som planlagt arbeidsmål, ikke som eget fristvedtak; PRD, epics, sprintstatus og `deferred-work.md` er samordnet med dette.
 
 ## Review Triage Log
 
@@ -34,7 +34,7 @@ context: []
 | B1/V1 | medium | Konfliktfilene hadde fortsatt uavklarte indeksstadier. Innholdet var løst; filene er lagt til i indeksen. |
 | B2/V2 | medium | OP-16s opprinnelige tekst lovet bredere dekning enn de 12 testene gir og motsa presiseringen. Rettet i vedtaksreferatet. |
 | B3 | low | P-13-raden og AV-16-avsnittet brukte framtidsform om mobilvalg som AV-17 allerede har avgjort. Oppdatert som status, med historisk ansvar bevart. |
-| B4 | medium | Epics, PRD og sprintstatus angir frist før story 4.6 for P-13-testen; referatet gjør det ikke, og tidligere review avviste fristen. Berører ikke PR #20s testoppsett. Utsatt til gruppeavklaring i `deferred-work.md`. |
+| B4 | medium | Epics, PRD og sprintstatus anga frist før story 4.6 for P-13-testen; referatet gjør det ikke. Kim valgte å beholde tidspunktet som planlagt arbeidsmål uten eget gruppevedtak om frist. Filene og `deferred-work.md` er samordnet. |
 | B5 | low | Eget `issues.md` ba fortsatt om mobilavklaring. Punktet sier nå at AV-17 er vedtatt og beholder forståelsestesten som åpen. |
 | B6/V3 | low | Vurderingsmatrisen kalte 360 px fast testbredde. Endret til smale datamaskinvinduer etter AV-17. |
 | B7/V5 | low | Den fullførte spesifikasjonens låste blokk hadde bred testpåstand og 360 px. En datert presisering er lagt i Implementation Notes uten å omskrive det historiske grunnlaget. |

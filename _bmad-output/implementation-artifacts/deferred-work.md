@@ -59,5 +59,5 @@
   evidence: Blind-hunter 2026-11-14. P-13 er vedtatt i §12 i avklaringspunktene, ikke i OP-16. Rettet i PR-gjennomgangen: `AGENTS.md` peker nå til beslutningsreferatet §12. Forståelsestesten er fortsatt ikke utført.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-pr-20-samordning-testplan.md`
-  summary: Fristen for P-13s forståelsestest er ikke samordnet mellom beslutningsreferatet og planfilene.
-  evidence: P-13-raden i `docs/beslutninger/avklaringspunkter.md` beskriver testen uten frist, og Review Triage Log B13 i `spec-frontend-komponenttester.md` avviste «før story 4.6» som ikke vedtatt. Gjeldende `epics.md` story 4.6, PRD og sprintstatus sier likevel at testen må dokumenteres før story 4.6 ferdigstilles. Krever avklaring om dette er et arbeidsmål eller et bindende gruppevedtak før filene samordnes.
+  summary: "[LØST 2026-11-14, PR #20] Fristen for P-13s forståelsestest var ikke samordnet mellom beslutningsreferatet og planfilene."
+  evidence: P-13-raden i `docs/beslutninger/avklaringspunkter.md` beskriver testen uten frist, og Review Triage Log B13 i `spec-frontend-komponenttester.md` avviste «før story 4.6» som ikke vedtatt. Kim valgte 2026-11-14 å beholde før story 4.6 som planlagt arbeidsmål, ikke som eget gruppevedtak om frist. `epics.md`, PRD og sprintstatus er presisert tilsvarende. Selve forståelsestesten er fortsatt ikke utført.
