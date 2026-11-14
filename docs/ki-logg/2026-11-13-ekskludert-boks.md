@@ -56,7 +56,10 @@ Mot en midlertidig testdatabase i scratchpad (ikke `backend/turnushjelperen.db`)
 - Ingen konsollfeil utover forventede 401 (før innlogging) og en manglende favicon.
 - Skriptet og skjermbildene ligger i [`2026-11-13-ekskludert-boks/`](2026-11-13-ekskludert-boks/) (`nettleserkontroll.mjs`, `vakt-4127-apen.png`, `vakt-4189-apen.png`, `vakt-4127-360px.png`), kjørt med en ekte, lokal Chrome via `playwright-core` (ikke installert i prosjektets egne `package.json`).
 
+## Etterfølgende PR-gjennomgang (2026-11-14)
+
+Kimsk81 gjennomgikk [PR #19](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/19) mot spesifikasjonen, AV-07 og NFR2. To feil i prosessdokumentasjonen ble rettet i `ff21622`: vurderingsmatrisen hevdet at PR-en ikke var opprettet, og den og denne loggen oppga sju domenetester der testfilen har seks. En konflikt i Kimsk81s `issues.md` ble løst ved å bevare punktene fra begge grener (`d8c1cf0`). På sammenslått branch bestod 389 lokale backendtester uten arkitekturtesten, 35 frontendtester og bygg. Alle fem CI-jobber bestod på siste commit, inkludert full backendtest og import-linter. Kimsk81 godkjente PR-en, som ble merget til `main` i `464fc02`.
+
 ## Gjenstår
 
-- Menneskelig PR-gjennomgang av et gruppemedlem.
 - Testene er kjørt på Windows i denne økten (ikke bekreftet på macOS/Linux for denne storyen spesifikt; CI dekker Linux).
