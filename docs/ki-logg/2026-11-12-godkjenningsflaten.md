@@ -75,6 +75,6 @@ Johannes gjorde nettleserkontrollen 2026-11-12 og godkjente den. Knappene oppfø
 - **Kims gjennomgang (2026-11-13):** Kim O. Skinstad fant samme testfeil og tre funn til, ført som PR3–PR5 i spesifikasjonens Review Triage Log. Bekreftelsesteksten om «Godkjenn erstatning» (PR3) og datoen for nattevakter (PR4) er avvist med begrunnelse. At «Avbryt» går tilbake «uten kall» (PR5), er presisert i Spec Change Log: knappen gjør ingen kall, men kandidatflaten henter data på nytt.
 - **Story 2.5:** `main` med Story 2.5 er også tatt inn. Konfliktene i `app.css`, `tekster.ts` og `avklaringspunkter.md` var blokker begge hadde lagt til. Den forrige sammenslåingen hadde delt tabellen i avklaringspunkter §2 med en tom linje, og det er rettet. Etterpå bestod 412 backendtester og 48 frontendtester, og bygget bestod.
 
-## Gjenstår
+## Merge
 
-- Ny godkjenning av PR #16 etter rettingen.
+CI var grønn på alle fem jobbene. Johannes godkjente rettingene og merget PR #16 2026-11-14. Ragnhilds review står fortsatt som «changes requested» på GitHub, fordi hun ikke har godkjent på nytt, men rettingen følger forslaget hennes. Storyen er `done`.
