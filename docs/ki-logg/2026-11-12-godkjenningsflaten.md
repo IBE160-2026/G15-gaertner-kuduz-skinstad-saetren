@@ -64,6 +64,14 @@ Dato: 2026-11-12. Grunnlag: [spesifikasjonen](../../_bmad-output/implementation-
 
 Johannes gjorde nettleserkontrollen 2026-11-12 og godkjente den. Knappene oppførte seg som forventet, og flaten så bra ut.
 
+## Retting etter PR-gjennomgang (2026-11-14)
+
+- **Funn:** Ragnhild Sætren slo sammen 3.1 og 2.4 lokalt i gjennomgangen av [PR #16](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/16) 2026-11-12. Da feilet `test_alle_i_listen_gir_200_og_alle_andre_404[4189]` på `assert gyldige`.
+- **Hva som var galt i den genererte testen:** Testen skulle være regeluavhengig (OP-13) og tåle at 2.4 merges, men `assert gyldige` krevde minst én Gyldig kandidat for #4189. Med 35-timersregelen faller Line Moe ut, og #4189 har 0 gyldige, som i `FASIT`. Implementeringsagenten og de tre gjennomgangsagentene så ikke at påstanden bandt testen til antallet regler.
+- **Retting:** Testen krever en ikke-tom liste bare for #4127. For #4189 går løkken fortsatt over alle Ansatte, så testen kontrollerer at alle gir 404 når listen er tom. Rettingen er den Ragnhild foreslo.
+- **Sammenslåing:** `main` med Story 2.4 er tatt inn i branchen. `Kandidatflate.tsx` og `tekster.ts` ble slått sammen automatisk. Konfliktene i `sprint-status.yaml`, `deferred-work.md`, `avklaringspunkter.md` og `vurderingsmatrise.md` var linjer begge hadde lagt til, og alle er beholdt. Merknaden om «OP-12» i §11 er rettet til OP-14.
+- **Kvalitetssikring:** Før rettingen ga sammenslåingen 1 feil av 404 backendtester, den samme som Ragnhild fant. Etter rettingen bestod 404 av 404 (`pytest` i `backend/`, med import-linter), `npm.cmd test` ga 41 bestått, og `npm.cmd run build` bestod.
+
 ## Gjenstår
 
-- PR-gjennomgang av et annet gruppemedlem. Den som merger sist av 3.1 og 2.4, løser konflikten i `Kandidatflate.tsx` og `tekster.ts`.
+- Ny godkjenning av PR #16 fra Ragnhild etter rettingen.

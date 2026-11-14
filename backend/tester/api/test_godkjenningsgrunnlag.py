@@ -88,10 +88,12 @@ def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
 @pytest.mark.parametrize("vaktnummer", [4127, 4189])
 def test_alle_i_listen_gir_200_og_alle_andre_404(klient: TestClient, vaktnummer: int) -> None:
     # Regeluavhengig (OP-13): fasiten er det `/kandidater` svarer, uansett hvor
-    # mange regler som er på plass.
+    # mange regler som er på plass. Listen for #4189 kan være tom (0 etter 2.4),
+    # og da skal alle Ansatte gi 404.
     logg_inn(klient)
     gyldige = gyldige_ider(klient, vaktnummer)
-    assert gyldige
+    if vaktnummer == 4127:
+        assert gyldige
     assert MANGLER_BEMANNING[vaktnummer][0] not in gyldige
 
     for ansatt_id in sorted(NAVN):

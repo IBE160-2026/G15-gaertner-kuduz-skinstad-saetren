@@ -98,6 +98,7 @@ context:
 - 2026-11-12: Verifisert av hovedøkten: `pytest` 359 passed, `npm.cmd test` 39 av 39 og `npm.cmd run build` grønn.
 - 2026-11-12: Etter kodegjennomgangen er 7 funn rettet, 2 utsatt til `deferred-work.md` og 10 avvist (se Review Triage Log). KI-loggen er [2026-11-12-godkjenningsflaten.md](../../docs/ki-logg/2026-11-12-godkjenningsflaten.md). 359 backendtester og 39 frontendtester består, og bygget går gjennom.
 - 2026-11-12: Johannes gjorde nettleserkontrollen og godkjente den. Knappene oppførte seg som forventet.
+- 2026-11-14: `main` med Story 2.4 (PR #17) er tatt inn i branchen. Konfliktene var bare i dokumenter der begge hadde lagt til linjer. Testen `test_alle_i_listen_gir_200_og_alle_andre_404` er rettet etter PR-gjennomgangen (PR1 i Review Triage Log). Etterpå bestod 404 backendtester og 41 frontendtester, og bygget bestod.
 
 ## Spec Change Log
 
@@ -126,6 +127,13 @@ Tre uavhengige gjennomganger 2026-11-12, alle på Opus og uten kjennskap til imp
 | EC1 | Vaktnummer over 2⁶³−1 gir 500 | low | Fantes fra før i søskenrutene. Johannes vurderte det 2026-11-10 og fant at det ikke er et reelt problem (`issues.md`) | avvist |
 | EC2 | Et 200-svar med `null` eller uten `vakt` krasjer frontend | false | Pydantic-modellen `GodkjenningsgrunnlagUt` gjør at backend aldri sender det. `kandidater.ts` har samme forutsetning | avvist |
 | EC3 | Svaret kan gjelde en annen id enn URL-en | false | Backend slår opp `ansatt_id` fra stien og returnerer den samme Kandidaten (`main.py`, `next(... k.id == ansatt_id)`) | avvist |
+
+PR-gjennomgang 2026-11-12 av Ragnhild Sætren (PR #16), med 3.1 og 2.4 slått sammen lokalt:
+
+| # | Funn | Vurdering | Begrunnelse | Utfall |
+|---|---|---|---|---|
+| PR1 | `assert gyldige` i den regeluavhengige 404-testen krever minst én Gyldig kandidat for #4189. Med 35-timersregelen har #4189 ingen, så testen feiler etter 2.4 | high | Testen var lovet å tåle 2.4 (OP-13), men bandt seg til at listen ikke er tom. 0 for #4189 stemmer med `FASIT` og `test_kandidater.py` | patch 2026-11-14: krever ikke-tom liste bare for #4127; for #4189 gir alle Ansatte 404 |
+| PR2 | Merknaden i §11 om at 2.4 bruker «OP-12» er utdatert | low | 2.4 bruker OP-14 etter `d6c716a` | patch 2026-11-14 i `avklaringspunkter.md` |
 
 ## Verification
 
