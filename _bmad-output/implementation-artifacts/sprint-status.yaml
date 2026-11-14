@@ -81,7 +81,7 @@ development_status:
   epic-5-retrospective: optional
 action_items:
   - epic: 4
-    action: "P-13/OP-02: Etter fungerende kandidatvisning og før story 4.6 ferdigstilles, avklar mobil/nettbrett og dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige. Én testperson og ett operativsystem og én skjermflate holder; akseptmålet er alle tre uten hint (referatet §12)."
+    action: "P-13/OP-02: Etter fungerende kandidatvisning og før story 4.6 ferdigstilles, avklar mobil/nettbrett og dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige. Én testperson og ett operativsystem og én skjermflate holder; akseptmålet er alle tre uten hint (referatet §12). Dokumenter også hva testpersonen forstod eller misforstod, hvilke designendringer gruppa vurderte, hva som ble valgt eller avvist og hvorfor. Ved endring: ta vare på skjermbilder før og etter, og kontroller at rettingen virker. Hvis designet beholdes: begrunn det ut fra observasjonene. Før resultatet med lenke til test- og designbevis under «Design og brukeropplevelse» i docs/emne/vurderingsmatrise.md."
     owner: "gruppa"
     status: open
   - epic: 2
