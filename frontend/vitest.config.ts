@@ -15,5 +15,10 @@ export default mergeConfig(viteConfig, defineConfig({
     // Over asyncUtilTimeout (5 s i oppsett.ts), så en treg maskin gir en
     // tydelig feil fra findBy… og ikke et tidsavbrudd for hele testen.
     testTimeout: 20_000,
+    // Én testfil om gangen. jsdom bruker mye minne. På en maskin med 7,7 GB
+    // RAM ga flere arbeidere ingen gevinst (17,2 mot 16,6 s), og fire samtidige
+    // kjøringer feilet med tidsavbrudd. Med én arbeider besto de. Overstyres med
+    // `npx vitest run --maxWorkers=4` på en sterk maskin (se docs/testing.md).
+    maxWorkers: 1,
   },
 }));

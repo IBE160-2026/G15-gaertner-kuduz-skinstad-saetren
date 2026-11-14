@@ -249,7 +249,9 @@ kjører import-linter-kontrakten i `pyproject.toml`, som forbyr hele `domene`, o
 `npm run build` typesjekker koden og komponenttestene og bygger (`npm.cmd run test`
 og `npm.cmd run build` i PowerShell hvis skript er blokkert, se steg 4). Hva som
 testes automatisk, og hva som kontrolleres for hånd og hvorfor, står i
-[docs/testing.md](docs/testing.md).
+[docs/testing.md](docs/testing.md). Komponenttestene bruker mye minne. På en maskin med
+lite ledig RAM tar de rundt 20 sekunder, og de kan få tidsavbrudd hvis flere kjøringer
+går samtidig. Se «Trege maskiner og tidsavbrudd» i samme fil.
 
 GitHub Actions kjører de samme testene på Linux ved hver push: backend med Python
 3.12 og nyeste 3.x, frontend (`npm run build` og `npm run test`) med Node 22.12 og

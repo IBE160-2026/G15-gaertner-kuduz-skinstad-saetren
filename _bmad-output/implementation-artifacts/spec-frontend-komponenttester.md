@@ -150,6 +150,7 @@ Gjennomgang 1, 2026-11-14. Lag: blind-hunter (B), edge-case-hunter (E) og verifi
 - Maskinen har 7,7 GB RAM, 0,6 GB ledig og 77–100 % CPU før testene starter. Fire kjøringer gir 16 jsdom-instanser og 125–154 s per kjøring.
 - Vurdering: det er en stresstest maskinen ikke klarer, ikke en feil i testene. CI kjører én instans. VG1 er rettet for moderat last med `asyncUtilTimeout` 5 s og `testTimeout` 20 s.
 - Holder ikke CI på 22.12 og `lts/*`, åpnes punktet igjen.
+- Tillegg 2026-11-14, på Johannes' ønske: `maxWorkers: 1` i `vitest.config.ts`. Fire parallelle kjøringer gir nå 12 av 12 på 21–22 s. Målingene står i `docs/testing.md`, og AGENTS.md har fått en fallgruve om dette.
 
 ## Verification
 

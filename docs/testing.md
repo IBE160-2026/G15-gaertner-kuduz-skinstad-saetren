@@ -28,6 +28,39 @@ og nyeste 3.x, og `npm run build` og `npm run test` med Node 22.12 og nyeste LTS
 hver push. Testene av modellverktøyene i `scripts/` og den manuelle sjekklisten under
 er ikke med i CI.
 
+## Trege maskiner og tidsavbrudd
+
+Komponenttestene starter jsdom, en nettleser-DOM i Node, for hver testfil. Det krever
+mye minne og CPU, og på en svak maskin kan testene få tidsavbrudd selv om koden er
+riktig. Målt 2026-11-14 på maskinen der testene ble skrevet:
+
+| | |
+|---|---|
+| Maskin | Intel Core i3-1115G4 (2 kjerner, 4 tråder), 7,7 GB RAM, Windows 11 |
+| Belastning før start | 0,6 GB ledig RAM, CPU 35–100 % (VS Code, Chrome, Claude Code) |
+| Én kjøring av `npx vitest run` | 12 av 12 på 17–21 s, med én og med fire arbeidere |
+| Fire samtidige kjøringer, standard antall arbeidere (16 jsdom) | 1–4 tester per kjøring feilet med tidsavbrudd (125–154 s), også med `testTimeout` på 20 s |
+| Fire samtidige kjøringer med `maxWorkers: 1` (4 jsdom) | 12 av 12 i alle fire (53 s hver) |
+
+Derfor er oppsettet:
+
+- `maxWorkers: 1` i [`vitest.config.ts`](../frontend/vitest.config.ts): én testfil om
+  gangen. På maskinen over var det ikke tregere.
+- `testTimeout: 20_000` (20 s per test) i `vitest.config.ts` og `asyncUtilTimeout: 5000`
+  (5 s for `findBy…` og `waitFor`) i
+  [`oppsett.ts`](../frontend/tester/komponenter/oppsett.ts).
+
+Ser du «Test timed out» eller «Unable to find …» på kode som består i CI:
+
+1. Kjør bare én testkjøring om gangen. Det gjelder også agenter og underagenter som
+   kjører `npm run test` parallelt.
+2. Lukk tunge programmer og kjør på nytt.
+3. Hjelper ikke det, hev `testTimeout` i `vitest.config.ts` og `asyncUtilTimeout` i
+   `oppsett.ts`. Skriv målingene inn i tabellen over, så gruppa ser hva som kreves.
+
+På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
+`npx vitest run --maxWorkers=4`.
+
 ## Hva som testes automatisk
 
 ### Backend

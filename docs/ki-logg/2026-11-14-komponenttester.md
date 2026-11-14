@@ -131,8 +131,14 @@ Alle er rettet:
   standard `testTimeout` på 5 s. Orkestratoren hevet `testTimeout` til 20 s i
   `vitest.config.ts`, men fire parallelle kjøringer feilet fortsatt (125–154 s per kjøring).
   Maskinen hadde 7,7 GB RAM med 0,6 GB ledig og 77–100 % CPU før testene startet. Én kjøring
-  alene består (12 av 12 på 19 s). Rettingen dekker moderat last. Fire samtidige kjøringer med
-  til sammen 16 jsdom-instanser tåler ikke denne maskinen. CI kjører én instans.
+  alene består (12 av 12 på 19 s).
+
+  Etter at Johannes ba om at RAM og CPU skulle dokumenteres, målte orkestratoren én arbeider
+  (`--maxWorkers=1`). Én kjøring ble ikke tregere (16,6 mot 17,2 s), og fire samtidige
+  kjøringer besto, 12 av 12 i alle fire. Derfor har `vitest.config.ts` nå `maxWorkers: 1`.
+  Fire samtidige kjøringer gir da 12 av 12 på 21–22 s hver, mot tidsavbrudd og 125–154 s
+  før. Målingene og tiltakene står i «Trege maskiner og tidsavbrudd» i `docs/testing.md`.
+  Merknader er også lagt i README og AGENTS.md.
 - **Skjult opprydding:** `afterEach` ble registrert som en sideeffekt av å importere
   `hjelpere.ts`, og `window.history` ble ikke nullstilt. Flyttet til
   `tester/komponenter/oppsett.ts` i `test.setupFiles`, som også setter stien tilbake til `/`.

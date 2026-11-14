@@ -180,6 +180,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   `npm.cmd install` og `npm.cmd run dev`. Funnet av Johannes 2026-11-07 ved den
   manuelle testen av story 1.3. Det gjelder trolig flere i gruppa. README-steg 4 sier
   det samme.
+- Kjør ikke flere frontend-testkjøringer samtidig, heller ikke fra parallelle
+  underagenter. Komponenttestene starter jsdom og krever mye minne. På en maskin med
+  7,7 GB RAM ga fire samtidige kjøringer tidsavbrudd på riktig kode. Derfor har
+  `vitest.config.ts` `maxWorkers: 1`. Målinger og tiltak står i «Trege maskiner og
+  tidsavbrudd» i `docs/testing.md` (2026-11-14).
 
 <!-- /bmad:context -->
 
