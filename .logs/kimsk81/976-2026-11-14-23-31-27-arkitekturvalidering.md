@@ -46,3 +46,26 @@ Gå gjennom valideringens seks funn ett om gangen, velg håndtering og samordne 
 ### Åpne punkter
 
 Ingen. Implementasjon og tester i Story 3.2 og 5.1–5.7 er allerede planlagt i storyene og fulgt opp i eksisterende åpne punkter.
+
+## 2026-11-15 kl. 00:37 — Kimsk81
+
+### Oppgave
+
+Kjøre en ny full BMAD Validate av den oppdaterte arkitekturspinen, med mekanisk lint, rubrikk og uavhengige underagenter. Kontrollere de seks funnene fra 14.11 mot gjeldende dokumenter og kode, og levere samlet Markdown- og HTML-rapport uten å endre spine, PRD, epics eller kode.
+
+### Plan
+
+- Leste AGENTS, arkitekturens memlog, brief, PRD, epics, UX, beslutningsreferat, sensorveiledning og relevante kode-/avhengighetsfiler.
+- Kjørte Reviewer Gate-lint og tre uavhengige underagentkontroller: rubrikk, adversarial grenseflate og teknologi/kode.
+- Sammenholdt funnene med primærkilder, skrev nye delrapporter og samlet rapport, og oppdaterte vurderingsmatrisen med korrekt bevisstatus.
+
+### Resultat
+
+- `lint_spine.py` ga 0 funn. `uv run` kunne ikke starte i sandboxen, så samme skript ble kjørt direkte med Python. De seks tidligere dokumentfunnene er kontrollert mot den nye spineversjonen og er adressert som kontrakter; Godkjenning og KI-flytene gjenstår som implementasjonskrav. Ingen kjørende kodefeil ble påvist.
+- Nye dokumentfunn: lagringsadapteren tilordnes feilaktig en persistert innloggingssesjon; AD-1 er for absolutt om hvem som kan konstruere en lagret `TolketPreferanse`; tidssonekonvensjonen beskriver fysisk lagring/beregning feil. Lavere presiseringer gjelder lokal HTTP, `.env.example`-kommentar og foreldet endringsdato/memlog. Se `reviews/validation-2026-11-15.md` og `.html`, samt tre delrapporter med samme dato.
+- `docs/emne/vurderingsmatrise.md` lenker til den nye Validate-kontrollen som planleggings- og arkitekturbevis, uttrykkelig ikke funksjons- eller testbevis. Spinen, PRD, epics og kode ble ikke endret i denne økten; deres eksisterende arbeidsendringer ble bevart.
+- HTML-strukturen ble parset og alle 70 lenkemål kontrollert (ingen lokale brudd). `git diff --check` var ren. Ingen apptester eller live KI-kall ble kjørt. CUA hadde ingen tilgjengelig nettleser, så HTML-en kunne ikke åpnes visuelt.
+
+### Åpne punkter
+
+- Ta de nye dokumentfunnene inn i en senere BMAD Update med AD-ID-ene beholdt, særlig sesjonslagring, `TolketPreferanse`-eierskap og tidssoneordlyd; se rapporten for lavere presiseringer. Ført i `issues.md`.

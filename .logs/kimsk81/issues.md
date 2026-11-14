@@ -1,5 +1,7 @@
 # Åpne punkter
 
+- [ ] 2026-11-15 [Arkitekturvalidering](976-2026-11-14-23-31-27-arkitekturvalidering.md) — Følg opp nye dokumentfunn i [Validate-rapporten](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/reviews/validation-2026-11-15.md): rett feil sesjonslagring, avklar semantisk produksjon mot deserialisering av `TolketPreferanse`, og presiser Oslo/UTC-konvensjonen. Ta også de tre små dokumentpresiseringene ved senere Update, med AD-ID-ene beholdt.
+
 - [x] 2026-11-14 [Arkitekturvalidering](976-2026-11-14-23-31-27-arkitekturvalidering.md) — Vurder funnene i [valideringsrapporten](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/reviews/validation-2026-11-14.md): bind godkjenning til konsistent grunnlag, skill KI-tolkning fra forklaring, og ta referansefakta med i demoens cache-identitet. Avklar OpenRouter-ruting og rett foreldet SQLAlchemy-versjon og cookie-eierskap i arkitekturen. (løst som dokumentpresisering 2026-11-15; implementasjon og tester gjenstår i storyene)
 
 - [x] 2026-11-14 [Gjennomgang av PR #20](977-2026-11-14-21-55-00-gjennomgang-pr-20.md) — Samordne `docs/testing.md` og agentinstruksjonene med AV-17s kontroll av smale nettleservinduer, avgrens påstanden om at komponentkoblingen er fullt dekket, og rett P-13-henvisningen i `AGENTS.md` før PR #20 godkjennes. (løst lokalt 2026-11-14 i `d1a9bbb`; PR-branchen er ikke pushet)
