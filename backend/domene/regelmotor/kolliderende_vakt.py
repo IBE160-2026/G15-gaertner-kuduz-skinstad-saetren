@@ -25,6 +25,15 @@ def overlapper(a_start: datetime, a_slutt: datetime, b_start: datetime, b_slutt:
 
 
 def bryter_kollisjon(kandidat: Kandidat, vakt: Vakt) -> bool:
+    """Om en av Kandidatens egne vakter overlapper Vakten.
+
+    Forutsetning: kalles via `vurder_kandidater`, eller etter at
+    `kandidatvaktdatafeil` har godkjent Kandidatens vakter i vinduet. Ugyldige
+    vakter hoppes ikke over her, slik de gjør i 11- og 35-timersregelen. Kalt
+    direkte feiler en vakt som ikke er et tidsrom, en vakt uten tidssone tolkes
+    i maskinens lokale tid, og en vakt med start etter slutt kan gi kollisjon
+    (gjelder for eksempel en ny regelkontroll ved Godkjenning i Epic 3).
+    """
     return any(overlapper(egen.start, egen.slutt, vakt.start, vakt.slutt) for egen in kandidat.vakter)
 
 

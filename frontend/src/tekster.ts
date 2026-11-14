@@ -92,8 +92,8 @@ export const TEKSTER = {
     minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
     // Kandidatlisten (story 2.1).
     kandidaterOverskrift: "Gyldige kandidater",
-    // Midlertidig til alle fire reglene er på plass. Fjernes i story 2.4.
-    midlertidigMerknad: "Filtrert på kompetanse, kolliderende vakt og 11-timersregelen. Flere regler kommer.",
+    // Tom liste (story 2.4, beslutning B). Story 2.6 erstatter den med tomtilstanden.
+    ingenGyldige: "Ingen gyldige kandidater for denne vakten.",
     kandidaterLaster: "Henter kandidatene …",
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",

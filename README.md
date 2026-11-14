@@ -45,8 +45,12 @@ testdata. Kandidatlisten kommer i Epic 2. Du trenger Python 3.12 eller nyere og
 Node 22.12 eller nyere. Backend og testene er kjørt med Python 3.12.5 og 3.15.2 på Windows
 (2026-11-04). Kommandoene under er for Windows PowerShell. På macOS/Linux bytter du
 `.venv\Scripts\python` med `.venv/bin/python`. Der det står en egen bash-kommando, er
-den for macOS/Linux og Git Bash. Appen er laget for å virke på alle tre, men er bare
-testet på Windows. Bash-kommandoene er kontrollert i Git Bash (OP-05).
+den for macOS/Linux og Git Bash. Appen er laget for å virke på alle tre. Den er testet
+på Windows og på macOS. På macOS bestod 275 av 275 backendtester 2026-11-11. Fra en ren
+klone på macOS 2026-11-12, med Python 3.12.14 og Node 26.8.1, bestod 337 av 337
+backendtester og 26 av 26 frontendtester, `npm run build` gikk gjennom, og innlogging og
+Vaktvalg virket. Linux kjøres bare i CI. Bash-kommandoene er kontrollert i Git Bash
+(OP-05).
 
 På Windows er en filsti begrenset til 260 tegn, med mindre lange stier er slått på. Den
 lengste filen i repoet har en sti på 125 tegn, så stien du kloner til, bør være kortere
@@ -169,12 +173,14 @@ bemanning står øverst under «Krever handling» (#4127 og #4189 i testdataene)
 periodestart, vises ikke (AV-03). «Velg vakt — finn erstatter →» går til
 `/vakt/<nr>/kandidater`. Her vises avdeling, vakttype, tidspunkt og minstenivå,
 og under dem de gyldige kandidatene alfabetisk med kompetansenivå («Nivå 3/4»).
-Listen hentes automatisk. Etter story 2.3 er den filtrert på
-kompetanse-minstekravet (FR2), kolliderende vakt (FR3) og 11-timersregelen (FR4),
-og det står i en merknad under overskriften. Story 2.4 legger til
-35-timersregelen. Med de tre reglene gir #4127 5 gyldige og #4189 1 i testdataene.
-En vakt der hvilen før eller etter ikke kan kontrolleres fordi testdataene slutter
-05.10 kl. 00:00, gir en melding om manglende turnusgrunnlag (P-08). Det kan ikke nås
+Listen hentes automatisk. Etter story 2.4 er den filtrert på alle fire harde
+regler: kompetanse-minstekravet (FR2), kolliderende vakt (FR3), 11-timersregelen
+(FR4) og 35-timersregelen (FR5). I testdataene gir #4127 4 gyldige (Ingrid Dahl,
+Jonas Bakke, Mette Solberg og Thomas Nygård) og #4189 0. Når ingen er gyldige, står
+det «Ingen gyldige kandidater for denne vakten.», til story 2.6 innfører
+tomtilstanden. En vakt der hvilen før eller etter eller en berørt kalenderuke ikke
+kan kontrolleres fordi testdataene slutter 05.10 kl. 00:00, gir en melding om
+manglende turnusgrunnlag (P-08). Det kan ikke nås
 gjennom vanlig bruk, fordi bare #4127 og #4189 mangler bemanning, og begge ligger
 innenfor dekningen. Det er dekket av API-tester med endret testdatabase. Direkte URL og
 nettleserens tilbakeknapp virker. En bemannet, ukjent eller utenforliggende vakt

@@ -124,8 +124,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   - `.github/workflows/skills-speiling.yml`: speilingstesten for skills. Lokalt:
     `python -m unittest discover -s scripts -p "test_skills*.py"`.
   - `.github/workflows/backend-tester.yml`: `pytest` i `backend/` med Python 3.12
-    (laveste versjon vi lover) og nyeste stabile 3.x. Det er den eneste kjøringen
-    utenfor Windows (OP-05). Rød 3.x med grønn 3.12 er som regel versjonsdrift og rettes
+    (laveste versjon vi lover) og nyeste stabile 3.x. Det er den eneste faste kjøringen
+    utenfor Windows; macOS er testet manuelt (OP-05). Rød 3.x med grønn 3.12 er som regel versjonsdrift og rettes
     som vanlig vedlikehold, oftest ved å oppdatere en pakkelås.
   - `.github/workflows/frontend-tester.yml`: `npm ci`, `npm run build` og `npm run test`
     i `frontend/` med Node 22.12 (laveste versjon vi lover) og nyeste LTS (`lts/*`).
@@ -152,8 +152,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Koden skal virke på tvers av operativsystem: `pathlib` for stier, eksplisitt
   `encoding="utf-8"` ved lesing, skriving og underprosesser, og ingen kall eller
   kommandoer som bare finnes på Windows. README viser både PowerShell og bash. Fysisk
-  test skjer bare på Windows, fordi verken sensor eller noen i gruppa har Mac (OP-05,
-  2026-11-07). Bash-kommandoer kontrolleres i Git Bash.
+  test skjer først og fremst på Windows, fordi sensor ikke har Mac (OP-05, 2026-11-07).
+  Ragnhild har Mac. Appen er testet på macOS 2026-11-11 (275 av 275 backendtester
+  bestått) og fra en ren klone på macOS 2026-11-12 (337 av 337 backendtester og 26 av
+  26 frontendtester bestått), se OP-05 i `avklaringspunkter.md` §11. Bash-kommandoer
+  kontrolleres i Git Bash.
 
 ## Kjente fallgruver
 

@@ -37,3 +37,11 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-3-1-velge-kandidat-og-se-godkjenningsflaten.md`
   summary: Leddene i brødsmulestien er ikke lenker, så «Kandidater» og «Vakt #<nr>» på godkjenningsflaten kan ikke brukes til å gå tilbake.
   evidence: Blind Hunter 2026-11-12. `Brodsmulesti.tsx` har bare `{tekst, uthevet}` fra story 1.6. EXPERIENCE.md sier at flatene «henger sammen via brødsmulesti fremfor global navigasjon». Fantes før 3.1. Lenken «Tilbake til kandidatlisten» og «Avbryt» dekker behovet på godkjenningsflaten foreløpig.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md`
+  summary: Ingen frontendtest rendrer `Kandidatliste`, så grenen for tom liste (beslutning B) og de andre tilstandene er bare dekket av tester på tekstene og kildeteksten.
+  evidence: Verification-gap 2026-11-12. `frontend/tester/kandidater-bunt.ts` bunter bare `src/kandidater` og `src/api`. En snudd betingelse (`!== 0`) ville gått gjennom alle 28 testene. Inntil videre dekker den manuelle nettleserkontrollen dette. Bør løses senest i 2.6, som erstatter grenen med tomtilstanden.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md`
+  summary: AGENTS.md sier at domenekjernen har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter 2.4 er alle fire harde regler på plass.
+  evidence: Blind-hunter 2026-11-12. AGENTS.md er agentkontekst for hele gruppa og oppdateres utenom storyen.

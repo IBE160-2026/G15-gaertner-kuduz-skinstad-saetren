@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -48,21 +48,21 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 
 | ID | Tema | Status | Kort registrering | Ansvarlig |
 |---|---|---|---|---|
-| K-01 | Feil regneeksempel | Åpent | `22 + 2 × 21 + 3 × 29 = 151`, ikke 136; konkret retting ikke avtalt. | Ikke bestemt |
+| K-01 | Feil regneeksempel | Løst 2026-11-02 (registrert 2026-11-12) | `22 + 2 × 21 + 3 × 29 = 151`, ikke 136. Eksempelet er byttet til 182 p = kveld 16 t · helg 32 t · natt 34 t i `1a7ad04`, før merge av PR #4 (§11). | Ragnhild Sætren |
 | K-02 | Høy timebelastning | Vedtatt 2026-11-09 (P-04) | Terskel minst 32,4 t før visningsavrunding. Ingrid beholdes på 32 t og er under grensen; retting av forventning i Story 1.2 er dokumentarbeid, visning/test gjenstår. | Gruppen |
 | K-03 | Avrunding | Vedtatt | Beregn/sorter uavrundet; vis én desimal. | Ikke bestemt |
 | K-04 | `RangertKandidat`/KI-kontrakt | Produktvalg vedtatt 2026-11-09 (P-06/P-07); kontrakt og tester gjenstår | Strukturerte, faktakontrollerte begrunnelser og én forhåndsberegnet referansekandidat; se §12. | Gruppen |
 | K-05 | KI-sporbarhet | Prinsipp vedtatt; kontroll åpen | Behold logging uendret; sjekk senere dokumentasjon inkl. tak 300. | Ikke bestemt |
 | K-06 | Dokumentkvalitet | Samordning pågår 2026-11-10 | P-vedtakene føres i planleggingsdokumentene; endelig dokumentkontroll gjenstår. | Gruppen |
 | OP-01 | Avgrensninger i v1 | Vedtatt | Ingen omfattende tariff-, fraværs-, stillingsprosent-, helligdags- eller juridisk modell. | Ikke bestemt |
-| OP-02 | UX og mobil | Vedtatt | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. | Ikke bestemt |
-| OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); implementasjon gjenstår | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. | Gruppen |
+| OP-02 | UX og mobil | Vedtatt; ansvar presisert 2026-11-13 (AV-16) | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. Mobil-/nettbrettvalg før story 4.6 ferdigstilles (§13). | Hele gruppa |
+| OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); teknisk detalj åpen §13 | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. Ventetrinn, antall forsøk, tidsbudsjett/startpunkt og sluttstatus avklares før story 5.1. | Gruppen |
 | OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
-| OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07 | Fysisk test på macOS/Linux strykes: verken sensor eller noen i gruppa har Mac. Koden skrives for å virke på tvers av operativsystem og testes fysisk på Windows. Test fra ren klone er fortsatt ikke avtalt (§11). | Johannes W. Gaertner |
+| OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07; macOS og ren klone testet 2026-11-11 og 2026-11-12 | Koden skrives for å virke på tvers av operativsystem og testes fysisk først og fremst på Windows. Begrunnelsen 07.11 om at ingen i gruppa har Mac, var feil: Ragnhild har Mac. Appen er testet på macOS (275 av 275 backendtester 11.11) og fra ren klone på macOS (337 av 337 backendtester og 26 av 26 frontendtester 12.11). Linux kjøres bare i CI (§11). | Johannes W. Gaertner |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
 | OP-07 | PR #4 | Vedtatt | Ragnhild Sætren ansvarlig for oppfølging og retting av PR #4. | Ragnhild Sætren |
 | OP-08 | Story 1.2 | Vedtatt | Mithad Kuduz ansvarlig for oppdatering av Story 1.2. | Mithad Kuduz |
-| OP-09 | Frist PR-review | Åpent | Ingen frist avtalt. | Ikke bestemt (PR-ansvar: Ragnhild) |
+| OP-09 | Frist PR-review | Bortfalt 2026-11-02 (registrert 2026-11-12) | Ingen frist avtalt. PR #4 ble merget 02.11 (`7eabb81`) uten ny review etter rettingen (§11). | Ikke bestemt (PR-ansvar: Ragnhild) |
 | KS-01 | Åpne punkter ved merge | Vedtatt | K-01/K-02/K-04/K-06 kan være åpne etter merge; øvrige godkjenningskrav gjelder. | Ikke bestemt |
 | KS-02 | Kontroller rangeringsformel | Utført for fasiten i Story 1.2 (2026-11-04) | Fasiten for #4127 er kontrollert og godkjent med PR #5 (§11). Gjelder ny fasit på nytt. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 | KS-03 | Kontroller tidskategorier | Kontroll vedtatt; ikke utført | Kontroller fire vakttyper før implementasjon av Story 4.7 og ferdigstilling av fasit. | Ikke bestemt |
@@ -74,10 +74,14 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 |---|---|---|---|---|
 | AV-13 | Enhet i designtokens | Vedtatt 2026-11-06 | Skriftstørrelser i `rem`; spacing, kanter, radius, sporing og faste bredder i `px`. Ingen rå størrelser i komponentene (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
 | AV-14 | Layoutbredde | Vedtatt 2026-11-06 | Appbar over hele bredden; innholdet får `max-width: 1180px`. Fast bredde på 1180px forkastes (§11). | Johannes W. Gaertner (vedtatt på vegne av gruppa) |
+| AV-15 | Målbare suksessmål i PRD §7 | Vedtatt 2026-11-13 | SM-3 etter ferdig kandidatberegning uten ekstra handling; SM-4 med faktakontrollert relevant myk faktor og særtilfeller; SM-C2 med faktakontroll og 90 s for live avveining (§13). | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
+| AV-16 | Beslutningseiere i PRD §8 | Vedtatt 2026-11-13 | Hele gruppa eier åpne valg om mobil/nettbrett og sensors OpenRouter-nøkkel. Fristene og åpne valg står i §13. | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
 | OP-13 | Story 3.1 | Meldt 2026-11-12 | Johannes W. Gaertner tar Story 3.1, Velge kandidat og se godkjenningsflaten. Arbeidet går parallelt med Story 2.4 (Ragnhild Sætren), fordi 3.1 bruker listen over gyldige kandidater uansett hvor mange regler som finnes (§11). | Johannes W. Gaertner |
+
+| OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12; PR #17 godkjent og merget av Mithad 2026-11-13 | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -132,6 +136,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Avgrensning:** **Ikke** markedsfør som full juridisk arbeidsmiljølovkontroll. Omfattende lovtolkning er utenfor v1 (OP-01).
 - **Ansvarlig/frist:** Ikke bestemt.
 - **Status:** Vedtatt.
+- **Oppdatering 2026-11-12 (Story 2.4, ikke merget):** Begge delene av vedtaket er nå implementert i regelmotoren: 11 t i Story 2.3 og 35 t i berørt kalenderuke i Story 2.4. Grensetestene for 35 t finnes i `backend/tester/regelmotor/test_35_timersregelen.py`. Se §11.
 
 ### AV-05 – Min–maks-normalisering og håndtering av like verdier
 
@@ -250,6 +255,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Status:** Åpent. Det er ikke avtalt ansvarlig, frist eller konkret retting.
 - **Codex-/faglig kontrollbehov:** Undersøk hvor 136 brukes i PR #4, PRD, Story 4.7, eksempler og eventuell fasit; vurder konsekvens av feilverdien.
 - **Ikke vedtatt:** Ingen automatisk retting eller ny merge-blokkering er besluttet gjennom K-01.
+- **Oppdatering 2026-11-12 – Løst:** Rettet 2026-11-02 i `1a7ad04`, før merge av PR #4. Statusen over ble skrevet etter rettingen, men fulgte møtet. Se §11.
 
 ### K-02 – Terskel for høy timebelastning
 
@@ -304,6 +310,8 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### OP-02 – UX, mobil og mockuper
 
+**Senere vedtak 2026-11-13 (AV-16, gjeldende ansvar):** Hele gruppa er beslutningseier for mobil-/nettbrettvalget. Valget tas etter fungerende kandidatvisning og før story 4.6 ferdigstilles. Linjen om «Ikke bestemt» nedenfor er historisk status fra 02.11.
+
 - **Status:** Vedtatt.
 - **Beslutning:** Samordne relevante mockuper og grensesnittbeskrivelser med **fire vakttyper nå**. Detaljert UX, mobiltilpasning og brukerprøving prioriteres etter at en fungerende kandidatvisning finnes.
 - **Konsekvens:** Grunnleggende forståelig kandidatvisning er fortsatt del av kjerneflyten; dette innebærer ikke å utsette hele grensesnittet.
@@ -327,7 +335,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### OP-05 – Ren klone og plattformtesting
 
-- **Status:** Delvis vedtatt 2026-11-07 (§11). Fysisk test på macOS/Linux er strøket. Test fra ren klone er fortsatt ikke avtalt.
+- **Status:** Delvis vedtatt 2026-11-07 (§11). Fysisk test på macOS/Linux ble strøket 07.11. **Oppdatering 2026-11-12:** Appen er likevel testet på macOS 11.11 og fra ren klone på macOS 12.11, med alle tester bestått (§11). Linux kjøres bare i CI.
 - **Codex-anbefaling (ikke vedtak):** Test fra ren GitHub-klone, Python 3.12 og macOS/Linux før Story 1.2 er `done`; oppdater vurderingsmatrise ved milepæler.
 - **Konsekvens:** OP-05 innfører **ingen nye** ferdigkriterier. Eksisterende tester og vedtatte AV-/KS-krav gjelder fortsatt.
 - **Ansvarlig/frist:** Ikke bestemt.
@@ -359,6 +367,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Møteopplysning:** **Ingen frist ble avtalt** for ny review av PR #4. Dette betyr ikke at review er unødvendig.
 - **Konsekvens:** Ingen kalenderfrist innføres; eksisterende godkjenningskrav gjelder.
 - **Ansvarlig:** Ikke bestemt for review; Ragnhild er ansvarlig for oppfølging av PR #4 (OP-07).
+- **Oppdatering 2026-11-12 – Bortfalt:** PR #4 ble merget 2026-11-02 (`7eabb81`) uten ny review etter rettingen. Det er ikke det samme som at en ny review er gjort. Se §11.
 
 ## 6. Konsistenskontroller (KS-01–KS-04)
 
@@ -446,9 +455,9 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Kontrollér om eksisterende logging dekker sporbarhet og begrunnelse for tak 300. | K-05 | Kontroll åpen; ingen loggendringer vedtatt. |
 | Gjennomgå agentpraksis/underagenter og bevar reviewfunn. | OP-04 | Gjennomført og godkjent 2026-11-04; regelen om underagenter står i `AGENTS.md` (§11). |
 | Detaljert UX, mobiltilpasning og brukerprøving. | OP-02 | Etter fungerende kandidatvisning; mockuper med fire vakttyper samordnes nå. |
-| Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | macOS/Linux strøket 2026-11-07; ren klone fortsatt åpen. Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). |
+| Avklar ren klone, Python 3.12, macOS/Linux og vurderingsmatrise. | OP-05 | Ren klone testet på macOS 2026-11-12 med Python 3.12.14: 337 av 337 backendtester og 26 av 26 frontendtester bestått (§11). macOS testet også 2026-11-11 (275 av 275). Python 3.12 er verifisert på Windows 2026-11-04 (sprint-status). Linux kjøres bare i CI. |
 | Fastsett eventuell bindende arbeidsrekkefølge. | OP-06 | Codex-rekkefølgen er kun et forslag. |
-| Avtal frist for ny PR-review. | OP-09 | Ingen frist vedtatt. |
+| Avtal frist for ny PR-review. | OP-09 | Bortfalt: PR #4 ble merget 2026-11-02 uten ny review etter rettingen (§11). |
 | Eventuell videreføring av tariff-, fraværs-, stillingsprosent-, helligdags- og omfattende lovmodell. | OP-01 | **Utenfor v1**; krever nytt vedtak før eventuell utvikling. |
 
 ## 9. Instruksjoner til Codex, Claude og andre KI-agenter
@@ -566,6 +575,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kontrollert i stedet:** bash-kommandoene for passordvariantene i README er kjørt i Git Bash på Windows 2026-11-07, mot en midlertidig database. `IFS= read -rsp` beholdt mellomrom først og sist i passordet, og innloggingen virket med det. Variant B ga et tilfeldig passord på 12 tegn.
 - **Fortsatt åpent i OP-05:** om og når det skal testes fra en ren klone.
 - **Endret:** `AGENTS.md`, `README.md`, vurderingsmatrisen, KI-loggen for Story 1.3 og handlingspunktet for PR #3 i `sprint-status.yaml`.
+- **Senere:** Begrunnelsen om at ingen i gruppa har Mac, var feil, og testen fra ren klone er gjennomført. Se oppføringen 2026-11-12 under.
 
 ### 2026-11-08 – Godkjenning av PR #6 (speiling av skills i CI, AV-08 og regelen for branch og PR)
 
@@ -682,6 +692,45 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Grunnlag:** [epics.md, Epic 3](../../_bmad-output/planning-artifacts/epics.md) og [modellvalg-stories.md](../modellvalg-stories.md), som anbefaler Sonnet for 3.1. Johannes valgte å bygge med Opus.
 - **Ikke endret:** OP-06 (rekkefølgen er fortsatt ikke bindende) og de andre AV-, K-, OP- og KS-punktene.
 
+### 2026-11-12 – Story 2.4 (OP-14): 35-timersregelen, uke som vindu og beslutning A og B
+
+- **Hvem:** Ragnhild Sætren tar Story 2.4 (OP-14) og avgjorde 2026-11-11 de to spørsmålene i spesifikasjonen, som eier av storyen. Det er avgjørelser i storyen, ikke gruppevedtak. Gruppa kan ta dem opp igjen. Implementert 2026-11-12 på branchen `story-2.4-trettifem-timer`. PR-gjennomgang gjenstår.
+- **A – Overlapp og 35 t:** En egen vakt som overlapper Vakten, telles med i unionen når fria i uka regnes ut, som fasithjelperen `bryter_trettifem_timer` fra Story 1.2. En Kandidat med kolliderende vakt kan da også få «35-timersregelen». Det skiller seg fra 1A for 11 t, men følger fasiten (AV-07). Seeden har ingen slike tilfeller.
+- **B – Tom liste før 2.6:** Når listen er tom, viser flaten «Ingen gyldige kandidater for denne vakten.» i `meta`-stil, uten ikon og uten `danger`. API-et er uendret (`status: "ok"`, tom liste). Story 2.6 erstatter teksten med tomtilstanden og API-statusen (P-11).
+- **AV-04:** Grensetestene for 35 t finnes nå: 35:00 og 34:59, ukeskiftet, Vakt som slutter mandag 00:00, fri over ukeskiftet og begge sommertidsskiftene (167 og 169 timer).
+- **Vedtak A5 gjennomført for 2.4:** Vinduet for 35-timersregelen er hele berørte kalenderuker, `[mandag i første berørte uke, mandag etter siste berørte uke)` i UTC.
+- **P-08 gjennomført for 2.4:** Merknaden `[ASSUMPTION]` i story 2.4 i epics («testdataene dekker hele kalenderuker») er erstattet av datafeil: ligger en berørt uke utenfor `[historikkstart, datagrense]`, stoppes vurderingen med datafeil. Uka for #4189 slutter nøyaktig på datagrensen 05.10 kl. 00:00 og er gyldig. KS-04 står uendret. Planleggingsdokumentene er ikke endret, så merknaden står fortsatt i epics.
+- **Rettet henvisning:** Spesifikasjonen for Story 2.4 oppga beslutningene som «OP-12». OP-12 er Mithads Story 2.3. Riktig er OP-14, og Ragnhild rettet det i den frosne delen av spesifikasjonen 2026-11-12.
+- **Grunnlag:** [spesifikasjonen for Story 2.4](../../_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md) og [KI-loggen](../ki-logg/2026-11-11-35-timersregelen.md).
+- **Ikke endret:** 1A for 11 t, vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-12 – Test på macOS og fra ren klone (OP-05)
+
+- **Hvem:** Ragnhild Sætren, på egen Mac.
+- **Rettet grunnlag:** Oppføringen 2026-11-07 sier at verken sensor eller noen i gruppa har Mac. Det stemmer ikke for gruppa: Ragnhild har Mac. Den historiske oppføringen står, men begrunnelsen gjelder bare sensor.
+- **Test på macOS 2026-11-11:** mot `main` på `f218810`, med Python 3.15.2 og nytt Python-miljø og `node_modules`, men ikke fra ren klone. `pytest` 275 av 275 bestått, `npm test` 26 av 26 bestått, `npm run build` uten feil, og manuell akseptansetest av Story 1.6 i nettleseren. Se [nettleserkontrollen for Story 1.6](../ki-logg/2026-11-09-vaktdetaljer-nettleserkontroll.md).
+- **Test fra ren klone 2026-11-12:** ny klone fra GitHub i en egen mappe, på `a289598`, med Python 3.12.14 (laveste versjon vi lover) og Node 26.8.1. Fulgte stegene i README for macOS:
+  - `pip install -r requirements-dev.txt` virket.
+  - `pytest` 337 av 337 bestått.
+  - Testdatakommandoen lagde 1 turnus, 25 ansatte, 506 vakter (166 i perioden, 340 i historikken) og brukeren `kari.vestby` med tilfeldig testpassord.
+  - `npm install` virket, `npm run test` 26 av 26 bestått, og `npm run build` (typesjekk og Vite) gikk gjennom.
+  - Innlogging som `kari.vestby` og Vaktvalg virket i nettleseren.
+  - `git status` var ren etter kjøringen.
+- **Konsekvens:** Det som sto åpent i OP-05 etter 07.11, test fra ren klone, er gjennomført, og appen er testet på macOS. Linux kjøres bare i CI. Fysisk test skjer fortsatt først og fremst på Windows, fordi sensor ikke har Mac.
+- **Endret:** OP-05 i tabellen og i §5, raden for OP-05 i §8.4, `AGENTS.md`, `README.md` og vurderingsmatrisen.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-12 – K-01 løst og OP-09 bortfalt (PR #4)
+
+- **Hvem:** Registrert av Ragnhild Sætren, som er ansvarlig for oppfølging av PR #4 (OP-07). Statusendringene registrerer det som skjedde 02.11. De er ingen nye vedtak.
+- **K-01 – Løst 2026-11-02:** Funnet kom fra Mithad Kuduz' gjennomgang av PR #4 30.10. Visningseksempelet «136 p» med «kveld 22 t · helg 21 t · natt 29 t» gikk ikke opp: det gir 151. Det er byttet til profil E, regnet med `scripts/ulempe_regneeksempler.py`: 182 p = kveld 16 t · helg 32 t · natt 34 t (16 + 2 × 32 + 3 × 34). Rettet i `1a7ad04` 2026-11-02 kl. 21:45, før merge av PR #4. Kilder:
+  - UX-DR28 og Story 4.7 i `epics.md`, og `DESIGN.md` (Ulempeindikator), har det nye eksempelet. «136» finnes ikke lenger i planleggingsdokumentene.
+  - [KI-loggen for ÅB-3](../ki-logg/2026-11-02-ab-3-ulempebelastning.md) og PRD-ens `.memlog.md` beskriver rettingen.
+  - Referatet ble skrevet etter rettingen (`07dc80a`, kl. 23:29), men gjenga statusen fra møtet. Derfor sto K-01 som åpent.
+- **OP-09 – Bortfalt 2026-11-02:** Punktet gjaldt frist for ny review av PR #4. Ragnhild Sætren merget PR #4 2026-11-02 kl. 21:51 (`7eabb81`). Mithads gjennomgang 30.10 var før rettingen, og GitHub har ingen registrert review etter den. KS-01 tillot merge med åpne K-punkter. Det fantes ingen frist å avtale etter merge, men en ny review av rettingen er ikke gjort.
+- **Endret:** K-01 og OP-09 i tabellen, i §4 og §5, og raden for OP-09 i §8.4.
+- **Ikke endret:** KS-01, raden for PR #4 i §7 og kontrollen av K-punktene i §8. De gjengir beslutningene fra møtet. K-02, K-04, K-06 og de andre AV-, K-, OP- og KS-punktene er heller ikke endret.
+
 ---
 
 **Dokumentvedlikehold:** Endre status til «Vedtatt», «Utsatt» eller «Løst» for et åpent punkt **bare etter faktisk avklaring**, med dato, beslutning og kilde/henvisning. Behold opprinnelig beslutnings-ID for sporbarhet. Nye punkter gis nye ID-er uten å omskrive historiske vedtak.
@@ -709,3 +758,21 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 | E-02 | Commit `ee6d798` er identifisert som godkjent proposal; planavvikene er listet i beslutningsgrunnlaget. | Avklart som dokumentpunkt 2026-11-09. Kontroller faktisk levert app mot proposal og forklar avvik ved innlevering. |
 
 **Status 2026-11-10:** Beslutningene er ført her. PRD og nedstrøms dokumenter samordnes i egen branch. Dette er ingen påstand om at P-01–P-13 er implementert, at KS-03 er utført, eller at P-13s brukerprøve er gjennomført.
+
+## 13. Målbare PRD-mål og beslutningseiere 2026-11-13
+
+**Kilde og fullmakt:** Kim O. Skinstad bekreftet 2026-11-13 på vegne av gruppa at anbefalingene etter gjennomgangen av PR #18 skal følges, og vedtok «Hele gruppa» som beslutningseier. Grunnlaget er [Bårds formative PRD-tilbakemelding](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/tilbakemelding-prd.md) og [PRD-en](../../_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md). Vedtakene gjelder krav og ansvar, ikke utført implementasjon eller test.
+
+### AV-15 – SM-3, SM-4 og SM-C2
+
+- **SM-3:** Inntil fem høyest rangerte gyldige kandidater og antall utelukkede per hard regel vises når kandidatberegningen er ferdig, uten ekstra handling. Null gyldige og datafeil har egne utfall. Målet er avklart før story 4.4.
+- **SM-4:** En gyldig KI-forklaring har minst én relevant, faktakontrollert påstand om en myk faktor. Ved én gyldig kandidat brukes ingen referansekandidat; ved KI-feil vises reservetekst. Vaktkostnad, timebelastning, ulempebelastning og preferansekategori/-status med poeng er synlige også ved reservetekst. «Faktoren som bidrar mest» er ikke et krav. Målet er avklart før story 5.3.
+- **SM-C2:** Før en live KI-forklaring vises, skal den bestå faktakontroll. Innen 90 sekunder fra første live-kall for avveiningen vises en godkjent forklaring eller tydelig merket reservetekst, i samsvar med AD-7. Dette er ikke en frist fra vaktvalg og gjelder ikke demo-modus. Målet er avklart før story 5.3.
+- **Kvalitetssikring som gjenstår:** Berørte stories og tester må dekke ferdig beregning, én kandidat, likhet, feil og reservetekst samt 90-sekundersgrensen med falsk OpenRouter. Vedtaket er ikke bevis for at kontrollene er utført.
+
+### AV-16 – Eier for åpne valg
+
+- **Mobil/nettbrett (OP-02/P-13):** Hele gruppa er beslutningseier. Desktop og gjeldende tilgjengelighetskrav gjelder nå. Selve mobil-/nettbrettvalget tas etter fungerende kandidatvisning og før story 4.6 er ferdig. P-13s oppgavebaserte forståelsestest er fortsatt ikke utført.
+- **Sensornøkkel (ÅB-8):** Hele gruppa er beslutningseier. Hvilken OpenRouter-nøkkel sensor får, hvem som betaler og hvor mye kreditt som trengs, avgjøres før innlevering ut fra faktisk forbruk. Ingen nøkkel eller verdi skal inn i repoet.
+
+**Fortsatt åpent:** P-05 vedtar avgrensede nye forsøk ved forbigående feil i preferansetolkning, men ventetrinn ved 5xx/nettverksfeil, konkret antall, tidsbudsjett og startpunkt for målingen samt sluttstatus for 429/nettverks-/serverfeil må avklares før story 5.1. AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver avveining; de overføres ikke automatisk til tolkning. FR-13s 480 minutter er en overstyrbar standard etter OP-10/AD-3. P-12B om historisk lagring av forklaring er fortsatt utenfor v1 og krever eget vedtak og story.
