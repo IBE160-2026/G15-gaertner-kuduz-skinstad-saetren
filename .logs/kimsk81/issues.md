@@ -1,5 +1,7 @@
 # Åpne punkter
 
+- [ ] 2026-11-14 [Gjennomgang av PR #20](977-2026-11-14-21-55-00-gjennomgang-pr-20.md) — Samordne `docs/testing.md` og agentinstruksjonene med AV-17s kontroll av smale nettleservinduer, avgrens påstanden om at komponentkoblingen er fullt dekket, og rett P-13-henvisningen i `AGENTS.md` før PR #20 godkjennes.
+
 - [x] 2026-11-14 [Gjennomgang av PR #19](982-2026-11-14-09-25-33-gjennomgang-pr-19.md) — Rett vurderingsmatrisens foreldede «PR er ikke opprettet», og rett antall nye domenetester fra sju til seks i vurderingsmatrisen og KI-loggen før story 2.5 markeres ferdig. (løst 2026-11-14 i `ff21622`)
 - [x] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett #4189-testen for tom gyldigliste, løs fire dokumentkonflikter mot gjeldende `main`, og kjør tester på faktisk sammenslåingsresultat før godkjenning. (løst 2026-11-14: test rettet i `f59f69b`; konfliktene ble løst etter at main med 2.4 og 2.5 ble tatt inn; 412 backendtester og 48 frontendtester bestod, og bygget bestod.)
   - **Merknad fra Johannes 2026-11-14:** Rettet slik du og Ragnhild foreslo. Testen krever nå at listen ikke er tom bare for #4127. For #4189 sjekker den at alle får 404 når listen er tom (`f59f69b`). `main` er tatt inn to ganger, med 2.4 og 2.5, og konfliktene er løst. Etter sammenslåingen bestod 412 backendtester og 48 frontendtester, og bygget bestod. Du kan lukke punktet.
