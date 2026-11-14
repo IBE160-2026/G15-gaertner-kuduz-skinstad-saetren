@@ -444,6 +444,11 @@ button {
   background: var(--color-row-alt);
 }
 
+/* Taggen og «Velg» står til høyre, navnet til venstre (story 3.1). */
+.kandidatliste li .tag {
+  margin-left: auto;
+}
+
 /* Datafeil er ikke en utelukkelse og ikke en lastefeil (P-08): nøytral kant
    til venstre, aldri `danger` eller `warn` (DESIGN.md). */
 .datafeil {
@@ -454,6 +459,76 @@ button {
 .datafeil-tekst {
   margin-top: var(--space-3);
   font-weight: var(--font-weight-bold);
+}
+
+/* --- Godkjenning (story 3.1, UX-DR17, UX-DR19, UX-DR22) ------------------- */
+
+/* Sekundærknapp i en rad, uten luft over (kandidatlisten og bekreftelsesboksen). */
+.button-secondary.button-kompakt,
+.bekreftelse-handlinger .button-secondary {
+  margin-top: 0;
+  padding: var(--button-compact-padding);
+  font-weight: var(--font-weight-bold);
+}
+
+.kandidatliste .button-secondary.button-kompakt {
+  padding: var(--space-1) var(--space-3);
+}
+
+.lenke {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
+.godkjenning-tilbake {
+  margin: var(--space-3) 0 0;
+}
+
+.godkjenningsflate {
+  overflow-wrap: anywhere;
+}
+
+.vaktlinje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.kandidatkort .meta {
+  margin-top: var(--space-2);
+}
+
+.bekreftelsesboks {
+  margin-top: var(--space-4);
+}
+
+.bekreftelsesboks .brodtekst {
+  margin-top: var(--space-2);
+  color: var(--color-text-mute);
+}
+
+.bekreftelsesboks .brodtekst b {
+  color: var(--color-text-main);
+}
+
+.bekreftelse-handlinger {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.bekreftelse-melding:not(:empty) {
+  margin-top: var(--space-3);
+  text-align: right;
+}
+
+.statuslinje {
+  margin-top: var(--space-3);
+  text-align: right;
 }
 
 /* Ekskludert-boksen (story 2.5, UX-DR15). Stiplet kant, egen bakgrunn. */

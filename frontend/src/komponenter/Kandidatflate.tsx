@@ -20,7 +20,13 @@ type Tilstand =
 
 const t = TEKSTER.kandidatflate;
 
-export default function Kandidatflate({ vaktnummer }: { vaktnummer: number }) {
+type Props = {
+  vaktnummer: number;
+  /** Til godkjenningsflaten for Kandidaten (story 3.1). */
+  onVelg: (vaktnummer: number, ansattId: number) => void;
+};
+
+export default function Kandidatflate({ vaktnummer, onVelg }: Props) {
   const [tilstand, setTilstand] = useState<Tilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
   const retryknapp = useRef<HTMLButtonElement>(null);
@@ -86,13 +92,13 @@ export default function Kandidatflate({ vaktnummer }: { vaktnummer: number }) {
           <div><dt>{t.kompetanse}</dt><dd>{t.minstenivaa(data.minstenivå)}</dd></div>
         </dl>
       </section>
-      <Kandidatliste vaktnummer={data.vaktnummer} />
+      <Kandidatliste vaktnummer={data.vaktnummer} onVelg={(ansattId) => onVelg(data.vaktnummer, ansattId)} />
     </main>
   </>;
 }
 
 // Hentes automatisk når vakten er lastet (story 2.1). Bare Gyldige kandidater.
-function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
+function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (ansattId: number) => void }) {
   const [tilstand, setTilstand] = useState<Kandidattilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
   const retryknapp = useRef<HTMLButtonElement>(null);
@@ -151,6 +157,12 @@ function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
           <li key={k.id}>
             <span className="ansattnavn">{k.navn}</span>
             <span className="tag">{t.nivaaTag(k.kompetansenivå)}</span>
+            <button
+              type="button" className="button-secondary button-kompakt"
+              aria-label={TEKSTER.godkjenning.velgEtikett(k.navn)} onClick={() => onVelg(k.id)}
+            >
+              {TEKSTER.godkjenning.velg}
+            </button>
           </li>
         ))}
       </ul>

@@ -79,6 +79,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
+| OP-13 | Story 3.1 | Meldt 2026-11-12 | Johannes W. Gaertner tar Story 3.1, Velge kandidat og se godkjenningsflaten. Arbeidet går parallelt med Story 2.4 (Ragnhild Sætren), fordi 3.1 bruker listen over gyldige kandidater uansett hvor mange regler som finnes (§11). | Johannes W. Gaertner |
 | OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12; PR #17 godkjent og merget av Mithad 2026-11-13 | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
 | OP-15 | Story 2.5 | Meldt 2026-11-13 | Mithad Kuduz tar Story 2.5, Ekskludert-boks med oppsummering av utelukkelser. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 
@@ -678,6 +679,19 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kjente begrensninger, godtatt av Mithad 2026-11-11:** `datagrense` i datafeilsvaret er `turnus.periode_slutt` også når det er historikkstarten som ikke holder, og en egen vakt som starter før historikkstarten og slutter etter den, regnes som kjent data. Ingen vakt i perioden treffer den nedre grensen.
 - **Grunnlag:** [spesifikasjonen for Story 2.3](../../_bmad-output/implementation-artifacts/spec-2-3-filtrere-pa-11-timersregelen-daglig-hvile.md) og [KI-loggen](../ki-logg/2026-11-11-11-timersregelen.md).
 - **Ikke endret:** Vedtak A5 og P-08 (gjennomført, ikke endret), KS-04, datafeilformen og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-12 – Story 3.1 (OP-13), parallelt med Story 2.4
+
+- **Hvem:** Johannes W. Gaertner meldte 2026-11-12 at han tar Story 3.1. Det er en melding om ansvar, ikke et gruppevedtak. Gruppa kan si fra hvis noen allerede er i gang.
+- **OP-13 – Story 3.1, Velge kandidat og se godkjenningsflaten:**
+  - Johannes W. Gaertner er ansvarlig. Arbeidet skjer på branchen `story-3.1-godkjenningsflaten` og går til PR, fordi storyen innfører et nytt endepunkt og en ny flate som Story 3.2 bygger videre på (AD-5).
+  - Storyen startes før Story 2.4 er ferdig. Rekkefølgen er ikke bindende (OP-06), og Epic 3 er «ikke blokkert» i epics. 3.1 bruker listen over gyldige kandidater slik regelmotoren gir den, uansett hvor mange regler som finnes.
+  - Tester bruker kandidater som er gyldige også etter 2.4, for eksempel Jonas Bakke for #4127. Anders Strand faller ut av #4127 med 35-timersregelen. Testen for en utelukket Ansatt bindes ikke til én bestemt regel.
+  - 3.1 og 2.4 endrer begge `frontend/src/komponenter/Kandidatflate.tsx` og `frontend/src/tekster.ts`. Endringene i 3.1 holdes små der, og den som merger sist, løser konflikten.
+- **Merknad til Story 2.4:** Spesifikasjonen for 2.4 kalte først Ragnhild Sætrens avgjørelser A og B «OP-12», som er Mithad Kuduz' melding for Story 2.3. Ragnhild rettet det til OP-14 2026-11-12 (`d6c716a`), se seksjonen for Story 2.4 (OP-14). Merknaden er oppdatert 2026-11-14, da `main` med Story 2.4 ble tatt inn i branchen for 3.1.
+- **Rettet 2026-11-14:** Den regeluavhengige 404-testen krevde at #4189 hadde minst én Gyldig kandidat. Med 35-timersregelen har #4189 ingen, så testen feilet etter at 2.4 ble merget. Ragnhild Sætren fant det i gjennomgangen av [PR #16](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/16) 2026-11-12. Testen krever nå en ikke-tom liste bare for #4127, og for #4189 kontrollerer den at alle Ansatte gir 404 når listen er tom.
+- **Grunnlag:** [epics.md, Epic 3](../../_bmad-output/planning-artifacts/epics.md) og [modellvalg-stories.md](../modellvalg-stories.md), som anbefaler Sonnet for 3.1. Johannes valgte å bygge med Opus.
+- **Ikke endret:** OP-06 (rekkefølgen er fortsatt ikke bindende) og de andre AV-, K-, OP- og KS-punktene.
 
 ### 2026-11-13 – Story 2.5 (OP-15)
 

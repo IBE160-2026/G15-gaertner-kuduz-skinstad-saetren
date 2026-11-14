@@ -30,6 +30,14 @@
   summary: epics.md sier fortsatt «Grensetester i story 2.3 gjenstår» (ÅB-5, l.116) og «Grensetester gjenstår» i AV-04-sitatet i Story 2.3 (l.~502). Story 2.3 har levert grensetestene.
   evidence: Blind-hunter 2026-11-11. Endring i planleggingsdokumentet gjør `epic-2-context.md` ugyldig før 2.4 og hører til gruppas samordning av epics.
 
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-1-velge-kandidat-og-se-godkjenningsflaten.md`
+  summary: Koblingen i komponentene på godkjenningsflaten er bare kontrollert manuelt: at «Velg» sender riktig id, at ruten i App viser flaten, at «Godkjenn erstatning» ikke gjør noe kall, at datafeil og 404 ikke viser knapper for godkjenning, og at «Avbryt» går tilbake.
+  evidence: Verification Gap 2026-11-12. Ingen test rendrer `App`, `Kandidatflate` eller `Godkjenningsflate`, fordi det ikke finnes noen komponentrigg (se punktet fra 2.1 over). Nettleserkontrollen er reserveløsningen til det finnes en rigg. Story 3.2 bytter ut handleren for «Godkjenn erstatning» og bør få en rendret test for den.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-1-velge-kandidat-og-se-godkjenningsflaten.md`
+  summary: Leddene i brødsmulestien er ikke lenker, så «Kandidater» og «Vakt #<nr>» på godkjenningsflaten kan ikke brukes til å gå tilbake.
+  evidence: Blind Hunter 2026-11-12. `Brodsmulesti.tsx` har bare `{tekst, uthevet}` fra story 1.6. EXPERIENCE.md sier at flatene «henger sammen via brødsmulesti fremfor global navigasjon». Fantes før 3.1. Lenken «Tilbake til kandidatlisten» og «Avbryt» dekker behovet på godkjenningsflaten foreløpig.
+
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md`
   summary: Ingen frontendtest rendrer `Kandidatliste`, så grenen for tom liste (beslutning B) og de andre tilstandene er bare dekket av tester på tekstene og kildeteksten.
   evidence: Verification-gap 2026-11-12. `frontend/tester/kandidater-bunt.ts` bunter bare `src/kandidater` og `src/api`. En snudd betingelse (`!== 0`) ville gått gjennom alle 28 testene. Inntil videre dekker den manuelle nettleserkontrollen dette. Bør løses senest i 2.6, som erstatter grenen med tomtilstanden.

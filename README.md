@@ -193,6 +193,17 @@ innenfor dekningen. Det er dekket av API-tester med endret testdatabase. Direkte
 nettleserens tilbakeknapp virker. En bemannet, ukjent eller utenforliggende vakt
 gir en nøytral feilmelding (AV-03). Feil ved lasting kan prøves på nytt.
 
+Hver kandidat i listen har knappen «Velg», som går til godkjenningsflaten på
+`/vakt/<nr>/godkjenning/<ansatt_id>` (story 3.1). Den viser brødsmulestien
+`Turnus > <avdeling> > Vakt #<nr> > Kandidater > Godkjenning`, vakten, et
+kandidatkort med navn og nivå, en bekreftelsesboks som sier hvem som settes inn i
+hvilken vakt, og statuslinjen «Ikke gjennomført — venter på eksplisitt godkjenning».
+«Avbryt» går tilbake til kandidatlisten. «Godkjenn erstatning» lagrer ingenting ennå:
+den viser bare «Godkjenningen lagres ikke ennå. Ingenting er endret.». Lagringen kommer
+i story 3.2. En adresse for en Ansatt som ikke er en gyldig kandidat for vakten, eller
+for en vakt som ikke mangler bemanning, gir «Kandidaten kan ikke velges for denne
+vakten.» med lenke tilbake til kandidatlisten.
+
 Beskyttede adresser kontrollerer sesjonen før innhold vises. Uten gyldig sesjon
 sendes du til `/logg-inn`; en sesjon som bortfaller mens du bruker appen, gir
 meldingen «Sesjonen er utløpt. Logg inn på nytt.» og handlingen gjentas ikke.
@@ -209,8 +220,13 @@ gyldige kandidater; `utelukkelser` er bygd av regelmotoren fra alle utelukkede, 
 Ekskludert-boksen (story 2.5). Mangler eller er turnusgrunnlaget
 ugyldig, for eksempel fordi vakten slutter etter datagrensen 05.10.2026 kl. 00:00,
 er svaret fortsatt 200, men `{"status": "datafeil", "kode": "mangler_turnusgrunnlag",
-"datagrense": "2026-10-05T00:00:00+02:00"}` uten liste (P-08). Reglene beregnes i
-`backend/domene/regelmotor/` uten KI.
+"datagrense": "2026-10-05T00:00:00+02:00"}` uten liste (P-08).
+`GET /api/vakter/{vaktnummer}/kandidater/{ansatt_id}` gir grunnlaget for
+godkjenningsflaten: `{"status": "ok", "vakt": {…som vaktdetaljene}, "kandidat": {id,
+navn, kompetansenivå}}`, eller samme datafeilsvar. Det svarer bare for Ansatte som er
+i kandidatlisten for vakten. En utelukket, ukjent eller opprinnelig oppsatt Ansatt gir
+samme 404 `ikke_funnet`, uten å si hvorfor (NFR2). Endepunktet er lesende og har ingen
+`POST` (FR12). Reglene beregnes i `backend/domene/regelmotor/` uten KI.
 API-dokumentasjon er deaktivert.
 
 ### Tester
@@ -221,7 +237,8 @@ kjører import-linter-kontrakten i `pyproject.toml`, som forbyr hele `domene`, o
 `domene.regelmotor` og `domene.porter`, å importere `adaptere` (AD-1, AD-2). Fra `frontend/`:
 `npm run test` kjører `node --test`, som finner alle `*.test.mjs` og andre
 testfiler i hele `frontend/` utenom `node_modules`. I dag er det
-`tester/sesjon.test.mjs`, `tester/format.test.mjs` og `tester/kandidater.test.mjs`. Formateringstestene kjøres
+`tester/sesjon.test.mjs`, `tester/format.test.mjs`, `tester/kandidater.test.mjs` og
+`tester/godkjenning.test.mjs`. Formateringstestene kjøres
 også en gang til i en underprosess med `TZ=America/New_York`, så de ikke består
 bare fordi maskinen går i Oslo-tid. `npm run build` typesjekker og bygger
 (`npm.cmd run test` og `npm.cmd run build` i PowerShell hvis skript er blokkert,

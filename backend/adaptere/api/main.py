@@ -153,6 +153,18 @@ class KandidaterUt(BaseModel):
     utelukkelser: UtelukkelsesOppsummeringUt
 
 
+class GodkjenningsgrunnlagUt(BaseModel):
+    """Vakten og én Gyldig kandidat for godkjenningsflaten (story 3.1, FR12).
+
+    Bare lesing. Utelukkede, ukjente og opprinnelig oppsatte Ansatte gir 404, uten at svaret sier
+    hvorfor (NFR2).
+    """
+
+    status: Literal["ok"]
+    vakt: VaktdetaljerUt
+    kandidat: KandidatUt
+
+
 class DatafeilUt(BaseModel):
     """Grunnlaget mangler eller er ugyldig, så ingen Kandidat er vurdert (P-08).
 
@@ -273,6 +285,36 @@ def lag_app(
                 for k in vurdering.gyldige
             ],
             utelukkelser=UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True),
+        )
+
+    @app.get(
+        "/api/vakter/{vaktnummer}/kandidater/{ansatt_id}",
+        response_model=GodkjenningsgrunnlagUt | DatafeilUt,
+    )
+    def godkjenningsgrunnlag(
+        vaktnummer: int, ansatt_id: int, request: Request, okt: Okt,
+    ) -> GodkjenningsgrunnlagUt | DatafeilUt | JSONResponse:
+        # Hele grunnlaget vurderes, som i kandidatruten. Filtreres det ned til én
+        # Ansatt, endres datafeilsjekken, og svaret kan avvike fra listen.
+        grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
+        detaljer = hent_vaktdetaljer(okt, request.state.bruker.id, vaktnummer)
+        if grunnlag is None or detaljer is None:
+            return feil(404, "ikke_funnet")
+        vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+        if isinstance(vurdering, Datafeil):
+            # Før oppslaget: uten vurdering er det ukjent om id-en er en Gyldig kandidat.
+            logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
+            return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
+        kandidat = next((k for k in vurdering.gyldige if k.id == ansatt_id), None)
+        if kandidat is None:
+            # Utelukket, satt opp og ukjent gir samme svar (NFR2).
+            return feil(404, "ikke_funnet")
+        return GodkjenningsgrunnlagUt(
+            status="ok",
+            vakt=VaktdetaljerUt.model_validate(detaljer, from_attributes=True),
+            kandidat=KandidatUt(
+                id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
+            ),
         )
 
     @app.post("/api/utlogging", status_code=204)

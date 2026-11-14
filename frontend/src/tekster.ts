@@ -100,6 +100,47 @@ export const TEKSTER = {
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },
 
+  // Godkjenningsflaten (story 3.1, UX-DR17, UX-DR19, UX-DR23). Egen blokk, så
+  // endringene ikke blandes med kandidatflate, som story 2.4 også endrer.
+  godkjenning: {
+    velg: "Velg",
+    velgEtikett: (navn: string) => `Velg ${navn}`,
+    overskrift: "Godkjenning",
+    laster: "Henter kandidaten …",
+    brodsmuleVakt: (nummer: number) => `Vakt #${nummer}`,
+    brodsmuleKandidater: "Kandidater",
+    brodsmuleGodkjenning: "Godkjenning",
+    vaktoverskrift: (nummer: number, vakttype: string, avdeling: string) =>
+      `Vakt #${nummer} — ${vakttype}, ${avdeling}`,
+    minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
+    valgtKandidat: "Valgt kandidat",
+    kompetanse: "Kompetanse",
+    nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
+    bekreftOverskrift: "Bekreft erstatning",
+    // «Du er i ferd med å sette <navn> inn i <Vakt #nr> (Dagvakt, 27.09.2026,
+    // 07:00–15:00). Ingen endring gjøres i turnusen før du trykker <Godkjenn
+    // erstatning>.» Delt opp, så navn, vakt og knapp kan utheves.
+    bekreft: {
+      foer: "Du er i ferd med å sette ",
+      inn: " inn i ",
+      vakt: (nummer: number) => `Vakt #${nummer}`,
+      etter: (vakttype: string, tid: string) => ` (${vakttype}, ${tid}). `,
+      ingenEndring: "Ingen endring gjøres i turnusen før du trykker ",
+      slutt: ".",
+    },
+    avbryt: "Avbryt",
+    godkjenn: "Godkjenn erstatning",
+    // Beslutning 2A: knappen er aktiv før story 3.2, men lagrer ingenting.
+    ikkeLagret: "Godkjenningen lagres ikke ennå. Ingenting er endret.",
+    statuslinje: "Ikke gjennomført — venter på eksplisitt godkjenning",
+    // Beslutning 3A: samme tekst for utelukket og ukjent Ansatt og for en vakt
+    // som ikke lenger mangler bemanning.
+    ikkeFunnet: "Kandidaten kan ikke velges for denne vakten.",
+    tilbake: "Tilbake til kandidatlisten",
+    datafeil: "Kan ikke vise godkjenningen fordi nødvendig turnusgrunnlag mangler.",
+    datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
+  },
+
   // Ekskludert-boksen (story 2.5, UX-DR15). Egen mal per årsak: grammatikken er
   // ulik per regel («kolliderende vakt» har ikke «brudd på»). Nøkkelen er
   // regelmotorens eksakte årsaksstreng, ikke en generert tekst.
