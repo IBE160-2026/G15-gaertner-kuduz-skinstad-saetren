@@ -18,7 +18,23 @@ Innføre automatiske komponenttester for frontend etter [handoffen](../../_bmad-
 - Spesifikasjon: [spec-frontend-komponenttester.md](../../_bmad-output/implementation-artifacts/spec-frontend-komponenttester.md).
 
 ### Resultat
-Milepæl: spesifikasjonen er godkjent ved sjekkpunkt 1, og implementeringen har startet. Loggen oppdateres når arbeidet er gjennomgått.
+- **Spesifikasjonen** ble godkjent ved sjekkpunkt 1 og er nå `done`. Handoffen og spesifikasjonen ligger i `0e1b86b`.
+- **Implementeringen** ble gjort av en underagent som bare hadde spesifikasjonen som grunnlag. Arbeidet er committet i `de74a3a`.
+  - Vitest 5.1.0, Testing Library og jsdom 28.1.0 er installert. `npm run test` kjører `node --test && vitest run`, og `npm run build` typesjekker testene.
+  - 12 komponenttester i `frontend/tester/komponenter/` dekker de fem utsatte punktene.
+  - Alle 13 mutasjonene ga rød test. `frontend/src` er uendret.
+  - Dokumentasjon: `docs/testing.md` (testoversikt og manuell sjekkliste), README, AGENTS.md, ARCHITECTURE-SPINE (Testing-raden og Stack), `deferred-work.md`, vurderingsmatrisen, OP-16 og `modellvalg-stories.md`.
+  - Regelen om manuell kontroll står i `_bmad/custom/bmad-build.toml`.
+  - [KI-logg](../../docs/ki-logg/2026-11-14-komponenttester.md).
+- **Gjennomgang:** tre uavhengige lag (blind-hunter, edge-case-hunter, verification-gap) ga 24 funn. 13 ble rettet, 2 utsatt til `deferred-work.md` (vite-sårbarheten og P-13-henvisningen i AGENTS.md) og 6 avvist. Detaljene står i Review Triage Log i spesifikasjonen.
+- **Verifisert av orkestratoren:**
+  - `npm run build` består. `node --test` gir 48 av 48, og Vitest 12 av 12 i én kjøring.
+  - Fire parallelle kjøringer feiler fortsatt på denne maskinen (7,7 GB RAM, CPU 77–100 % før start). Funnet er ført i KI-loggen, og den gale påstanden fra underagenten er rettet der.
+  - Node 22.12 er ikke kjørt lokalt. Johannes valgte at CI skal kontrollere det.
+- **Lukket i issues.md:** punktet om å vurdere en komponentrigg.
 
 ### Åpne punkter
-- Implementering, gjennomgang og PR gjenstår (pågår i økten).
+- Push branchen og opprett PR. Avklar hvem i gruppa som gjennomgår den.
+- Kontroller at CI er grønn på Node 22.12 og `lts/*` (ikke kjørt lokalt).
+- Vite 8.3.1 har en høy sårbarhet (rettet i 8.3.8). Utsatt i `deferred-work.md`.
+- AGENTS.md sier «P-13 én gang (OP-16)», men henvisningen bør være P-13 i §12. Avgjøres i PR-gjennomgangen.
