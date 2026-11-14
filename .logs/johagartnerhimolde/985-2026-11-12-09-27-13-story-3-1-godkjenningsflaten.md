@@ -76,3 +76,23 @@ Vurdere Kims gjennomgang av PR #16 (13.11, ført i hans sesjonslogg) og sjekke o
 ### Åpne punkter
 - Ny godkjenning av PR #16 etter push. Kim kan lukke sine tre punkter i `issues.md` når han har sett vurderingen.
 - PR4: om nattevakter skal vises med sluttdato, bør gruppa eventuelt avgjøre for alle flatene samlet. Ikke en forutsetning for merge.
+
+## 2026-11-14 kl. 10:02 — johagartnerHiMolde
+
+### Oppgave
+Pushe branchen, merge PR #16 til `main` hvis CI er grønn (Johannes godkjenner), og skrive vurderingen av Kims funn inn i hans `issues.md` med enkle forklaringer, så han kan lukke punktene selv.
+
+### Plan
+- Skrev merknader under Kims tre åpne punkter om PR #16, uten å lukke dem (`.logs/kimsk81/issues.md`). Det er gjort på Johannes' uttrykkelige ønske, som unntak fra regelen om ikke å skrive i andres loggmappe.
+- Pushet branchen og ventet på CI. Satte storyen til `done` på branchen før merge, slik at det følger med mergen.
+- `main` hadde fått nye loggcommits fra Kim. De gjaldt et annet sted i hans `issues.md` og ga ingen konflikt.
+
+### Resultat
+- CI var grønn på alle fem jobbene (pytest 3.12 og 3.x, npm 22.12 og lts/*, skills-speiling).
+- Story 3.1 er satt til `done` i `sprint-status.yaml`, i vurderingsmatrisen og i KI-loggen. Det er notert at Ragnhilds review fortsatt står som «changes requested» på GitHub, fordi hun ikke har godkjent på nytt, men rettingen følger forslaget hennes.
+- PR #16 merges av Johannes' godkjenning etter at denne loggen er committet.
+- Punktet om PR-gjennomgangen i `issues.md` er lukket.
+
+### Åpne punkter
+- Kim lukker sine tre punkter om PR #16 selv.
+- PR4 (sluttdato for nattevakter) står fortsatt som åpent punkt for gruppa, se over.
