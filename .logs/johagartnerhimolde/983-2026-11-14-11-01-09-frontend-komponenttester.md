@@ -61,8 +61,8 @@ Johannes ba om to ting. Informasjonen om RAM og CPU fra testkjøringene skulle d
 - Lukket i issues.md: punktet om Vite.
 
 - Branchen er pushet, og [PR #20](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/20) er opprettet. Johannes sa at det holder at én i gruppa går gjennom den.
+- CI-kjøringen 43587346640 var grønn på Node v22.12.0 og `lts/*`, med Vitest 4 av 4 testfiler. Vurderingsmatrisen og KI-loggen er oppdatert.
 
 ### Åpne punkter
 - Ett gruppemedlem går gjennom og godkjenner PR #20.
-- Kontroller at CI er grønn på Node 22.12 og `lts/*`.
 - Henvisningen til P-13 i AGENTS.md avgjøres i PR-gjennomgangen.
