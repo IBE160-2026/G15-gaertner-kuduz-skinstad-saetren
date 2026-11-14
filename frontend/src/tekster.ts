@@ -141,6 +141,24 @@ export const TEKSTER = {
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },
 
+  // Ekskludert-boksen (story 2.5, UX-DR15). Egen mal per årsak: grammatikken er
+  // ulik per regel («kolliderende vakt» har ikke «brudd på»). Nøkkelen er
+  // regelmotorens eksakte årsaksstreng, ikke en generert tekst.
+  ekskludertBoks: {
+    totaltUtelukket: (n: number) => `${n} utelukket av harde regler`,
+    // Pil-glyfen rendres for seg i et `aria-hidden`-element (som Brodsmulesti og
+    // Vaktvalg gjør for andre dekorative tegn), så denne teksten er bare det
+    // skjermlesere skal lese opp.
+    visFullListe: "Vis full liste",
+    skjulFullListe: "Skjul full liste",
+    årsaksmaler: {
+      "kompetanse-minstekrav": (n: number) => `${n} under kompetanse-minstekrav`,
+      "kolliderende vakt": (n: number) => `${n} kolliderende vakt`,
+      "11-timersregelen": (n: number) => `${n} brudd på 11-timersregelen`,
+      "35-timersregelen": (n: number) => `${n} brudd på 35-timersregelen`,
+    } as Record<string, (n: number) => string>,
+  },
+
   brodsmulesti: {
     etikett: "Brødsmulesti",
     turnus: "Turnus",

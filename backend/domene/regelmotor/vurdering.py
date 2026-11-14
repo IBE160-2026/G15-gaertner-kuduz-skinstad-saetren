@@ -21,6 +21,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
+from domene.porter.utelukkelse import EkskludertKandidat, RegelAntall, UtelukkelsesOppsummering
 from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse, trettifem_timer
 from domene.typer import VAKTTYPER, Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Utelukket, Vakt
 
@@ -234,3 +235,23 @@ def vurder_kandidater(
         else:
             gyldige.append(kandidat)
     return Kandidatvurdering(gyldige=tuple(gyldige), utelukkede=tuple(utelukkede))
+
+
+def lag_utelukkelsesoppsummering(
+    vurdering: Kandidatvurdering,
+    regler: tuple[Regel, ...] = REGLER,
+) -> UtelukkelsesOppsummering:
+    """Bygg Ekskludert-boksens oppsummering fra `vurdering.utelukkede` (UX-DR15).
+
+    `vurdering.utelukkede` er allerede sortert alfabetisk (samme grunnlag-sortering
+    som `gyldige`). `totalt` teller hver Kandidat én gang; `per_regel` teller en
+    Kandidat under hver regel den bryter, så summen kan bli større enn `totalt`.
+    """
+    per_regel = tuple(
+        RegelAntall(årsak=regel.årsak, antall=sum(1 for u in vurdering.utelukkede if regel.årsak in u.årsaker))
+        for regel in regler
+    )
+    utelukkede = tuple(
+        EkskludertKandidat(id=u.kandidat.id, navn=u.kandidat.navn, årsaker=u.årsaker) for u in vurdering.utelukkede
+    )
+    return UtelukkelsesOppsummering(totalt=len(vurdering.utelukkede), per_regel=per_regel, utelukkede=utelukkede)

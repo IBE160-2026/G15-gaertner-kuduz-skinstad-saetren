@@ -530,3 +530,25 @@ button {
   margin-top: var(--space-3);
   text-align: right;
 }
+
+/* Ekskludert-boksen (story 2.5, UX-DR15). Stiplet kant, egen bakgrunn. */
+.ekskludert-boks {
+  margin-top: var(--space-4);
+  padding: var(--content-padding);
+  border: var(--border-width) dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-breadcrumb-bg);
+}
+
+.ekskludert-boks .brodtekst {
+  margin-bottom: var(--space-3);
+}
+
+.ekskludert-liste {
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-5);
+}
+
+.ekskludert-liste li {
+  padding: var(--space-1) 0;
+}
