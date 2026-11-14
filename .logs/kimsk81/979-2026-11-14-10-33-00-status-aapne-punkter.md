@@ -15,8 +15,11 @@ Lukket PR #16-punktet om #4189-testen, dokumentkonfliktene og verifikasjon etter
 
 Delte det sammensatte punktet om godkjenningstekst/nattevakt: PR3s tekstinnvending er avvist med begrunnelse i review-loggen, mens gruppens beslutning om sluttdato for nattevakter på alle flater gjenstår. Delte også punktet om «Avbryt» og komponenttest; komponenttesten er fortsatt utsatt i `deferred-work.md`/VG1 og står derfor fortsatt åpen.
 
+Ny gjennomgang etter brukerens oppfølgingsspørsmål: Lukket de ferdige delene av BMAD-statuspunktet. Valg av startuke, Python 3.12 og test fra ren klone på macOS er dokumentert i beslutningsreferatet (OP-05) og sprintstatus; generell beslutning om eksakte versjonslåser står igjen som eget åpent delpunkt. Lukket dokumentpunktet fra PR #18: AV-15/16, gjeldende PRD §§4.5, 4.7, 5, 7 og 8, og mergecommit `1d31ea7` viser at alle de nevnte dokumentavklaringene og konflikten ble håndtert. Åpne produktvalg er ført i egne punkter. Gikk gjennom resten av åpne punkter: de krever fortsatt nettleserkontroll, komponenttest, arbeid i AGENTS.md, implementasjon/test, gruppens beslutning eller kontroll ved innlevering. Ingen ytterligere punkt ble lukket uten slikt bevis.
+
 Ingen tester kjørt; dette var en dokumentkontroll. Arbeidskopien var ren før endringene.
 
 ### Åpne punkter
 - Avklar med gruppa om sluttdato skal vises for nattevakter på alle relevante flater.
 - Følg opp utsatt komponenttest av godkjenningsflaten.
+- Avklar gruppens generelle valg om eksakte versjonslåser.
