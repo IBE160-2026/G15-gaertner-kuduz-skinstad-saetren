@@ -173,7 +173,8 @@ uventet GET-kall og en POST uten POST-rute gjør testen rød, at `kallTil` telle
 
 ## Gjenstår
 
-- Uavhengig kodegjennomgang (`bmad-build` med underagenter) og PR-gjennomgang av et annet
-  gruppemedlem.
-- Grønn CI på Node 22.12 og `lts/*` etter push.
+- PR-gjennomgang av et annet gruppemedlem i [PR #20](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/20). Den uavhengige kodegjennomgangen er utført
+  (se «Retting etter kodegjennomgang»).
+- Grønn CI på Node 22.12 og `lts/*` er oppnådd: kjøring [43587346640](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/actions/runs/43587346640) på `9e27ffd`.
+  Node v22.12.0 ga 4 av 4 testfiler i Vitest, og `lts/*` ga 48 av 48 og 4 av 4.
 - Story 3.2 må endre testen for «Godkjenn erstatning», og story 2.6 testen for tom liste.
