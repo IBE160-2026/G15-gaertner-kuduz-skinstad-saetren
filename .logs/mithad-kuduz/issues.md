@@ -34,3 +34,5 @@
 - [ ] 2026-11-13 [prd-tilbakemelding-bard](985-2026-11-13-17-25-11-prd-tilbakemelding-bard.md) — Gjennomgang av PR #18 (PRD-rettingene etter Bårds tilbakemelding) fra et annet gruppemedlem
 - [ ] 2026-11-13 [prd-tilbakemelding-bard](985-2026-11-13-17-25-11-prd-tilbakemelding-bard.md) — Spør Bård om technology.md i arkitekturmappen (gjelder pytagoras-website-v2) er lagt der med vilje
 - [x] 2026-11-13 [gjennomgang-pr-17](984-2026-11-13-17-38-36-gjennomgang-pr-17.md) — PR #17 (story 2.4): avgjør godkjenning og tekst på GitHub (løst 2026-11-13: godkjent på GitHub)
+- [x] 2026-11-13 [story-2-5-ekskludert-boks](983-2026-11-13-19-35-00-story-2-5-ekskludert-boks.md) — Story 2.5: nettleserkontroll av Ekskludert-boksen (#4127, #4189, tastatur, 360 px) gjenstår (løst 2026-11-13, 169e24a: 13 kontroller besto mot en midlertidig testdatabase)
+- [x] 2026-11-13 [story-2-5-ekskludert-boks](983-2026-11-13-19-35-00-story-2-5-ekskludert-boks.md) — Story 2.5: PR og gjennomgang fra et annet gruppemedlem gjenstår (løst 2026-11-13: PR #19 opprettet mot main)

@@ -1,5 +1,6 @@
 # Åpne punkter
 
+- [x] 2026-11-14 [Gjennomgang av PR #19](982-2026-11-14-09-25-33-gjennomgang-pr-19.md) — Rett vurderingsmatrisens foreldede «PR er ikke opprettet», og rett antall nye domenetester fra sju til seks i vurderingsmatrisen og KI-loggen før story 2.5 markeres ferdig. (løst 2026-11-14 i `ff21622`)
 - [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett #4189-testen for tom gyldigliste, løs fire dokumentkonflikter mot gjeldende `main`, og kjør tester på faktisk sammenslåingsresultat før godkjenning.
 - [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Rett eller avklar misvisende tekst om «Godkjenn erstatning» i 3.1 og vis sluttdato for nattvakter i bekreftelsen.
 - [ ] 2026-11-13 [Gjennomgang av PR #16](981-2026-11-13-22-18-40-gjennomgang-pr-16.md) — Avklar «Avbryt uten kall» mot de to GET-kallene ved retur, og følg opp den utsatte komponenttesten.

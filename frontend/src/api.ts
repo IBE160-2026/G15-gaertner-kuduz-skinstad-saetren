@@ -48,8 +48,18 @@ export type Vaktdetaljer = {
 // alfabetisk. Datafeil er et 200-svar uten liste (P-08).
 export type Kandidat = { id: number; navn: string; kompetansenivå: number };
 
+// Ekskludert-boksen (story 2.5, UX-DR15). `per_regel` følger regelmotorens
+// rekkefølge, og summen der kan være større enn `totalt`.
+export type RegelAntall = { årsak: string; antall: number };
+export type EkskludertKandidat = { id: number; navn: string; årsaker: string[] };
+export type UtelukkelsesOppsummering = {
+  totalt: number;
+  per_regel: RegelAntall[];
+  utelukkede: EkskludertKandidat[];
+};
+
 export type Kandidatsvar =
-  | { status: "ok"; kandidater: Kandidat[] }
+  | { status: "ok"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering }
   | { status: "datafeil"; kode: string; datagrense: string };
 
 /** API-et svarte med feilformen `{ kode, melding }`. */
