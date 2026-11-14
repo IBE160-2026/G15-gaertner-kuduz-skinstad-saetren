@@ -33,14 +33,52 @@ afterEach(() => { globalThis.fetch = NODE_FETCH; });
 
 const nesteTick = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-const OK_4127 = { status: "ok", kandidater: [{ id: 11, navn: "Anders Strand", kompetansenivå: 3 }] };
-const OK_4189 = { status: "ok", kandidater: [{ id: 4, navn: "Ingrid Dahl", kompetansenivå: 3 }] };
+const UTELUKKELSER_4127 = {
+  totalt: 20,
+  per_regel: [
+    { årsak: "kompetanse-minstekrav", antall: 8 },
+    { årsak: "kolliderende vakt", antall: 7 },
+    { årsak: "11-timersregelen", antall: 4 },
+    { årsak: "35-timersregelen", antall: 1 },
+  ],
+  utelukkede: [{ id: 2, navn: "Eirik Moen", årsaker: ["kompetanse-minstekrav"] }],
+};
+const UTELUKKELSER_4189 = {
+  totalt: 24,
+  per_regel: [
+    { årsak: "kompetanse-minstekrav", antall: 3 },
+    { årsak: "kolliderende vakt", antall: 2 },
+    { årsak: "11-timersregelen", antall: 18 },
+    { årsak: "35-timersregelen", antall: 1 },
+  ],
+  utelukkede: [{ id: 1, navn: "Silje Amundsen", årsaker: ["kompetanse-minstekrav"] }],
+};
+const OK_4127 = {
+  status: "ok",
+  kandidater: [{ id: 11, navn: "Anders Strand", kompetansenivå: 3 }],
+  utelukkelser: UTELUKKELSER_4127,
+};
+const OK_4189 = {
+  status: "ok",
+  kandidater: [{ id: 4, navn: "Ingrid Dahl", kompetansenivå: 3 }],
+  utelukkelser: UTELUKKELSER_4189,
+};
 const DATAFEIL = { status: "datafeil", kode: "mangler_turnusgrunnlag", datagrense: "2026-10-05T00:00:00+02:00" };
 
 test("svar blir klar, datafeil eller feil, aldri en tom liste ved ukjent status", () => {
-  assert.deepEqual(k.tilstandFraSvar(OK_4127), { type: "klar", kandidater: OK_4127.kandidater });
+  assert.deepEqual(k.tilstandFraSvar(OK_4127), {
+    type: "klar",
+    kandidater: OK_4127.kandidater,
+    utelukkelser: OK_4127.utelukkelser,
+  });
   assert.deepEqual(k.tilstandFraSvar(DATAFEIL), { type: "datafeil", datagrense: DATAFEIL.datagrense });
   assert.equal(k.tilstandFraSvar({ status: "noe_nytt" }).type, "feil");
+});
+
+test("tilstandFraSvar tar med utelukkelser uendret fra svaret", () => {
+  const tilstand = k.tilstandFraSvar(OK_4189);
+  assert.equal(tilstand.type, "klar");
+  assert.deepEqual(tilstand.utelukkelser, UTELUKKELSER_4189);
 });
 
 test("feil gir egen tekst fra tekstlista, og 401 viser ingenting", async () => {
@@ -89,9 +127,10 @@ test("tom liste fra API-et blir klar med tom liste, ikke datafeil", async () => 
   const svar = styrtFetch();
   const meldt = [];
   k.lastKandidater(4189, (tilstand) => meldt.push(tilstand));
-  svar("/api/vakter/4189/kandidater", json({ status: "ok", kandidater: [] }));
+  const tomUtelukkelser = { totalt: 0, per_regel: [], utelukkede: [] };
+  svar("/api/vakter/4189/kandidater", json({ status: "ok", kandidater: [], utelukkelser: tomUtelukkelser }));
   await nesteTick();
-  assert.deepEqual(meldt.at(-1), { type: "klar", kandidater: [] });
+  assert.deepEqual(meldt.at(-1), { type: "klar", kandidater: [], utelukkelser: tomUtelukkelser });
 });
 
 test("taggen viser nivået av fire", () => {
@@ -107,7 +146,7 @@ test("listen hentes straks og meldes etter laster", async () => {
 
   svar("/api/vakter/4127/kandidater", json(OK_4127));
   await nesteTick();
-  assert.deepEqual(meldt.at(-1), { type: "klar", kandidater: OK_4127.kandidater });
+  assert.deepEqual(meldt.at(-1), { type: "klar", kandidater: OK_4127.kandidater, utelukkelser: OK_4127.utelukkelser });
 });
 
 test("datafeil fra API-et blir datafeil, ikke tom liste", async () => {
@@ -133,7 +172,11 @@ test("forsinket svar for forrige vakt erstatter ikke den aktive (P-09)", async (
   svar("/api/vakter/4127/kandidater", json(OK_4127));
   await nesteTick();
 
-  assert.deepEqual(meldt, [{ type: "laster" }, { type: "laster" }, { type: "klar", kandidater: OK_4189.kandidater }]);
+  assert.deepEqual(meldt, [
+    { type: "laster" },
+    { type: "laster" },
+    { type: "klar", kandidater: OK_4189.kandidater, utelukkelser: OK_4189.utelukkelser },
+  ]);
 });
 
 test("forsinket feil for forrige vakt meldes heller ikke", async () => {
@@ -154,4 +197,59 @@ test("svar fra en sesjon som er byttet ut, meldes ikke (P-09)", async () => {
   svar("/api/vakter/4127/kandidater", json(OK_4127));
   await nesteTick();
   assert.deepEqual(meldt, [{ type: "laster" }]);
+});
+
+test("ekskludertBoksTekst følger mønsteret for #4127 (AV-07)", () => {
+  assert.equal(
+    k.ekskludertBoksTekst(UTELUKKELSER_4127),
+    "20 utelukket av harde regler · 8 under kompetanse-minstekrav · 7 kolliderende vakt · "
+      + "4 brudd på 11-timersregelen · 1 brudd på 35-timersregelen",
+  );
+});
+
+test("ekskludertBoksTekst følger mønsteret for #4189 (AV-07)", () => {
+  assert.equal(
+    k.ekskludertBoksTekst(UTELUKKELSER_4189),
+    "24 utelukket av harde regler · 3 under kompetanse-minstekrav · 2 kolliderende vakt · "
+      + "18 brudd på 11-timersregelen · 1 brudd på 35-timersregelen",
+  );
+});
+
+test("ekskludertBoksTekst utelater regler uten utelukkede", () => {
+  const oppsummering = {
+    totalt: 1,
+    per_regel: [
+      { årsak: "kompetanse-minstekrav", antall: 0 },
+      { årsak: "kolliderende vakt", antall: 1 },
+      { årsak: "11-timersregelen", antall: 0 },
+      { årsak: "35-timersregelen", antall: 0 },
+    ],
+    utelukkede: [{ id: 1, navn: "Ada", årsaker: ["kolliderende vakt"] }],
+  };
+  assert.equal(k.ekskludertBoksTekst(oppsummering), "1 utelukket av harde regler · 1 kolliderende vakt");
+});
+
+test("ekskludertBoksTekst faller tilbake til årsak og tall ved ukjent regel", () => {
+  // Regelmotoren kan i prinsippet legge til en regel uten tekstmal; boksen skal
+  // da fortsatt vise tallet, ikke kaste.
+  const oppsummering = {
+    totalt: 2,
+    per_regel: [{ årsak: "en-helt-ny-regel", antall: 2 }],
+    utelukkede: [],
+  };
+  assert.equal(k.ekskludertBoksTekst(oppsummering), "2 utelukket av harde regler · 2 en-helt-ny-regel");
+});
+
+test("ekskludertRadTekst viser navn og én årsak", () => {
+  assert.equal(
+    k.ekskludertRadTekst({ id: 1, navn: "Eirik Moen", årsaker: ["kompetanse-minstekrav"] }),
+    "Eirik Moen — kompetanse-minstekrav",
+  );
+});
+
+test("ekskludertRadTekst viser flere årsaker kommaseparert (Design Notes-eksempelet)", () => {
+  assert.equal(
+    k.ekskludertRadTekst({ id: 2, navn: "Kari Nordmann", årsaker: ["kolliderende vakt", "35-timersregelen"] }),
+    "Kari Nordmann — kolliderende vakt, 35-timersregelen",
+  );
 });

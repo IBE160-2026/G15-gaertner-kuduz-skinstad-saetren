@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { ApiFeil, gjeldendeSesjonsgenerasjon, hentVaktdetaljer, type Vaktdetaljer } from "../api";
+import {
+  ApiFeil,
+  gjeldendeSesjonsgenerasjon,
+  hentVaktdetaljer,
+  type UtelukkelsesOppsummering,
+  type Vaktdetaljer,
+} from "../api";
 import { datoOgKlokke, vaktBrodsmule, vakttypenavn } from "../format";
-import { lastKandidater, type Kandidattilstand } from "../kandidater";
+import { ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, type Kandidattilstand } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
 
@@ -133,6 +139,7 @@ function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
     <section className="panel kandidater" aria-labelledby="kandidater-tittel">
       {overskrift}
       <p className="meta kandidater-status" role="status">{t.ingenGyldige}</p>
+      <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
   );
 
@@ -147,6 +154,33 @@ function Kandidatliste({ vaktnummer }: { vaktnummer: number }) {
           </li>
         ))}
       </ul>
+      <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
+  );
+}
+
+// Ekskludert-boksen (story 2.5, UX-DR15). Vist bare når noen er utelukket, enten
+// listen over Gyldige er tom (#4189) eller ikke (#4127).
+const ek = TEKSTER.ekskludertBoks;
+
+function EkskludertBoks({ oppsummering }: { oppsummering: UtelukkelsesOppsummering }) {
+  const [åpen, setÅpen] = useState(false);
+
+  if (oppsummering.totalt === 0) return null;
+
+  return (
+    <div className="ekskludert-boks">
+      <p className="brodtekst">{ekskludertBoksTekst(oppsummering)}</p>
+      <button type="button" className="button-secondary" aria-expanded={åpen} onClick={() => setÅpen((v) => !v)}>
+        {åpen ? ek.skjulFullListe : ek.visFullListe} <span aria-hidden="true">{åpen ? "▴" : "▾"}</span>
+      </button>
+      {åpen && (
+        <ul className="ekskludert-liste">
+          {oppsummering.utelukkede.map((kandidat) => (
+            <li key={kandidat.id}>{ekskludertRadTekst(kandidat)}</li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

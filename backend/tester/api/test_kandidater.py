@@ -15,10 +15,24 @@ from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
 from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
 from adaptere.lagring.testdata import ANSATTE, FASIT, MANGLER_BEMANNING, PERIODE_SLUTT, PERIODE_START
+from domene.regelmotor.vurdering import norsk_sorteringsnøkkel
+from domene.typer import Kandidat
 from tester.api.test_innlogging import engine, feilsvar, klient, logg_inn  # noqa: F401
 
 NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
+ID_VED_NAVN = {navn: ansatt_id for ansatt_id, navn in NAVN.items()}
+# To ansatte med samme navn ville la ID_VED_NAVN peke på feil id (den sist vunnet).
+assert len(ID_VED_NAVN) == len(NAVN)
 KOMPETANSE = {navn: kompetanse for _, navn, _, _, _, kompetanse, _ in ANSATTE}
+
+# FASIT bruker korte utfallsnavn; API-et svarer med regelmotorens fulle årsaksstrenger.
+UTFALL_TIL_ÅRSAK = {
+    "kompetanse": "kompetanse-minstekrav",
+    "kolliderende": "kolliderende vakt",
+    "elleve-timer": "11-timersregelen",
+    "trettifem-timer": "35-timersregelen",
+}
+REKKEFØLGE_PER_REGEL = ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen", "35-timersregelen"]
 
 
 def hent(klient: TestClient, nummer: int) -> dict:
@@ -39,11 +53,36 @@ def forventet_utelukket(nummer: int) -> set[str]:
     return {navn for navn, utfall in FASIT[nummer]["utfall"].items() if utfall in IMPLEMENTERTE_REGLER}
 
 
+def forventet_per_regel(nummer: int) -> list[dict[str, object]]:
+    tellinger = dict.fromkeys(REKKEFØLGE_PER_REGEL, 0)
+    for utfall in FASIT[nummer]["utfall"].values():
+        if utfall in UTFALL_TIL_ÅRSAK:
+            tellinger[UTFALL_TIL_ÅRSAK[utfall]] += 1
+    return [{"årsak": årsak, "antall": tellinger[årsak]} for årsak in REKKEFØLGE_PER_REGEL]
+
+
+def forventet_utelukkelser(nummer: int) -> dict[str, object]:
+    utfall = FASIT[nummer]["utfall"]
+    # Samme norske sortering som regelmotoren faktisk bruker (`vurder_kandidater`),
+    # ikke Pythons vanlige strengsortering, slik at forventningen ikke kan skli
+    # fra produksjonslogikken selv om de i dag gir samme rekkefølge for fasitnavnene.
+    kandidater = [Kandidat(id=ID_VED_NAVN[navn], navn=navn, kompetanse={}) for navn in forventet_utelukket(nummer)]
+    navn_sortert = [k.navn for k in sorted(kandidater, key=norsk_sorteringsnøkkel)]
+    return {
+        "totalt": len(navn_sortert),
+        "per_regel": forventet_per_regel(nummer),
+        "utelukkede": [
+            {"id": ID_VED_NAVN[navn], "navn": navn, "årsaker": [UTFALL_TIL_ÅRSAK[utfall[navn]]]}
+            for navn in navn_sortert
+        ],
+    }
+
+
 @pytest.mark.parametrize("nummer,antall", [(4127, 4), (4189, 0)])
 def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: int) -> None:
     svar = hent(klient, nummer)
 
-    assert set(svar) == {"status", "kandidater"}
+    assert set(svar) == {"status", "kandidater", "utelukkelser"}
     assert svar["status"] == "ok"
     navn = [k["navn"] for k in svar["kandidater"]]
     assert len(navn) == len(set(navn)) == antall
@@ -52,19 +91,25 @@ def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: in
 
 @pytest.mark.parametrize("nummer", [4127, 4189])
 def test_bare_gyldige_sendes_nfr2(klient: TestClient, nummer: int) -> None:
-    logg_inn(klient)
-    respons_tekst = klient.get(f"/api/vakter/{nummer}/kandidater").text
+    svar = hent(klient, nummer)
     utelukket = forventet_utelukket(nummer)
     satt_opp = NAVN[MANGLER_BEMANNING[nummer][0]]
 
     # 4127: 8 kompetanse + 7 kollisjon + 4 på 11 t + 1 på 35 t. 4189: 3 + 2 + 18 + 1.
     assert len(utelukket) == {4127: 20, 4189: 24}[nummer]
-    for navn in utelukket | {satt_opp}:
-        assert navn not in respons_tekst
-    assert "kompetanse-minstekrav" not in respons_tekst
-    assert "kolliderende" not in respons_tekst
-    assert "11-timersregelen" not in respons_tekst
-    assert "35-timersregelen" not in respons_tekst
+
+    kandidatnavn = {k["navn"] for k in svar["kandidater"]}
+    utelukkede_svar = {u["navn"]: tuple(u["årsaker"]) for u in svar["utelukkelser"]["utelukkede"]}
+    # To utelukkede med samme navn ville la ordboka skjule den ene stille.
+    assert len(utelukkede_svar) == len(svar["utelukkelser"]["utelukkede"])
+
+    for navn in utelukket:
+        assert navn not in kandidatnavn
+        forventet_årsak = UTFALL_TIL_ÅRSAK[FASIT[nummer]["utfall"][navn]]
+        assert utelukkede_svar[navn] == (forventet_årsak,)
+
+    assert satt_opp not in kandidatnavn
+    assert satt_opp not in utelukkede_svar
 
 
 @pytest.mark.parametrize("nummer", [4127, 4189])
@@ -107,7 +152,23 @@ def test_ingen_med_brudd_på_35_timersregelen_i_fasiten_er_med(klient: TestClien
 
 def test_4189_gir_tom_liste_med_status_ok_til_story_2_6(klient: TestClient) -> None:
     # Alle 24 er utelukket. API-et er uendret til 2.6 (beslutning B).
-    assert hent(klient, 4189) == {"status": "ok", "kandidater": []}
+    assert hent(klient, 4189) == {
+        "status": "ok",
+        "kandidater": [],
+        "utelukkelser": forventet_utelukkelser(4189),
+    }
+
+
+@pytest.mark.parametrize("nummer,forventet", [(4127, [8, 7, 4, 1]), (4189, [3, 2, 18, 1])])
+def test_per_regel_stemmer_med_fasiten(klient: TestClient, nummer: int, forventet: list[int]) -> None:
+    svar = hent(klient, nummer)
+
+    assert svar["utelukkelser"]["per_regel"] == [
+        {"årsak": årsak, "antall": antall} for årsak, antall in zip(REKKEFØLGE_PER_REGEL, forventet)
+    ]
+    # Samme tall følger av selve fasiten (AV-07), ikke bare hardkodet to steder.
+    assert svar["utelukkelser"]["per_regel"] == forventet_per_regel(nummer)
+    assert svar["utelukkelser"]["totalt"] == len(forventet_utelukket(nummer))
 
 
 def test_silje_er_ikke_med_på_4127_og_utelukket_på_4189(klient: TestClient) -> None:
