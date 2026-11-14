@@ -37,3 +37,23 @@ Starte Story 3.1 med `bmad-build` på egen branch, parallelt med Ragnhilds Story
 ### Åpne punkter
 - Story 3.1: et annet gruppemedlem går gjennom PR-en. Etter merge settes storyen til `done` i sprintstatus og vurderingsmatrisen.
 - Den som merger sist av 3.1 og 2.4, løser konflikten i `Kandidatflate.tsx` og `tekster.ts`.
+
+## 2026-11-14 kl. 09:48 — johagartnerHiMolde
+
+### Oppgave
+Hente siste oppdateringer, gå gjennom Ragnhilds review av PR #16 og rette det som må til før merge. Johannes bekreftet at testen som feiler, er den dere planla for, og ba om at `main` tas inn og konfliktene løses.
+
+### Plan
+- Hentet fra GitHub. PR #17 (2.4) og #18 var merget, så PR #16 sto som `CONFLICTING`.
+- Prøvemerget i en midlertidig worktree i scratchpad og bekreftet funnet: 1 feil av 404 backendtester (`test_alle_i_listen_gir_200_og_alle_andre_404[4189]`), frontend 41 av 41 og build bestått.
+- Tok inn `origin/main`, løste dokumentkonfliktene ved å beholde begge sider, og rettet testen slik Ragnhild foreslo.
+- Oppdaterte dokumentene fra 3.1 som lovet at testen tålte 2.4.
+
+### Resultat
+- `84dbf58`: merge av `main`. Konflikter bare i `sprint-status.yaml` (`last_updated` fra main), `deferred-work.md`, `avklaringspunkter.md` og `vurderingsmatrise.md`. Alle linjene er beholdt.
+- `f59f69b`: `test_godkjenningsgrunnlag.py` krever ikke-tom liste bare for #4127. For #4189 kontrolleres det at alle Ansatte gir 404 når listen er tom. Merknaden i avklaringspunkter §11 om «OP-12» er rettet til OP-14 (`d6c716a`). Vurderingsmatrisen, spesifikasjonen (Implementation Notes og PR1/PR2 i Review Triage Log) og KI-loggen beskriver funnet og rettingen.
+- Kontroll etter rettingen: `pytest` 404 av 404, `npm.cmd test` 41 av 41 og `npm.cmd run build` bestått.
+- Ikke pushet.
+
+### Åpne punkter
+- Ragnhild må godkjenne PR #16 på nytt etter rettingen. Etter merge settes storyen til `done` i sprintstatus og vurderingsmatrisen.
