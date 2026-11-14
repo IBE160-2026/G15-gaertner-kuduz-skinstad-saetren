@@ -1,5 +1,7 @@
 # Åpne punkter
 
+- [ ] 2026-11-14 [Gjennomgang av PR #19](982-2026-11-14-09-25-33-gjennomgang-pr-19.md) — Rett vurderingsmatrisens foreldede «PR er ikke opprettet», og rett antall nye domenetester fra sju til seks i vurderingsmatrisen og KI-loggen før story 2.5 markeres ferdig.
+
 - [x] 2026-11-09 [Story 1.6 – mergehistorikk](985-2026-11-09-18-33-00-story-1-6-vaktdetaljer.md) — Bekreft på GitHub om PR #11 hadde menneskelig gjennomgang og om CI var kontrollert før merge; lokal git-historikk gir ikke dette beviset. (løst 2026-11-09: brukeren opplyste at han selv godkjente PR-en og at CI bestod)
 
 - [ ] 2026-11-08 [Gjennomgang av PR #10](988-2026-11-08-18-44-03-gjennomgang-pr-10.md) — Kontroller tomtilstanden og feil-/prøv-igjen-tilstanden i Vaktvalg i nettleser. Også dokumentert i `deferred-work.md` og Mithads `issues.md`.
