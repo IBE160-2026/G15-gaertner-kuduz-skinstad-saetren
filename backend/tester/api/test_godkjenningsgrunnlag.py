@@ -81,7 +81,9 @@ def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
             "slutt": "2026-09-27T15:00:00+02:00",
             "minstenivå": 3,
         },
-        "kandidat": {"id": JONAS, "navn": "Jonas Bakke", "kompetansenivå": KOMPETANSE[JONAS]["dag"]},
+        "kandidat": {"id": JONAS, "navn": "Jonas Bakke", "kompetansenivå": KOMPETANSE[JONAS]["dag"],
+                     "ulempebelastning": {"dagtimer": 67, "kveldstimer": 4, "helgetimer": 15,
+                                          "natttimer": 2, "poeng": 40, "score": 100 * (1 - 40 / 300)}},
     }
 
 
@@ -128,10 +130,10 @@ def test_svaret_for_gyldig_nevner_ingen_utelukket(klient: TestClient) -> None:
         assert ord_ not in tekst
 
 
-def test_kandidaten_har_bare_id_navn_og_nivå(klient: TestClient) -> None:
+def test_kandidaten_har_bare_offentlige_felt(klient: TestClient) -> None:
     logg_inn(klient)
     svar = klient.get(sti(4127, JONAS)).json()
-    assert set(svar["kandidat"]) == {"id", "navn", "kompetansenivå"}
+    assert set(svar["kandidat"]) == {"id", "navn", "kompetansenivå", "ulempebelastning"}
     assert set(svar["vakt"]) == {"avdeling", "vaktnummer", "vakttype", "start", "slutt", "minstenivå"}
 
 

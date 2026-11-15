@@ -119,11 +119,21 @@ class VaktdetaljerUt(BaseModel):
     minstenivå: int
 
 
+class UlempebelastningUt(BaseModel):
+    dagtimer: float
+    kveldstimer: float
+    helgetimer: float
+    natttimer: float
+    poeng: float
+    score: float
+
+
 class KandidatUt(BaseModel):
     id: int
     navn: str
     # Nivået for Vaktens vakttype, 1–4. Vises som tag (UX-DR11).
     kompetansenivå: int
+    ulempebelastning: UlempebelastningUt
 
 
 class RegelAntallUt(BaseModel):
@@ -300,7 +310,12 @@ def lag_app(
         return KandidaterUt(
             status="ok",
             kandidater=[
-                KandidatUt(id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt))
+                KandidatUt(
+                    id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
+                    ulempebelastning=UlempebelastningUt.model_validate(
+                        vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
+                    ),
+                )
                 for k in vurdering.gyldige
             ],
             utelukkelser=utelukkelser,
@@ -333,6 +348,9 @@ def lag_app(
             vakt=VaktdetaljerUt.model_validate(detaljer, from_attributes=True),
             kandidat=KandidatUt(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
+                ulempebelastning=UlempebelastningUt.model_validate(
+                    vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
+                ),
             ),
         )
 

@@ -98,6 +98,11 @@ export const TEKSTER = {
     innleie: "Innleie av personell kan vurderes",
     kandidaterLaster: "Henter kandidatene …",
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
+    ulempeOverskrift: "Ulempebelastning",
+    ulempePeriode: "Ulempebelastning gjelder de siste 672 timene før vakten og vises avrundet.",
+    ulempePoeng: (poeng: string) => `${poeng} p`,
+    ulempeFordeling: (kveld: string, helg: string, natt: string) =>
+      `Kveld ${kveld} t · helg ${helg} t · natt ${natt} t`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },

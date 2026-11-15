@@ -69,6 +69,19 @@ describe("Kandidatliste (story 2.1)", () => {
   });
 });
 
+test("viser hver kandidats ulempepoeng og fordeling, også null (story 4.7)", async () => {
+  const { del } = await rendreMed(ok(TO_GYLDIGE));
+  expect(within(del).getByText(TEKSTER.kandidatflate.ulempePeriode)).toBeTruthy();
+  const rader = within(del).getAllByRole("listitem");
+  const jonas = rader.find((rad) => rad.textContent?.includes("Jonas Bakke"))!;
+  const mette = rader.find((rad) => rad.textContent?.includes("Mette Solberg"))!;
+
+  expect(within(jonas).getByText("Ulempebelastning: 14,6 p")).toBeTruthy();
+  expect(within(jonas).getByText("Kveld 1,6 t · helg 2,0 t · natt 3,0 t")).toBeTruthy();
+  expect(within(mette).getByText("Ulempebelastning: 0,0 p")).toBeTruthy();
+  expect(within(mette).getByText("Kveld 0,0 t · helg 0,0 t · natt 0,0 t")).toBeTruthy();
+});
+
 describe("Tomtilstanden (story 2.6)", () => {
   test("viser full tekst, ikon, boks og innleietekst uten knapp utenom «Vis full liste»", async () => {
     const { del } = await rendreMed(ok(INGEN_GYLDIGE));

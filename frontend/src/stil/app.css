@@ -449,6 +449,17 @@ button {
   margin-left: auto;
 }
 
+.kandidat-ulempe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.kandidat-ulempe .meta {
+  margin: 0;
+}
+
 /* Datafeil er ikke en utelukkelse og ikke en lastefeil (P-08): nøytral kant
    til venstre, aldri `danger` eller `warn` (DESIGN.md). */
 .datafeil {

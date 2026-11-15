@@ -19,6 +19,7 @@ type Tilstand =
   | { type: "klar"; data: Vaktdetaljer };
 
 const t = TEKSTER.kandidatflate;
+const tall = new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 type Props = {
   vaktnummer: number;
@@ -156,11 +157,20 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
   return (
     <section className="panel kandidater kandidater-klar" aria-labelledby="kandidater-tittel">
       {overskrift}
+      <p className="meta">{t.ulempePeriode}</p>
       <ul className="kandidatliste">
         {tilstand.kandidater.map((k) => (
           <li key={k.id}>
             <span className="ansattnavn">{k.navn}</span>
             <span className="tag">{t.nivaaTag(k.kompetansenivå)}</span>
+            <div className="kandidat-ulempe">
+              <span>{t.ulempeOverskrift}: {t.ulempePoeng(tall.format(k.ulempebelastning.poeng))}</span>
+              <span className="meta">{t.ulempeFordeling(
+                tall.format(k.ulempebelastning.kveldstimer),
+                tall.format(k.ulempebelastning.helgetimer),
+                tall.format(k.ulempebelastning.natttimer),
+              )}</span>
+            </div>
             <button
               type="button" className="button-secondary button-kompakt"
               aria-label={TEKSTER.godkjenning.velgEtikett(k.navn)} onClick={() => onVelg(k.id)}
