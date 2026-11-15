@@ -11,7 +11,7 @@ from domene.typer import Kandidat, Kandidatvurdering, Utelukket
 
 
 def kandidat(id: int, navn: str) -> Kandidat:
-    return Kandidat(id=id, navn=navn, kompetanse={})
+    return Kandidat(id=id, navn=navn, kompetanse={}, timelønn=300)
 
 
 def test_ingen_utelukkede_gir_tom_oppsummering() -> None:

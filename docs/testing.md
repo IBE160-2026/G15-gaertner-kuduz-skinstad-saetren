@@ -193,3 +193,7 @@ Ikke relevant: <punkt og hvorfor>
 P-13s forståelsestest står for seg: én testperson, ett operativsystem og én skjermflate,
 med tre oppgaver uten hint (§12 i avklaringspunktene). Planlagt arbeidsmål er før
 story 4.6 ferdigstilles; dette er ikke et eget gruppevedtak om frist. Testen er ikke utført ennå.
+
+## Story 4.3 – kostnad per kandidat (2026-11-15)
+
+Domenetester i [`test_kostnad.py`](../backend/tester/regelmotor/test_kostnad.py) dekker 36-timersgrensen, ukeskifte, overlapp, brøktimer, begge sommertidsskifter og ugyldig lønn. API-testene kontrollerer #4127-fasit og begge kandidatgrunnlagene. Kandidat- og godkjenningsflatens komponenttester dekker kostnadsfordeling, overtid og oppdatert grunnlag. Etter integreringen med story 4.2 viser overtid og høy belastning hvert sitt `Varselmerke`. Komponenttesten «høy belastning og overtid vises som hvert sitt varselmerke» dekker ingen varsler, bare høy belastning, bare overtid og begge samtidig. P-09 for endret lønn testes i `test_godkjenningsgrunnlag.py`. Visuell kontroll og gjenstående punkter står i [spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-3-forenklet-kostnad-per-kandidat.md). Den integrerte raden med begge varslene er ikke kontrollert i nettleser.

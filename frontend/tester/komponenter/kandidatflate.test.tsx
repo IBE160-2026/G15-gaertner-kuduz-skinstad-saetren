@@ -45,11 +45,44 @@ const kandidat = (id: number, navn: string, minutter: number) => ({
   id, navn, kompetansenivå: 3, minutter_i_uka: minutter,
   timebelastning_prosent: (100 * minutter) / 2160, hoy_belastning: minutter >= 1944,
   ulempebelastning: INGEN_ULEMPE,
+  // Kostnaden (4.3) er påkrevd av typen; ordinær som standard, så den ikke gir varselmerke.
+  kostnad: TO_GYLDIGE.kandidater[1].kostnad,
 });
 
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
 describe("Kandidatliste (story 2.1)", () => {
+  test("kostnad og satsfordeling vises på riktig kandidat", async () => {
+    const grunnlag = TO_GYLDIGE.kandidater[0];
+    const svar = { ...TO_GYLDIGE, kandidater: [
+      { ...grunnlag, id: 1, navn: "Ordinær", kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 } },
+      { ...grunnlag, id: 2, navn: "Blandet", kostnad: { total: 3000, ordinære_timer: 4, overtidstimer: 4, ordinær_sats: 300, overtidssats: 450 } },
+      { ...grunnlag, id: 3, navn: "Overtid", kostnad: { total: 3600, ordinære_timer: 0, overtidstimer: 8, ordinær_sats: 300, overtidssats: 450 } },
+    ] } satisfies Kandidatsvar;
+    const { del } = await rendreMed(ok(svar));
+    const rad = (navn: string) => within(del).getByText(navn, { selector: ".ansattnavn" }).closest("li")!;
+    const format = (n: number) => new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/\s/g, " ");
+    expect(within(rad("Ordinær")).getByText(`${t.kostnadOverskrift}: ${format(2400)} kr`)).toBeTruthy();
+    expect(within(rad("Ordinær")).getByText(t.kostnadOrdinaer, { selector: ".kostnad-ordinaer" })).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(t.kostnadOvertid)).toBeTruthy();
+    expect(within(rad("Overtid")).getByText(t.kostnadOvertid)).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("4:00", format(300))}`)).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(`${t.kostnadOvertidDel}: ${t.kostnadDetalj("4:00", format(450))}`)).toBeTruthy();
+    expect(within(rad("Overtid")).getByText(`${t.kostnadOvertidDel}: ${t.kostnadDetalj("8:00", format(450))}`)).toBeTruthy();
+    expect(within(rad("Overtid")).queryByText(/^Ordinær:/)).toBeNull();
+  });
+
+  test("ett minutt vises med minuttpresisjon", async () => {
+    const kandidat = { ...TO_GYLDIGE.kandidater[0], kostnad: { total: 5, ordinære_timer: 1 / 60, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 } };
+    const { del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater: [kandidat] }));
+    expect(within(del).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("0:01", "300,00")}`)).toBeTruthy();
+  });
+
+  test("varighet med sekunder merkes som avrundet", async () => {
+    const kandidat = { ...TO_GYLDIGE.kandidater[0], kostnad: { total: 7.5, ordinære_timer: 1.5 / 60, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 } };
+    const { del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater: [kandidat] }));
+    expect(within(del).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("ca. 0:02", "300,00")}`)).toBeTruthy();
+  });
   test("hver rad viser timer i uka som t:mm, og 0:00 uten vakter (story 4.1)", async () => {
     const svar = {
       ...TO_GYLDIGE,
@@ -157,6 +190,39 @@ test("belastningslinja er accent under 32,4 t og warn på og over, kuttet ved 10
     // 4.1-verdien og ulempeblokken er uendret.
     expect(within(rad).getByText(/ t i uka$/)).toBeTruthy();
     expect(within(rad).getByText(/^Ulempebelastning: /)).toBeTruthy();
+  }
+});
+
+test("høy belastning og overtid vises som hvert sitt varselmerke, alene og samtidig (4.2 + 4.3)", async () => {
+  const ordinær = { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 };
+  const overtid = { total: 3000, ordinære_timer: 4, overtidstimer: 4, ordinær_sats: 300, overtidssats: 450 };
+  // Høy belastning uten overtid finnes i virkeligheten for en nattevakt over ukeskiftet
+  // (1 t i startuka); overtid uten høy belastning er Ingrid på #4127 (32 t + 8 t).
+  const svar = {
+    ...TO_GYLDIGE,
+    kandidater: [
+      { ...kandidat(1, "Ingen varsler", 0), kostnad: ordinær },
+      { ...kandidat(2, "Bare høy belastning", 33 * 60), kostnad: ordinær },
+      { ...kandidat(3, "Bare overtid", 32 * 60), kostnad: overtid },
+      { ...kandidat(4, "Begge varsler", 33 * 60), kostnad: overtid },
+    ],
+  } satisfies Kandidatsvar;
+  const { del } = await rendreMed(ok(svar));
+
+  for (const [navn, forventet] of [
+    ["Ingen varsler", []],
+    ["Bare høy belastning", [t.hoyBelastning]],
+    ["Bare overtid", [t.kostnadOvertid]],
+    ["Begge varsler", [t.hoyBelastning, t.kostnadOvertid]],
+  ] as const) {
+    const rad = within(del).getByText(navn, { selector: ".ansattnavn" }).closest("li")!;
+    const merker = [...rad.querySelectorAll(".varselmerke")];
+    expect(merker.map((m) => m.textContent)).toEqual(forventet);
+    // Samme komponent: begge varslene har det samme skjulte ikonet.
+    for (const merke of merker) expect(merke.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    // «Ordinær» vises bare når kostnaden ikke har overtid.
+    const harOvertid = forventet.some((v) => v === t.kostnadOvertid);
+    expect(within(rad).queryByText(t.kostnadOrdinaer, { selector: ".kostnad-ordinaer" }) === null).toBe(harOvertid);
   }
 });
 

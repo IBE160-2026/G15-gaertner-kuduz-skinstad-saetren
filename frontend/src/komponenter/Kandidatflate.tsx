@@ -10,6 +10,7 @@ import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn } from "../f
 import { ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, type Kandidattilstand } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
+import Kostnadsvisning from "./Kostnadsvisning";
 import Varselmerke from "./Varselmerke";
 
 type Tilstand =
@@ -177,6 +178,7 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
               </span>
               {k.hoy_belastning && <Varselmerke>{t.hoyBelastning}</Varselmerke>}
             </span>
+            <Kostnadsvisning kostnad={k.kostnad} />
             <div className="kandidat-ulempe">
               <span>{t.ulempeOverskrift}: {t.ulempePoeng(tall.format(k.ulempebelastning.poeng))}</span>
               <span className="meta">{t.ulempeFordeling(

@@ -89,6 +89,7 @@ def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
         },
         "kandidat": {
             "id": JONAS, "navn": "Jonas Bakke", "kompetansenivå": KOMPETANSE[JONAS]["dag"],
+            "kostnad": {"total": 2960, "ordinære_timer": 8, "overtidstimer": 0, "ordinær_sats": 370, "overtidssats": 555},
             "minutter_i_uka": 960,  # 16 t i uke 39
             "timebelastning_prosent": 100 * 16 / 36, "hoy_belastning": False,
             "ulempebelastning": {"dagtimer": 67, "kveldstimer": 4, "helgetimer": 15,
@@ -167,7 +168,7 @@ def test_kandidaten_har_bare_kontraktsfeltene(klient: TestClient) -> None:
     logg_inn(klient)
     svar = klient.get(sti(4127, JONAS)).json()
     assert set(svar["kandidat"]) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
-                                  "hoy_belastning", "ulempebelastning"}
+                                  "hoy_belastning", "ulempebelastning", "kostnad"}
     assert set(svar["vakt"]) == {"avdeling", "vaktnummer", "vakttype", "start", "slutt", "minstenivå"}
 
 
@@ -327,6 +328,31 @@ def test_ansatt_og_vakttid_endrer_merket_uten_lagring(
     nytt = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
     assert nytt != gammelt
     assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": nytt}).status_code == 200
+
+
+def test_endret_lønn_krever_nytt_trykk_og_gir_ny_kostnad(klient: TestClient, engine: Engine) -> None:
+    """P-09 for kostnaden (story 4.3): en lønnsendring etter visning lagrer ingenting.
+
+    Ingrid har 4 t ordinær tid og 4 t overtid på #4127, så både satsen og 150 %-satsen
+    må følge med i det nye grunnlaget.
+    """
+    ingrid = 4
+    logg_inn(klient)
+    gammelt = klient.get(sti(4127, ingrid)).json()
+    assert gammelt["kandidat"]["kostnad"]["total"] == 3850
+    with lag_sessionmaker(engine).begin() as session:
+        session.execute(update(AnsattRad).where(AnsattRad.id == ingrid).values(timelønn=400))
+    før = øyeblikksbilde(engine)
+    svar = klient.post(sti(4127, ingrid), json={"grunnlagsmerke": gammelt["grunnlagsmerke"]})
+    assert svar.status_code == 409
+    assert feilsvar("endret_grunnlag")(svar.json())
+    assert øyeblikksbilde(engine) == før
+    nytt = klient.get(sti(4127, ingrid)).json()
+    assert nytt["grunnlagsmerke"] != gammelt["grunnlagsmerke"]
+    assert nytt["kandidat"]["kostnad"] == {
+        "total": 4000, "ordinære_timer": 4, "overtidstimer": 4, "ordinær_sats": 400, "overtidssats": 600,
+    }
+    assert klient.post(sti(4127, ingrid), json={"grunnlagsmerke": nytt["grunnlagsmerke"]}).status_code == 200
 
 
 def test_merket_er_knyttet_til_valgt_kandidat(klient: TestClient, engine: Engine) -> None:

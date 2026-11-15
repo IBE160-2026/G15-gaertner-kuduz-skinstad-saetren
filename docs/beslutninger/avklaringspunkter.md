@@ -775,6 +775,14 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Ikke endret:** P-13s oppgavebaserte forståelsestest (én testperson, ett operativsystem og én skjermflate) gjelder fortsatt og er ikke utført. AV-14, UX-DR24 og tilgjengelighetsgulvet er uendret.
 - **Endret:** OP-02, AV-16 og P-13-raden i §12 (pekere hit), raden for OP-02 i §8.4, `epic-2-context.md`, PRD §8 og §10, EXPERIENCE.md (Foundation, Responsive & Platform og UJ-1), DESIGN.md (Bredde), arkitektur § Deferred, ÅB-7, UX-DR25, UX-DR26, Story 4.6 og 4.7 i `epics.md`, handlingspunktet i `sprint-status.yaml` og vurderingsmatrisen.
 
+### 2026-11-15 – Kostnad som `float` i rangeringen (story 4.4)
+
+- **Hvem:** Johannes W. Gaertner, på vegne av gruppa, 2026-11-15, under gjennomgangen av PR #28 (story 4.3).
+- **Beslutning:** Story 4.4 rangerer på kostnaden som `float`, ikke `Decimal`. `beregn_kostnad` regner fortsatt i `Decimal` uten avrunding underveis (P-01–P-03), og API-et leverer `float`.
+- **Begrunnelse:** Ryddigere kode. Ulempescoren fra 4.7 er allerede `float`, og Python kan ikke blande `Decimal` og `float` i regnestykker. `Decimal` gir ingen praktisk fordel senere.
+- **Merknad til 4.4, ikke vedtatt:** Lik totalscore skal avgjøres av stigende ansatt-ID på uavrundet verdi (AV-05, K-03). Med min–maks-poeng kan to matematisk like totaler skille seg i siste siffer, både med `float` og med `Decimal`. Eksempel: `[0, 0, 0, 42,857…]` gir 10.714285714285714, og `[0, 14,286…, 28,571…, 14,286…]` gir 10.714285714285715. Spesifikasjonen for 4.4 bør si hvordan likhet sjekkes.
+- **Berørte filer:** `epics.md` (story 4.4).
+
 ### 2026-11-15 – Faktarettelser i AGENTS.md (AV-08)
 
 - **Hvem:** Ragnhild Sætren, med Claude, 2026-11-15, før story 4.2. Det er rettelser av utdatert status, ikke et nytt vedtak eller et nytt punkt.

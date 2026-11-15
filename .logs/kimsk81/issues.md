@@ -1,4 +1,4 @@
-﻿# Åpne punkter
+# Åpne punkter
 
 - [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Kontroller den nye teksten med faktisk skjermleser, inkludert hele timer og minutter. Kode, radvis komponenttest og foreldet dokumentstatus er rettet; automatisk test kan ikke bekrefte faktisk opplesing.
 
@@ -83,6 +83,9 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før story 5.1 vedta preferansetolkningens ventetrinn, antall automatiske forsøk, tidsbudsjett og startpunkt samt sluttstatus ved 429/5xx/nettverksfeil; oppdater deretter FR-10, AD-7 og story 5.1 med den samme kontrakten.
 - [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før innlevering velge sensornøkkel, ansvar for betaling og kreditt ut fra faktisk forbruk (AV-16/ÅB-8).
 
+- [x] 2026-11-15 [Story 4.3](973-2026-11-15-18-55-14-story-4-3-forenklet-kostnad.md) — Fullfør implementasjon, tester, uavhengig gjennomgang og dokumentasjon. (løst 2026-11-15; kontroller nedenfor gjenstår)
+- [ ] 2026-11-15 [Story 4.3](973-2026-11-15-18-55-14-story-4-3-forenklet-kostnad.md) — Kontroller tastaturfokus, større skrift og faktisk skjermleser på kostnadsflatene; koordiner felles frontend-filer med story 4.2.
+- [ ] 2026-11-15 [Story 4.3](973-2026-11-15-18-55-14-story-4-3-forenklet-kostnad.md) — Vurder mer presis datafeilmelding ved ugyldig lønn og en lønnsspesifikk P-09 POST-test.
 
 - [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Gi høy belastning synlig indikasjon utover farge og test sekundpresisjon gjennom begge API-ruter. (løst 2026-11-15; visuell kontroll gjenstår)
 - [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Kontroller ny synlig tekst og layout i nettleser ved relevante vindusbredder og større skrift. (løst 2026-11-15 med Chromium og falske API-svar; integrert 4.3 gjenstår)

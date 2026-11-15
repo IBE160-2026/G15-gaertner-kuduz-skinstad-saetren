@@ -18,7 +18,7 @@ def lokal(y, m, d, h, minute=0):
 
 def beregn(start, slutt, *, tak=300):
     vakt = Vakt(1, "dag", slutt + timedelta(days=1), slutt + timedelta(days=1, hours=8), 1, None)
-    kandidat = Kandidat(1, "Test", {}, (Tidsrom(start, slutt),))
+    kandidat = Kandidat(1, "Test", {}, (Tidsrom(start, slutt),), timelønn=300)
     return beregn_ulempebelastning(kandidat, vakt, tak=tak)
 
 
@@ -57,7 +57,7 @@ def test_vindu_er_672_faktiske_timer_og_klipper_begge_grenser(start, forventet_l
         Tidsrom(måling.slutt - timedelta(minutes=30), måling.slutt + timedelta(minutes=30)),
         Tidsrom(måling.start - timedelta(hours=2), måling.start),
         Tidsrom(måling.slutt, måling.slutt + timedelta(hours=2)),
-    ))
+    ), timelønn=300)
     resultat = beregn_ulempebelastning(kandidat, vakt)
     assert sum((resultat.dagtimer, resultat.kveldstimer, resultat.helgetimer, resultat.natttimer)) == 1
     # Begge klippede halvtimeintervaller ligger på dagtid en fredag/tirsdag.
@@ -82,7 +82,7 @@ def test_overlapp_og_duplikat_telles_en_gang():
     start, slutt = lokal(2026, 11, 13, 17), lokal(2026, 11, 13, 23)
     vakt = Vakt(1, "dag", lokal(2026, 11, 16, 7), lokal(2026, 11, 16, 15), 1, None)
     kandidat = Kandidat(1, "Test", {}, (Tidsrom(start, slutt), Tidsrom(start, slutt),
-                                         Tidsrom(lokal(2026, 11, 13, 20), lokal(2026, 11, 14, 1))))
+                                         Tidsrom(lokal(2026, 11, 13, 20), lokal(2026, 11, 14, 1))), timelønn=300)
     resultat = beregn_ulempebelastning(kandidat, vakt)
     assert (resultat.dagtimer, resultat.kveldstimer, resultat.natttimer, resultat.poeng) == (1, 4, 3, 13)
 
@@ -90,9 +90,9 @@ def test_overlapp_og_duplikat_telles_en_gang():
 def test_tomt_grunnlag_og_parameterisert_tak():
     start = lokal(2026, 11, 13, 18)
     vakt = Vakt(1, "dag", lokal(2026, 11, 16, 7), lokal(2026, 11, 16, 15), 1, None)
-    tom = Kandidat(1, "Test", {})
+    tom = Kandidat(1, "Test", {}, timelønn=300)
     assert beregn_ulempebelastning(tom, vakt).score == 100
-    kandidat = Kandidat(1, "Test", {}, (Tidsrom(start, start + timedelta(hours=1)),))
+    kandidat = Kandidat(1, "Test", {}, (Tidsrom(start, start + timedelta(hours=1)),), timelønn=300)
     assert beregn_ulempebelastning(kandidat, vakt, tak=2).score == 50
     assert beregn_ulempebelastning(kandidat, vakt, tak=1).score == 0
     assert beregn_ulempebelastning(kandidat, vakt, tak=0.5).score == 0
@@ -106,9 +106,9 @@ def test_standardtak_300_og_over_300():
     # Tolv vakter à åtte natttimer og én på fire: 100 × 3 = 300.
     vakter = tuple(Tidsrom(lokal(2026, 11, dag, 22), lokal(2026, 11, dag + 1, 6))
                    for dag in range(1, 13)) + (Tidsrom(lokal(2026, 11, 13, 22), lokal(2026, 11, 14, 2)),)
-    ved_taket = beregn_ulempebelastning(Kandidat(1, "A", {}, vakter), vakt)
+    ved_taket = beregn_ulempebelastning(Kandidat(1, "A", {}, vakter, timelønn=300), vakt)
     over_taket = beregn_ulempebelastning(
-        Kandidat(2, "B", {}, vakter + (Tidsrom(lokal(2026, 11, 14, 2), lokal(2026, 11, 14, 3)),)), vakt,
+        Kandidat(2, "B", {}, vakter + (Tidsrom(lokal(2026, 11, 14, 2), lokal(2026, 11, 14, 3)),), timelønn=300), vakt,
     )
     assert (ved_taket.natttimer, ved_taket.poeng, ved_taket.score) == (100, 300, 0)
     assert (over_taket.natttimer, over_taket.poeng, over_taket.score) == (101, 303, 0)
@@ -116,9 +116,9 @@ def test_standardtak_300_og_over_300():
 
 def test_like_poeng_er_uavhengig_av_andre_kandidater_og_gjentakelse():
     vakt = Vakt(1, "dag", lokal(2026, 11, 16, 7), lokal(2026, 11, 16, 15), 1, None)
-    a = Kandidat(1, "A", {"dag": 1}, (Tidsrom(lokal(2026, 11, 13, 18), lokal(2026, 11, 13, 22)),))
-    b = Kandidat(2, "B", {"dag": 1}, (Tidsrom(lokal(2026, 11, 13, 21), lokal(2026, 11, 13, 23)),))
-    c = Kandidat(3, "C", {"dag": 1}, ())
+    a = Kandidat(1, "A", {"dag": 1}, (Tidsrom(lokal(2026, 11, 13, 18), lokal(2026, 11, 13, 22)),), timelønn=300)
+    b = Kandidat(2, "B", {"dag": 1}, (Tidsrom(lokal(2026, 11, 13, 21), lokal(2026, 11, 13, 23)),), timelønn=300)
+    c = Kandidat(3, "C", {"dag": 1}, (), timelønn=300)
     def vurder(kandidater):
         result = vurder_kandidater(vakt, kandidater, lokal(2026, 12, 1, 0), lokal(2026, 10, 1, 0))
         assert isinstance(result, Kandidatvurdering)
@@ -138,8 +138,8 @@ def test_beregner_kun_for_gyldige(monkeypatch):
     from domene.regelmotor import ulempebelastning
 
     vakt = Vakt(1, "dag", lokal(2026, 11, 16, 7), lokal(2026, 11, 16, 15), 1, None)
-    gyldig = Kandidat(1, "A", {"dag": 1})
-    utelukket = Kandidat(2, "B", {})
+    gyldig = Kandidat(1, "A", {"dag": 1}, timelønn=300)
+    utelukket = Kandidat(2, "B", {}, timelønn=300)
     kall = []
     original = ulempebelastning.beregn_ulempebelastning
 

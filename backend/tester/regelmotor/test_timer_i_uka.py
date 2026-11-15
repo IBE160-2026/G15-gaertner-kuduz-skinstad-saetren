@@ -25,7 +25,7 @@ def vakt(start: datetime, slutt: datetime | None = None) -> Vakt:
 
 
 def kandidat(*egne: Tidsrom) -> Kandidat:
-    return Kandidat(id=1, navn="Test", kompetanse={"dag": 4}, vakter=egne)
+    return Kandidat(id=1, navn="Test", kompetanse={"dag": 4}, vakter=egne, timelønn=300)
 
 
 def timer(k: Kandidat, v: Vakt) -> timedelta:

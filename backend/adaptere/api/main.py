@@ -29,6 +29,7 @@ from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
+from domene.regelmotor.kostnad import beregn_kostnad
 from domene.regelmotor.timebelastning import timebelastning
 from domene.regelmotor.timer_i_uka import minutter_i_uka, timer_i_startuka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
@@ -135,6 +136,14 @@ class UlempebelastningUt(BaseModel):
     score: float
 
 
+class KostnadUt(BaseModel):
+    total: float
+    ordinære_timer: float
+    overtidstimer: float
+    ordinær_sats: float
+    overtidssats: float
+
+
 class KandidatUt(BaseModel):
     id: int
     navn: str
@@ -146,6 +155,7 @@ class KandidatUt(BaseModel):
     timebelastning_prosent: float
     hoy_belastning: bool
     ulempebelastning: UlempebelastningUt
+    kostnad: KostnadUt
 
 
 def belastning(kandidat: Kandidat, vakt: Vakt) -> dict[str, float | bool]:
@@ -341,6 +351,7 @@ def lag_app(
                     id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
                     minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
                     **belastning(k, grunnlag.vakt),
+                    kostnad=KostnadUt.model_validate(beregn_kostnad(k, grunnlag.vakt), from_attributes=True),
                     ulempebelastning=UlempebelastningUt.model_validate(
                         vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
                     ),
@@ -381,6 +392,7 @@ def lag_app(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
                 minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
                 **belastning(kandidat, grunnlag.vakt),
+                kostnad=KostnadUt.model_validate(beregn_kostnad(kandidat, grunnlag.vakt), from_attributes=True),
                 ulempebelastning=UlempebelastningUt.model_validate(
                     vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
                 ),

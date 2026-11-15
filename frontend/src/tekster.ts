@@ -110,6 +110,11 @@ export const TEKSTER = {
     },
     // Belastningslinja (story 4.2): fargen alene bærer ikke «høy», så den har også tekst.
     hoyBelastning: "Høy belastning",
+    kostnadOverskrift: "Kostnad",
+    kostnadOrdinaer: "Ordinær",
+    kostnadOvertid: "Inkluderer overtid",
+    kostnadOvertidDel: "Overtid",
+    kostnadDetalj: (timer: string, sats: string) => `${timer} t:min ved ${sats} kr/t`,
     ulempeOverskrift: "Ulempebelastning",
     ulempePeriode: "Ulempebelastning gjelder de siste 672 timene før vakten og vises avrundet.",
     ulempePoeng: (poeng: string) => `${poeng} p`,

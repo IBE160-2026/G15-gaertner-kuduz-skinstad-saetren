@@ -789,6 +789,8 @@ So that jeg kan ta hensyn til kostnaden i valget (FR7).
 
 > **Avhengighet (2026-10-30):** Arbeidsbelastningen er delt i Timebelastning 20 % og Ulempebelastning 15 %. Storien bruker Ulempescoren fra **story 4.7** og kan ikke ferdigstilles før 4.7 er ferdig. Scenarioet for Ulempebelastning krever testdataene fra **story 1.2**.
 
+> **Kostnad som `float` (2026-11-15):** Rangeringen bruker kostnaden som `float`, ikke `Decimal`. Johannes avgjorde det på vegne av gruppa, se referatet §11. Avklar i spesifikasjonen hvordan lik totalscore sjekkes. Matematisk like totaler kan skille seg i siste siffer, og da slår ikke AV-05 (stigende ansatt-ID) inn.
+
 As a turnusansvarlig,
 I want at de gyldige kandidatene er rangert, med nøkkeltallene synlige i hver rad,
 So that jeg ser hvem som passer best uten å sammenligne alle manuelt (FR9, SM-3).

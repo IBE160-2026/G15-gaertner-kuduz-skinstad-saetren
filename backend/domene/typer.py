@@ -62,6 +62,8 @@ class Kandidat:
     kompetanse: Mapping[str, object] = field(compare=False)
     vakter: tuple[Tidsrom, ...] = field(default=(), compare=False)
 
+    timelønn: object = None
+
     def __post_init__(self) -> None:
         if isinstance(self.kompetanse, Mapping):
             object.__setattr__(self, "kompetanse", MappingProxyType(dict(self.kompetanse)))

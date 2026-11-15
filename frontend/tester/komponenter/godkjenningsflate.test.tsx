@@ -58,7 +58,7 @@ test("404 viser «kan ikke velges» og ingen knapper for godkjenning", async () 
 });
 
 test("endret grunnlag hentes på nytt og krever nytt trykk", async () => {
-  const oppdatert = { ...GODKJENNING_JONAS, grunnlagsmerke: "b".repeat(64), kandidat: { ...GODKJENNING_JONAS.kandidat, navn: "Jonas Oppdatert" } };
+  const oppdatert = { ...GODKJENNING_JONAS, grunnlagsmerke: "b".repeat(64), kandidat: { ...GODKJENNING_JONAS.kandidat, navn: "Jonas Oppdatert", kostnad: { total: 3000, ordinære_timer: 4, overtidstimer: 4, ordinær_sats: 300, overtidssats: 450 } } };
   const fetch = falskFetch({
     [URL]: [ok(GODKJENNING_JONAS), ok(oppdatert)],
     [`POST ${URL}`]: [feil(409, "endret_grunnlag"), ok({ status: "godkjent" })],
@@ -69,6 +69,11 @@ test("endret grunnlag hentes på nytt og krever nytt trykk", async () => {
   await screen.findByRole("heading", { name: "Jonas Bakke" });
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
   expect(await screen.findByRole("heading", { name: "Jonas Oppdatert" })).toBeTruthy();
+  const kort = screen.getByRole("region", { name: "Jonas Oppdatert" });
+  expect(within(kort).getByText(/Kostnad: 3\s000,00 kr/)).toBeTruthy();
+  expect(within(kort).getByText(TEKSTER.kandidatflate.kostnadOvertid)).toBeTruthy();
+  expect(within(kort).getByText("Ordinær: 4:00 t:min ved 300,00 kr/t")).toBeTruthy();
+  expect(within(kort).getByText("Overtid: 4:00 t:min ved 450,00 kr/t")).toBeTruthy();
   expect(screen.getByRole("status").textContent).toBe(t.endret);
   expect(onGodkjent).not.toHaveBeenCalled();
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
@@ -119,7 +124,7 @@ test("sent POST-svar for forrige kandidat kan ikke navigere fra nytt valg", asyn
   let svarPaGammeltPost: ((svar: Response) => void) | undefined;
   const mette = {
     ...GODKJENNING_JONAS,
-    kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
+    kandidat: { ...GODKJENNING_JONAS.kandidat, id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
     grunnlagsmerke: "b".repeat(64),
   };
   vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL, init?: RequestInit) => {

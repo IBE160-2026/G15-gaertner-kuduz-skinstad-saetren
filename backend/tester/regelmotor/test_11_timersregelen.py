@@ -39,7 +39,7 @@ def vakt(vakttype: str = "dag", *, start: datetime = DAG_START, slutt: datetime 
 
 def kandidat(*egne: object, id: int = 1, kompetanse: dict | None = None) -> Kandidat:
     nivåer = {"dag": 4, "kveld": 4, "natt": 4} if kompetanse is None else kompetanse
-    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse=nivåer, vakter=egne)  # type: ignore[arg-type]
+    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse=nivåer, vakter=egne, timelønn=300)  # type: ignore[arg-type]
 
 
 def rom(start: datetime, slutt: datetime) -> Tidsrom:

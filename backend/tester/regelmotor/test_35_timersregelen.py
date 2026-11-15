@@ -49,7 +49,7 @@ def vakt(start: datetime, slutt: datetime, vakttype: str = "dag") -> Vakt:
 
 
 def kandidat(*egne: object, id: int = 1) -> Kandidat:
-    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse={"dag": 4, "kveld": 4, "natt": 4}, vakter=egne)  # type: ignore[arg-type]
+    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse={"dag": 4, "kveld": 4, "natt": 4}, vakter=egne, timelønn=300)  # type: ignore[arg-type]
 
 
 def hverdager(mandag: date, dager: range = range(5), fra: int = 7, til: int = 15) -> tuple[Tidsrom, ...]:
@@ -207,7 +207,7 @@ def test_vakt_som_ligger_inne_i_en_annen_forkorter_ikke_den_ytre() -> None:
 
 def test_for_lavt_nivå_og_for_lite_fri_gir_begge_årsakene_i_fast_rekkefølge() -> None:
     v = Vakt(4127, "dag", kl(date(2026, 9, 26), 6), kl(date(2026, 9, 26), 14), 3, None)
-    k = Kandidat(id=1, navn="Ansatt 01", kompetanse={"dag": 1}, vakter=hverdager(UKE_39))
+    k = Kandidat(id=1, navn="Ansatt 01", kompetanse={"dag": 1}, vakter=hverdager(UKE_39), timelønn=300)
     assert vurder(v, k).utelukkede[0].årsaker == (kompetanse.ÅRSAK, ÅRSAK)
 
 
