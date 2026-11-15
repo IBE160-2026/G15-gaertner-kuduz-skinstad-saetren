@@ -6,7 +6,7 @@ import userEvent from "@testing-library/user-event";
 import Godkjenningsflate from "../../src/komponenter/Godkjenningsflate";
 import { datoOgKlokke } from "../../src/format";
 import { kandidatsti } from "../../src/navigasjon";
-import { TEKSTER } from "../../src/tekster";
+import { FEILTEKSTER, TEKSTER } from "../../src/tekster";
 import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, falskFetch, feil, json, ok, type Svar } from "./hjelpere";
 
 const t = TEKSTER.godkjenning;
@@ -16,8 +16,9 @@ function rendreMed(svar: Svar, post?: Svar) {
   const fetch = falskFetch({ [URL]: svar, ...(post ? { [`POST ${URL}`]: post } : {}) });
   const onTilbake = vi.fn();
   const onGodkjent = vi.fn();
-  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={onTilbake} onGodkjent={onGodkjent} />);
-  return { fetch, onTilbake, onGodkjent, bruker: userEvent.setup() };
+  const onTilOversikt = vi.fn();
+  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={onTilbake} onGodkjent={onGodkjent} onTilOversikt={onTilOversikt} />);
+  return { fetch, onTilbake, onGodkjent, onTilOversikt, bruker: userEvent.setup() };
 }
 
 test("«Godkjenn erstatning» sender merket og navigerer bare etter suksess", async () => {
@@ -63,7 +64,7 @@ test("endret grunnlag hentes på nytt og krever nytt trykk", async () => {
     [`POST ${URL}`]: [feil(409, "endret_grunnlag"), ok({ status: "godkjent" })],
   });
   const onGodkjent = vi.fn();
-  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={vi.fn()} onGodkjent={onGodkjent} />);
+  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={vi.fn()} onGodkjent={onGodkjent} onTilOversikt={vi.fn()} />);
   const bruker = userEvent.setup();
   await screen.findByRole("heading", { name: "Jonas Bakke" });
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
@@ -82,6 +83,24 @@ test("ugyldig kandidat etter POST gir nøytral melding uten ny bekreftelse", asy
   expect(await screen.findByRole("heading", { name: t.ikkeFunnet })).toBeTruthy();
   expect(screen.queryByRole("button", { name: t.godkjenn })).toBeNull();
   expect(onGodkjent).not.toHaveBeenCalled();
+});
+
+test("allerede bemannet etter POST gir bare vei til Vaktvalg, uten nytt forsøk", async () => {
+  const { onGodkjent, onTilOversikt, fetch, bruker } = rendreMed(ok(GODKJENNING_JONAS), feil(409, "allerede_bemannet"));
+  await screen.findByRole("heading", { name: "Jonas Bakke" });
+  await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
+
+  const varsel = await screen.findByRole("alert");
+  expect(within(varsel).getByRole("heading", { name: FEILTEKSTER.allerede_bemannet })).toBeTruthy();
+  const tilVaktvalg = within(varsel).getByRole("button", { name: t.tilVaktvalg });
+  expect(document.activeElement).toBe(tilVaktvalg);
+  expect(screen.queryByRole("button", { name: TEKSTER.provIgjen })).toBeNull();
+  expect(screen.queryByRole("button", { name: t.godkjenn })).toBeNull();
+
+  await bruker.click(tilVaktvalg);
+  expect(onTilOversikt).toHaveBeenCalledTimes(1);
+  expect(onGodkjent).not.toHaveBeenCalled();
+  expect(fetch).toHaveBeenCalledTimes(2);
 });
 
 test("datafeil etter POST stopper godkjenning og viser datagrensen", async () => {
@@ -115,13 +134,13 @@ test("sent POST-svar for forrige kandidat kan ikke navigere fra nytt valg", asyn
   const onTilbake = vi.fn();
   const bruker = userEvent.setup();
   const { rerender } = render(
-    <Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={onTilbake} onGodkjent={onGodkjent} />,
+    <Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={onTilbake} onGodkjent={onGodkjent} onTilOversikt={vi.fn()} />,
   );
   await screen.findByRole("heading", { name: "Jonas Bakke" });
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
   expect(svarPaGammeltPost).toBeDefined();
 
-  rerender(<Godkjenningsflate vaktnummer={4127} ansattId={5} onTilbake={onTilbake} onGodkjent={onGodkjent} />);
+  rerender(<Godkjenningsflate vaktnummer={4127} ansattId={5} onTilbake={onTilbake} onGodkjent={onGodkjent} onTilOversikt={vi.fn()} />);
   expect(await screen.findByRole("heading", { name: "Mette Solberg" })).toBeTruthy();
   await act(async () => { svarPaGammeltPost!(json({ status: "godkjent" })); });
   expect(onGodkjent).not.toHaveBeenCalled();
@@ -148,7 +167,7 @@ test("sent POST-svar fra gammel sesjon gir ingen suksessnavigasjon", async () =>
     return Promise.resolve(json(GODKJENNING_JONAS));
   }));
   const onGodkjent = vi.fn();
-  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={vi.fn()} onGodkjent={onGodkjent} />);
+  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={vi.fn()} onGodkjent={onGodkjent} onTilOversikt={vi.fn()} />);
   await screen.findByRole("heading", { name: "Jonas Bakke" });
   await userEvent.setup().click(screen.getByRole("button", { name: t.godkjenn }));
   nySesjonsgenerasjon();
@@ -163,7 +182,7 @@ test("raske gjentatte trykk sender bare ett POST-kall", async () => {
     return Promise.resolve(json(GODKJENNING_JONAS));
   });
   vi.stubGlobal("fetch", fetch);
-  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={vi.fn()} onGodkjent={vi.fn()} />);
+  render(<Godkjenningsflate vaktnummer={4127} ansattId={6} onTilbake={vi.fn()} onGodkjent={vi.fn()} onTilOversikt={vi.fn()} />);
   await screen.findByRole("heading", { name: "Jonas Bakke" });
   const knapp = screen.getByRole("button", { name: t.godkjenn });
   fireEvent.click(knapp);

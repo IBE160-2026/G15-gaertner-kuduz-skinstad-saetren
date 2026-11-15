@@ -77,7 +77,8 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   for #4127 og #4189 (AV-07). Story 3.2 tester også endret grunnlag (P-09),
   ugyldig kandidat, atomisk bemanning, rollback, dublett og samtidige POST-kall (AD-5).
 - **Lagring** ([`tester/lagring/`](../backend/tester/lagring/)): testdataene mot fasiten,
-  og brukere og passord.
+  brukere og passord, og at hver tabell er tatt med i grunnlagsmerket eller
+  bevisst holdt utenfor (P-09).
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
   import-linter-kontrakten som forbyr `domene` å importere `adaptere` (AD-1, AD-2).
 
@@ -108,7 +109,7 @@ har satt opp, feiler testen.
 | | Tomtilstanden (`ingen_gyldige_kandidater`) har ikon, full tekst, boks og innleietekst uten knapp utenom «Vis full liste». `ok` med tom liste gir feiltilstand. Lasting, feil, datafeil og ingen gyldige har ulik tekst, panelklasse og kombinasjon av rolle, ikon og knapp | 2.6 |
 | | Ingen Ekskludert-boks ved 0 utelukkede. «Vis full liste» lukket, åpen og lukket med `aria-expanded` | 2.5 |
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
-| [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
+| [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
 
 Hver test er vist å kunne feile: en bevisst feil i komponenten gjorde den rød. Mutasjonene
 og de røde meldingene står i [KI-loggen](ki-logg/2026-11-14-komponenttester.md).

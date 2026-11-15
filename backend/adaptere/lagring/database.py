@@ -26,6 +26,31 @@ def database_sti(sti: str | os.PathLike[str] | None = None) -> Path:
 
 
 def lag_engine(sti: str | os.PathLike[str] | None = None) -> Engine:
+    """Engine mot SQLite-filen, med fremmednøkler slått på.
+
+    Transaksjonene bygger på standardoppførselen til Pythons `sqlite3`
+    (`isolation_level=""`, `autocommit=LEGACY_TRANSACTION_CONTROL`), som
+    SQLAlchemy lar stå. Driveren starter da en transaksjon selv bare før
+    INSERT/UPDATE/DELETE, ikke før SELECT, og godtar en eksplisitt `BEGIN` fra
+    koden. To steder bruker dette:
+
+    - GET-grunnlaget i `adaptere/api/main.py` kjører `BEGIN`, slik at visning og
+      grunnlagsmerke leses fra samme øyeblikk (P-09).
+    - `lagre_godkjenning` i `adaptere/lagring/godkjenninger.py` kjører
+      `BEGIN IMMEDIATE`, slik at skrivelåsen tas før regelkontroll og skriving
+      (AD-5). Driveren starter ikke en ny transaksjon før UPDATE, fordi en allerede
+      er åpen, og `session.commit()` avslutter den.
+
+    Ikke sett `isolation_level`, `autocommit` eller `execution_options` på engine
+    eller tilkobling uten å gå gjennom begge stedene. Med `autocommit=False` åpner
+    driveren selv en transaksjon, og den eksplisitte `BEGIN` feiler med «cannot
+    start a transaction within a transaction» (kontrollert 2026-11-15). Med
+    SQLAlchemys `"AUTOCOMMIT"` virker de to eksplisitte transaksjonene fortsatt.
+    Driveren starter da ingen transaksjon av seg selv, så andre skriveveier uten
+    eksplisitt `BEGIN` blir committet setning for setning. Testdataene, som tømmer
+    og fyller tabellene i én transaksjon, blir da ikke lenger atomiske. Testene i `tester/api/test_godkjenningsgrunnlag.py`
+    (snapshot, skrivelås, rollback og samtidige POST) bruker begge kodestedene.
+    """
     fil = database_sti(sti)
     fil.parent.mkdir(parents=True, exist_ok=True)
     engine = create_engine(URL.create("sqlite", database=str(fil)))
