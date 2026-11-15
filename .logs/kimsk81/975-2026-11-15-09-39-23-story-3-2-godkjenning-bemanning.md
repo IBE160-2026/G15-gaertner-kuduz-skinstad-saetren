@@ -21,6 +21,7 @@ Kjøre bmad-build for story 3.2 til klar for gjennomgang. Starte med branch, com
 - Tre uavhengige kodegjennomganger førte til retting av blant annet GET-snapshot, grunnlagsmerkets identitet, sen respons, usikkert svar, rollback og manglende integrasjonstest. En ekstra uavhengig kontroll ble gjort etter AD-5-refaktoreringen; to dokumenterte avveininger ble beholdt, ingen ny kodefeil påvist.
 - Trakk `main` inn i branchen etter brukerens beskjed. Johannes' notat om grunnlagsmerke og tidlig SQLite-lås var allerede dekket. Den nye AD-5 krevde at transaksjonen ble flyttet fra API-et til lagringsadapteren; dette er nå gjort og testet. Story 2.6 er samordnet. Oppdaterte README, testveiledning, vurderingsmatrise, arkitekturens lagringsoversikt og sprintstatus (`review`).
 - Etter samordningen bestod 427 backendtester, 49 frontendmodultester, 23 komponenttester og frontendbygget. Nettleserkontroll mot ekte backend ved 1000 px viste godkjenning av Jonas for #4127 og bemannet vakt i Vaktvalg før siste tekstendring. Arbeidet ble committet som `1e5807a`. Ingen betalte KI-kall ble gjort.
+- Opprettet [PR #23](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/23) mot `main` for gruppas vurdering. PR-en er åpen, uten mergekonflikt, og de fem viste CI-jobbene for backend, frontend og skills-speiling bestod.
 
 ### Åpne punkter
 
