@@ -13,7 +13,8 @@ Bygge story 2.6 med `bmad-build`: tydelig tomtilstand når alle kandidater er ut
 ### Resultat
 - Backend: nytt svar `ingen_gyldige_kandidater` (HTTP 200, tom liste, utelukkelser) i `backend/adaptere/api/main.py`. #4189 gir det nye svaret, #4127 er uendret. Datafeil og godkjenningsendepunktet er uendret.
 - Frontend: ny tilstand `ingen_gyldige`; `ok` med tom liste behandles som kontraktsbrudd og vises som feil med `RESERVETEKST`. Tomtilstanden har «!»-ikon, full tekst, Ekskludert-boks og innleietekst uten knapp. Modifikatorklasser på alle fire tilstander.
-- Tester: `pytest` 415 bestått (kjørt på nytt av meg etter gjennomgangen). Underagenten rapporterte `npm run build` og `npm run test` bestått (49 node-tester, 14 komponenttester); jeg kjørte ikke frontend på nytt selv.
+- Tester, kjørt av underagenten (rapportert, ikke sett av meg da): `pytest` 415 bestått, `npm run build` og `npm run test` bestått (49 node-tester, 14 komponenttester).
+- Tester, verifisert av meg selv: `pytest` 415 bestått (etter gjennomgangen). `npm run build` bestått (typesjekk av kode og tester, Vite-bygg). `npm run test` bestått, 49 av 49 node-tester og 14 av 14 komponenttester (kjørt 2026-11-15 kl. 12:28, etter at jeg først hadde hoppet over dette og satt storyen til review på underagentens rapport). De tre nye komponenttestene i «Tomtilstanden (story 2.6)» ble bekreftet kjørt med verbose-rapportering.
 - Retting av generert kode: testen `test_uke_som_slutter_ved_datagrensen_vurderes` forventet `ok` for #4189 og ble rettet til ny status. Fasiten er uendret (AV-07).
 - Gjennomgang: ingen funn ble patch, bad_spec eller intent_gap. Verdiktene står i spesifikasjonens Review Triage Log. Ingenting utsatt til `deferred-work.md`.
 - Dokumentasjon: README, `docs/testing.md`, vurderingsmatrisen, `epic-2-context.md` og KI-logg `docs/ki-logg/2026-11-15-ingen-gyldige-kandidater.md`. Sprintstatus satt til `review`, spesifikasjonen til `done`.
