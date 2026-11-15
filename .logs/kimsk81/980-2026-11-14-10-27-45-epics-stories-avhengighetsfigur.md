@@ -34,3 +34,21 @@ Flytte avhengighetsfiguren til en egen mappe under `docs/` og publisere flytting
 
 ### Åpne punkter
 Ingen.
+
+## 2026-11-15 kl. 16:53 — Kimsk81
+
+### Oppgave
+Oppdatere fargene for fullførte stories i avhengighetsfiguren, undersøke status for 4.1 og oppdatere sprintstatus etter gjennomgang og merge.
+
+### Plan
+- Sammenligne figuren med sprintstatus, spesifikasjon, gjennomgangslogg og git-historikk.
+- Endre kun statusfargene i figuren og sette 4.1 til done i sprintstatus.
+- Kontrollere diffen og dokumentere arbeidet før commit og push.
+
+### Resultat
+- Story 2.6, 3.1, 3.2 og 4.1 er markert grønne i figuren. Tekstene er beholdt etter brukerens avgrensning, også «Gjenstår» under 2.6 og 4.1.
+- Story 4.1 sto som review i sprintstatus selv om spesifikasjonen var done og PR #25 ble gjennomgått og merget i a98d28a. Ingen begrunnelse for avviket ble funnet. Sprintstatus er nå done.
+- Kontrollert status mot spesifikasjonen, gjennomgangsloggen og git-historikken; diffen er kontrollert. Dette er dokumentasjonsendringer, så apptester er ikke kjørt.
+
+### Åpne punkter
+- Den eksisterende oppfølgingen av faktisk skjermleseropplesing står i issues.md under gjennomgang av PR 25.
