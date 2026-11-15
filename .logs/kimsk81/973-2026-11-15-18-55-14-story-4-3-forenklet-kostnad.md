@@ -1,4 +1,4 @@
-﻿# Story 4.3 – forenklet kostnad
+# Story 4.3 – forenklet kostnad
 
 ## 2026-11-15 kl. 18:55 — Kimsk81
 

@@ -1,4 +1,4 @@
-﻿# Åpne punkter
+# Åpne punkter
 
 - [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Kontroller den nye teksten med faktisk skjermleser, inkludert hele timer og minutter. Kode, radvis komponenttest og foreldet dokumentstatus er rettet; automatisk test kan ikke bekrefte faktisk opplesing.
 
