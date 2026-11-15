@@ -1,15 +1,15 @@
 // Kandidatflate med Kandidatliste og EkskludertBoks (story 2.1, 2.4, 2.5 og 3.1).
 // Kandidatliste og EkskludertBoks er interne og testes gjennom Kandidatflate.
 import { describe, expect, test, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Kandidatflate from "../../src/komponenter/Kandidatflate";
 import { datoOgKlokke } from "../../src/format";
 import { ekskludertBoksTekst, ekskludertRadTekst } from "../../src/kandidater";
-import { TEKSTER, feiltekst } from "../../src/tekster";
+import { RESERVETEKST, TEKSTER, feiltekst } from "../../src/tekster";
 import type { Kandidatsvar } from "../../src/api";
 import {
-  INGEN_GYLDIGE, KANDIDATER_DATAFEIL, TO_GYLDIGE, TO_UTELUKKET, VAKT_4127,
+  INGEN_GYLDIGE, KANDIDATER_DATAFEIL, OK_MED_TOM_LISTE, TO_GYLDIGE, TO_UTELUKKET, VAKT_4127,
   falskFetch, feil, kallTil, malRegex, ok, regexTekst, type Svar,
 } from "./hjelpere";
 
@@ -69,12 +69,79 @@ describe("Kandidatliste (story 2.1)", () => {
   });
 });
 
-test("tom liste viser «ingen gyldige» og ingen «Velg»-knapp (story 2.4)", async () => {
-  const { del } = await rendreMed(ok(INGEN_GYLDIGE));
+describe("Tomtilstanden (story 2.6)", () => {
+  test("viser full tekst, ikon, boks og innleietekst uten knapp utenom «Vis full liste»", async () => {
+    const { del } = await rendreMed(ok(INGEN_GYLDIGE));
 
-  expect(within(del).getByRole("status").textContent).toBe(t.ingenGyldige);
-  expect(velgknapper()).toHaveLength(0);
+    expect(within(del).getByRole("status").textContent).toContain(t.ingenGyldige);
+    expect(t.ingenGyldige).toContain("Dette er ikke en feil eller en lastefeil");
+    const ikon = del.querySelector(".alert-icon");
+    expect(ikon?.textContent).toBe("!");
+    expect(ikon?.getAttribute("aria-hidden")).toBe("true");
+    expect(within(del).getByText(ekskludertBoksTekst(INGEN_GYLDIGE.utelukkelser))).toBeTruthy();
+    expect(within(del).getByText(/^24 utelukket/)).toBeTruthy();
+    expect(within(del).getByText(t.innleie)).toBeTruthy();
+    expect(within(del).queryByRole("link")).toBeNull();
+    const knapper = within(del).getAllByRole("button");
+    expect(knapper).toHaveLength(1);
+    expect(knapper[0].textContent).toMatch(begynnerMed(ek.visFullListe));
+    expect(velgknapper()).toHaveLength(0);
+  });
+
+  test("`ok` med tom liste er kontraktsbrudd og gir feiltilstand med «Prøv igjen»", async () => {
+    const { del } = await rendreMed(ok(OK_MED_TOM_LISTE));
+
+    const varsel = within(del).getByRole("alert");
+    expect(within(varsel).getByText(RESERVETEKST)).toBeTruthy();
+    expect(within(varsel).getByRole("button", { name: TEKSTER.provIgjen })).toBeTruthy();
+    expect(within(del).queryByText(t.ingenGyldige)).toBeNull();
+    expect(within(del).queryByText(t.innleie)).toBeNull();
+  });
+
+  test("laster, feil, datafeil og ingen gyldige er fire ulike tilstander", async () => {
+    // Lasting hentes mens svaret ikke er kommet; de tre andre etter svar.
+    const laster = falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: { status: 200, kropp: null } });
+    laster.mockImplementation((input) => String(input).endsWith("/kandidater")
+      ? new Promise<Response>(() => {})
+      : Promise.resolve(new Response(JSON.stringify(VAKT_4127), { status: 200, headers: { "Content-Type": "application/json" } })));
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    const lasterDel = await screen.findByRole("region", { name: t.kandidaterOverskrift });
+    const laster_ = beskriv(lasterDel);
+    cleanup();
+
+    const tilstander = [laster_];
+    for (const svar of [feil(500, "intern_feil"), ok(KANDIDATER_DATAFEIL), ok(INGEN_GYLDIGE)]) {
+      const { del } = await rendreMed(svar);
+      tilstander.push(beskriv(del));
+      cleanup();
+    }
+
+    const [lasterT, feilT, datafeilT, ingenT] = tilstander;
+    expect(lasterT).toMatchObject({ rolle: "status", ikon: false, knapp: false });
+    expect(feilT).toMatchObject({ rolle: "alert", ikon: false, knapp: true });
+    expect(datafeilT).toMatchObject({ rolle: "alert", ikon: false, knapp: false });
+    expect(ingenT).toMatchObject({ rolle: "status", ikon: true, knapp: true });
+    for (const felt of ["tekst", "klasse"] as const) {
+      expect(new Set(tilstander.map((s) => s[felt])).size).toBe(4);
+    }
+    expect(new Set(tilstander.map((s) => `${s.rolle}|${s.ikon}|${s.knapp}`)).size).toBe(4);
+    expect(datafeilT.klasse).toContain("datafeil");
+    expect(ingenT.klasse).not.toContain("datafeil");
+  });
 });
+
+/** Tekst, panelklasse og kombinasjonen av rolle, ikon og knapp for én kandidatdel. */
+function beskriv(del: HTMLElement) {
+  const status = del.querySelector('[role="status"]');
+  const alert = del.querySelector('[role="alert"]');
+  return {
+    tekst: (status ?? alert)?.textContent ?? "",
+    klasse: del.className,
+    rolle: status ? "status" : alert ? "alert" : "ingen",
+    ikon: del.querySelector(".alert-icon") !== null,
+    knapp: del.querySelector("button") !== null,
+  };
+}
 
 describe("Ekskludert-boksen (story 2.5)", () => {
   test("vises ikke når ingen er utelukket", async () => {

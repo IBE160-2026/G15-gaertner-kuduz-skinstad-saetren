@@ -60,6 +60,7 @@ export type UtelukkelsesOppsummering = {
 
 export type Kandidatsvar =
   | { status: "ok"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering }
+  | { status: "ingen_gyldige_kandidater"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering }
   | { status: "datafeil"; kode: string; datagrense: string };
 
 // GET /api/vakter/{nr}/kandidater/{ansatt_id} (story 3.1). Bare for en Gyldig

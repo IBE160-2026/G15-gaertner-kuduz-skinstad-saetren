@@ -2,7 +2,7 @@
 title: 'Story 2.6: Tydelig melding når ingen kandidater er gyldige'
 type: 'feature'
 created: '2026-11-15'
-status: 'ready-for-dev'
+status: 'done'
 baseline_commit: 'd53be97f98118fc3bf47234f805f0e615e986891'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -61,11 +61,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/adaptere/api/main.py` + `backend/tester/api/test_kandidater.py` — ny status og tester (FR6, AD-4).
-- [ ] `frontend/src/api.ts`, `kandidater.ts`, `tekster.ts` — typer, tilstand, tekster.
-- [ ] `frontend/src/komponenter/Kandidatflate.tsx`, `stil/app.css` — tomtilstanden.
-- [ ] `frontend/tester/**` — komponent- og enhetstester inkl. fire-tilstander-testen.
-- [ ] Dokumentasjon og KI-logg (se Code Map).
+- [x] `backend/adaptere/api/main.py` + `backend/tester/api/test_kandidater.py` — ny status og tester (FR6, AD-4).
+- [x] `frontend/src/api.ts`, `kandidater.ts`, `tekster.ts` — typer, tilstand, tekster.
+- [x] `frontend/src/komponenter/Kandidatflate.tsx`, `stil/app.css` — tomtilstanden.
+- [x] `frontend/tester/**` — komponent- og enhetstester inkl. fire-tilstander-testen.
+- [x] Dokumentasjon og KI-logg (se Code Map).
 
 **Acceptance Criteria:**
 - Given #4189, when kandidatflaten lastes, then API-et svarer 200 `ingen_gyldige_kandidater`, og flaten viser ikon, full tekst, boks med 24 utelukket og «Innleie av personell kan vurderes» uten knapp.
@@ -77,6 +77,24 @@ context:
 ## Spec Change Log
 
 ## Review Triage Log
+
+Gjennomgang 1 (Blind Hunter, Edge Case Hunter, Verification Gap). Ingen funn ble patch, bad_spec eller intent_gap.
+
+| Funn | Verdikt | Begrunnelse |
+|---|---|---|
+| BH: «lastefeil»/«regelmotoren» er utviklerspråk | false | Teksten er ordrett UX-DR16/P-11 og frosset i spesifikasjonen |
+| BH: `role="status"` er lik for laster og ingen gyldige | false | Spesifikasjonen krever det; tilstandene skilles på ikon, knapp, tekst og klasse, og fire-tilstander-testen sjekker kombinasjonen |
+| BH: `IngenGyldigeUt` dupliserer `KandidaterUt`, `kandidater` ikke `never[]` | low, avvist | Ingen konkret skade; fiks krever ny validering/typer utover direkte korreksjon. Backend kan ikke gi annet enn tom liste |
+| BH: manglende exhaustiveness-sjekk i `tilstandFraSvar` | low, avvist | Eksisterende mønster; ukjent status gir allerede feil |
+| BH: invariant-test grener på svaret; lasting-mock dobbel; fixture `totalt` 24 mot 2 rader; magisk dato | low, avvist | Testhygiene uten påvist feil; invariantene dekkes også av de strengere testene |
+| BH: Innleie uten handling | false | P-11 sier ren tekst uten knapp eller lenke |
+| BH: ingen flex-shrink/smal skjerm | low, avvist | Dekkes av manuell kontroll (AV-17) i Verification |
+| BH: dokumentasjon/commit-begrunnelse ikke i diffen | false | Dokumentasjon og KI-logg er endret; commit-begrunnelsen skrives ved commit |
+| BH: brudd på API-kontrakt, godkjenning | false | Godkjenningsendepunktet er uendret; frontendens `godkjenning.ts` bruker eget svar |
+| EC: `ingen_gyldige_kandidater` med ikke-tom liste skjules stille | low, avvist | Backend kan ikke produsere det; ekstra gren uten påvist vei dit |
+| EC: null gyldige og `totalt` 0 gir melding uten boks | false | Spesifikasjonen sier uttrykkelig at boksen bare vises ved `totalt > 0` |
+| EC: fixture inkonsistent, dobbel mock, cleanup uten finally, klassetest sjekker bare ulikhet | low, avvist | Samme som over: testhygiene uten påvist skade |
+| VG: ingen hull | — | Ingen funn |
 
 ## Design Notes
 

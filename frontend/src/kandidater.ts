@@ -19,10 +19,17 @@ export type Kandidattilstand =
   | { type: "avvist" }
   | { type: "feil"; tekst: string }
   | { type: "datafeil"; datagrense: string }
+  | { type: "ingen_gyldige"; utelukkelser: UtelukkelsesOppsummering }
   | { type: "klar"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering };
 
 export function tilstandFraSvar(svar: Kandidatsvar): Kandidattilstand {
-  if (svar.status === "ok") return { type: "klar", kandidater: svar.kandidater, utelukkelser: svar.utelukkelser };
+  if (svar.status === "ok") {
+    // `ok` har alltid minst én Kandidat (FR6, AD-4). En tom liste er kontraktsbrudd og
+    // vises som feil, aldri som tom liste eller som tomtilstanden.
+    if (svar.kandidater.length === 0) return { type: "feil", tekst: RESERVETEKST };
+    return { type: "klar", kandidater: svar.kandidater, utelukkelser: svar.utelukkelser };
+  }
+  if (svar.status === "ingen_gyldige_kandidater") return { type: "ingen_gyldige", utelukkelser: svar.utelukkelser };
   if (svar.status === "datafeil") return { type: "datafeil", datagrense: svar.datagrense };
   // En status frontend ikke kjenner, vises som feil, aldri som en tom liste.
   return { type: "feil", tekst: RESERVETEKST };
