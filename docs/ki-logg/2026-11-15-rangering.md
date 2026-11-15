@@ -24,7 +24,7 @@ Disse står ikke i spesifikasjonen og bør ses over i PR-gjennomgangen:
 - **Timer i min–maks** regnes fra `timedelta` i hele mikrosekunder, ikke fra prosenten som `float`. Det er eksakt og gir samme rekkefølge.
 - **Totalscore vises** i `meta` under plassnummeret med én desimal («79,4 poeng»), og preferansepoengene under taggen («50,0 poeng», etter gjennomgangen, se under). Spesifikasjonen sier at visningen avrunder til én desimal, men nevner ikke hvor. Avrundingen bruker den eksisterende `Intl.NumberFormat` fra ulempecellen (K-03: følg eksisterende kontrakt).
 - **Ulempecellen** viser «182 p» uten forstavelsen «Ulempebelastning:», fordi kolonneoverskriften er «Ulempe». `Kostnadsvisning` er brukt uendret, med «Kostnad:» foran, fordi godkjenningsflaten bruker den samme komponenten.
-- **«Vis alle»** er enveis: knappen forsvinner, og fokus flyttes til den første nye raden. Det finnes ingen «Vis færre». Valget nullstilles ved ny lasting, fordi tabellen monteres på nytt.
+- **«Vis alle»** flytter fokus til den første nye raden. Valget nullstilles ved ny lasting, fordi tabellen monteres på nytt. Den første leveransen var enveis. Etter gjennomgangen ba Johannes om at listen også skal kunne lukkes igjen (se under).
 
 ## Hva som ble rettet underveis
 
@@ -43,6 +43,14 @@ Gjennomgangen er ført i Review Triage Log i [spesifikasjonen](../../_bmad-outpu
 - **«p» betydde motsatte ting i to kolonner ved siden av hverandre:** mer er verre for ulempe og bedre for preferanse. Preferansen viser nå «50,0 poeng».
 - **Docstringen til `RangertKandidat` hadde forholdet mellom `float` og `Fraction` feil vei.** Nå står det at sorteringen bruker eksakte brøker, at like `float` kan være ulike brøker (men ikke omvendt), og at rekkefølgen skal leses fra `plass`.
 
+### Endret etter ønske fra Johannes
+
+Johannes ba 2026-11-15 om at «Vis alle gyldige kandidater» også skal kunne lukkes. Endringen er gjort direkte av koordinatoren (Claude Opus 5.5), ikke av underagenten:
+
+- Det er fortsatt én knapp. Når listen er åpen, står det «Vis bare de 5 øverste» på den, og «Viser alle N gyldige kandidater.» over. Knappen har `aria-expanded`, som knappen i Ekskludert-boksen.
+- Lukkes listen, blir fokus stående på knappen, fordi det er det samme elementet. Radene som forsvinner, tar ikke fokus med seg. Åpnes listen igjen, flyttes fokus til den første nye raden som før.
+- Ny komponenttest: `«Vis bare de 5 øverste» lukker listen igjen, med fokus på knappen`. Den sjekker rader, tekst, `aria-expanded` og fokus i begge retninger. Den feilet da knappen ble gjort enveis igjen (`setVisAlle(true)`), og bestod etter tilbakeføring.
+
 ## Kvalitetssikring
 
 - **Fasiten er regnet for hånd (KS-02).** Brøkene står i testene: med tolkede preferanser 75/75/0/100 er totalene 7195/84 ≈ 85,65, 6607/84 ≈ 78,65, 59 og 37, og med 50 for alle 3335/42 ≈ 79,40, 3041/42 ≈ 72,40, 71,5 og 24,5. Programmets verdier sammenlignes med `float(Fraction(...))` og med `testdata.FASIT` (avvik under 1e-12). Jonas mot Mette gir nøyaktig 7,0 (AV-12), og Thomas er billigst, men havner som nr. 3 (FR9, SM-6).
@@ -54,6 +62,6 @@ Gjennomgangen er ført i Review Triage Log i [spesifikasjonen](../../_bmad-outpu
   - `row-alt` på feil rader: kolonnetesten og Vis alle-testen feilet.
 
   Etter tilbakeføring bestod alle.
-- **Testkjøringer før gjennomgangen:** 560 backendtester (inkludert arkitekturtesten), `npm run build`, 52 Node-tester og 36 komponenttester bestod. Frontendtestene ble kjørt én om gangen. Etter rettingene bestod de berørte testfilene: `test_rangering.py` og `test_kandidater.py` (103 tester), `kandidatflate.test.tsx` (20) og `kandidater.test.mjs` (21). Den fulle kjøringen gjøres av koordinatoren.
+- **Testkjøringer før gjennomgangen:** 560 backendtester (inkludert arkitekturtesten), `npm run build`, 52 Node-tester og 36 komponenttester bestod. Frontendtestene ble kjørt én om gangen. Etter rettingene bestod de berørte testfilene: `test_rangering.py` og `test_kandidater.py` (103 tester), `kandidatflate.test.tsx` (20) og `kandidater.test.mjs` (21). Den fulle kjøringen etter rettingene ga 562 backendtester, `npm run build`, 52 Node-tester og 36 komponenttester, alle bestått. Etter at listen kan lukkes, består bygget og 52 Node-tester og 37 komponenttester.
 - **Ekte backend:** uvicorn ble startet mot en egen database i scratch-mappen, og testdata ble lagt inn. For #4127 ga `GET /api/vakter/4127/kandidater` rekkefølgen Jonas 79,4, Mette 72,4, Thomas 71,5 og Ingrid 24,5, alle med `venter_paa_tolkning`. #4189 ga fortsatt `ingen_gyldige_kandidater`, og godkjenningsgrunnlaget for Jonas var uten Rangeringens felt.
-- **Ikke kontrollert:** nettleservisningen. Det gjelder `rank-badge` i `accent`, fet, 14px, rulling i egen beholder ved 1080 og 1600 px, og synlig fokus på Velg og «Vis alle». Kontrollene står som «Manual checks» i spesifikasjonen og må gjøres før PR. Gjennomgangen av koden uten å ha sett implementeringen (OP-04) gjøres av egne agenter i `bmad-build`.
+- **Ikke kontrollert:** nettleservisningen. Det gjelder `rank-badge` i `accent`, fet, 14px, rulling i egen beholder ved 1080 og 1600 px, og synlig fokus på Velg og «Vis alle». Kontrollene står som «Manual checks» i spesifikasjonen. De gjenstår og står som åpent punkt i PR-en. Tre agenter som ikke hadde sett implementeringen, gikk gjennom koden (OP-04), se over. Menneskelig PR-gjennomgang gjenstår.

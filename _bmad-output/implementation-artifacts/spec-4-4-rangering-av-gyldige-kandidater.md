@@ -74,6 +74,10 @@ context:
 - Gitt samme input i ulik rekkefølge: når rangeringen kjører to ganger, blir plassene og totalene identiske.
 - Gitt at «Vis alle gyldige kandidater» brukes: når listen utvides, vises alle i rangert rekkefølge, og Velg virker for hver av dem.
 
+## Spec Change Log
+
+- 2026-11-15, etter gjennomgangen (Johannes): «Vis alle gyldige kandidater» skal også kunne lukkes. Samme knapp heter da «Vis bare de 5 øverste» og har `aria-expanded`. Fokus blir stående på knappen når listen lukkes. Testet med egen komponenttest og mutasjon. Intensjonen er uendret: de fem øverste vises uten ekstra handling.
+
 ## Review Triage Log
 
 Første gjennomgang 2026-11-15 med tre uavhengige agenter på Opus: Blind Hunter (B), Edge Case Hunter (E) og Verification Gap (V).

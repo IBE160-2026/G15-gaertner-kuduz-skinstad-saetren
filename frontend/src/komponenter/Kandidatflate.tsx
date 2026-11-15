@@ -172,7 +172,8 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
 
 // Rangeringstabellen (story 4.4, UX-DR7–DR11). Erstatter den alfabetiske listen fra
 // 2.1. De fem øverste vises uten ekstra handling (SM-3); «Vis alle gyldige kandidater»
-// viser resten og flytter fokus til den første nye raden. Monteres på nytt ved hver
+// viser resten og flytter fokus til den første nye raden. Samme knapp lukker listen
+// igjen til de fem øverste, og fokus blir stående på knappen. Monteres på nytt ved hver
 // lasting, så valget nullstilles for en ny vakt.
 const k = t.kolonner;
 
@@ -210,10 +211,15 @@ function Rangeringstabell({ kandidater, onVelg }: { kandidater: RangertKandidat[
         </tbody>
       </table>
     </div>
-    {!visAlle && kandidater.length > SYNLIGE_KANDIDATER && (
+    {kandidater.length > SYNLIGE_KANDIDATER && (
       <div className="vis-alle">
-        <p className="meta">{t.viserAv(SYNLIGE_KANDIDATER, kandidater.length)}</p>
-        <button type="button" className="button-secondary" onClick={() => setVisAlle(true)}>{t.visAlle}</button>
+        <p className="meta">
+          {visAlle ? t.viserAlle(kandidater.length) : t.viserAv(SYNLIGE_KANDIDATER, kandidater.length)}
+        </p>
+        {/* Samme knapp i begge tilstander, så fokus blir stående på den når listen lukkes. */}
+        <button type="button" className="button-secondary" aria-expanded={visAlle} onClick={() => setVisAlle((v) => !v)}>
+          {visAlle ? t.visFærre(SYNLIGE_KANDIDATER) : t.visAlle}
+        </button>
       </div>
     )}
   </>;

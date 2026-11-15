@@ -148,6 +148,8 @@ export const TEKSTER = {
     },
     visAlle: "Vis alle gyldige kandidater",
     viserAv: (vist: number, totalt: number) => `Viser ${vist} av ${totalt} gyldige kandidater.`,
+    visFærre: (antall: number) => `Vis bare de ${antall} øverste`,
+    viserAlle: (totalt: number) => `Viser alle ${totalt} gyldige kandidater.`,
   },
 
   // Godkjenningsflaten (story 3.1, UX-DR17, UX-DR19, UX-DR23). Egen blokk, så

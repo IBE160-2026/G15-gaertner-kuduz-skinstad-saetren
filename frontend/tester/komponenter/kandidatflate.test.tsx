@@ -431,6 +431,8 @@ describe("Rangeringstabellen (story 4.4)", () => {
     expect(datarader(del).map(navnIRad)).toEqual(kandidater.map((k) => k.navn));
     expect(within(del).queryByRole("button", { name: t.visAlle })).toBeNull();
     expect(within(del).queryByText(t.viserAv(5, 7))).toBeNull();
+    expect(within(del).getByText(t.viserAlle(7))).toBeTruthy();
+    expect(within(del).getByRole("button", { name: t.visFærre(5) }).getAttribute("aria-expanded")).toBe("true");
     // Fokus flyttes til den første nye raden, så tastaturet fortsetter der.
     expect(document.activeElement).toBe(screen.getByRole("button", { name: g.velgEtikett("Kandidat 6") }));
     expect(datarader(del)[5].classList.contains("row-alt")).toBe(true);
@@ -441,6 +443,28 @@ describe("Rangeringstabellen (story 4.4)", () => {
       expect(onVelg).toHaveBeenLastCalledWith(4127, kandidat.id);
     }
     expect(onVelg).toHaveBeenCalledTimes(7);
+  });
+
+  test("«Vis bare de 5 øverste» lukker listen igjen, med fokus på knappen", async () => {
+    const kandidater = rangerte(7);
+    const { bruker, del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater }));
+    expect(within(del).getByRole("button", { name: t.visAlle }).getAttribute("aria-expanded")).toBe("false");
+
+    await bruker.click(within(del).getByRole("button", { name: t.visAlle }));
+    const visFærre = within(del).getByRole("button", { name: t.visFærre(5) });
+    await bruker.click(visFærre);
+
+    expect(datarader(del).map(navnIRad)).toEqual(kandidater.slice(0, 5).map((k) => k.navn));
+    expect(within(del).getByText(t.viserAv(5, 7))).toBeTruthy();
+    const visAlle = within(del).getByRole("button", { name: t.visAlle });
+    expect(visAlle.getAttribute("aria-expanded")).toBe("false");
+    // Samme knapp, så fokus forsvinner ikke med radene som skjules.
+    expect(document.activeElement).toBe(visAlle);
+
+    // Kan åpnes igjen, og fokus flyttes til den første nye raden som før.
+    await bruker.keyboard("{Enter}");
+    expect(datarader(del)).toHaveLength(7);
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: g.velgEtikett("Kandidat 6") }));
   });
 
   test("«Vis alle» kan brukes med tastaturet alene", async () => {
