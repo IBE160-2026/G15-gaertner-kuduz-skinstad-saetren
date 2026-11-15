@@ -6,7 +6,7 @@ import {
   type UtelukkelsesOppsummering,
   type Vaktdetaljer,
 } from "../api";
-import { datoOgKlokke, vaktBrodsmule, vakttypenavn } from "../format";
+import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn } from "../format";
 import { ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, type Kandidattilstand } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
@@ -163,6 +163,10 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
           <li key={k.id}>
             <span className="ansattnavn">{k.navn}</span>
             <span className="tag">{t.nivaaTag(k.kompetansenivå)}</span>
+            <span className="timer-i-uka">
+              <span aria-hidden="true">{t.timerIUka(timerOgMinutter(k.minutter_i_uka))}</span>
+              <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(k.minutter_i_uka))}</span>
+            </span>
             <div className="kandidat-ulempe">
               <span>{t.ulempeOverskrift}: {t.ulempePoeng(tall.format(k.ulempebelastning.poeng))}</span>
               <span className="meta">{t.ulempeFordeling(

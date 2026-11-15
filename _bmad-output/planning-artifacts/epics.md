@@ -966,6 +966,8 @@ Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avve
 
 > **Åpent før start (P-05/AD-7, PRD §8):** Felles takt og 429-venting er bestemt. Ventetrinn ved 5xx/nettverksfeil, antall automatiske forsøk, tidsbudsjett og startpunkt for målingen, samt sluttstatus for preferansetolkning ved 429, 5xx og nettverksfeil må avklares før implementasjon. Avveiningens 2/4/8 sekunder, 90 sekunder og `avveining_feilet` er ikke automatisk tolkningens kontrakt.
 
+> **Lagt til 2026-11-15 (P-09, gjennomgang av PR #23):** Grunnlagsmerket fra story 3.2 hasher alle kolonner i tabellene i `GRUNNLAGSTABELLER` (`backend/adaptere/lagring/kandidatgrunnlag.py`). Lagres `TolketPreferanse` og tolkestatus som kolonner på `ansatt`, dekkes de automatisk. Får de en egen tabell, feiler `backend/tester/lagring/test_grunnlagsmerke.py` til tabellen er ført i `GRUNNLAGSTABELLER`, fordi den påvirker Rangeringen. `UTENFOR_GRUNNLAG` er bare for tabeller uten beslutningsdata. Tolkningen skjer i bakgrunnen. En tolkning som blir ferdig mellom visning og godkjenning, skal derfor endre merket og gi `endret_grunnlag` og ny bekreftelse (story 5.2, P-05/P-09). Dekk dette med en API-test.
+
 As a turnusansvarlig,
 I want at de skrevne preferansene til de ansatte blir tolket til noe systemet kan bruke,
 So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
@@ -1033,6 +1035,8 @@ So that den som ønsker flere vakter, kan få dem når alt annet er likt (FR10, 
 ### Story 5.3: Avveining per kandidat
 
 > ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på `RangertKandidat` fra story 4.4.
+
+> **Lagt til 2026-11-15 (P-09, gjennomgang av PR #23):** Avveiningen skal ikke inn i grunnlagsmerket fra story 3.2. Den er ikke deterministisk, så merket ville aldri stemt ved godkjenning. Bind i stedet hver Avveining til grunnlaget den ble laget fra: svaret bærer et merke for rangeringen, og frontend viser bare Avveininger med samme merke som gjeldende visning. Kandidatlisten har ikke merke i dag. Formen fastsettes i storien, og den kan gjenbruke `grunnlagsmerke` i `adaptere/lagring`. En Avveining for et eldre merke forkastes og vises aldri som gjeldende (P-09, Epic 3-konteksten: «foreldede forklaringer skal ikke brukes etter endret grunnlag»).
 
 As a turnusansvarlig,
 I want en forklaring i klartekst av hva som trekker opp og ned for hver kandidat,
@@ -1105,6 +1109,8 @@ So that jeg aldri får en anbefaling uten grunnlag, og aldri står fast (FR11, N
 ### Story 5.5: Rader vises før forklaringene er ferdige
 
 > ✅ **ÅB-1, ÅB-2 og ÅB-3 er alle løst 2026-10-06 (se § Åpne beslutninger).** Storien bygger på story 5.3.
+
+> **Lagt til 2026-11-15 (P-09, gjennomgang av PR #23):** Avveiningene kommer etter at radene vises, og kan derfor komme etter at grunnlaget er endret. Uansett om storien velger streaming, polling eller separate kall, må hver Avveining ha med merket fra story 5.3. Frontend forkaster svar med et annet merke enn gjeldende visning, slik sene GET- og POST-svar forkastes i story 3.2. Dekk dette med en komponenttest der grunnlaget endres mens en Avveining venter.
 
 As a turnusansvarlig,
 I want å se rangeringen med en gang, mens forklaringene lastes etter hvert,

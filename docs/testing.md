@@ -12,8 +12,8 @@ Opprettet 2026-11-14 sammen med komponenttestene (OP-16 i
 
 | Hva | Hvor | Kommando | Antall 2026-11-14 |
 |---|---|---|---|
-| Backend: regelmotor, API, lagring og arkitektur | `backend/` | `.venv\Scripts\python -m pytest` | 412 |
-| Frontend: ren logikk (`node:test`) og komponenter (Vitest) | `frontend/` | `npm run test` | 48 + 12 |
+| Backend: regelmotor, API, lagring og arkitektur | `backend/` | `.venv\Scripts\python -m pytest` | 427 |
+| Frontend: ren logikk (`node:test`) og komponenter (Vitest) | `frontend/` | `npm run test` | 49 + 23 |
 | Frontend: typesjekk av kode og tester, og bygg | `frontend/` | `npm run build` | – |
 | Modellverktøyene i `scripts/` | roten | `python -m unittest discover -s scripts -p "test_modelltest*.py"` | – |
 
@@ -73,10 +73,12 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   - [`test_35_timersregelen.py`](../backend/tester/regelmotor/test_35_timersregelen.py) – ukentlig fri, ukeskifte
   - [`test_utelukkelsesoppsummering.py`](../backend/tester/regelmotor/test_utelukkelsesoppsummering.py) – Ekskludert-boksens tall
 - **API** ([`tester/api/`](../backend/tester/api/)): innlogging og sesjon, vaktoversikt,
-  vaktdetaljer, kandidater og godkjenningsgrunnlaget, med 401, 404, datafeil og fasiten
-  for #4127 og #4189 (AV-07).
+  vaktdetaljer, kandidater og godkjenning, med 401, 404, datafeil og fasiten
+  for #4127 og #4189 (AV-07). Story 3.2 tester også endret grunnlag (P-09),
+  ugyldig kandidat, atomisk bemanning, rollback, dublett og samtidige POST-kall (AD-5).
 - **Lagring** ([`tester/lagring/`](../backend/tester/lagring/)): testdataene mot fasiten,
-  og brukere og passord.
+  brukere og passord, og at hver tabell er tatt med i grunnlagsmerket eller
+  bevisst holdt utenfor (P-09).
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
   import-linter-kontrakten som forbyr `domene` å importere `adaptere` (AD-1, AD-2).
 
@@ -100,14 +102,14 @@ har satt opp, feiler testen.
 
 | Testfil | Hva | Utsatt punkt |
 |---|---|---|
-| [`vaktvalg.test.tsx`](../frontend/tester/komponenter/vaktvalg.test.tsx) | Feil i Vaktvalg gir «Prøv igjen», og trykket henter på nytt | 1.5 |
+| [`vaktvalg.test.tsx`](../frontend/tester/komponenter/vaktvalg.test.tsx) | Feil gir «Prøv igjen»; etter godkjenning vises bekreftelse med ansatt og vakt over oppdatert oversikt | 1.5, 3.2 |
 | [`app.test.tsx`](../frontend/tester/komponenter/app.test.tsx) | 401 etter bekreftet sesjon viser innloggingen med «Sesjonen er utløpt» | 1.5 |
-| | Stien `/vakt/4127/godkjenning/6` viser godkjenningsflaten | 3.1 |
-| [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx) | Feil i kandidatlisten gir «Prøv igjen», og trykket henter listen på nytt. Datafeil viser tekst og datagrense uten liste | 2.1 |
+| | Stien `/vakt/4127/godkjenning/6` viser godkjenningsflaten; vellykket POST går via `App` til ny Vaktvalg-visning | 3.1, 3.2 |
+| [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx) | Feil i kandidatlisten gir «Prøv igjen», og trykket henter listen på nytt. Datafeil viser tekst og datagrense uten liste. Hver rad viser timer i startuka som t:mm, også 0:00 uten vakter | 2.1, 4.1 |
 | | Tomtilstanden (`ingen_gyldige_kandidater`) har ikon, full tekst, boks og innleietekst uten knapp utenom «Vis full liste». `ok` med tom liste gir feiltilstand. Lasting, feil, datafeil og ingen gyldige har ulik tekst, panelklasse og kombinasjon av rolle, ikon og knapp | 2.6 |
 | | Ingen Ekskludert-boks ved 0 utelukkede. «Vis full liste» lukket, åpen og lukket med `aria-expanded` | 2.5 |
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
-| [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» gjør ingen kall. «Avbryt» og tilbakelenken går tilbake. Datafeil og 404 viser ingen knapper for godkjenning | 3.1 |
+| [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
 
 Hver test er vist å kunne feile: en bevisst feil i komponenten gjorde den rød. Mutasjonene
 og de røde meldingene står i [KI-loggen](ki-logg/2026-11-14-komponenttester.md).

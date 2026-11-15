@@ -46,6 +46,7 @@ export type Vaktdetaljer = {
 
 // GET /api/vakter/{nr}/kandidater (story 2.1). Bare Gyldige kandidater,
 // alfabetisk. Datafeil er et 200-svar uten liste (P-08).
+// `minutter_i_uka`: hele minutter i uka Vakten starter i, uten Vakten selv (story 4.1, FR8).
 export type Ulempebelastning = {
   dagtimer: number;
   kveldstimer: number;
@@ -54,7 +55,9 @@ export type Ulempebelastning = {
   poeng: number;
   score: number;
 };
-export type Kandidat = { id: number; navn: string; kompetansenivå: number; ulempebelastning: Ulempebelastning };
+export type Kandidat = {
+  id: number; navn: string; kompetansenivå: number; minutter_i_uka: number; ulempebelastning: Ulempebelastning;
+};
 
 // Ekskludert-boksen (story 2.5, UX-DR15). `per_regel` følger regelmotorens
 // rekkefølge, og summen der kan være større enn `totalt`.
@@ -74,7 +77,7 @@ export type Kandidatsvar =
 // GET /api/vakter/{nr}/kandidater/{ansatt_id} (story 3.1). Bare for en Gyldig
 // kandidat. Utelukket eller ukjent Ansatt gir 404 `ikke_funnet` (NFR2).
 export type Godkjenningssvar =
-  | { status: "ok"; vakt: Vaktdetaljer; kandidat: Kandidat }
+  | { status: "ok"; vakt: Vaktdetaljer; kandidat: Kandidat; grunnlagsmerke: string }
   | { status: "datafeil"; kode: string; datagrense: string };
 
 /** API-et svarte med feilformen `{ kode, melding }`. */
@@ -188,4 +191,14 @@ export function hentKandidater(vaktnummer: number): Promise<Kandidatsvar> {
 
 export function hentGodkjenningsgrunnlag(vaktnummer: number, ansattId: number): Promise<Godkjenningssvar> {
   return kall<Godkjenningssvar>(`/api/vakter/${vaktnummer}/kandidater/${ansattId}`, {}, true);
+}
+
+export function godkjennErstatning(vaktnummer: number, ansattId: number, grunnlagsmerke: string): Promise<
+  { status: "godkjent" } | { status: "datafeil"; kode: string; datagrense: string }
+> {
+  return kall(`/api/vakter/${vaktnummer}/kandidater/${ansattId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ grunnlagsmerke }),
+  }, true);
 }

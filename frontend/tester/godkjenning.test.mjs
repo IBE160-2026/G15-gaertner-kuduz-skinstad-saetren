@@ -39,8 +39,8 @@ const VAKT_4127 = {
   avdeling: "Kirurgisk sengepost", vaktnummer: 4127, vakttype: "dag",
   start: "2026-09-27T07:00:00+02:00", slutt: "2026-09-27T15:00:00+02:00", minstenivå: 3,
 };
-const JONAS = { status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3 } };
-const METTE = { status: "ok", vakt: VAKT_4127, kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4 } };
+const JONAS = { status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960 }, grunnlagsmerke: "a".repeat(64) };
+const METTE = { status: "ok", vakt: VAKT_4127, kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 }, grunnlagsmerke: "b".repeat(64) };
 const DATAFEIL = { status: "datafeil", kode: "mangler_turnusgrunnlag", datagrense: "2026-10-05T00:00:00+02:00" };
 const IKKE_FUNNET = { kode: "ikke_funnet", melding: "Fant ikke ressursen." };
 
@@ -72,7 +72,7 @@ test("stiene bygges og tolkes likt begge veier", () => {
 // --- Tilstand fra svar og feil ----------------------------------------------------
 
 test("svar blir klar eller datafeil, og ukjent status blir feil, aldri bekreftelsesbilde", () => {
-  assert.deepEqual(g.tilstandFraSvar(JONAS), { type: "klar", vakt: VAKT_4127, kandidat: JONAS.kandidat });
+  assert.deepEqual(g.tilstandFraSvar(JONAS), { type: "klar", vakt: VAKT_4127, kandidat: JONAS.kandidat, grunnlagsmerke: JONAS.grunnlagsmerke });
   assert.deepEqual(g.tilstandFraSvar(DATAFEIL), { type: "datafeil", datagrense: DATAFEIL.datagrense });
   assert.deepEqual(g.tilstandFraSvar({ status: "noe_nytt" }), { type: "feil", tekst: RESERVETEKST });
 });
@@ -84,7 +84,7 @@ test("kallet går til endepunktet for vakten og den ansatte", async () => {
   assert.deepEqual(meldt, [{ type: "laster" }]);
   svar("/api/vakter/4127/kandidater/5", json(METTE));
   await nesteTick();
-  assert.deepEqual(meldt.at(-1), { type: "klar", vakt: VAKT_4127, kandidat: METTE.kandidat });
+  assert.deepEqual(meldt.at(-1), { type: "klar", vakt: VAKT_4127, kandidat: METTE.kandidat, grunnlagsmerke: METTE.grunnlagsmerke });
 });
 
 test("404 blir ikke funnet, 401 viser ingenting, andre feil gir tekst fra tekstlista", async () => {
@@ -136,7 +136,7 @@ test("forsinket svar for forrige kandidat erstatter ikke den aktive", async () =
   await nesteTick();
 
   assert.deepEqual(meldt, [
-    { type: "laster" }, { type: "laster" }, { type: "klar", vakt: VAKT_4127, kandidat: METTE.kandidat },
+    { type: "laster" }, { type: "laster" }, { type: "klar", vakt: VAKT_4127, kandidat: METTE.kandidat, grunnlagsmerke: METTE.grunnlagsmerke },
   ]);
 });
 
@@ -175,7 +175,7 @@ test("laster, feil, ikke funnet og datafeil har ulik tekst", () => {
 
 test("de faste tekstene fra spesifikasjonen", () => {
   assert.equal(t.statuslinje, "Ikke gjennomført — venter på eksplisitt godkjenning");
-  assert.equal(t.ikkeLagret, "Godkjenningen lagres ikke ennå. Ingenting er endret.");
+  assert.equal(t.endret, "Grunnlaget er endret. Se de oppdaterte opplysningene før du godkjenner på nytt.");
   assert.equal(t.ikkeFunnet, "Kandidaten kan ikke velges for denne vakten.");
   assert.equal(t.avbryt, "Avbryt");
   assert.equal(t.godkjenn, "Godkjenn erstatning");

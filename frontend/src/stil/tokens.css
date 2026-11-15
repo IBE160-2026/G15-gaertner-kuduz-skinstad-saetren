@@ -51,6 +51,7 @@
   --letter-spacing-column-header: 0.4px;
 
   /* Spacing */
+  --column-hours-width: 7rem;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;

@@ -37,9 +37,38 @@ const UTELUKKET = malRegex(ek.totaltUtelukket(999999), 999999);
 // textContent har pilen med. Derfor bare begynnelsen.
 const begynnerMed = (tekst: string) => new RegExp(`^${regexTekst(tekst)}`);
 
+// Timerkolonnen (4.1) er testens tema; ulempen (4.7) er påkrevd av typen, men uten betydning her.
+const INGEN_ULEMPE = TO_GYLDIGE.kandidater[1].ulempebelastning;
+
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
 describe("Kandidatliste (story 2.1)", () => {
+  test("hver rad viser timer i uka som t:mm, og 0:00 uten vakter (story 4.1)", async () => {
+    const svar = {
+      ...TO_GYLDIGE,
+      kandidater: [
+        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920, ulempebelastning: INGEN_ULEMPE },
+        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0, ulempebelastning: INGEN_ULEMPE },
+        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23, ulempebelastning: INGEN_ULEMPE },
+        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61, ulempebelastning: INGEN_ULEMPE },
+      ],
+    } satisfies Kandidatsvar;
+    const { del } = await rendreMed(ok(svar));
+
+    for (const [navn, verdi, opplest] of [
+      ["Ingrid Dahl", "32:00", "32 timer og 0 minutter i uka"],
+      ["Mette Solberg", "0:00", "0 timer og 0 minutter i uka"],
+      ["Jonas Bakke", "32:23", "32 timer og 23 minutter i uka"],
+      ["Ola Nord", "1:01", "1 time og 1 minutt i uka"],
+    ]) {
+      const rad = within(del).getByText(navn).closest("li");
+      expect(rad).not.toBeNull();
+      const synlig = within(rad!).getByText(t.timerIUka(verdi));
+      expect(synlig.getAttribute("aria-hidden")).toBe("true");
+      expect(within(rad!).getByText(opplest).classList.contains("visuelt-skjult")).toBe(true);
+    }
+  });
+
   test("feil gir «Prøv igjen», og et trykk henter kandidatene på nytt", async () => {
     const { fetch, bruker, del } = await rendreMed([feil(500, "intern_feil"), ok(TO_GYLDIGE)]);
 

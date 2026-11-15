@@ -114,3 +114,11 @@ class Datafeil:
 
     datagrense: datetime
     grunner: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Godkjenning:
+    vaktnummer: int
+    ansatt_id: int
+    bruker_id: int
+    godkjent: datetime

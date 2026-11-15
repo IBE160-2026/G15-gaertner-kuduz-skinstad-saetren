@@ -15,10 +15,13 @@ export type Godkjenningstilstand =
   | { type: "ikke_funnet" }
   | { type: "feil"; tekst: string }
   | { type: "datafeil"; datagrense: string }
-  | { type: "klar"; vakt: Vaktdetaljer; kandidat: Kandidat };
+  // Bare fra POST: vakten ble bemannet etter at flaten ble lastet. Et nytt forsøk
+  // kan ikke lykkes, så flaten gir bare vei videre til Vaktvalg.
+  | { type: "allerede_bemannet" }
+  | { type: "klar";vakt: Vaktdetaljer; kandidat: Kandidat; grunnlagsmerke: string };
 
 export function tilstandFraSvar(svar: Godkjenningssvar): Godkjenningstilstand {
-  if (svar.status === "ok") return { type: "klar", vakt: svar.vakt, kandidat: svar.kandidat };
+  if (svar.status === "ok") return { type: "klar", vakt: svar.vakt, kandidat: svar.kandidat, grunnlagsmerke: svar.grunnlagsmerke };
   if (svar.status === "datafeil") return { type: "datafeil", datagrense: svar.datagrense };
   // En status frontend ikke kjenner, vises som feil, aldri som et bekreftelsesbilde.
   return { type: "feil", tekst: RESERVETEKST };

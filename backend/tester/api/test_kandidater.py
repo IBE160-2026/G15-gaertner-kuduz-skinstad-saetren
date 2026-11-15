@@ -130,7 +130,7 @@ def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
     svar = hent(klient, nummer)
 
     for k in svar["kandidater"]:
-        assert set(k) == {"id", "navn", "kompetansenivå", "ulempebelastning"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
     tekst = str(svar)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
@@ -221,7 +221,7 @@ def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer
     nøkkel = {4127: "dag", 4189: "natt"}[nummer]
 
     for k in kandidater:
-        assert set(k) == {"id", "navn", "kompetansenivå", "ulempebelastning"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
         assert NAVN[k["id"]] == k["navn"]
         assert k["kompetansenivå"] == KOMPETANSE[k["navn"]][nøkkel]
         assert k["kompetansenivå"] >= 3
@@ -447,3 +447,11 @@ def test_ugyldig_kompetanseverdi_gir_datafeil(klient: TestClient, engine: Engine
     with lag_sessionmaker(engine).begin() as session:
         session.execute(update(AnsattRad).where(AnsattRad.id == 3).values(kompetanse={"dag": verdi, "natt": 3}))
     assert_datafeil(hent(klient, 4127))
+
+
+def test_minutter_i_startuka_ingrid_32_timer_og_alle_har_feltet(klient: TestClient) -> None:
+    kandidater = hent(klient, 4127)["kandidater"]
+    minutter = {k["navn"]: k["minutter_i_uka"] for k in kandidater}
+    assert minutter["Ingrid Dahl"] == 1920  # 32 t, fasit AV-07
+    assert all(isinstance(m, int) and m >= 0 for m in minutter.values())
+    assert hent(klient, 4127)["kandidater"] == kandidater

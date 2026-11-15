@@ -22,13 +22,16 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from adaptere.api import sesjon
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
-from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
+from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke, hent_kandidatgrunnlag
+from adaptere.lagring.godkjenninger import lagre_godkjenning
+from adaptere.lagring.modeller import OSLO
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
+from domene.regelmotor.timer_i_uka import minutter_i_uka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
-from domene.typer import Datafeil
+from domene.typer import Datafeil, Godkjenning
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -40,6 +43,9 @@ MELDINGER: dict[str, str] = {
     "metode_ikke_tillatt": "Metoden er ikke tillatt for denne ressursen.",
     "intern_feil": "Uventet feil på serveren.",
     "ukjent_feil": "Forespørselen kunne ikke behandles.",
+    "endret_grunnlag": "Beslutningsgrunnlaget er endret.",
+    "ugyldig_kandidat": "Kandidaten kan ikke godkjennes for denne vakten.",
+    "allerede_bemannet": "Vakten er allerede bemannet.",
 }
 RUTEKODER = {404: "ikke_funnet", 405: "metode_ikke_tillatt"}
 
@@ -133,6 +139,8 @@ class KandidatUt(BaseModel):
     navn: str
     # Nivået for Vaktens vakttype, 1–4. Vises som tag (UX-DR11).
     kompetansenivå: int
+    # Hele minutter i uka Vakten starter i, uten Vakten selv (FR8, P-02, story 4.1).
+    minutter_i_uka: int
     ulempebelastning: UlempebelastningUt
 
 
@@ -187,6 +195,15 @@ class GodkjenningsgrunnlagUt(BaseModel):
     status: Literal["ok"]
     vakt: VaktdetaljerUt
     kandidat: KandidatUt
+    grunnlagsmerke: str
+
+
+class GodkjenningInn(BaseModel):
+    grunnlagsmerke: StrictStr = Field(min_length=64, max_length=64)
+
+
+class GodkjenningUt(BaseModel):
+    status: Literal["godkjent"]
 
 
 class DatafeilUt(BaseModel):
@@ -312,6 +329,7 @@ def lag_app(
             kandidater=[
                 KandidatUt(
                     id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
+                    minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
                     ulempebelastning=UlempebelastningUt.model_validate(
                         vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
                     ),
@@ -330,6 +348,8 @@ def lag_app(
     ) -> GodkjenningsgrunnlagUt | DatafeilUt | JSONResponse:
         # Hele grunnlaget vurderes, som i kandidatruten. Filtreres det ned til én
         # Ansatt, endres datafeilsjekken, og svaret kan avvike fra listen.
+        # En eksplisitt lesetransaksjon holder visning og merke i samme SQLite-snapshot.
+        okt.connection().exec_driver_sql("BEGIN")
         grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
         detaljer = hent_vaktdetaljer(okt, request.state.bruker.id, vaktnummer)
         if grunnlag is None or detaljer is None:
@@ -348,11 +368,29 @@ def lag_app(
             vakt=VaktdetaljerUt.model_validate(detaljer, from_attributes=True),
             kandidat=KandidatUt(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
+                minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
                 ulempebelastning=UlempebelastningUt.model_validate(
                     vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
                 ),
             ),
+            grunnlagsmerke=grunnlagsmerke(okt, request.state.bruker.id, vaktnummer, ansatt_id),
         )
+
+    @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}", response_model=GodkjenningUt | DatafeilUt)
+    def godkjenn(
+        vaktnummer: int, ansatt_id: int, inn: GodkjenningInn, request: Request,
+    ) -> GodkjenningUt | DatafeilUt | JSONResponse:
+        godkjenning = Godkjenning(
+            vaktnummer=vaktnummer, ansatt_id=ansatt_id,
+            bruker_id=request.state.bruker.id, godkjent=datetime.now(OSLO),
+        )
+        utfall = lagre_godkjenning(okter, godkjenning, inn.grunnlagsmerke)
+        if isinstance(utfall, Datafeil):
+            logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(utfall.grunner))
+            return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=utfall.datagrense)
+        if utfall == "godkjent":
+            return GodkjenningUt(status="godkjent")
+        return feil(404 if utfall == "ikke_funnet" else 409, utfall)
 
     @app.post("/api/utlogging", status_code=204)
     def utlogging(respons: Response) -> None:
