@@ -67,9 +67,10 @@ def test_gyldig_kandidat_gir_vakt_og_kandidat(klient: TestClient, ansatt_id: int
     assert len(svar["grunnlagsmerke"]) == 64
     assert svar["status"] == "ok"
     # Vakten er den samme som vaktdetaljene gir, og Kandidaten den samme som i listen.
+    # Listen har i tillegg Rangeringens felt (story 4.4), som godkjenningsgrunnlaget ikke har.
     assert svar["vakt"] == klient.get("/api/vakter/4127").json()
     (fra_listen,) = [k for k in klient.get("/api/vakter/4127/kandidater").json()["kandidater"] if k["id"] == ansatt_id]
-    assert svar["kandidat"] == fra_listen
+    assert svar["kandidat"] == {felt: fra_listen[felt] for felt in svar["kandidat"]}
     assert svar["kandidat"]["navn"] == NAVN[ansatt_id]
 
 

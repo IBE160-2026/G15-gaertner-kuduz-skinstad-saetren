@@ -48,8 +48,9 @@ def test_ugyldig_lønn_stopper_begge_kandidatsvar(klient, monkeypatch):
     assert_datafeil(respons.json())
 from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
 from adaptere.lagring.testdata import ANSATTE, FASIT, MANGLER_BEMANNING, PERIODE_SLUTT, PERIODE_START
-from domene.regelmotor.vurdering import norsk_sorteringsnøkkel
-from domene.typer import Kandidat
+from domene.regelmotor.rangering import ranger
+from domene.regelmotor.vurdering import norsk_sorteringsnøkkel, vurder_kandidater
+from domene.typer import Kandidat, Kandidatvurdering
 from tester.api.test_innlogging import engine, feilsvar, klient, logg_inn  # noqa: F401
 
 NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
@@ -66,6 +67,11 @@ UTFALL_TIL_ÅRSAK = {
     "trettifem-timer": "35-timersregelen",
 }
 REKKEFØLGE_PER_REGEL = ["kompetanse-minstekrav", "kolliderende vakt", "11-timersregelen", "35-timersregelen"]
+# `KandidatUt` (uendret, også i godkjenningsgrunnlaget) og det Rangeringen legger til (story 4.4).
+KANDIDAT_FELT = {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
+                 "hoy_belastning", "ulempebelastning", "kostnad"}
+RANGERT_FELT = KANDIDAT_FELT | {"stilling", "ansiennitet", "plass", "totalscore", "faktorpoeng",
+                                "preferansepoeng", "tolkestatus", "preferansekategori"}
 
 
 def hent(klient: TestClient, nummer: int) -> dict:
@@ -163,8 +169,7 @@ def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
     svar = hent(klient, nummer)
 
     for k in svar["kandidater"]:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
-                      "hoy_belastning", "ulempebelastning", "kostnad"}
+        assert set(k) == RANGERT_FELT
     tekst = str(svar)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
@@ -250,21 +255,94 @@ def test_silje_er_ikke_med_på_4127_og_utelukket_på_4189(klient: TestClient) ->
 
 
 @pytest.mark.parametrize("nummer", [4127, 4189])
-def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer: int) -> None:
+def test_rangert_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer: int) -> None:
     kandidater = hent(klient, nummer)["kandidater"]
     nøkkel = {4127: "dag", 4189: "natt"}[nummer]
 
     for k in kandidater:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
-                      "hoy_belastning", "ulempebelastning", "kostnad"}
+        assert set(k) == RANGERT_FELT
         assert NAVN[k["id"]] == k["navn"]
         assert k["kompetansenivå"] == KOMPETANSE[k["navn"]][nøkkel]
         assert k["kompetansenivå"] >= 3
-    navn = [k["navn"] for k in kandidater]
-    # Seeden har ingen navn med æ, ø eller å først, så vanlig sortering er nok her.
-    # Den norske rekkefølgen testes i domenet.
-    assert navn == sorted(navn)
-    assert navn == {4127: ["Ingrid Dahl", "Jonas Bakke", "Mette Solberg", "Thomas Nygård"], 4189: []}[nummer]
+    # Story 4.4: sortert etter plass i Rangeringen, ikke alfabetisk som i 2.1.
+    assert [k["navn"] for k in kandidater] == {
+        4127: ["Jonas Bakke", "Mette Solberg", "Thomas Nygård", "Ingrid Dahl"], 4189: [],
+    }[nummer]
+    assert [k["plass"] for k in kandidater] == list(range(1, len(kandidater) + 1))
+
+
+# --- Rangering (story 4.4) -------------------------------------------------------
+
+# Regnet for hånd fra PRD §4.4 (KS-02), med 50 preferansepoeng for alle fordi ingen
+# tolkning er lagret før epic 5 (P-05). Kostnad 2960/2960/2800/3850 gir min–maks
+# over 1050 kr: Jonas og Mette 100 × 890/1050 = 1780/21, Thomas 100, Ingrid 0.
+# Timer 16/16/24/32 gir 100/100/50/0. Ulempe 40/180/120/60 p gir 260/3, 40, 60, 80.
+#   Jonas  = 2/5 × 1780/21 + 1/5 × 100 + 3/20 × 260/3 + 1/4 × 50 = 3335/42 ≈ 79,40
+#   Mette  = 2/5 × 1780/21 + 1/5 × 100 + 3/20 × 40    + 1/4 × 50 = 3041/42 ≈ 72,40
+#   Thomas = 2/5 × 100     + 1/5 × 50  + 3/20 × 60    + 1/4 × 50 = 71,5
+#   Ingrid = 0             + 0         + 3/20 × 80    + 1/4 × 50 = 24,5
+RANGERING_4127_UTEN_TOLKNING = [
+    ("Jonas Bakke", 3335 / 42), ("Mette Solberg", 3041 / 42), ("Thomas Nygård", 71.5), ("Ingrid Dahl", 24.5),
+]
+
+
+def test_4127_er_rangert_med_totaler_plass_og_status(klient: TestClient) -> None:
+    kandidater = hent(klient, 4127)["kandidater"]
+    assert [(k["navn"], k["totalscore"]) for k in kandidater] == RANGERING_4127_UTEN_TOLKNING
+    assert [round(k["totalscore"], 2) for k in kandidater] == [79.40, 72.40, 71.50, 24.50]
+    assert [k["plass"] for k in kandidater] == [1, 2, 3, 4]
+    # Alle fire har registrert tekst i seeden, og ingen tolkning er lagret (P-05).
+    assert {k["tolkestatus"] for k in kandidater} == {"venter_paa_tolkning"}
+    assert {k["preferansepoeng"] for k in kandidater} == {50}
+    assert {k["preferansekategori"] for k in kandidater} == {None}
+    jonas, mette, thomas, ingrid = kandidater
+    assert jonas["faktorpoeng"] == {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 260 / 3}
+    assert thomas["faktorpoeng"] == {"kostnad": 100, "timebelastning": 50, "ulempe": 60}
+    assert ingrid["faktorpoeng"] == {"kostnad": 0, "timebelastning": 0, "ulempe": 80}
+    # AV-12: bare ulempen skiller Jonas og Mette, med nøyaktig 7,0 i forskjell.
+    assert jonas["totalscore"] - mette["totalscore"] == 7.0
+    # Thomas er billigst, men ikke øverst (FR9, SM-6).
+    assert min(kandidater, key=lambda k: k["kostnad"]["total"])["navn"] == "Thomas Nygård"
+    assert thomas["plass"] == 3
+    assert (jonas["stilling"], jonas["ansiennitet"]) == ("Sykepleier", 3)
+
+
+def test_rangeringen_bruker_fasiten_fra_testdataene(klient: TestClient) -> None:
+    # FASIT har tolkede preferanser (75/75/0/100). Uten dem er rekkefølgen den samme.
+    fasit = [r["navn"] for r in FASIT[4127]["rangering"]]
+    assert [k["navn"] for k in hent(klient, 4127)["kandidater"]] == fasit
+
+
+def test_svaret_stemmer_med_porten_fra_samme_database(klient: TestClient, engine: Engine) -> None:
+    # `rangert_ut` regner `KandidatUt`-feltene for seg. De må stemme med `RangertKandidat`.
+    svar = {k["id"]: k for k in hent(klient, 4127)["kandidater"]}
+    with lag_sessionmaker(engine)() as session:
+        bruker_id = session.scalars(select(BrukerRad.id)).first()
+        grunnlag = hent_kandidatgrunnlag(session, bruker_id, 4127)
+    assert grunnlag is not None
+    vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+    assert isinstance(vurdering, Kandidatvurdering)
+    rangert = ranger(vurdering, grunnlag.vakt)
+    assert sorted(svar) == sorted(r.id for r in rangert)
+    for r in rangert:
+        k = svar[r.id]
+        assert (k["plass"], k["totalscore"]) == (r.plass, r.totalscore)
+        assert (k["kostnad"]["total"], k["kostnad"]["ordinære_timer"], k["kostnad"]["overtidstimer"]) == (
+            r.kostnad, r.ordinære_timer, r.overtidstimer)
+        assert (k["timebelastning_prosent"], k["hoy_belastning"]) == (r.timebelastning_prosent, r.høy_belastning)
+        u = k["ulempebelastning"]
+        assert (u["poeng"], u["kveldstimer"], u["helgetimer"], u["natttimer"]) == (
+            r.ulempepoeng, r.kveldstimer, r.helgetimer, r.natttimer)
+        # Med standardtaket er Ulempescoren den samme som scoren fra story 4.7.
+        assert k["faktorpoeng"]["ulempe"] == pytest.approx(u["score"])
+
+
+def test_kandidatfeltene_er_de_samme_som_i_godkjenningsgrunnlaget(klient: TestClient) -> None:
+    # Rangeringen legger bare til felt. `KandidatUt` er uendret (story 4.4).
+    for kandidat in hent(klient, 4127)["kandidater"]:
+        enkelt = klient.get(f"/api/vakter/4127/kandidater/{kandidat['id']}").json()["kandidat"]
+        assert set(enkelt) == KANDIDAT_FELT
+        assert {felt: kandidat[felt] for felt in KANDIDAT_FELT} == enkelt
 
 
 def test_samme_svar_hver_gang(klient: TestClient) -> None:

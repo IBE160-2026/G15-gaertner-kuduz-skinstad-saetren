@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -791,6 +791,20 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Regelen om underagenter sa «Ikke drøftet i gruppa ennå». Den viser nå til godkjenningen 2026-11-04 (OP-04, se PR #5 over). Selve regelen er uendret.
   - «446 av 455 sporede filer» er erstattet med «godt over halvparten av de sporede filene», fordi tallet endrer seg ved hver commit. På rettetidspunktet var det 451 av 843.
 - **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter. `docs/ki-logg/README.md` har samme utdaterte tall (446 rammeverksfiler) og `deferred-work.md` har to åpne funn om den første harde regelen. Begge er ikke rørt og tas opp separat.
+
+### 2026-11-15 – Lik totalscore avgjøres med eksakt `Fraction` (story 4.4)
+
+- **Hvem:** Johannes W. Gaertner, på vegne av gruppa, 2026-11-15, da han godkjente spesifikasjonen for story 4.4. Merknaden «Merknad til 4.4, ikke vedtatt» under «Kostnad som `float` i rangeringen» over står som historikk.
+- **Beslutning:** Faktorpoeng og totalscore regnes eksakt med `fractions.Fraction` fra `float`-verdiene. Lik betyr eksakt lik `Fraction`, uten toleranse. Da sorteres det på stigende ansatt-ID (AV-05, K-03). Verdiene gjøres om til `float` først i porten `RangertKandidat`.
+- **Begrunnelse:** `Fraction(float)` er eksakt for verdien `float` faktisk har. Min–maks og vekter som brøk (2/5, 1/5, 3/20, 1/4) gir da nøyaktig like summer for matematisk like totaler, som i eksempelet med 75/7. To alternativer er forkastet: `round(total, 9)` i sorteringsnøkkelen kan skille like verdier ved en avrundingsgrense, og `math.isclose` er ikke transitiv.
+- **Berørte filer:** [spesifikasjonen for story 4.4](../../_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md), `backend/domene/regelmotor/rangering.py`, `backend/domene/porter/rangering.py`, `backend/tester/regelmotor/test_rangering.py` og `epic-4-context.md`.
+- **Ikke endret:** AV-05, K-03 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-15 – Statuslinjen i AGENTS.md etter story 4.4 (AV-08)
+
+- **Hvem:** Claude, som del av implementeringen av story 4.4. Spesifikasjonen, godkjent av Johannes W. Gaertner 2026-11-15, ber om oppdatert statuslinje. Endringen gjennomgås i PR-en for story 4.4. Det er en rettelse av status, ikke et nytt vedtak.
+- **Rettet:** Innledningen i AGENTS.md sier nå at 4.2 og 4.3 er ferdige, at 4.4 er implementert og til gjennomgang, og at regelmotoren også har timebelastning, kostnad og rangeringen med porten `RangertKandidat`. Preferansene får midlertidig 50 poeng til epic 5 (P-05).
+- **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter.
 
 ---
 

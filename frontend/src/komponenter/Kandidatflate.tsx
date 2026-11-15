@@ -1,13 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import {
   ApiFeil,
   gjeldendeSesjonsgenerasjon,
   hentVaktdetaljer,
+  type RangertKandidat,
   type UtelukkelsesOppsummering,
   type Vaktdetaljer,
 } from "../api";
 import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn } from "../format";
-import { ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, type Kandidattilstand } from "../kandidater";
+import {
+  SYNLIGE_KANDIDATER, ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, preferansetekst, synligeKandidater,
+  type Kandidattilstand,
+} from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
 import Kostnadsvisning from "./Kostnadsvisning";
@@ -160,44 +164,119 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
     <section className="panel kandidater kandidater-klar" aria-labelledby="kandidater-tittel">
       {overskrift}
       <p className="meta">{t.ulempePeriode}</p>
-      <ul className="kandidatliste">
-        {tilstand.kandidater.map((k) => (
-          <li key={k.id}>
-            <span className="ansattnavn">{k.navn}</span>
-            <span className="tag">{t.nivaaTag(k.kompetansenivå)}</span>
-            <span className="timer-i-uka">
-              <span aria-hidden="true">{t.timerIUka(timerOgMinutter(k.minutter_i_uka))}</span>
-              <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(k.minutter_i_uka))}</span>
-            </span>
-            <span className="belastning">
-              <span className="belastningslinje" aria-hidden="true">
-                <span
-                  className={k.hoy_belastning ? "belastningsfyll hoy" : "belastningsfyll"}
-                  style={{ width: `${Math.min(Math.max(k.timebelastning_prosent, 0), 100)}%` }}
-                />
-              </span>
-              {k.hoy_belastning && <Varselmerke>{t.hoyBelastning}</Varselmerke>}
-            </span>
-            <Kostnadsvisning kostnad={k.kostnad} />
-            <div className="kandidat-ulempe">
-              <span>{t.ulempeOverskrift}: {t.ulempePoeng(tall.format(k.ulempebelastning.poeng))}</span>
-              <span className="meta">{t.ulempeFordeling(
-                tall.format(k.ulempebelastning.kveldstimer),
-                tall.format(k.ulempebelastning.helgetimer),
-                tall.format(k.ulempebelastning.natttimer),
-              )}</span>
-            </div>
-            <button
-              type="button" className="button-secondary button-kompakt"
-              aria-label={TEKSTER.godkjenning.velgEtikett(k.navn)} onClick={() => onVelg(k.id)}
-            >
-              {TEKSTER.godkjenning.velg}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <Rangeringstabell kandidater={tilstand.kandidater} onVelg={onVelg} />
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
+  );
+}
+
+// Rangeringstabellen (story 4.4, UX-DR7–DR11). Erstatter den alfabetiske listen fra
+// 2.1. De fem øverste vises uten ekstra handling (SM-3); «Vis alle gyldige kandidater»
+// viser resten og flytter fokus til den første nye raden. Monteres på nytt ved hver
+// lasting, så valget nullstilles for en ny vakt.
+const k = t.kolonner;
+
+function Rangeringstabell({ kandidater, onVelg }: { kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void }) {
+  const [visAlle, setVisAlle] = useState(false);
+  const førsteNye = useRef<HTMLButtonElement>(null);
+  const synlige = synligeKandidater(kandidater, visAlle);
+
+  useEffect(() => {
+    if (visAlle) førsteNye.current?.focus();
+  }, [visAlle]);
+
+  return <>
+    <div className="tabellbeholder rangeringstabell" tabIndex={0} role="region" aria-label={t.rangeringstabell}>
+      <table className="tabell">
+        <thead>
+          <tr>
+            <th scope="col">{k.plass}</th>
+            <th scope="col">{k.kandidat}</th>
+            <th scope="col">{k.kompetanse}</th>
+            <th scope="col">{k.kostnad}</th>
+            <th scope="col">{k.timebelastning}</th>
+            <th scope="col">{k.ulempe}</th>
+            <th scope="col">{k.preferanse}</th>
+            <th scope="col"><span className="visuelt-skjult">{k.handling}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {synlige.map((kandidat, i) => (
+            <Kandidatrad
+              key={kandidat.id} kandidat={kandidat} alt={i % 2 === 1} onVelg={onVelg}
+              knappRef={i === SYNLIGE_KANDIDATER ? førsteNye : undefined}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {!visAlle && kandidater.length > SYNLIGE_KANDIDATER && (
+      <div className="vis-alle">
+        <p className="meta">{t.viserAv(SYNLIGE_KANDIDATER, kandidater.length)}</p>
+        <button type="button" className="button-secondary" onClick={() => setVisAlle(true)}>{t.visAlle}</button>
+      </div>
+    )}
+  </>;
+}
+
+type RadProps = {
+  kandidat: RangertKandidat;
+  alt: boolean;
+  onVelg: (ansattId: number) => void;
+  knappRef?: RefObject<HTMLButtonElement | null>;
+};
+
+function Kandidatrad({ kandidat: r, alt, onVelg, knappRef }: RadProps) {
+  return (
+    <tr className={alt ? "row-alt" : undefined}>
+      <td>
+        <span className="rank-badge">{r.plass}</span>
+        <div className="undertekst">{t.totalscore(tall.format(r.totalscore))}</div>
+      </td>
+      <td>
+        <span className="ansattnavn">{r.navn}</span>
+        <div className="undertekst">{t.kandidatMeta(r.stilling, r.ansiennitet)}</div>
+      </td>
+      <td><span className="tag">{t.nivaaTag(r.kompetansenivå)}</span></td>
+      <td><Kostnadsvisning kostnad={r.kostnad} /></td>
+      <td>
+        <span className="timer-i-uka">
+          <span aria-hidden="true">{t.timerIUka(timerOgMinutter(r.minutter_i_uka))}</span>
+          <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(r.minutter_i_uka))}</span>
+        </span>
+        <span className="belastning">
+          <span className="belastningslinje" aria-hidden="true">
+            <span
+              className={r.hoy_belastning ? "belastningsfyll hoy" : "belastningsfyll"}
+              style={{ width: `${Math.min(Math.max(r.timebelastning_prosent, 0), 100)}%` }}
+            />
+          </span>
+          {r.hoy_belastning && <Varselmerke>{t.hoyBelastning}</Varselmerke>}
+        </span>
+      </td>
+      <td>
+        <div className="kandidat-ulempe">
+          <span>{t.ulempePoeng(tall.format(r.ulempebelastning.poeng))}</span>
+          <span className="meta">{t.ulempeFordeling(
+            tall.format(r.ulempebelastning.kveldstimer),
+            tall.format(r.ulempebelastning.helgetimer),
+            tall.format(r.ulempebelastning.natttimer),
+          )}</span>
+        </div>
+      </td>
+      <td>
+        <span className="tag">{preferansetekst(r)}</span>
+        <div className="undertekst">{t.preferansePoeng(tall.format(r.preferansepoeng))}</div>
+      </td>
+      <td>
+        <button
+          ref={knappRef} type="button" className="button-secondary button-kompakt"
+          aria-label={TEKSTER.godkjenning.velgEtikett(r.navn)} onClick={() => onVelg(r.id)}
+        >
+          {TEKSTER.godkjenning.velg}
+        </button>
+      </td>
+    </tr>
   );
 }
 

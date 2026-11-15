@@ -2,7 +2,7 @@
 title: 'Story 4.4: Rangering av gyldige kandidater'
 type: 'feature'
 created: '2026-11-15'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 baseline_commit: '7a04261964851e7f08334067b1322a43f2b64122'
 review_loop_iteration: 0
@@ -64,15 +64,39 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/domene/` og `kandidatgrunnlag.py`: porter, parametere og `ranger`. Testene dekker hver rad i matrisen, vektvariasjon via parameter, alle fire tolkestatuser, at utelukkede aldri rangeres, og determinisme med stokket inndata. Fasiten regnes for hånd (KS-02), ikke ved å kopiere programmets resultat.
-- [ ] `backend/adaptere/api/main.py` og API-tester: rangert svar for #4127 med totaler, plass og status. #4189 og datafeil er uendret.
-- [ ] `frontend/src/` og tester: tabellen, de fem øverste, «Vis alle» med fokus, taggene, `rank-badge` og `row-alt` (OP-16).
-- [ ] Dokumentasjon: `docs/ki-logg/2026-11-15-rangering.md`, flytlisten i `docs/testing.md`, `docs/emne/vurderingsmatrise.md`, `sprint-status.yaml` og statuslinjen i `AGENTS.md`.
+- [x] `backend/domene/` og `kandidatgrunnlag.py`: porter, parametere og `ranger`. Testene dekker hver rad i matrisen, vektvariasjon via parameter, alle fire tolkestatuser, at utelukkede aldri rangeres, og determinisme med stokket inndata. Fasiten regnes for hånd (KS-02), ikke ved å kopiere programmets resultat.
+- [x] `backend/adaptere/api/main.py` og API-tester: rangert svar for #4127 med totaler, plass og status. #4189 og datafeil er uendret.
+- [x] `frontend/src/` og tester: tabellen, de fem øverste, «Vis alle» med fokus, taggene, `rank-badge` og `row-alt` (OP-16).
+- [x] Dokumentasjon: `docs/ki-logg/2026-11-15-rangering.md`, flytlisten i `docs/testing.md`, `docs/emne/vurderingsmatrise.md`, `sprint-status.yaml` og statuslinjen i `AGENTS.md`.
 
 **Acceptance Criteria:**
 - Gitt et komplett grunnlag: når kandidatene lastes etter vaktvalg, viser tabellen kolonnene rangeringsnummer, kandidat (navn og stilling · ansiennitet i `meta`), Kompetansenivå-tag, kostnad, timebelastning, ulempe og preferanse-tag. Tallene står i raden uten klikk.
 - Gitt samme input i ulik rekkefølge: når rangeringen kjører to ganger, blir plassene og totalene identiske.
 - Gitt at «Vis alle gyldige kandidater» brukes: når listen utvides, vises alle i rangert rekkefølge, og Velg virker for hver av dem.
+
+## Review Triage Log
+
+Første gjennomgang 2026-11-15 med tre uavhengige agenter på Opus: Blind Hunter (B), Edge Case Hunter (E) og Verification Gap (V).
+
+| Funn | Verdikt og bevis | Tiltak |
+|---|---|---|
+| B1: likhetsvedtaket står bare i spesifikasjonen. §11 i referatet og `epic-4-context.md` kaller det fortsatt «ikke vedtatt» | medium: AV-08 krever sporbare vedtak i referatet, og sensor leser dokumentasjonen | patch: ny §11-oppføring og rettet epic-kontekst |
+| B2/E4/V-andre: `rangert_ut` regner kostnad, timer og ulempe en gang til, uavhengig av porten. Ulempescoren finnes i to utgaver (`float` og `Fraction`) | medium: epic 5 forklarer porten, mens tabellen viser egne tall, og ingen test sjekker at de er like | patch: test som sammenligner portfeltene med API-feltene for #4127 |
+| V1: `kostnadstype == "ordinær"` og kveld-, helge- og nattetimer i porten testes ikke | medium: en byttet fordeling eller `>= 0` i stedet for `> 0` består alle testene (forhåndsverifisert av V) | patch: utvidet porttest for alle fire kandidatene på #4127 |
+| E6: `ulempeOverskrift` i `tekster.ts` er ikke lenger i bruk | low: verifisert med grep, ingen bruker igjen | patch: slettet |
+| B6: «p» betyr «verre» i ulempekolonnen og «bedre» i preferansekolonnen | low: står side om side og kan misforstås. Én desimal er riktig etter K-03 | patch: preferansepoeng vises som «poeng» |
+| B3: docstringen til `RangertKandidat` beskriver forholdet mellom `float` og sortering feil | low: villedende for 4.5 og epic 5 | patch: docstringen er rettet |
+| B11: statuslinjen i AGENTS.md er feil etter merge | low: krever endring i en agentkontekstfil | defer |
+| E1/E2: ukjent `tolkestatus`, eller `tolket` uten kategori, gir en tom tagg | low: krever kontraktsbrudd fra API-et (`Literal`), og retting krever en ny vakt | avvist |
+| E3: `tak = 10**400` gir `OverflowError`, ikke `ValueError` | low: urealistisk inndata, retting krever en ny vakt | avvist |
+| E5/B12/V-andre: regex-testen for AD-1 fanger ikke `replace()` eller alias | low: slike omveier er usannsynlige i hverdagen, og en AST-sjekk gir mer kompleksitet | avvist |
+| B4: testdataene i frontend har lik totalscore og plass = id | low: komponenten viser rekkefølgen fra API-et, og ingen frontendtest sjekker sorteringen | avvist |
+| B5: ingen test binder kategorinøklene i backend og frontend sammen | low: stien `tolket` kan ikke nås før epic 5. Tas i 5.1/5.2 | avvist |
+| B7: totalscore vises under Nr. uten at UX-DR sier det | low: PRD §4.4 forutsetter visning med én desimal. Johannes valgte 2026-11-15 å beholde totalscoren under plassnummeret | avvist, beholdes etter brukerens valg |
+| B8: AV-12-testen bruker `== 7.0` på `float` | low: data og formel er deterministiske, og en rød test ville selv vært et nyttig signal. Domenetesten har eksakt brøkfasit | avvist |
+| B9: sesjonslogg og `issues.md` mangler | false: loggføres i steg 05 før sluttsvaret, etter AGENTS.md | avvist |
+| B10: kriterienumrene i vurderingsmatrisen kan ikke spores | false: numrene viser til kriteriekolonnen i matrisen (sensorveiledningen), som i alle tidligere milepæler | avvist |
+| B13: typehintet `float` på `tak`, og stille standardverdier for `stilling` og `ansiennitet` | low: `AnsattRad` har begge som NOT NULL, og standardverdiene brukes bare i testene | avvist |
 
 ## Design Notes
 

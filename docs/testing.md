@@ -72,6 +72,11 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   - [`test_11_timersregelen.py`](../backend/tester/regelmotor/test_11_timersregelen.py) – daglig hvile, sommertid
   - [`test_35_timersregelen.py`](../backend/tester/regelmotor/test_35_timersregelen.py) – ukentlig fri, ukeskifte
   - [`test_utelukkelsesoppsummering.py`](../backend/tester/regelmotor/test_utelukkelsesoppsummering.py) – Ekskludert-boksens tall
+- **Rangering** ([`test_rangering.py`](../backend/tester/regelmotor/test_rangering.py), story 4.4):
+  fasiten for #4127 med og uten tolkede preferanser (KS-02), AV-12, min–maks og like
+  verdier (AV-05), eksakt likhet med `Fraction` og ID-rekkefølge (K-03, §11), de fire
+  tolkestatusene (P-05), at utelukkede aldri rangeres (NFR2), determinisme med stokket
+  inndata, og vekter og tak som parametere (AV-11).
 - **API** ([`tester/api/`](../backend/tester/api/)): innlogging og sesjon, vaktoversikt,
   vaktdetaljer, kandidater og godkjenning, med 401, 404, datafeil og fasiten
   for #4127 og #4189 (AV-07). Story 3.2 tester også endret grunnlag (P-09),
@@ -89,7 +94,7 @@ TypeScript buntes med `rolldown`.
 
 - [`sesjon.test.mjs`](../frontend/tester/sesjon.test.mjs) – sesjonsvarsleren og sesjonsgenerasjonen i `api.ts`
 - [`format.test.mjs`](../frontend/tester/format.test.mjs) – datoer og tider i `Europe/Oslo`, også kjørt i en annen tidssone
-- [`kandidater.test.mjs`](../frontend/tester/kandidater.test.mjs) – tilstandene til kandidatlisten og tekstene i Ekskludert-boksen
+- [`kandidater.test.mjs`](../frontend/tester/kandidater.test.mjs) – tilstandene til kandidatlisten, tekstene i Ekskludert-boksen, de fem synlige kandidatene og preferansetaggen (4.4)
 - [`godkjenning.test.mjs`](../frontend/tester/godkjenning.test.mjs) – tilstandene til godkjenningsflaten og stiene
 
 ### Frontend: komponenter (Vitest, Testing Library, jsdom)
@@ -109,6 +114,7 @@ har satt opp, feiler testen.
 | | Tomtilstanden (`ingen_gyldige_kandidater`) har ikon, full tekst, boks og innleietekst uten knapp utenom «Vis full liste». `ok` med tom liste gir feiltilstand. Lasting, feil, datafeil og ingen gyldige har ulik tekst, panelklasse og kombinasjon av rolle, ikon og knapp | 2.6 |
 | | Ingen Ekskludert-boks ved 0 utelukkede. «Vis full liste» lukket, åpen og lukket med `aria-expanded` | 2.5 |
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
+| | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
 | [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
 
 Hver test er vist å kunne feile: en bevisst feil i komponenten gjorde den rød. Mutasjonene
@@ -197,3 +203,7 @@ story 4.6 ferdigstilles; dette er ikke et eget gruppevedtak om frist. Testen er 
 ## Story 4.3 – kostnad per kandidat (2026-11-15)
 
 Domenetester i [`test_kostnad.py`](../backend/tester/regelmotor/test_kostnad.py) dekker 36-timersgrensen, ukeskifte, overlapp, brøktimer, begge sommertidsskifter og ugyldig lønn. API-testene kontrollerer #4127-fasit og begge kandidatgrunnlagene. Kandidat- og godkjenningsflatens komponenttester dekker kostnadsfordeling, overtid og oppdatert grunnlag. Etter integreringen med story 4.2 viser overtid og høy belastning hvert sitt `Varselmerke`. Komponenttesten «høy belastning og overtid vises som hvert sitt varselmerke» dekker ingen varsler, bare høy belastning, bare overtid og begge samtidig. P-09 for endret lønn testes i `test_godkjenningsgrunnlag.py`. Visuell kontroll og gjenstående punkter står i [spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-3-forenklet-kostnad-per-kandidat.md). Den integrerte raden med begge varslene er ikke kontrollert i nettleser.
+
+## Story 4.4 – rangering av gyldige kandidater (2026-11-15)
+
+Domenetestene i [`test_rangering.py`](../backend/tester/regelmotor/test_rangering.py) har fasiten regnet for hånd som brøker (KS-02). API-testene i [`test_kandidater.py`](../backend/tester/api/test_kandidater.py) kontrollerer rangert svar for #4127 med totaler, plass og tolkestatus, og at feltene fra `KandidatUt` er de samme som i godkjenningsgrunnlaget. #4189 og datafeil er uendret. Komponenttestene for rangeringstabellen står i tabellen over. Mutasjonene som viste at testene kan feile, står i [KI-loggen](ki-logg/2026-11-15-rangering.md). Layout, farger og fokusmarkering i nettleser (`rank-badge` i `accent`, 14px, rulling i egen beholder ved 1080 og 1600 px) er ikke kontrollert og står som «Manual checks» i [spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md).

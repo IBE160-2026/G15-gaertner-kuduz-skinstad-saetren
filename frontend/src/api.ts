@@ -45,7 +45,7 @@ export type Vaktdetaljer = {
 };
 
 // GET /api/vakter/{nr}/kandidater (story 2.1). Bare Gyldige kandidater,
-// alfabetisk. Datafeil er et 200-svar uten liste (P-08).
+// sortert etter plass i Rangeringen (story 4.4). Datafeil er et 200-svar uten liste (P-08).
 // `minutter_i_uka`: hele minutter i uka Vakten starter i, uten Vakten selv (story 4.1, FR8).
 export type Ulempebelastning = {
   dagtimer: number;
@@ -65,6 +65,15 @@ export type Kandidat = {
   ulempebelastning: Ulempebelastning; kostnad: Kostnad;
 };
 
+// Rangeringen (story 4.4, FR9). Poengene er uavrundet og avrundes ved visning (K-03).
+// `preferansekategori` er satt bare når `tolkestatus` er "tolket" (P-05).
+export type Tolkestatus = "tolket" | "venter_paa_tolkning" | "kunne_ikke_tolkes" | "ingen_registrert";
+export type RangertKandidat = Kandidat & {
+  stilling: string; ansiennitet: number; plass: number; totalscore: number;
+  faktorpoeng: { kostnad: number; timebelastning: number; ulempe: number };
+  preferansepoeng: number; tolkestatus: Tolkestatus; preferansekategori: string | null;
+};
+
 // Ekskludert-boksen (story 2.5, UX-DR15). `per_regel` følger regelmotorens
 // rekkefølge, og summen der kan være større enn `totalt`.
 export type RegelAntall = { årsak: string; antall: number };
@@ -76,8 +85,8 @@ export type UtelukkelsesOppsummering = {
 };
 
 export type Kandidatsvar =
-  | { status: "ok"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering }
-  | { status: "ingen_gyldige_kandidater"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering }
+  | { status: "ok"; kandidater: RangertKandidat[]; utelukkelser: UtelukkelsesOppsummering }
+  | { status: "ingen_gyldige_kandidater"; kandidater: RangertKandidat[]; utelukkelser: UtelukkelsesOppsummering }
   | { status: "datafeil"; kode: string; datagrense: string };
 
 // GET /api/vakter/{nr}/kandidater/{ansatt_id} (story 3.1). Bare for en Gyldig

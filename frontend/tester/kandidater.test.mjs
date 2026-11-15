@@ -266,3 +266,30 @@ test("ekskludertRadTekst viser flere årsaker kommaseparert (Design Notes-eksemp
     "Kari Nordmann — kolliderende vakt, 35-timersregelen",
   );
 });
+
+test("synligeKandidater gir de fem første i rekkefølge, eller alle (story 4.4)", () => {
+  const sju = [1, 2, 3, 4, 5, 6, 7].map((plass) => ({ id: 10 + plass, plass }));
+  assert.equal(k.SYNLIGE_KANDIDATER, 5);
+  assert.deepEqual(k.synligeKandidater(sju, false), sju.slice(0, 5));
+  assert.deepEqual(k.synligeKandidater(sju, true), sju);
+  assert.deepEqual(k.synligeKandidater(sju.slice(0, 5), false), sju.slice(0, 5));
+  assert.deepEqual(k.synligeKandidater(sju.slice(0, 2), false), sju.slice(0, 2));
+  assert.deepEqual(k.synligeKandidater([], false), []);
+  // Listen fra API-et endres ikke.
+  assert.notEqual(k.synligeKandidater(sju, true), sju);
+  assert.equal(sju.length, 7);
+});
+
+test("preferansetekst viser kategori når tolket, ellers status (P-05)", () => {
+  assert.equal(k.preferansetekst({ tolkestatus: "tolket", preferansekategori: "onsker_flere" }), "Ønsker flere vakter");
+  assert.equal(k.preferansetekst({ tolkestatus: "tolket", preferansekategori: "vil_unnga" }), "Vil unngå ekstravakter");
+  assert.equal(k.preferansetekst({ tolkestatus: "venter_paa_tolkning", preferansekategori: null }), "Preferanse venter på tolkning");
+  assert.equal(k.preferansetekst({ tolkestatus: "kunne_ikke_tolkes", preferansekategori: null }), "Preferanse kunne ikke tolkes");
+  assert.equal(k.preferansetekst({ tolkestatus: "ingen_registrert", preferansekategori: null }), "Ingen registrert");
+  // En kategori frontend ikke kjenner, vises som den er i stedet for å kaste.
+  assert.equal(k.preferansetekst({ tolkestatus: "tolket", preferansekategori: "ny_kategori" }), "ny_kategori");
+  // Alle fem kategoriene fra regelmotoren har tekst, og ingen av dem er lik en status.
+  const kategorier = Object.values(t.preferansekategorier);
+  assert.equal(new Set(kategorier).size, 5);
+  for (const status of Object.values(t.tolkestatuser)) assert.ok(!kategorier.includes(status));
+});

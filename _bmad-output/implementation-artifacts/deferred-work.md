@@ -75,3 +75,7 @@
 ## Deferred from: code review of spec-4-2-belastningslinje-med-terskel.md (2026-11-15)
 
 - Epic 4-konteksten er forkortet og har mistet sentrale detaljer om normalisering over alle gyldige (lavest gir 100), preferanseskala, uavhengig fasit, P-09, opprinnelig ansatts lønn og referansesammenligning. Samordne mot styrende dokumenter før senere stories bruker konteksten.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md`
+  summary: Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på.
+  evidence: Blind Hunter B11 (2026-11-15). Endringen gjelder en agentkontekstfil og er derfor utsatt. Rett linjen når 4.4 settes til `done`, eller vurder å fjerne storystatus fra AGENTS.md.

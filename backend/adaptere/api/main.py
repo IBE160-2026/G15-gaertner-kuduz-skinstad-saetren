@@ -27,13 +27,15 @@ from adaptere.lagring.godkjenninger import lagre_godkjenning
 from adaptere.lagring.modeller import OSLO
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
+from domene.porter.rangering import RangertKandidat
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
 from domene.regelmotor.kostnad import beregn_kostnad
+from domene.regelmotor.rangering import ranger
 from domene.regelmotor.timebelastning import timebelastning
 from domene.regelmotor.timer_i_uka import minutter_i_uka, timer_i_startuka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
-from domene.typer import Datafeil, Godkjenning, Kandidat, Vakt
+from domene.typer import Datafeil, Godkjenning, Kandidat, Ulempebelastning, Vakt
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -158,10 +160,58 @@ class KandidatUt(BaseModel):
     kostnad: KostnadUt
 
 
+Tolkestatus = Literal["tolket", "venter_paa_tolkning", "kunne_ikke_tolkes", "ingen_registrert"]
+
+
+class FaktorpoengUt(BaseModel):
+    """Faktorpoengene 0–100, uavrundet (K-03). Preferansen står i `preferansepoeng`."""
+
+    kostnad: float
+    timebelastning: float
+    ulempe: float
+
+
+class RangertKandidatUt(KandidatUt):
+    """En Gyldig kandidat i Rangeringen (story 4.4, FR9): `KandidatUt` med plass og poeng.
+
+    Lages bare fra `RangertKandidat` fra regelmotoren. `totalscore` og poengene er
+    uavrundet, og frontend avrunder ved visning. `preferansekategori` er satt bare
+    når `tolkestatus` er `tolket`.
+    """
+
+    stilling: str
+    ansiennitet: int
+    plass: int
+    totalscore: float
+    faktorpoeng: FaktorpoengUt
+    preferansepoeng: float
+    tolkestatus: Tolkestatus
+    preferansekategori: str | None
+
+
 def belastning(kandidat: Kandidat, vakt: Vakt) -> dict[str, float | bool]:
     """Feltene for timebelastning, regnet fra uavrundet tid (story 4.2)."""
     b = timebelastning(timer_i_startuka(kandidat, vakt))
     return {"timebelastning_prosent": b.prosent, "hoy_belastning": b.høy}
+
+
+def rangert_ut(rangert: RangertKandidat, kandidat: Kandidat, vakt: Vakt, ulempe: Ulempebelastning) -> RangertKandidatUt:
+    """`KandidatUt`-feltene, regnet som før, pluss Rangeringens plass og poeng."""
+    return RangertKandidatUt(
+        id=rangert.id, navn=rangert.navn, kompetansenivå=rangert.kompetansenivå,
+        minutter_i_uka=minutter_i_uka(kandidat, vakt),
+        **belastning(kandidat, vakt),
+        kostnad=KostnadUt.model_validate(beregn_kostnad(kandidat, vakt), from_attributes=True),
+        ulempebelastning=UlempebelastningUt.model_validate(ulempe, from_attributes=True),
+        stilling=rangert.stilling, ansiennitet=rangert.ansiennitet, plass=rangert.plass,
+        totalscore=rangert.totalscore,
+        faktorpoeng=FaktorpoengUt(
+            kostnad=rangert.kostnadspoeng, timebelastning=rangert.timebelastningspoeng,
+            ulempe=rangert.ulempescore,
+        ),
+        preferansepoeng=rangert.preferansepoeng, tolkestatus=rangert.tolkestatus.value,
+        preferansekategori=rangert.tolket_preferanse.kategori if rangert.tolket_preferanse else None,
+    )
 
 
 class RegelAntallUt(BaseModel):
@@ -184,13 +234,14 @@ class UtelukkelsesOppsummeringUt(BaseModel):
 
 
 class KandidaterUt(BaseModel):
-    """Bare Gyldige kandidater, alfabetisk (NFR2). `utelukkelser` dekker resten.
+    """Bare Gyldige kandidater, sortert etter plass i Rangeringen (NFR2, FR9).
+    `utelukkelser` dekker resten.
 
     Alltid minst én Kandidat: null Gyldige gir `IngenGyldigeUt` (FR6, AD-4).
     """
 
     status: Literal["ok"]
-    kandidater: list[KandidatUt]
+    kandidater: list[RangertKandidatUt]
     utelukkelser: UtelukkelsesOppsummeringUt
 
 
@@ -201,7 +252,7 @@ class IngenGyldigeUt(BaseModel):
     """
 
     status: Literal["ingen_gyldige_kandidater"]
-    kandidater: list[KandidatUt]
+    kandidater: list[RangertKandidatUt]
     utelukkelser: UtelukkelsesOppsummeringUt
 
 
@@ -344,19 +395,13 @@ def lag_app(
         utelukkelser = UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True)
         if not vurdering.gyldige:
             return IngenGyldigeUt(status="ingen_gyldige_kandidater", kandidater=[], utelukkelser=utelukkelser)
+        # Ingen lagrede tolkninger før epic 5: alle med tekst venter på tolkning (P-05).
+        gyldige = {k.id: k for k in vurdering.gyldige}
         return KandidaterUt(
             status="ok",
             kandidater=[
-                KandidatUt(
-                    id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
-                    minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
-                    **belastning(k, grunnlag.vakt),
-                    kostnad=KostnadUt.model_validate(beregn_kostnad(k, grunnlag.vakt), from_attributes=True),
-                    ulempebelastning=UlempebelastningUt.model_validate(
-                        vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
-                    ),
-                )
-                for k in vurdering.gyldige
+                rangert_ut(r, gyldige[r.id], grunnlag.vakt, vurdering.ulempe_per_kandidat[r.id])
+                for r in ranger(vurdering, grunnlag.vakt)
             ],
             utelukkelser=utelukkelser,
         )

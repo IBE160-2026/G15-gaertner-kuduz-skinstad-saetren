@@ -1,5 +1,5 @@
-// Kandidatflate med Kandidatliste og EkskludertBoks (story 2.1, 2.4, 2.5 og 3.1).
-// Kandidatliste og EkskludertBoks er interne og testes gjennom Kandidatflate.
+// Kandidatflate med Kandidatliste, Rangeringstabell og EkskludertBoks (story 2.1, 2.4,
+// 2.5, 3.1 og 4.4). De er interne og testes gjennom Kandidatflate.
 import { describe, expect, test, vi } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -7,10 +7,10 @@ import Kandidatflate from "../../src/komponenter/Kandidatflate";
 import { datoOgKlokke } from "../../src/format";
 import { ekskludertBoksTekst, ekskludertRadTekst } from "../../src/kandidater";
 import { RESERVETEKST, TEKSTER, feiltekst } from "../../src/tekster";
-import type { Kandidatsvar } from "../../src/api";
+import type { Kandidatsvar, RangertKandidat } from "../../src/api";
 import {
   INGEN_GYLDIGE, KANDIDATER_DATAFEIL, OK_MED_TOM_LISTE, TO_GYLDIGE, TO_UTELUKKET, VAKT_4127,
-  falskFetch, feil, kallTil, malRegex, ok, regexTekst, type Svar,
+  falskFetch, feil, kallTil, malRegex, ok, rangering, regexTekst, type Svar,
 } from "./hjelpere";
 
 const t = TEKSTER.kandidatflate;
@@ -47,7 +47,13 @@ const kandidat = (id: number, navn: string, minutter: number) => ({
   ulempebelastning: INGEN_ULEMPE,
   // Kostnaden (4.3) er påkrevd av typen; ordinær som standard, så den ikke gir varselmerke.
   kostnad: TO_GYLDIGE.kandidater[1].kostnad,
+  // Rangeringen (4.4) er påkrevd av typen; plassen er id-en, som bare vises.
+  ...rangering(id),
 });
+
+/** Raden i rangeringstabellen for kandidaten med dette navnet. */
+const radFor = (del: HTMLElement, navn: string) =>
+  within(del).getByText(navn, { selector: ".ansattnavn" }).closest("tr")!;
 
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
@@ -60,7 +66,7 @@ describe("Kandidatliste (story 2.1)", () => {
       { ...grunnlag, id: 3, navn: "Overtid", kostnad: { total: 3600, ordinære_timer: 0, overtidstimer: 8, ordinær_sats: 300, overtidssats: 450 } },
     ] } satisfies Kandidatsvar;
     const { del } = await rendreMed(ok(svar));
-    const rad = (navn: string) => within(del).getByText(navn, { selector: ".ansattnavn" }).closest("li")!;
+    const rad = (navn: string) => radFor(del, navn);
     const format = (n: number) => new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/\s/g, " ");
     expect(within(rad("Ordinær")).getByText(`${t.kostnadOverskrift}: ${format(2400)} kr`)).toBeTruthy();
     expect(within(rad("Ordinær")).getByText(t.kostnadOrdinaer, { selector: ".kostnad-ordinaer" })).toBeTruthy();
@@ -101,7 +107,7 @@ describe("Kandidatliste (story 2.1)", () => {
       ["Jonas Bakke", "32:23", "32 timer og 23 minutter i uka"],
       ["Ola Nord", "1:01", "1 time og 1 minutt i uka"],
     ]) {
-      const rad = within(del).getByText(navn).closest("li");
+      const rad = within(del).getByText(navn).closest("tr");
       expect(rad).not.toBeNull();
       const synlig = within(rad!).getByText(t.timerIUka(verdi));
       expect(synlig.getAttribute("aria-hidden")).toBe("true");
@@ -132,7 +138,7 @@ describe("Kandidatliste (story 2.1)", () => {
     const varsel = within(del).getByRole("alert");
     expect(within(varsel).getByText(t.datafeil)).toBeTruthy();
     expect(within(varsel).getByText(t.datagrense(datoOgKlokke(datagrense)))).toBeTruthy();
-    expect(within(del).queryByRole("list")).toBeNull();
+    expect(within(del).queryByRole("table")).toBeNull();
     expect(velgknapper()).toHaveLength(0);
     expect(within(del).queryByRole("button")).toBeNull();
   });
@@ -141,13 +147,13 @@ describe("Kandidatliste (story 2.1)", () => {
 test("viser hver kandidats ulempepoeng og fordeling, også null (story 4.7)", async () => {
   const { del } = await rendreMed(ok(TO_GYLDIGE));
   expect(within(del).getByText(TEKSTER.kandidatflate.ulempePeriode)).toBeTruthy();
-  const rader = within(del).getAllByRole("listitem");
-  const jonas = rader.find((rad) => rad.textContent?.includes("Jonas Bakke"))!;
-  const mette = rader.find((rad) => rad.textContent?.includes("Mette Solberg"))!;
+  const jonas = radFor(del, "Jonas Bakke");
+  const mette = radFor(del, "Mette Solberg");
 
-  expect(within(jonas).getByText("Ulempebelastning: 14,6 p")).toBeTruthy();
+  // Kolonneoverskriften er «Ulempe» (4.4); cellen har bare poengene.
+  expect(within(jonas).getByText("14,6 p")).toBeTruthy();
   expect(within(jonas).getByText("Kveld 1,6 t · helg 2,0 t · natt 3,0 t")).toBeTruthy();
-  expect(within(mette).getByText("Ulempebelastning: 0,0 p")).toBeTruthy();
+  expect(within(mette).getByText("0,0 p")).toBeTruthy();
   expect(within(mette).getByText("Kveld 0,0 t · helg 0,0 t · natt 0,0 t")).toBeTruthy();
 });
 
@@ -163,7 +169,9 @@ test("belastningslinja er accent under 32,4 t og warn på og over, kuttet ved 10
       kandidat(9, "Eva Lund", 40 * 60),
     ],
   } satisfies Kandidatsvar;
-  const { del } = await rendreMed(ok(svar));
+  const { bruker, del } = await rendreMed(ok(svar));
+  // Seks kandidater: den sjette vises først etter «Vis alle gyldige kandidater» (story 4.4).
+  await bruker.click(within(del).getByRole("button", { name: t.visAlle }));
 
   for (const [navn, høy, bredde] of [
     ["Ingrid Dahl", false, "88.8888"],
@@ -173,7 +181,7 @@ test("belastningslinja er accent under 32,4 t og warn på og over, kuttet ved 10
     ["Per Vik", true, "90.0462"],
     ["Eva Lund", true, "100%"],
   ] as const) {
-    const rad = within(del).getByText(navn).closest("li")!;
+    const rad = radFor(del, navn);
     const fyll = rad.querySelector(".belastningsfyll") as HTMLElement;
     expect(fyll.classList.contains("hoy")).toBe(høy);
     expect(fyll.style.width.startsWith(bredde)).toBe(true);
@@ -189,7 +197,7 @@ test("belastningslinja er accent under 32,4 t og warn på og over, kuttet ved 10
     }
     // 4.1-verdien og ulempeblokken er uendret.
     expect(within(rad).getByText(/ t i uka$/)).toBeTruthy();
-    expect(within(rad).getByText(/^Ulempebelastning: /)).toBeTruthy();
+    expect(rad.querySelector(".kandidat-ulempe")?.textContent).toMatch(/^\d+,\d p/);
   }
 });
 
@@ -213,9 +221,10 @@ test("høy belastning og overtid vises som hvert sitt varselmerke, alene og samt
     ["Ingen varsler", []],
     ["Bare høy belastning", [t.hoyBelastning]],
     ["Bare overtid", [t.kostnadOvertid]],
-    ["Begge varsler", [t.hoyBelastning, t.kostnadOvertid]],
+    // Kostnad står før timebelastning i rangeringstabellen (story 4.4).
+    ["Begge varsler", [t.kostnadOvertid, t.hoyBelastning]],
   ] as const) {
-    const rad = within(del).getByText(navn, { selector: ".ansattnavn" }).closest("li")!;
+    const rad = radFor(del, navn);
     const merker = [...rad.querySelectorAll(".varselmerke")];
     expect(merker.map((m) => m.textContent)).toEqual(forventet);
     // Samme komponent: begge varslene har det samme skjulte ikonet.
@@ -341,4 +350,123 @@ test("«Velg» sender vaktnummer og id for riktig kandidat (story 3.1)", async (
   expect(onVelg).toHaveBeenCalledWith(4127, 6);
   // Valget er bare navigasjon (story 3.1): ingen kall til API-et.
   expect(fetch.mock.calls.length).toBe(kallFoer);
+});
+
+describe("Rangeringstabellen (story 4.4)", () => {
+  const k = t.kolonner;
+  const tabell = (del: HTMLElement) => within(del).getByRole("table");
+  /** Datarader i tabellen, uten overskriftsraden. */
+  const datarader = (del: HTMLElement) => within(tabell(del)).getAllByRole("row").slice(1);
+  const navnIRad = (rad: HTMLElement) => rad.querySelector(".ansattnavn")?.textContent;
+
+  /** Kandidater i rangert rekkefølge med plass 1, 2, … og synkende totalscore. */
+  const rangerte = (antall: number): RangertKandidat[] =>
+    Array.from({ length: antall }, (_, i) => ({ ...kandidat(100 + i, `Kandidat ${i + 1}`, 600), plass: i + 1, totalscore: 90 - i * 7.25 }));
+
+  test("kolonnene, plassen, kandidaten med meta og taggene står i raden uten klikk", async () => {
+    const svar = {
+      ...TO_GYLDIGE,
+      kandidater: [
+        { ...TO_GYLDIGE.kandidater[0], stilling: "Sykepleier", ansiennitet: 3, totalscore: 85.654761904761905,
+          preferansepoeng: 75, tolkestatus: "tolket", preferansekategori: "positiv_ved_behov" },
+        { ...TO_GYLDIGE.kandidater[1], stilling: "Spesialsykepleier", ansiennitet: 12, totalscore: 78.65,
+          tolkestatus: "kunne_ikke_tolkes" },
+        { ...kandidat(7, "Ola Nord", 0), plass: 3, totalscore: 59.05, tolkestatus: "venter_paa_tolkning" },
+        { ...kandidat(8, "Per Vik", 0), plass: 4, totalscore: 37, tolkestatus: "ingen_registrert" },
+      ],
+    } satisfies Kandidatsvar;
+    const { del } = await rendreMed(ok(svar));
+
+    expect(within(tabell(del)).getAllByRole("columnheader").map((h) => h.textContent)).toEqual(
+      [k.plass, k.kandidat, k.kompetanse, k.kostnad, k.timebelastning, k.ulempe, k.preferanse, k.handling]);
+    // Den alfabetiske listen fra 2.1 er erstattet.
+    expect(within(del).queryByRole("list")).toBeNull();
+    const rader = datarader(del);
+    expect(rader.map(navnIRad)).toEqual(["Jonas Bakke", "Mette Solberg", "Ola Nord", "Per Vik"]);
+    expect(rader.map((r) => r.querySelector(".rank-badge")?.textContent)).toEqual(["1", "2", "3", "4"]);
+    // Annenhver rad har row-alt (UX-DR7).
+    expect(rader.map((r) => r.classList.contains("row-alt"))).toEqual([false, true, false, true]);
+
+    const [jonas, mette, ola, per] = rader;
+    // Totalscore avrundes til én desimal bare ved visning (K-03).
+    expect(within(jonas).getByText(t.totalscore("85,7"))).toBeTruthy();
+    expect(within(ola).getByText(t.totalscore("59,1"))).toBeTruthy();
+    expect(within(jonas).getByText(t.kandidatMeta("Sykepleier", 3))).toBeTruthy();
+    expect(within(mette).getByText(t.kandidatMeta("Spesialsykepleier", 12))).toBeTruthy();
+    expect(within(jonas).getByText(t.nivaaTag(3), { selector: ".tag" })).toBeTruthy();
+    expect(within(mette).getByText(t.nivaaTag(4), { selector: ".tag" })).toBeTruthy();
+    // Preferansetaggen viser kategori eller status (UX-DR11, P-05), med poengene under.
+    expect(within(jonas).getByText(t.preferansekategorier.positiv_ved_behov, { selector: ".tag" })).toBeTruthy();
+    expect(within(jonas).getByText(t.preferansePoeng("75,0"))).toBeTruthy();
+    expect(within(mette).getByText(t.tolkestatuser.kunne_ikke_tolkes, { selector: ".tag" })).toBeTruthy();
+    expect(within(ola).getByText(t.tolkestatuser.venter_paa_tolkning, { selector: ".tag" })).toBeTruthy();
+    expect(within(per).getByText(t.tolkestatuser.ingen_registrert, { selector: ".tag" })).toBeTruthy();
+    expect(within(per).getByText(t.preferansePoeng("50,0"))).toBeTruthy();
+    // Kostnad, timebelastning og ulempe står i raden, og Velg i siste kolonne.
+    for (const rad of rader) {
+      const celler = within(rad).getAllByRole("cell");
+      expect(celler).toHaveLength(8);
+      expect(within(celler[3]).getByText(/^Kostnad: /)).toBeTruthy();
+      expect(within(celler[4]).getByText(/ t i uka$/)).toBeTruthy();
+      expect(celler[4].querySelector(".belastningslinje")).not.toBeNull();
+      expect(within(celler[5]).getByText(/^\d+,\d p$/)).toBeTruthy();
+      expect(within(celler[7]).getByRole("button", { name: VELG })).toBeTruthy();
+    }
+    // Tabellen ruller i egen beholder, som kan nås med tastatur (AV-14).
+    const beholder = within(del).getByRole("region", { name: t.rangeringstabell });
+    expect(beholder.classList.contains("tabellbeholder")).toBe(true);
+    expect(beholder.getAttribute("tabindex")).toBe("0");
+  });
+
+  test("viser de fem øverste, og «Vis alle» viser resten i rangert rekkefølge med fokus", async () => {
+    const kandidater = rangerte(7);
+    const { bruker, del, onVelg } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater }));
+
+    expect(datarader(del).map(navnIRad)).toEqual(kandidater.slice(0, 5).map((k) => k.navn));
+    expect(within(del).getByText(t.viserAv(5, 7))).toBeTruthy();
+    const visAlle = within(del).getByRole("button", { name: t.visAlle });
+
+    await bruker.click(visAlle);
+
+    expect(datarader(del).map(navnIRad)).toEqual(kandidater.map((k) => k.navn));
+    expect(within(del).queryByRole("button", { name: t.visAlle })).toBeNull();
+    expect(within(del).queryByText(t.viserAv(5, 7))).toBeNull();
+    // Fokus flyttes til den første nye raden, så tastaturet fortsetter der.
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: g.velgEtikett("Kandidat 6") }));
+    expect(datarader(del)[5].classList.contains("row-alt")).toBe(true);
+
+    // Velg virker for hver av dem, også de som var skjult.
+    for (const kandidat of kandidater) {
+      await bruker.click(screen.getByRole("button", { name: g.velgEtikett(kandidat.navn) }));
+      expect(onVelg).toHaveBeenLastCalledWith(4127, kandidat.id);
+    }
+    expect(onVelg).toHaveBeenCalledTimes(7);
+  });
+
+  test("«Vis alle» kan brukes med tastaturet alene", async () => {
+    const { bruker, del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater: rangerte(6) }));
+    within(del).getByRole("button", { name: t.visAlle }).focus();
+    await bruker.keyboard("{Enter}");
+    expect(datarader(del)).toHaveLength(6);
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: g.velgEtikett("Kandidat 6") }));
+  });
+
+  test("fem eller færre gyldige vises alle, uten «Vis alle»", async () => {
+    for (const antall of [1, 5]) {
+      const { del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater: rangerte(antall) }));
+      expect(datarader(del)).toHaveLength(antall);
+      expect(within(del).queryByRole("button", { name: t.visAlle })).toBeNull();
+      expect(within(del).queryByText(/^Viser /)).toBeNull();
+      cleanup();
+    }
+  });
+
+  test("ingen tabell ved datafeil eller null gyldige (P-08, P-11)", async () => {
+    for (const svar of [ok(KANDIDATER_DATAFEIL), ok(INGEN_GYLDIGE)]) {
+      const { del } = await rendreMed(svar);
+      expect(within(del).queryByRole("table")).toBeNull();
+      expect(within(del).queryByRole("region", { name: t.rangeringstabell })).toBeNull();
+      cleanup();
+    }
+  });
 });

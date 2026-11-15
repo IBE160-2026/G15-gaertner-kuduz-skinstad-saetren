@@ -115,13 +115,39 @@ export const TEKSTER = {
     kostnadOvertid: "Inkluderer overtid",
     kostnadOvertidDel: "Overtid",
     kostnadDetalj: (timer: string, sats: string) => `${timer} t:min ved ${sats} kr/t`,
-    ulempeOverskrift: "Ulempebelastning",
     ulempePeriode: "Ulempebelastning gjelder de siste 672 timene før vakten og vises avrundet.",
     ulempePoeng: (poeng: string) => `${poeng} p`,
     ulempeFordeling: (kveld: string, helg: string, natt: string) =>
       `Kveld ${kveld} t · helg ${helg} t · natt ${natt} t`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
+    // Rangeringstabellen (story 4.4, UX-DR7–DR11). Kolonnen for «Velg» har en skjult
+    // overskrift; der kommer også ekspanderen fra epic 5.
+    rangeringstabell: "Rangering av gyldige kandidater",
+    kolonner: {
+      plass: "Nr.", kandidat: "Kandidat", kompetanse: "Kompetanse", kostnad: "Kostnad",
+      timebelastning: "Timebelastning", ulempe: "Ulempe", preferanse: "Preferanse", handling: "Valg",
+    },
+    kandidatMeta: (stilling: string, ansiennitet: number) => `${stilling} · ${ansiennitet} år ansiennitet`,
+    totalscore: (poeng: string) => `${poeng} poeng`,
+    // «poeng», ikke «p»: i ulempekolonnen ved siden av betyr «p» at mer er verre.
+    preferansePoeng: (poeng: string) => `${poeng} poeng`,
+    // Kategoriene fra PRD §4.5 (FR-10). Nøklene er regelmotorens `PREFERANSEPOENG`.
+    preferansekategorier: {
+      onsker_flere: "Ønsker flere vakter",
+      positiv_ved_behov: "Positiv ved behov",
+      noytral: "Nøytral",
+      foretrekker_a_slippe: "Foretrekker å slippe",
+      vil_unnga: "Vil unngå ekstravakter",
+    } as Record<string, string>,
+    // Uten tolkning (P-05). «Ingen registrert» er ikke et nøytralt ønske.
+    tolkestatuser: {
+      venter_paa_tolkning: "Preferanse venter på tolkning",
+      kunne_ikke_tolkes: "Preferanse kunne ikke tolkes",
+      ingen_registrert: "Ingen registrert",
+    },
+    visAlle: "Vis alle gyldige kandidater",
+    viserAv: (vist: number, totalt: number) => `Viser ${vist} av ${totalt} gyldige kandidater.`,
   },
 
   // Godkjenningsflaten (story 3.1, UX-DR17, UX-DR19, UX-DR23). Egen blokk, så
