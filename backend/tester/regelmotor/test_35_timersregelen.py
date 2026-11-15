@@ -20,7 +20,7 @@ import pytest
 
 from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse, trettifem_timer
 from domene.regelmotor.trettifem_timer import ÅRSAK, berørte_uker, bryter_trettifem_timer, lengste_fri
-from domene.regelmotor.vurdering import REGLER, samlet_vindu, vurder_kandidater
+from domene.regelmotor.vurdering import REGLER, samlet_vindu, vindusdatafeil, vurder_kandidater
 from domene.typer import Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Vakt
 
 OSLO = ZoneInfo("Europe/Oslo")
@@ -223,8 +223,8 @@ def test_regelen_ligger_som_nummer_fire_i_regellisten() -> None:
 
 # --- Sommertid: ukegrenser i Oslo-tid, fri i faktisk tid ---------------------------
 # Seedens dekning går 24.08–05.10, så testene sender egne grenser.
-VÅR = {"historikkstart": datetime(2026, 3, 1, tzinfo=OSLO), "datagrense": datetime(2026, 4, 30, tzinfo=OSLO)}
-HØST = {"historikkstart": datetime(2026, 10, 1, tzinfo=OSLO), "datagrense": datetime(2026, 11, 30, tzinfo=OSLO)}
+VÅR = {"historikkstart": datetime(2026, 2, 1, tzinfo=OSLO), "datagrense": datetime(2026, 4, 30, tzinfo=OSLO)}
+HØST = {"historikkstart": datetime(2026, 9, 1, tzinfo=OSLO), "datagrense": datetime(2026, 11, 30, tzinfo=OSLO)}
 
 
 def test_uka_med_vårskiftet_har_167_timer() -> None:
@@ -344,14 +344,14 @@ def test_uke_ett_minutt_etter_datagrensen_er_datafeil() -> None:
 
 def test_uke_som_starter_ved_historikkstart_vurderes() -> None:
     v = vakt(kl(date(2026, 9, 27), 7), kl(date(2026, 9, 27), 15))
-    assert vurder(v, kandidat(), historikkstart=kl(UKE_39, 0)).gyldige
+    assert not vindusdatafeil(v, trettifem_timer.vindu(v), DATAGRENSE, kl(UKE_39, 0))
 
 
 def test_uke_som_starter_ett_minutt_før_historikkstart_er_datafeil() -> None:
     # 11-timersvinduet starter 26.09 20:00, langt etter. Det er uka som krever historikken.
     v = vakt(kl(date(2026, 9, 27), 7), kl(date(2026, 9, 27), 15))
-    resultat = datafeil(v, historikkstart=kl(UKE_39, 0) + MINUTT)
-    assert "historikkstarten" in resultat.grunner[0]
+    grunner = vindusdatafeil(v, trettifem_timer.vindu(v), DATAGRENSE, kl(UKE_39, 0) + MINUTT)
+    assert "historikkstarten" in grunner[0]
 
 
 def test_ugyldig_vakt_i_uka_utenfor_11_timer_er_datafeil() -> None:
@@ -363,10 +363,10 @@ def test_ugyldig_vakt_i_uka_utenfor_11_timer_er_datafeil() -> None:
     assert "ansatt 3" in resultat.grunner[0]
 
 
-def test_ugyldig_vakt_i_uka_før_vurderes_normalt() -> None:
+def test_ugyldig_vakt_i_uka_før_er_nå_innenfor_ulempevinduet() -> None:
     v = vakt(kl(date(2026, 9, 27), 7), kl(date(2026, 9, 27), 15))
     ugyldig = rom(kl(date(2026, 9, 18), 15), kl(date(2026, 9, 18), 7))
-    assert [k.id for k in vurder(v, kandidat(ugyldig, id=3)).gyldige] == [3]
+    datafeil(v, kandidat(ugyldig, id=3))  # Utenfor uka, men innenfor ulempevinduet.
 
 
 def test_ugyldig_vakt_som_slutter_ved_ukestart_er_innenfor() -> None:

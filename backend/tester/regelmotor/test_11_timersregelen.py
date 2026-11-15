@@ -15,7 +15,7 @@ import pytest
 
 from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse
 from domene.regelmotor.elleve_timer import ÅRSAK, bryter_elleve_timer
-from domene.regelmotor.vurdering import REGLER, Regel, vurder_kandidater
+from domene.regelmotor.vurdering import REGLER, Regel, vindusdatafeil, vurder_kandidater
 from domene.typer import Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Vakt
 
 OSLO = ZoneInfo("Europe/Oslo")
@@ -191,7 +191,7 @@ def test_vårskiftet_11_timer_på_veggklokka_er_10_faktiske_og_utelukker() -> No
     assert vakt_start.replace(tzinfo=None) - egen_slutt.replace(tzinfo=None) == ELLEVE
     assert utc(vakt_start) - utc(egen_slutt) == timedelta(hours=10)
     egen = rom(datetime(2026, 3, 28, 12, 0, tzinfo=OSLO), egen_slutt)
-    grenser = {"historikkstart": datetime(2026, 3, 1, tzinfo=OSLO), "datagrense": datetime(2026, 4, 30, tzinfo=OSLO)}
+    grenser = {"historikkstart": datetime(2026, 2, 1, tzinfo=OSLO), "datagrense": datetime(2026, 4, 30, tzinfo=OSLO)}
     v = vakt(start=vakt_start, slutt=datetime(2026, 3, 29, 15, 0, tzinfo=OSLO))
     assert årsaker(v, kandidat(egen), **grenser) == (ÅRSAK,)
 
@@ -200,7 +200,7 @@ def test_vårskiftet_etter_vakten() -> None:
     # Kveld 28.03 15–23, neste vakt 29.03 10:00: 11 t på veggklokka, 10 faktiske.
     v = vakt("kveld", start=datetime(2026, 3, 28, 15, 0, tzinfo=OSLO), slutt=datetime(2026, 3, 28, 23, 0, tzinfo=OSLO))
     neste = rom(datetime(2026, 3, 29, 10, 0, tzinfo=OSLO), datetime(2026, 3, 29, 18, 0, tzinfo=OSLO))
-    grenser = {"historikkstart": datetime(2026, 3, 1, tzinfo=OSLO), "datagrense": datetime(2026, 4, 30, tzinfo=OSLO)}
+    grenser = {"historikkstart": datetime(2026, 2, 1, tzinfo=OSLO), "datagrense": datetime(2026, 4, 30, tzinfo=OSLO)}
     assert årsaker(v, kandidat(neste), **grenser) == (ÅRSAK,)
 
 
@@ -211,7 +211,7 @@ def test_høstskiftet_10_5_timer_på_veggklokka_er_11_5_faktiske_og_er_gyldig() 
     assert vakt_start.replace(tzinfo=None) - egen_slutt.replace(tzinfo=None) == timedelta(hours=10, minutes=30)
     assert utc(vakt_start) - utc(egen_slutt) == timedelta(hours=11, minutes=30)
     egen = rom(datetime(2026, 10, 24, 12, 30, tzinfo=OSLO), egen_slutt)
-    grenser = {"historikkstart": datetime(2026, 10, 1, tzinfo=OSLO), "datagrense": datetime(2026, 11, 30, tzinfo=OSLO)}
+    grenser = {"historikkstart": datetime(2026, 9, 1, tzinfo=OSLO), "datagrense": datetime(2026, 11, 30, tzinfo=OSLO)}
     v = vakt(start=vakt_start, slutt=datetime(2026, 10, 25, 15, 0, tzinfo=OSLO))
     assert årsaker(v, kandidat(egen), **grenser) == ()
 
@@ -220,7 +220,7 @@ def test_høstskiftet_etter_vakten() -> None:
     # Kveld 24.10 15–23, neste vakt 25.10 09:30: 10,5 t på veggklokka, 11,5 faktiske.
     v = vakt("kveld", start=datetime(2026, 10, 24, 15, 0, tzinfo=OSLO), slutt=datetime(2026, 10, 24, 23, 0, tzinfo=OSLO))
     neste = rom(datetime(2026, 10, 25, 9, 30, tzinfo=OSLO), datetime(2026, 10, 25, 17, 30, tzinfo=OSLO))
-    grenser = {"historikkstart": datetime(2026, 10, 1, tzinfo=OSLO), "datagrense": datetime(2026, 11, 30, tzinfo=OSLO)}
+    grenser = {"historikkstart": datetime(2026, 9, 1, tzinfo=OSLO), "datagrense": datetime(2026, 11, 30, tzinfo=OSLO)}
     assert årsaker(v, kandidat(neste), **grenser) == ()
 
 
@@ -231,8 +231,8 @@ def test_vinduet_regnes_i_utc_over_vårskiftet() -> None:
     assert elleve_timer.vindu(v).start == datetime(2026, 3, 28, 18, 0, tzinfo=UTC)
     grense = datetime(2026, 4, 30, tzinfo=OSLO)
     ved = datetime(2026, 3, 28, 19, 0, tzinfo=OSLO)
-    assert vurder(v, kandidat(), historikkstart=ved, datagrense=grense, regler=ELLEVE_REGLER).gyldige
-    datafeil(v, historikkstart=ved + MINUTT, datagrense=grense, regler=ELLEVE_REGLER)
+    assert not vindusdatafeil(v, elleve_timer.vindu(v), grense, ved)
+    assert vindusdatafeil(v, elleve_timer.vindu(v), grense, ved + MINUTT)
 
 
 # --- Determinisme ---------------------------------------------------------------
@@ -286,12 +286,14 @@ def test_vakter_04_10_er_datafeil_som_p08_krever(start: datetime, vakttype: str)
 
 
 def test_vindu_nøyaktig_ved_historikkstart_vurderes() -> None:
-    # start − 11 t == historikkstart
-    assert vurder(vakt(), kandidat(), historikkstart=V_START, regler=ELLEVE_REGLER).gyldige
+    # Ulempevinduet er nå lengre enn 11-timersvinduet.
+    start = DAG_START.astimezone(UTC) - timedelta(hours=672)
+    assert vurder(vakt(), kandidat(), historikkstart=start, regler=ELLEVE_REGLER).gyldige
 
 
 def test_vindu_ett_minutt_før_historikkstart_er_datafeil() -> None:
-    resultat = datafeil(vakt(), historikkstart=V_START + MINUTT, regler=ELLEVE_REGLER)
+    start = DAG_START.astimezone(UTC) - timedelta(hours=672)
+    resultat = datafeil(vakt(), historikkstart=start + MINUTT, regler=ELLEVE_REGLER)
     assert "historikkstarten" in resultat.grunner[0]
 
 
@@ -340,8 +342,8 @@ def test_punkt_i_vinduets_slutt_er_utenfor() -> None:
 
 
 def test_omvendt_vakt_rett_før_vinduet_er_utenfor() -> None:
-    # Det lukkede tidsrommet [V_START − 3 t, V_START − 1 min] berører ikke vinduet.
-    assert vurder(vakt(), kandidat(rom(V_START - MINUTT, V_START - timedelta(hours=3))), regler=ELLEVE_REGLER).gyldige
+    # Tidligere utenfor 11-timersvinduet, men nå innenfor ulempevinduet.
+    datafeil(vakt(), kandidat(rom(V_START - MINUTT, V_START - timedelta(hours=3))), regler=ELLEVE_REGLER)
 
 
 def test_omvendt_vakt_som_slutter_i_vinduets_start_er_innenfor() -> None:

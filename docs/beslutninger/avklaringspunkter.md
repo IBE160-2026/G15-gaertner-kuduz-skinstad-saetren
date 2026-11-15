@@ -65,7 +65,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-09 | Frist PR-review | Bortfalt 2026-11-02 (registrert 2026-11-12) | Ingen frist avtalt. PR #4 ble merget 02.11 (`7eabb81`) uten ny review etter rettingen (§11). | Ikke bestemt (PR-ansvar: Ragnhild) |
 | KS-01 | Åpne punkter ved merge | Vedtatt | K-01/K-02/K-04/K-06 kan være åpne etter merge; øvrige godkjenningskrav gjelder. | Ikke bestemt |
 | KS-02 | Kontroller rangeringsformel | Utført for fasiten i Story 1.2 (2026-11-04) | Fasiten for #4127 er kontrollert og godkjent med PR #5 (§11). Gjelder ny fasit på nytt. | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
-| KS-03 | Kontroller tidskategorier | Kontroll vedtatt; ikke utført | Kontroller fire vakttyper før implementasjon av Story 4.7 og ferdigstilling av fasit. | Ikke bestemt |
+| KS-03 | Kontroller tidskategorier | Utført 2026-11-15 for fire vakttyper | Uavhengig tabell og sommertidsregning i [KS-03-kontrollen](ks-03-tidskategorier-2026-11-15.md). Kode og ny rangeringsfasit kontrolleres særskilt. | Ikke bestemt |
 | KS-04 | Kontroller datadekning | Utført 2026-11-04 | Dekket for #4127 og #4189 og låst med test; begrensningen etter 05.10 er godtatt (§11). | Mithad Kuduz (kontroll), Johannes W. Gaertner (godkjenning) |
 
 ### 2.3 Vedtak etter møtet (ikke i PDF-en)
@@ -392,7 +392,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### KS-03 – Verifiser tidskategorier for alle fire vakttyper
 
-- **Status:** Kontrollkrav vedtatt; kontroll ikke gjennomført.
+- **Status:** Kontroll utført 2026-11-15 for alle fire vedtatte vakttyper, med [etterprøvbar fordeling og uavhengig sommertidsregning](ks-03-tidskategorier-2026-11-15.md). Dette godkjenner ikke programkoden eller ny rangeringsfasit (KS-02).
 - **Beslutning:** Kontroller eksisterende tidskategorier og 0/1/2/3-regler for **dag, mellom, kveld og natt** før **implementasjon av Story 4.7** og ferdigstilling av tilhørende fasit. Legg frem mangler og motstrid for gruppen.
 - **Konsekvens:** Ingen nye klokkeslett, poengsatser eller kategorier er vedtatt her. Se AV-02/AV-09/AV-11.
 - **Ansvarlig:** Ikke bestemt. **Frist:** Nevnte milepæler; ingen kalenderdato.

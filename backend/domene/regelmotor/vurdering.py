@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from domene.porter.utelukkelse import EkskludertKandidat, RegelAntall, UtelukkelsesOppsummering
-from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse, trettifem_timer
+from domene.regelmotor import elleve_timer, kolliderende_vakt, kompetanse, trettifem_timer, ulempebelastning
 from domene.typer import VAKTTYPER, Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Utelukket, Vakt
 
 
@@ -221,6 +221,8 @@ def vurder_kandidater(
     if not vaktgrunner:
         # 2–4. Det samlede vinduet, datadekningen og Kandidatens vakter i vinduet.
         vindu = samlet_vindu(vakt, regler)
+        ulempevindu = ulempebelastning.vindu(vakt)
+        vindu = Tidsrom(min(vindu.start, ulempevindu.start), vindu.slutt)
         grunner += vindusdatafeil(vakt, vindu, datagrense, historikkstart)
         grunner += [g for kandidat in grunnlag for g in kandidatvaktdatafeil(kandidat, vindu)]
     if grunner:
@@ -234,7 +236,10 @@ def vurder_kandidater(
             utelukkede.append(Utelukket(kandidat=kandidat, årsaker=årsaker))
         else:
             gyldige.append(kandidat)
-    return Kandidatvurdering(gyldige=tuple(gyldige), utelukkede=tuple(utelukkede))
+    return Kandidatvurdering(
+        gyldige=tuple(gyldige), utelukkede=tuple(utelukkede),
+        ulempe_per_kandidat={k.id: ulempebelastning.beregn_ulempebelastning(k, vakt) for k in gyldige},
+    )
 
 
 def lag_utelukkelsesoppsummering(

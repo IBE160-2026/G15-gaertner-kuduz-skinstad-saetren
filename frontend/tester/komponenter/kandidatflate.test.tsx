@@ -37,6 +37,9 @@ const UTELUKKET = malRegex(ek.totaltUtelukket(999999), 999999);
 // textContent har pilen med. Derfor bare begynnelsen.
 const begynnerMed = (tekst: string) => new RegExp(`^${regexTekst(tekst)}`);
 
+// Timerkolonnen (4.1) er testens tema; ulempen (4.7) er påkrevd av typen, men uten betydning her.
+const INGEN_ULEMPE = TO_GYLDIGE.kandidater[1].ulempebelastning;
+
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
 describe("Kandidatliste (story 2.1)", () => {
@@ -44,10 +47,10 @@ describe("Kandidatliste (story 2.1)", () => {
     const svar = {
       ...TO_GYLDIGE,
       kandidater: [
-        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920 },
-        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
-        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23 },
-        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61 },
+        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920, ulempebelastning: INGEN_ULEMPE },
+        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0, ulempebelastning: INGEN_ULEMPE },
+        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23, ulempebelastning: INGEN_ULEMPE },
+        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61, ulempebelastning: INGEN_ULEMPE },
       ],
     } satisfies Kandidatsvar;
     const { del } = await rendreMed(ok(svar));
@@ -93,6 +96,19 @@ describe("Kandidatliste (story 2.1)", () => {
     expect(velgknapper()).toHaveLength(0);
     expect(within(del).queryByRole("button")).toBeNull();
   });
+});
+
+test("viser hver kandidats ulempepoeng og fordeling, også null (story 4.7)", async () => {
+  const { del } = await rendreMed(ok(TO_GYLDIGE));
+  expect(within(del).getByText(TEKSTER.kandidatflate.ulempePeriode)).toBeTruthy();
+  const rader = within(del).getAllByRole("listitem");
+  const jonas = rader.find((rad) => rad.textContent?.includes("Jonas Bakke"))!;
+  const mette = rader.find((rad) => rad.textContent?.includes("Mette Solberg"))!;
+
+  expect(within(jonas).getByText("Ulempebelastning: 14,6 p")).toBeTruthy();
+  expect(within(jonas).getByText("Kveld 1,6 t · helg 2,0 t · natt 3,0 t")).toBeTruthy();
+  expect(within(mette).getByText("Ulempebelastning: 0,0 p")).toBeTruthy();
+  expect(within(mette).getByText("Kveld 0,0 t · helg 0,0 t · natt 0,0 t")).toBeTruthy();
 });
 
 describe("Tomtilstanden (story 2.6)", () => {

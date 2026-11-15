@@ -32,7 +32,7 @@ text{font-family:Arial,sans-serif;fill:#172b3a}.title{font-size:34px;font-weight
 <g><rect x="75" y="1250" width="220" height="58" rx="7" class="done"/><text x="90" y="1274">4.1 Timer / uke</text><text x="90" y="1294" class="label">Ferdig</text></g>
 <g><rect x="335" y="1250" width="220" height="58" rx="7" class="todo"/><text x="350" y="1274">4.2 Belastningslinje</text><text x="350" y="1294" class="label">Etter 4.1</text></g>
 <g><rect x="595" y="1250" width="220" height="58" rx="7" class="todo"/><text x="610" y="1274">4.3 Kostnad</text><text x="610" y="1294" class="label">Gjenstår</text></g>
-<g><rect x="855" y="1250" width="220" height="58" rx="7" class="todo"/><text x="870" y="1274">4.7 Ulempebelastning</text><text x="870" y="1294" class="label">Krever historikk 1.2</text></g>
+<g><rect x="855" y="1250" width="220" height="58" rx="7" class="done"/><text x="870" y="1274">4.7 Ulempebelastning</text><text x="870" y="1294" class="label">Krever historikk 1.2</text></g>
 <g><rect x="1115" y="1250" width="240" height="58" rx="7" class="todo"/><text x="1130" y="1274">4.4 Rangering</text><text x="1130" y="1294" class="label">Etter 4.1–4.3 og 4.7</text></g>
 <g><rect x="1395" y="1250" width="220" height="58" rx="7" class="todo"/><text x="1410" y="1274">4.5 Godkjenningsnøkkeltall</text><text x="1410" y="1294" class="label">Kandidat- og rangdata</text></g>
 <g><rect x="1395" y="1360" width="260" height="58" rx="7" class="todo"/><text x="1410" y="1384">4.6 Smal skjerm</text><text x="1410" y="1404" class="label">Avklar P-13 før ferdig</text></g>

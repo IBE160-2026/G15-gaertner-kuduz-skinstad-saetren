@@ -86,6 +86,22 @@ class Kandidatvurdering:
 
     gyldige: tuple[Kandidat, ...]
     utelukkede: tuple[Utelukket, ...]
+    ulempe_per_kandidat: Mapping[int, "Ulempebelastning"] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "ulempe_per_kandidat", MappingProxyType(dict(self.ulempe_per_kandidat)))
+
+
+@dataclass(frozen=True)
+class Ulempebelastning:
+    """Faktiske timer i hver kategori, poeng og fast skalert score (FR-14)."""
+
+    dagtimer: float
+    kveldstimer: float
+    helgetimer: float
+    natttimer: float
+    poeng: float
+    score: float
 
 
 @dataclass(frozen=True)
