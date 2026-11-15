@@ -23,3 +23,19 @@ Johannes ba om en vurdering av gruppens tidsbruk, og om et estimat for når appe
 
 ### Åpne punkter
 - Innleveringsfristen står ikke i repoet. Den bør inn i planen, slik at estimatet kan holdes opp mot den.
+
+## 2026-11-15 kl. 13:25 — johagartnerHiMolde
+
+### Oppgave
+Johannes oppga at innleveringsfristen er 2026-12-15 og ba om at loggen pushes.
+
+### Plan
+- Holde estimatet opp mot fristen og føre den i loggen og `issues.md`.
+
+### Resultat
+- Mest sannsynlig er appen ferdig bygget ca. 3. desember, og innleveringsklar ca. 6.–8. desember. Det gir omtrent en uke buffer før 15. desember. Med fire parallelle løp blir bufferen nærmere to uker.
+- I det verste spennet blir appen ferdig bygget 8. desember og innleveringsklar ca. 11.–13. desember. Da er bufferen bare 2–4 dager, og 5.9 (strekkmål) bør kuttes.
+- Fristen står fortsatt ikke i noen sporet plan- eller instruksfil.
+
+### Åpne punkter
+- Før fristen (2026-12-15) inn i en sporet fil som gruppa ser, for eksempel AGENTS.md eller sprintstatus.
