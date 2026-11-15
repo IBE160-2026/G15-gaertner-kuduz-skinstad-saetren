@@ -112,12 +112,25 @@ def test_bare_gyldige_sendes_nfr2(klient: TestClient, nummer: int) -> None:
     assert satt_opp not in utelukkede_svar
 
 
+def test_av12_fasit_fra_seed_vises_uavrundet(klient: TestClient) -> None:
+    # Testdataenes uavhengige kontroll i test_testdata.py gir 40 og 180 poeng.
+    svar = hent(klient, 4127)
+    kandidater = {k["navn"]: k["ulempebelastning"] for k in svar["kandidater"]}
+    jonas, mette = kandidater["Jonas Bakke"], kandidater["Mette Solberg"]
+    assert jonas["poeng"] == 40
+    assert mette["poeng"] == 180
+    assert jonas["score"] == pytest.approx(86 + 2 / 3)
+    assert mette["score"] == 40
+    assert 0.15 * (jonas["score"] - mette["score"]) == pytest.approx(7)
+    assert hent(klient, 4127)["kandidater"] == svar["kandidater"]
+
+
 @pytest.mark.parametrize("nummer", [4127, 4189])
 def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
     svar = hent(klient, nummer)
 
     for k in svar["kandidater"]:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
     tekst = str(svar)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
@@ -208,7 +221,7 @@ def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer
     nøkkel = {4127: "dag", 4189: "natt"}[nummer]
 
     for k in kandidater:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
         assert NAVN[k["id"]] == k["navn"]
         assert k["kompetansenivå"] == KOMPETANSE[k["navn"]][nøkkel]
         assert k["kompetansenivå"] >= 3

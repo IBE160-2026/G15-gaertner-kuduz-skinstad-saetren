@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 15-11-2026 13:15
+last_updated: 15-11-2026 14:11
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -65,7 +65,7 @@ development_status:
   4-4-rangering-av-gyldige-kandidater: backlog
   4-5-avviksnotat-og-nøkkeltall-på-godkjenningsflaten: backlog
   4-6-rangeringstabellen-på-smalere-skjermer: backlog
-  4-7-ulempebelastning-per-kandidat: backlog
+  4-7-ulempebelastning-per-kandidat: review
   epic-4-retrospective: optional
 
   epic-5: backlog

@@ -108,6 +108,11 @@ export const TEKSTER = {
       const [timer, minutter] = verdi.split(":").map(Number);
       return `${timer} ${timer === 1 ? "time" : "timer"} og ${minutter} ${minutter === 1 ? "minutt" : "minutter"} i uka`;
     },
+    ulempeOverskrift: "Ulempebelastning",
+    ulempePeriode: "Ulempebelastning gjelder de siste 672 timene før vakten og vises avrundet.",
+    ulempePoeng: (poeng: string) => `${poeng} p`,
+    ulempeFordeling: (kveld: string, helg: string, natt: string) =>
+      `Kveld ${kveld} t · helg ${helg} t · natt ${natt} t`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },

@@ -125,6 +125,15 @@ class VaktdetaljerUt(BaseModel):
     minstenivå: int
 
 
+class UlempebelastningUt(BaseModel):
+    dagtimer: float
+    kveldstimer: float
+    helgetimer: float
+    natttimer: float
+    poeng: float
+    score: float
+
+
 class KandidatUt(BaseModel):
     id: int
     navn: str
@@ -132,6 +141,7 @@ class KandidatUt(BaseModel):
     kompetansenivå: int
     # Hele minutter i uka Vakten starter i, uten Vakten selv (FR8, P-02, story 4.1).
     minutter_i_uka: int
+    ulempebelastning: UlempebelastningUt
 
 
 class RegelAntallUt(BaseModel):
@@ -320,6 +330,9 @@ def lag_app(
                 KandidatUt(
                     id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
                     minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
+                    ulempebelastning=UlempebelastningUt.model_validate(
+                        vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
+                    ),
                 )
                 for k in vurdering.gyldige
             ],
@@ -356,6 +369,9 @@ def lag_app(
             kandidat=KandidatUt(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
                 minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
+                ulempebelastning=UlempebelastningUt.model_validate(
+                    vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
+                ),
             ),
             grunnlagsmerke=grunnlagsmerke(okt, request.state.bruker.id, vaktnummer, ansatt_id),
         )
