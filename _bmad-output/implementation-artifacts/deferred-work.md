@@ -72,3 +72,6 @@
 - source_spec: `spec-4-2-belastningslinje-med-terskel.md`
   summary: Fast bredde 110 px (`flex: 0 0`) kan gi overlapp eller klipp ved smale vinduer (maybe-false, ville vært medium).
   evidence: Kodegjennomgangen kunne ikke avgjøre det uten nettleser. Manuell layoutkontroll ved 1600, 1080, 960, 680 og 360 px mot ekte backend 2026-11-15: ingen overlapp, klipp eller vannrett scroll. Kan lukkes.
+## Deferred from: code review of spec-4-2-belastningslinje-med-terskel.md (2026-11-15)
+
+- Epic 4-konteksten er forkortet og har mistet sentrale detaljer om normalisering over alle gyldige (lavest gir 100), preferanseskala, uavhengig fasit, P-09, opprinnelig ansatts lønn og referansesammenligning. Samordne mot styrende dokumenter før senere stories bruker konteksten.

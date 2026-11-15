@@ -111,6 +111,15 @@ def test_timebelastning_i_godkjenningsgrunnlaget_følger_32_24_grensen(
     assert kandidat["timebelastning_prosent"] == pytest.approx(100 * (1920 + ekstra) / 2160)
 
 
+def test_timebelastning_i_godkjenningsgrunnlaget_bevarer_sekunder(klient: TestClient, engine: Engine) -> None:
+    forleng_ingrids_første_vakt_i_uka(engine, 23, 59)
+    logg_inn(klient)
+    kandidat = klient.get(sti(4127, 4)).json()["kandidat"]
+    assert kandidat["minutter_i_uka"] == 32 * 60 + 23
+    assert kandidat["hoy_belastning"] is False
+    assert kandidat["timebelastning_prosent"] == pytest.approx(100 * (32 * 3600 + 23 * 60 + 59) / (36 * 3600))
+
+
 @pytest.mark.parametrize("vaktnummer", [4127, 4189])
 def test_alle_i_listen_gir_200_og_alle_andre_404(klient: TestClient, vaktnummer: int) -> None:
     # Regeluavhengig (OP-13): fasiten er det `/kandidater` svarer, uansett hvor

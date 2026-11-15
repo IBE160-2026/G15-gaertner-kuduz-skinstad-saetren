@@ -459,7 +459,7 @@ def test_minutter_i_startuka_ingrid_32_timer_og_alle_har_feltet(klient: TestClie
     assert hent(klient, 4127)["kandidater"] == kandidater
 
 
-def forleng_ingrids_første_vakt_i_uka(engine: Engine, minutter: int) -> None:
+def forleng_ingrids_første_vakt_i_uka(engine: Engine, minutter: int, sekunder: int = 0) -> None:
     """Gjør Ingrids 32:00 i uke 39 til 32:00 + `minutter`, uten å flytte starten."""
     uke_start, uke_slutt = datetime(2026, 9, 21, tzinfo=OSLO), datetime(2026, 9, 28, tzinfo=OSLO)
     with lag_sessionmaker(engine).begin() as session:
@@ -469,7 +469,7 @@ def forleng_ingrids_første_vakt_i_uka(engine: Engine, minutter: int) -> None:
             .order_by(VaktRad.start)
         ).first()
         assert rad is not None
-        rad.slutt = rad.slutt + timedelta(minutes=minutter)
+        rad.slutt = rad.slutt + timedelta(minutes=minutter, seconds=sekunder)
 
 
 def test_timebelastning_ingrid_er_88_9_prosent_og_ikke_høy(klient: TestClient) -> None:
@@ -488,3 +488,11 @@ def test_timebelastning_grensen_32_23_og_32_24(klient: TestClient, engine: Engin
     assert ingrid["minutter_i_uka"] == 1920 + ekstra
     assert ingrid["hoy_belastning"] is høy
     assert ingrid["timebelastning_prosent"] == pytest.approx(100 * (1920 + ekstra) / 2160)
+
+
+def test_timebelastning_rett_under_grensen_bevarer_sekunder(klient: TestClient, engine: Engine) -> None:
+    forleng_ingrids_første_vakt_i_uka(engine, 23, 59)
+    ingrid = next(k for k in hent(klient, 4127)["kandidater"] if k["navn"] == "Ingrid Dahl")
+    assert ingrid["minutter_i_uka"] == 32 * 60 + 23
+    assert ingrid["hoy_belastning"] is False
+    assert ingrid["timebelastning_prosent"] == pytest.approx(100 * (32 * 3600 + 23 * 60 + 59) / (36 * 3600))

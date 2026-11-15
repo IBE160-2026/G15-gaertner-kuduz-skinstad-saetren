@@ -487,6 +487,20 @@ button {
   background: var(--color-warn);
 }
 
+.varselmerke {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-warn);
+  font-size: var(--font-size-meta);
+}
+
+.varselmerke-ikon {
+  flex: none;
+  width: var(--font-size-body);
+  height: var(--font-size-body);
+}
+
 .kandidat-ulempe {
   display: flex;
   flex-direction: column;

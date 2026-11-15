@@ -53,6 +53,14 @@ context:
 
 ## Tasks & Acceptance
 
+### Review Findings (uavhengig gjennomgang av PR 27, 2026-11-15)
+
+- [x] [Review][Patch] Høy belastning skilles visuelt bare med farge; gi også en synlig tekstlig indikasjon [frontend/src/komponenter/Kandidatflate.tsx:177]. Teksten er synlig og dekkes av komponenttesten og Chromium-kontroll med falske API-svar. Brukeren bekreftet opplesing av varselteksten med Windows Skjermleser i Edge; VoiceOver er fortsatt uavklart (se KI-loggen).
+- [x] [Review][Patch] Test at begge API-rutene bevarer sekundpresisjon ved 32:23:59 og ikke avrunder over terskelen [backend/adaptere/api/main.py:150]. Begge ruter har egne tester med eksakt prosent og avrundet minuttfelt.
+- [x] [Review][Defer] Gjenopprett eller lenk til utelatte føringer i epic-4-konteksten før senere stories bygger på den [epic-4-context.md:27] — gjelder særlig normaliseringsretning og alle gyldige kandidater, preferanseskala, fasit, P-09 og referansesammenligning.
+
+Avvist eller avgrenset: Utsagnene om manglende normalisering, fasit, preferanseskala, opprinnelig ansatts lønn, P-09 og referansesammenligning er reelle utelatelser, men er samlet som ett dokumentasjonsfunn; disse er ikke påvist feil i 4.2-koden. Påstanden om at 4.6s løsningsvalg er avgjort av teksten er ikke dokumentert: den krever synlighet uten å velge teknikk. Skjermleseropplesing kan ikke verifiseres fra DOM alene og er fortsatt åpen.
+
 **Execution:**
 - [x] `backend/domene/regelmotor/timebelastning.py` -- ren funksjon: prosent av 36 t (uavrundet) og `høy` fra eksakt sammenligning mot 32,4 t -- FR8, P-04
 - [x] `backend/tester/regelmotor/test_timebelastning.py` -- alle rader i matrisen, inkludert 32:23:59, 32:24:00 og gjentatt kjøring -- grensetester er beviset (AGENTS.md)

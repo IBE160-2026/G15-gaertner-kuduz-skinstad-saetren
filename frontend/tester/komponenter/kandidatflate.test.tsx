@@ -146,6 +146,14 @@ test("belastningslinja er accent under 32,4 t og warn på og over, kuttet ved 10
     expect(fyll.style.width.startsWith(bredde)).toBe(true);
     expect(rad.querySelector(".belastningslinje")!.getAttribute("aria-hidden")).toBe("true");
     expect(within(rad).queryByText(t.hoyBelastning) !== null).toBe(høy);
+    if (høy) {
+      const tekst = within(rad).getByText(t.hoyBelastning);
+      expect(tekst.classList.contains("visuelt-skjult")).toBe(false);
+      expect(tekst.closest('[aria-hidden="true"]')).toBeNull();
+      const merke = tekst.closest(".varselmerke");
+      expect(merke).not.toBeNull();
+      expect(merke!.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    }
     // 4.1-verdien og ulempeblokken er uendret.
     expect(within(rad).getByText(/ t i uka$/)).toBeTruthy();
     expect(within(rad).getByText(/^Ulempebelastning: /)).toBeTruthy();
