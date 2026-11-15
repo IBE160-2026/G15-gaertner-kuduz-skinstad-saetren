@@ -21,3 +21,9 @@ Implementere story 4.7 med bmad-build på egen branch, starte med KS-03, og unng
 ### Åpne punkter
 
 - Fullfør og kontroller story 4.7 fra den uferdige arbeidskopien: domenetester inkludert begge sommertidsskifter og 672-timersgrenser, API-/komponenttester, uavhengig fasitkontroll, review, KI-logg og vurderingsmatrise. Avstem ulempekolonnens plassering når 4.1 gir timekolonnen. Storyen skal ikke merkes ferdig før dette er verifisert.
+
+### Fortsettelse samme dag
+
+Brukeren ba om å fortsette med underagenter. En uavhengig kravkontroll bekreftet KS-03 og fant at overlappende historiske vakter i den påbegynte koden måtte håndteres for å unngå dobbel telling. Backend og frontend er fullført med sammenfletting av intervaller, klipping i UTC, kategorisering i Oslo og parameterisert tak; API og kandidatvisning er oppdatert. [KS-02/AV-12-eksemplet](../../docs/beslutninger/ks-02-av-12-ulempeeksempel-2026-11-15.md) dokumenterer uavhengig regning av 7 totalpoengs forskjell og UTC-grenser ved begge sommertidsskiftene. Tre uavhengige reviewlag ble brukt; funn, rettelser og avvisninger står i spesifikasjonen. Etter rettingene bestod 438 backendtester, 49 Node-tester, 15 komponenttester og frontendbygget. KI-logg og vurderingsmatrise er oppdatert. Storyen er i `review`.
+
+Gjenværende punkter: visuell nettleserkontroll og menneskelig gjennomgang, samt samordning av ulempekolonnens plassering ved integrasjon med story 4.1. Nettleser var ikke tilgjengelig under økten. Disse punktene erstatter det tidligere samlepunktet i `issues.md`.
