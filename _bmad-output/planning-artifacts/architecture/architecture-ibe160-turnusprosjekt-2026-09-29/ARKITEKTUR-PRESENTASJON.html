@@ -296,7 +296,7 @@
 
           <!-- solid: Web -> API -->
           <line x1="450" y1="72" x2="450" y2="128" stroke="#274b6d" stroke-width="2.2" marker-end="url(#arrowSolid)"/>
-          <text x="466" y="105" font-size="11" fill="#5c6478">HTTPS/JSON, JWT</text>
+          <text x="466" y="105" font-size="11" fill="#5c6478">Lokal HTTP/JSON, JWT-cookie</text>
 
           <!-- solid: API -> Core -->
           <line x1="450" y1="186" x2="450" y2="234" stroke="#274b6d" stroke-width="2.2" marker-end="url(#arrowSolid)"/>
@@ -393,14 +393,14 @@
         <div class="card">
           <h3>Hvorfor strukturelt, ikke en avtale</h3>
           <p>«Ingeniørarbeidet ligger i skjøten»: to eksplisitt typede porter (Pydantic) er de eneste
-          kontaktflatene. KI konstruerer aldri <code class="mono">RangertKandidat</code>, regelmotoren
-          konstruerer aldri <code class="mono">TolketPreferanse</code>. Ingen felles kode, ingen snarvei.</p>
+          kontaktflatene. KI konstruerer aldri <code class="mono">RangertKandidat</code>, og regelmotoren
+          tolker aldri rå preferansetekst. Typene deles gjennom portene, uten direkte kall.</p>
         </div>
         <div class="card">
           <h3>Hvordan gruppa beviser at det holder</h3>
           <p>1) Import-linter-kontrakt: <code class="mono">domene/regelmotor</code> importerer aldri
           <code class="mono">adaptere/ki</code>. 2) Kjøretidsinvariant-test i <code class="mono">tester/</code>:
-          verifiserer at ingen ID sendt til KI finnes blant regelmotorens utelukkede.</p>
+          verifiserer at forklaringsporten og forklaringens output ikke inneholder utelukkede kandidater; tolkingsporten kan behandle Ansattpreferanse før filtrering.</p>
         </div>
       </div>
     </div>
@@ -461,7 +461,7 @@
       <div class="flow-steps">
         <div class="flow-step">
           <div class="flow-num">1</div>
-          <p style="margin:0;"><strong>Tolkning skjer én gang</strong> per ansatt/preferansetekst og caches/persisteres av <code class="mono">adaptere/lagring</code>. Regelmotoren mottar alltid en allerede tolket, lagret verdi — aldri et rått, live KI-kall midt i beregningen.</p>
+          <p style="margin:0;"><strong>Vellykket tolkning lagres</strong> per ansatt/preferansetekst av <code class="mono">adaptere/lagring</code>. Regelmotoren bruker den når den finnes; ved venting eller feil får den midlertidige 50 poeng med egen status (P-05), aldri et live KI-kall midt i beregningen.</p>
         </div>
         <div class="flow-step">
           <div class="flow-num">2</div>
@@ -494,7 +494,7 @@
         <div class="card">
           <div class="pill">Lagring</div>
           <h3>SQLite / SQLAlchemy</h3>
-          <p>Trengs kun for å huske godkjente erstatninger og innloggingssesjoner mellom omstarter. Ingen skaleringsbehov i v1.</p>
+          <p>Husker brukere med passordhash og planlagte godkjenninger mellom omstarter. JWT-sesjonen lagres ikke i databasen. Ingen skaleringsbehov i v1.</p>
         </div>
         <div class="card">
           <div class="pill">KI</div>
