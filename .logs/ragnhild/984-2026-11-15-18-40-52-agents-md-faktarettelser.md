@@ -15,8 +15,8 @@ Før story 4.2: gjennomgå hele AGENTS.md mot faktisk prosjektstatus, kode og gj
 - Verifisert uten endring: kommandoer, filstier, CI-versjoner, jsdom/vitest, `BEGIN IMMEDIATE`-advarselen og OP-05-tallene (historiske, med dato).
 - Ikke verifisert, lar stå: grensen på 20 Luna-kall per minutt og at `main` mangler branchebeskyttelse (krever tilgang til OpenRouter og GitHub).
 - Logging: bare sesjonslogg. KI-logg i `docs/ki-logg/` gjelder generert kode, og dette er dokumentasjon. Kvalitetssikringen er forslaget som ble godkjent, diffen og commit-meldingen.
+- Oppfølging samme dag, etter godkjenning: `docs/ki-logg/README.md` sier ikke lenger «446 rammeverksfiler» (nå «rammeverksfilene»). I `deferred-work.md` er de to funnene om «den første harde regelen» (2.2 og 2.4) markert `[LØST 2026-11-15, rettet i AGENTS.md]` med henvisning til rettelsen. Etter ny godkjenning er også 2.1-punktet («ingen domenelogikk ennå», rettet 2026-11-11) og 1.5-punktet (vaktoversikten og `npm run test`) bekreftet mot AGENTS.md og markert løst.
 - Commit på `main`, ikke pushet.
 
 ### Åpne punkter
-- `docs/ki-logg/README.md` linje 24 har samme utdaterte tall («446 rammeverksfiler»). Ikke rørt, utenfor avtalt omfang.
-- `_bmad-output/implementation-artifacts/deferred-work.md` har to åpne funn (linje 18 og 46) om at AGENTS.md sa «den første harde regelen». De er nå løst i AGENTS.md. Ikke rørt.
+- Ingen.
