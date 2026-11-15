@@ -18,7 +18,10 @@ Bygge story 4.2 med `bmad-build`: timebelastning som prosent av 36 t og høy bel
 - Spec satt til `done`, sprintstatus til `review`. KI-logg: `docs/ki-logg/2026-11-15-arbeidsbelastningslinje.md`.
 - Kims branch for 4.3 fantes ikke på remote. Konflikt mulig i `KandidatUt` og `Kandidat` i `api.ts`.
 
+### Manuell kontroll (senere samme dag)
+Ragnhild testet i Safari på macOS mot ekte backend med seedede testdata. Jeg forlenget Ingrids første vakt i uke 39 lokalt (32:23, 32:24, 32:25). Resultat: `accent` under og `warn` på og over grensen, ingen layoutavvik fra 360 til 1600 px, tastatur og større skrift bestått, #4189 uendret. Appen har ingen mørk drakt (DESIGN.md: «ikke dark-mode-først»), så kontrollen i mørk drakt var ikke relevant. VoiceOver leste «Høy belastning» bokstav for bokstav, uavklart. Servere stoppet og databasen seedet på nytt. Verifikasjonen står i spesifikasjonen. Spec står som in-review og sprint-status som in-progress, i påvente av beslutning om commit og PR.
+
 ### Åpne punkter
-- Manuell nettleserkontroll mot ekte backend (OP-16): layout ved 1080/960/680 px (AV-17), farger, tastaturfokus, #4189 uendret.
-- Kontrast mellom sporet og fyllet (WCAG 1.4.11) er ikke målt (deferred-work).
-- Menneskelig gjennomgang og PR. Kim sin 4.3 kan gi konflikt i `KandidatUt` og `api.ts`.
+- Menneskelig gjennomgang og PR for 4.2. Rebase mot Kims 4.3 kan gi konflikt i `KandidatUt` og `api.ts`.
+- Valgfritt: VoiceOver-opplesing av «Høy belastning» (ble stavet bokstav for bokstav).
+- Kontrast mellom spor og fyll er sett manuelt i lys drakt, men ikke målt (WCAG 1.4.11).
