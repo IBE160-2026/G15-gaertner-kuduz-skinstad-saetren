@@ -2,7 +2,7 @@
 title: 'Story 4.7: Ulempebelastning per kandidat'
 type: 'feature'
 created: '2026-11-15'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 baseline_commit: '6a7e8713817b199c31fac1df76a5a62a98d53b94'
 review_loop_iteration: 0
