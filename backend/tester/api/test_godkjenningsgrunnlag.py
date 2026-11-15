@@ -304,6 +304,31 @@ def test_ansatt_og_vakttid_endrer_merket_uten_lagring(
     assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": nytt}).status_code == 200
 
 
+def test_endret_lønn_krever_nytt_trykk_og_gir_ny_kostnad(klient: TestClient, engine: Engine) -> None:
+    """P-09 for kostnaden (story 4.3): en lønnsendring etter visning lagrer ingenting.
+
+    Ingrid har 4 t ordinær tid og 4 t overtid på #4127, så både satsen og 150 %-satsen
+    må følge med i det nye grunnlaget.
+    """
+    ingrid = 4
+    logg_inn(klient)
+    gammelt = klient.get(sti(4127, ingrid)).json()
+    assert gammelt["kandidat"]["kostnad"]["total"] == 3850
+    with lag_sessionmaker(engine).begin() as session:
+        session.execute(update(AnsattRad).where(AnsattRad.id == ingrid).values(timelønn=400))
+    før = øyeblikksbilde(engine)
+    svar = klient.post(sti(4127, ingrid), json={"grunnlagsmerke": gammelt["grunnlagsmerke"]})
+    assert svar.status_code == 409
+    assert feilsvar("endret_grunnlag")(svar.json())
+    assert øyeblikksbilde(engine) == før
+    nytt = klient.get(sti(4127, ingrid)).json()
+    assert nytt["grunnlagsmerke"] != gammelt["grunnlagsmerke"]
+    assert nytt["kandidat"]["kostnad"] == {
+        "total": 4000, "ordinære_timer": 4, "overtidstimer": 4, "ordinær_sats": 400, "overtidssats": 600,
+    }
+    assert klient.post(sti(4127, ingrid), json={"grunnlagsmerke": nytt["grunnlagsmerke"]}).status_code == 200
+
+
 def test_merket_er_knyttet_til_valgt_kandidat(klient: TestClient, engine: Engine) -> None:
     logg_inn(klient)
     jonas = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
