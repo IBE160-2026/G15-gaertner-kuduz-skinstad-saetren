@@ -13,6 +13,39 @@ from sqlalchemy import Engine, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
+
+
+def test_kostnadsfasit_og_identisk_godkjenningsgrunnlag(klient):
+    svar = hent(klient, 4127)
+    forventet = {"Jonas Bakke": 2960, "Mette Solberg": 2960, "Thomas Nygård": 2800, "Ingrid Dahl": 3850}
+    assert {k["navn"]: k["kostnad"]["total"] for k in svar["kandidater"]} == forventet
+    ingrid = next(k for k in svar["kandidater"] if k["navn"] == "Ingrid Dahl")
+    assert ingrid["kostnad"] == {"total": 3850, "ordinære_timer": 4, "overtidstimer": 4,
+                                 "ordinær_sats": 385, "overtidssats": 577.5}
+    for kandidat in svar["kandidater"]:
+        respons = klient.get(f"/api/vakter/4127/kandidater/{kandidat['id']}")
+        assert respons.status_code == 200
+        assert respons.json()["kandidat"]["kostnad"] == kandidat["kostnad"]
+
+
+def test_ugyldig_lønn_stopper_begge_kandidatsvar(klient, monkeypatch):
+    from dataclasses import replace
+    import adaptere.api.main as api
+
+    opprinnelig = api.hent_kandidatgrunnlag
+
+    def ugyldig(*args):
+        grunnlag = opprinnelig(*args)
+        ansatte = list(grunnlag.ansatte)
+        indeks = next(i for i, ansatt in enumerate(ansatte) if ansatt.id == 6)
+        ansatte[indeks] = replace(ansatte[indeks], timelønn=None)
+        return replace(grunnlag, ansatte=tuple(ansatte))
+
+    monkeypatch.setattr(api, "hent_kandidatgrunnlag", ugyldig)
+    assert_datafeil(hent(klient, 4127))
+    respons = klient.get("/api/vakter/4127/kandidater/6")
+    assert respons.status_code == 200
+    assert_datafeil(respons.json())
 from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
 from adaptere.lagring.testdata import ANSATTE, FASIT, MANGLER_BEMANNING, PERIODE_SLUTT, PERIODE_START
 from domene.regelmotor.vurdering import norsk_sorteringsnøkkel
@@ -66,7 +99,7 @@ def forventet_utelukkelser(nummer: int) -> dict[str, object]:
     # Samme norske sortering som regelmotoren faktisk bruker (`vurder_kandidater`),
     # ikke Pythons vanlige strengsortering, slik at forventningen ikke kan skli
     # fra produksjonslogikken selv om de i dag gir samme rekkefølge for fasitnavnene.
-    kandidater = [Kandidat(id=ID_VED_NAVN[navn], navn=navn, kompetanse={}) for navn in forventet_utelukket(nummer)]
+    kandidater = [Kandidat(id=ID_VED_NAVN[navn], navn=navn, kompetanse={}, timelønn=300) for navn in forventet_utelukket(nummer)]
     navn_sortert = [k.navn for k in sorted(kandidater, key=norsk_sorteringsnøkkel)]
     return {
         "totalt": len(navn_sortert),
@@ -130,7 +163,7 @@ def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
     svar = hent(klient, nummer)
 
     for k in svar["kandidater"]:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning", "kostnad"}
     tekst = str(svar)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
@@ -221,7 +254,7 @@ def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer
     nøkkel = {4127: "dag", 4189: "natt"}[nummer]
 
     for k in kandidater:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning", "kostnad"}
         assert NAVN[k["id"]] == k["navn"]
         assert k["kompetansenivå"] == KOMPETANSE[k["navn"]][nøkkel]
         assert k["kompetansenivå"] >= 3

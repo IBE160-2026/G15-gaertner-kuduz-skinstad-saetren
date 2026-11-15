@@ -139,11 +139,11 @@ export const TO_GYLDIGE = {
   kandidater: [
     {
       id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960,
-      ulempebelastning: { dagtimer: 8, kveldstimer: 1.56, helgetimer: 2, natttimer: 3, poeng: 14.56, score: 95.1466666667 },
+      kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: { dagtimer: 8, kveldstimer: 1.56, helgetimer: 2, natttimer: 3, poeng: 14.56, score: 95.1466666667 },
     },
     {
       id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0,
-      ulempebelastning: { dagtimer: 0, kveldstimer: 0, helgetimer: 0, natttimer: 0, poeng: 0, score: 100 },
+      kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: { dagtimer: 0, kveldstimer: 0, helgetimer: 0, natttimer: 0, poeng: 0, score: 100 },
     },
   ],
   utelukkelser: INGEN_UTELUKKET,

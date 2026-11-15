@@ -30,7 +30,7 @@ def vakt(vakttype: str = "dag", minstenivå: int = 3, *, start: datetime = DAG_S
 
 
 def kandidat(id: int, kompetanse: dict, navn: str | None = None) -> Kandidat:
-    return Kandidat(id=id, navn=navn or f"Ansatt {id:02d}", kompetanse=kompetanse)
+    return Kandidat(id=id, navn=navn or f"Ansatt {id:02d}", kompetanse=kompetanse, timelønn=300)
 
 
 def vurder(v: Vakt, *kandidater: Kandidat, **kw) -> Kandidatvurdering:  # type: ignore[no-untyped-def]

@@ -108,6 +108,10 @@ export const TEKSTER = {
       const [timer, minutter] = verdi.split(":").map(Number);
       return `${timer} ${timer === 1 ? "time" : "timer"} og ${minutter} ${minutter === 1 ? "minutt" : "minutter"} i uka`;
     },
+    kostnadOverskrift: "Kostnad",
+    kostnadOrdinaer: "Ordinær",
+    kostnadOvertid: "Inkluderer overtid",
+    kostnadDetalj: (timer: string, sats: string) => `${timer} t:min ved ${sats} kr/t`,
     ulempeOverskrift: "Ulempebelastning",
     ulempePeriode: "Ulempebelastning gjelder de siste 672 timene før vakten og vises avrundet.",
     ulempePoeng: (poeng: string) => `${poeng} p`,

@@ -193,3 +193,7 @@ Ikke relevant: <punkt og hvorfor>
 P-13s forståelsestest står for seg: én testperson, ett operativsystem og én skjermflate,
 med tre oppgaver uten hint (§12 i avklaringspunktene). Planlagt arbeidsmål er før
 story 4.6 ferdigstilles; dette er ikke et eget gruppevedtak om frist. Testen er ikke utført ennå.
+
+## Story 4.3 – kostnad per kandidat (2026-11-15)
+
+Domenetester i [`test_kostnad.py`](../backend/tester/regelmotor/test_kostnad.py) dekker 36-timersgrensen, ukeskifte, overlapp, brøktimer, begge sommertidsskifter og ugyldig lønn. API-testene kontrollerer #4127-fasit og begge kandidatgrunnlagene. Kandidat- og godkjenningsflatens komponenttester dekker kostnadsfordeling, overtid og oppdatert grunnlag. Visuell kontroll og gjenstående punkter står i [spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-3-forenklet-kostnad-per-kandidat.md).

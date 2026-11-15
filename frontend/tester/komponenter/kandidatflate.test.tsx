@@ -43,14 +43,45 @@ const INGEN_ULEMPE = TO_GYLDIGE.kandidater[1].ulempebelastning;
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
 describe("Kandidatliste (story 2.1)", () => {
+  test("kostnad og satsfordeling vises på riktig kandidat", async () => {
+    const grunnlag = TO_GYLDIGE.kandidater[0];
+    const svar = { ...TO_GYLDIGE, kandidater: [
+      { ...grunnlag, id: 1, navn: "Ordinær", kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 } },
+      { ...grunnlag, id: 2, navn: "Blandet", kostnad: { total: 3000, ordinære_timer: 4, overtidstimer: 4, ordinær_sats: 300, overtidssats: 450 } },
+      { ...grunnlag, id: 3, navn: "Overtid", kostnad: { total: 3600, ordinære_timer: 0, overtidstimer: 8, ordinær_sats: 300, overtidssats: 450 } },
+    ] } satisfies Kandidatsvar;
+    const { del } = await rendreMed(ok(svar));
+    const rad = (navn: string) => within(del).getByText(navn, { selector: ".ansattnavn" }).closest("li")!;
+    const format = (n: number) => new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/\s/g, " ");
+    expect(within(rad("Ordinær")).getByText(`${t.kostnadOverskrift}: ${format(2400)} kr`)).toBeTruthy();
+    expect(within(rad("Ordinær")).getByText(t.kostnadOrdinaer, { selector: ".kostnad-ordinaer" })).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(t.kostnadOvertid)).toBeTruthy();
+    expect(within(rad("Overtid")).getByText(t.kostnadOvertid)).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("4:00", format(300))}`)).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(`Overtid: ${t.kostnadDetalj("4:00", format(450))}`)).toBeTruthy();
+    expect(within(rad("Overtid")).getByText(`Overtid: ${t.kostnadDetalj("8:00", format(450))}`)).toBeTruthy();
+    expect(within(rad("Overtid")).queryByText(/^Ordinær:/)).toBeNull();
+  });
+
+  test("ett minutt vises med minuttpresisjon", async () => {
+    const kandidat = { ...TO_GYLDIGE.kandidater[0], kostnad: { total: 5, ordinære_timer: 1 / 60, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 } };
+    const { del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater: [kandidat] }));
+    expect(within(del).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("0:01", "300,00")}`)).toBeTruthy();
+  });
+
+  test("varighet med sekunder merkes som avrundet", async () => {
+    const kandidat = { ...TO_GYLDIGE.kandidater[0], kostnad: { total: 7.5, ordinære_timer: 1.5 / 60, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 } };
+    const { del } = await rendreMed(ok({ ...TO_GYLDIGE, kandidater: [kandidat] }));
+    expect(within(del).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("ca. 0:02", "300,00")}`)).toBeTruthy();
+  });
   test("hver rad viser timer i uka som t:mm, og 0:00 uten vakter (story 4.1)", async () => {
     const svar = {
       ...TO_GYLDIGE,
       kandidater: [
-        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920, ulempebelastning: INGEN_ULEMPE },
-        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0, ulempebelastning: INGEN_ULEMPE },
-        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23, ulempebelastning: INGEN_ULEMPE },
-        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61, ulempebelastning: INGEN_ULEMPE },
+        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
+        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
+        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
+        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
       ],
     } satisfies Kandidatsvar;
     const { del } = await rendreMed(ok(svar));

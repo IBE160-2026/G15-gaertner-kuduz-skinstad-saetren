@@ -5,6 +5,7 @@ import { lastGodkjenning, type Godkjenningstilstand } from "../godkjenning";
 import { kandidatsti } from "../navigasjon";
 import { TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
+import Kostnadsvisning from "./Kostnadsvisning";
 
 const t = TEKSTER.godkjenning;
 
@@ -157,6 +158,7 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
         <h3 id="kandidatkort-navn" className="overskrift">{kandidat.navn}</h3>
         <p className="meta">{t.kompetanse}</p>
         <span className="tag">{t.nivaaTag(kandidat.kompetansenivå)}</span>
+        <Kostnadsvisning kostnad={kandidat.kostnad} />
       </section>
 
       <section className="panel bekreftelsesboks" aria-labelledby="bekreft-tittel">

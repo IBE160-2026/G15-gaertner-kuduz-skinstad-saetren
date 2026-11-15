@@ -31,7 +31,7 @@ def vakt(vakttype: str = "dag", *, start: datetime = DAG_START, slutt: datetime 
 
 
 def kandidat(*egne: Tidsrom, id: int = 1, kompetanse: dict | None = None) -> Kandidat:
-    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse={"dag": 4, "natt": 4} if kompetanse is None else kompetanse, vakter=egne)
+    return Kandidat(id=id, navn=f"Ansatt {id:02d}", kompetanse={"dag": 4, "natt": 4} if kompetanse is None else kompetanse, vakter=egne, timelønn=300)
 
 
 # Testene fra 2.2 vurderer bare kompetanse og kolliderende vakt, så en uventet
@@ -228,7 +228,7 @@ def test_ingen_egne_vakter_utelukkes_ikke() -> None:
 
 
 def test_kandidat_uten_vakter_virker_uendret_fra_2_1() -> None:
-    k = Kandidat(id=1, navn="Ola", kompetanse={"dag": 3})
+    k = Kandidat(id=1, navn="Ola", kompetanse={"dag": 3}, timelønn=300)
     assert k.vakter == ()
     assert vurder(vakt(minstenivå=3), k).gyldige == (k,)
 

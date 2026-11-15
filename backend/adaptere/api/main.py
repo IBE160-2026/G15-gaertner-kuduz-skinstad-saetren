@@ -29,6 +29,7 @@ from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
+from domene.regelmotor.kostnad import beregn_kostnad
 from domene.regelmotor.timer_i_uka import minutter_i_uka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
 from domene.typer import Datafeil, Godkjenning
@@ -134,6 +135,14 @@ class UlempebelastningUt(BaseModel):
     score: float
 
 
+class KostnadUt(BaseModel):
+    total: float
+    ordinære_timer: float
+    overtidstimer: float
+    ordinær_sats: float
+    overtidssats: float
+
+
 class KandidatUt(BaseModel):
     id: int
     navn: str
@@ -142,6 +151,7 @@ class KandidatUt(BaseModel):
     # Hele minutter i uka Vakten starter i, uten Vakten selv (FR8, P-02, story 4.1).
     minutter_i_uka: int
     ulempebelastning: UlempebelastningUt
+    kostnad: KostnadUt
 
 
 class RegelAntallUt(BaseModel):
@@ -330,6 +340,7 @@ def lag_app(
                 KandidatUt(
                     id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
                     minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
+                    kostnad=KostnadUt.model_validate(beregn_kostnad(k, grunnlag.vakt), from_attributes=True),
                     ulempebelastning=UlempebelastningUt.model_validate(
                         vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
                     ),
@@ -369,6 +380,7 @@ def lag_app(
             kandidat=KandidatUt(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
                 minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
+                kostnad=KostnadUt.model_validate(beregn_kostnad(kandidat, grunnlag.vakt), from_attributes=True),
                 ulempebelastning=UlempebelastningUt.model_validate(
                     vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
                 ),

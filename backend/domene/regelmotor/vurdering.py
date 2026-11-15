@@ -218,11 +218,16 @@ def vurder_kandidater(
     vaktgrunner = vaktdatafeil(vakt, datagrense, historikkstart)
     grunner = vaktgrunner + [g for regel in regler for g in regel.vaktkrav(vakt)]
     grunner += [g for kandidat in grunnlag for regel in regler for g in regel.kandidatkrav(kandidat, vakt)]
+    for kandidat in grunnlag:
+        if type(kandidat.timelønn) is not int or not 0 < kandidat.timelønn <= 2**63 - 1:
+            grunner.append(f"ansatt {kandidat.id}: ugyldig timelønn")
     if not vaktgrunner:
         # 2–4. Det samlede vinduet, datadekningen og Kandidatens vakter i vinduet.
         vindu = samlet_vindu(vakt, regler)
         ulempevindu = ulempebelastning.vindu(vakt)
-        vindu = Tidsrom(min(vindu.start, ulempevindu.start), vindu.slutt)
+        kostnadsvindu = trettifem_timer.vindu(vakt)
+        vindu = Tidsrom(min(vindu.start, ulempevindu.start, kostnadsvindu.start),
+                        max(vindu.slutt, kostnadsvindu.slutt))
         grunner += vindusdatafeil(vakt, vindu, datagrense, historikkstart)
         grunner += [g for kandidat in grunnlag for g in kandidatvaktdatafeil(kandidat, vindu)]
     if grunner:

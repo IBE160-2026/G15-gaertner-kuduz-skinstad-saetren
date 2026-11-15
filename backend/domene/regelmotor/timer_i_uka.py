@@ -13,7 +13,7 @@ from datetime import UTC, timedelta
 
 from domene.regelmotor.elleve_timer import gyldig_tidsrom
 from domene.regelmotor.trettifem_timer import berørte_uker
-from domene.typer import Kandidat, Vakt
+from domene.typer import Kandidat, Tidsrom, Vakt
 
 
 def timer_i_startuka(kandidat: Kandidat, vakt: Vakt) -> timedelta:
@@ -25,11 +25,15 @@ def timer_i_startuka(kandidat: Kandidat, vakt: Vakt) -> timedelta:
     hoppes ugyldige vakter over uten melding, så kall ikke funksjonen på kandidater
     som ikke har vært gjennom vurderingen.
     """
-    uke = berørte_uker(vakt)[0]
+    return arbeidstid_i_uke(kandidat.vakter, berørte_uker(vakt)[0])
+
+
+def arbeidstid_i_uke(vakter: tuple[Tidsrom, ...], uke: Tidsrom) -> timedelta:
+    """Summen av unionen av vakter i en kalenderuke, i faktisk tid."""
     uke_start, uke_slutt = uke.start.astimezone(UTC), uke.slutt.astimezone(UTC)
     klippet = sorted(
         (max(v.start.astimezone(UTC), uke_start), min(v.slutt.astimezone(UTC), uke_slutt))
-        for v in kandidat.vakter
+        for v in vakter
         if gyldig_tidsrom(v) and v.start.astimezone(UTC) < uke_slutt and uke_start < v.slutt.astimezone(UTC)
     )
     sum_, dekket_til = timedelta(0), uke_start

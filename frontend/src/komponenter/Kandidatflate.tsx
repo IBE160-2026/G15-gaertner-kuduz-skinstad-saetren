@@ -10,6 +10,7 @@ import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn } from "../f
 import { ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, type Kandidattilstand } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
+import Kostnadsvisning from "./Kostnadsvisning";
 
 type Tilstand =
   | { type: "laster" }
@@ -167,6 +168,7 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
               <span aria-hidden="true">{t.timerIUka(timerOgMinutter(k.minutter_i_uka))}</span>
               <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(k.minutter_i_uka))}</span>
             </span>
+            <Kostnadsvisning kostnad={k.kostnad} />
             <div className="kandidat-ulempe">
               <span>{t.ulempeOverskrift}: {t.ulempePoeng(tall.format(k.ulempebelastning.poeng))}</span>
               <span className="meta">{t.ulempeFordeling(

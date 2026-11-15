@@ -458,6 +458,7 @@ button {
   overflow-wrap: anywhere;
 }
 
+.kandidat-kostnad,
 .kandidat-ulempe {
   display: flex;
   flex-direction: column;
@@ -465,6 +466,7 @@ button {
   min-width: 0;
 }
 
+.kandidat-kostnad .meta,
 .kandidat-ulempe .meta {
   margin: 0;
 }
@@ -587,3 +589,6 @@ button {
 .tomtilstand-innleie {
   margin: var(--space-3) 0 0;
 }
+
+.kostnad-ordinaer { color: var(--color-ok); }
+.kostnad-overtid { color: var(--color-warn); }
