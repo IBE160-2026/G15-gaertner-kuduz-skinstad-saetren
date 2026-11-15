@@ -345,7 +345,7 @@ Systemet kan generere en KI-basert forklaring for hver Kandidat i Rangeringen: h
 - Forklaringen kan bruke én forhåndsberegnet, Gyldig referansekandidat: nr. 1 sammenlignes med nr. 2, øvrige med nr. 1. Ved én Gyldig kandidat er ingen referanse tilgjengelig. KI kan ikke velge referansen, finne på sammenligninger eller nevne utelukkede kandidater. Valgfri sammenligning av to merkede kandidater er Strekk.
 
 **Feature-spesifikke NFR-er:**
-- Grensen mellom deterministisk lag (§4.2–§4.4) og KI-laget er en hard systemgrense: KI mottar allerede filtrerte og beregnede data, og kan ikke endre dem.
+- Grensen mellom deterministisk lag (§4.2–§4.4) og KI-laget er en hard systemgrense: preferansetolkning kan behandle Ansattens tekst før filtrering, uten kandidatstatus for en bestemt Vakt; KI-forklaring mottar bare filtrerte og beregnede kandidat- og referansefakta. KI kan ikke endre beregningene eller anbefale en utelukket Kandidat (AD-1, SM-2).
 - **Kjørbar uten gruppens API-nøkkel:** Systemet kan kjøres i Demo-modus uten nøkkel til språkmodellen. Tolkede preferanser og Avveininger kommer da fra modellsvar som er generert på forhånd og lagret i testdataene, eller fra en mal bygd utelukkende av de beregnede tallene. Brukergrensesnittet viser alltid om en Avveining er live, forhåndsgenerert eller malbasert. En feil i live-modus gir reservetekst (FR-11), ikke stille overgang til demo-modus.
 
 ### 4.6 Godkjenning av erstatter

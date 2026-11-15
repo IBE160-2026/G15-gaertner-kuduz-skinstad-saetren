@@ -13,7 +13,7 @@ async function lastTs(sti) {
 }
 
 const k = await lastTs("./kandidater-bunt.ts");
-const { TEKSTER, INGEN_KONTAKT, FEILTEKSTER } = await lastTs("../src/tekster.ts");
+const { TEKSTER, INGEN_KONTAKT, FEILTEKSTER, RESERVETEKST } = await lastTs("../src/tekster.ts");
 const t = TEKSTER.kandidatflate;
 
 function json(kropp, status = 200) {
@@ -109,10 +109,15 @@ test("laster, feil, datafeil og tom liste har ulik tekst", () => {
   // To feilkoder deler tekst med vilje, så feiltekstene telles som én mengde.
   const feil = new Set([INGEN_KONTAKT, ...Object.values(FEILTEKSTER)]);
   const tilstander = [t.kandidaterLaster, t.datafeil, t.ingenGyldige];
+  assert.ok(!tilstander.includes(RESERVETEKST));
   for (const tekst of tilstander) assert.ok(!feil.has(tekst), tekst);
   assert.equal(new Set(tilstander).size, tilstander.length);
   assert.equal(t.datafeil, "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.");
-  assert.equal(t.ingenGyldige, "Ingen gyldige kandidater for denne vakten.");
+  assert.equal(
+    t.ingenGyldige,
+    "Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.",
+  );
+  assert.equal(t.innleie, "Innleie av personell kan vurderes");
 });
 
 test("den midlertidige merknaden er fjernet (story 2.4)", async () => {
@@ -123,15 +128,22 @@ test("den midlertidige merknaden er fjernet (story 2.4)", async () => {
   assert.ok(flate.includes("t.ingenGyldige"));
 });
 
-test("tom liste fra API-et blir klar med tom liste, ikke datafeil", async () => {
-  // Til story 2.6 svarer API-et status ok med tom liste når ingen er gyldige.
+test("ingen_gyldige_kandidater blir tilstanden ingen_gyldige med utelukkelsene", async () => {
   const svar = styrtFetch();
   const meldt = [];
   k.lastKandidater(4189, (tilstand) => meldt.push(tilstand));
-  const tomUtelukkelser = { totalt: 0, per_regel: [], utelukkede: [] };
-  svar("/api/vakter/4189/kandidater", json({ status: "ok", kandidater: [], utelukkelser: tomUtelukkelser }));
+  const utelukkelser = { totalt: 24, per_regel: [], utelukkede: [] };
+  svar("/api/vakter/4189/kandidater", json({ status: "ingen_gyldige_kandidater", kandidater: [], utelukkelser }));
   await nesteTick();
-  assert.deepEqual(meldt.at(-1), { type: "klar", kandidater: [], utelukkelser: tomUtelukkelser });
+  assert.deepEqual(meldt.at(-1), { type: "ingen_gyldige", utelukkelser });
+});
+
+test("ok med tom liste er kontraktsbrudd og blir feil med reservetekst (FR6)", () => {
+  const utelukkelser = { totalt: 0, per_regel: [], utelukkede: [] };
+  assert.deepEqual(
+    k.tilstandFraSvar({ status: "ok", kandidater: [], utelukkelser }),
+    { type: "feil", tekst: RESERVETEKST },
+  );
 });
 
 test("taggen viser nivået av fire", () => {

@@ -92,8 +92,10 @@ export const TEKSTER = {
     minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
     // Kandidatlisten (story 2.1).
     kandidaterOverskrift: "Gyldige kandidater",
-    // Tom liste (story 2.4, beslutning B). Story 2.6 erstatter den med tomtilstanden.
-    ingenGyldige: "Ingen gyldige kandidater for denne vakten.",
+    // Tomtilstanden (story 2.6, UX-DR16, P-11).
+    ingenGyldige:
+      "Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.",
+    innleie: "Innleie av personell kan vurderes",
     kandidaterLaster: "Henter kandidatene …",
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",

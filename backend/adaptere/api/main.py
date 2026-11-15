@@ -146,9 +146,23 @@ class UtelukkelsesOppsummeringUt(BaseModel):
 
 
 class KandidaterUt(BaseModel):
-    """Bare Gyldige kandidater, alfabetisk (NFR2). `utelukkelser` dekker resten."""
+    """Bare Gyldige kandidater, alfabetisk (NFR2). `utelukkelser` dekker resten.
+
+    Alltid minst én Kandidat: null Gyldige gir `IngenGyldigeUt` (FR6, AD-4).
+    """
 
     status: Literal["ok"]
+    kandidater: list[KandidatUt]
+    utelukkelser: UtelukkelsesOppsummeringUt
+
+
+class IngenGyldigeUt(BaseModel):
+    """Vurderingen er fullført og alle er utelukket (FR6, P-11). `kandidater` er alltid tom.
+
+    Ikke en feil og ikke en datafeil: datafeil har ingen liste, fordi ingen er vurdert.
+    """
+
+    status: Literal["ingen_gyldige_kandidater"]
     kandidater: list[KandidatUt]
     utelukkelser: UtelukkelsesOppsummeringUt
 
@@ -265,8 +279,10 @@ def lag_app(
             return feil(404, "ikke_funnet")
         return VaktdetaljerUt.model_validate(detaljer, from_attributes=True)
 
-    @app.get("/api/vakter/{vaktnummer}/kandidater", response_model=KandidaterUt | DatafeilUt)
-    def kandidater(vaktnummer: int, request: Request, okt: Okt) -> KandidaterUt | DatafeilUt | JSONResponse:
+    @app.get("/api/vakter/{vaktnummer}/kandidater", response_model=KandidaterUt | IngenGyldigeUt | DatafeilUt)
+    def kandidater(
+        vaktnummer: int, request: Request, okt: Okt,
+    ) -> KandidaterUt | IngenGyldigeUt | DatafeilUt | JSONResponse:
         # Samme filter som vaktdetaljer: ukjent, bemannet, annen turnus og
         # utenfor perioden gir samme 404.
         grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
@@ -278,13 +294,16 @@ def lag_app(
             logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
             return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
         oppsummering: UtelukkelsesOppsummering = lag_utelukkelsesoppsummering(vurdering)
+        utelukkelser = UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True)
+        if not vurdering.gyldige:
+            return IngenGyldigeUt(status="ingen_gyldige_kandidater", kandidater=[], utelukkelser=utelukkelser)
         return KandidaterUt(
             status="ok",
             kandidater=[
                 KandidatUt(id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt))
                 for k in vurdering.gyldige
             ],
-            utelukkelser=UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True),
+            utelukkelser=utelukkelser,
         )
 
     @app.get(

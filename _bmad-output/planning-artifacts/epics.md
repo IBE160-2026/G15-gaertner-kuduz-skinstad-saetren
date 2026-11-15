@@ -58,13 +58,13 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 **Arkitekturstruktur**
 - Heksagonal arkitektur (lett): `domene/regelmotor` og `domene/porter` er domenekjernen, ren Python uten avhengighet til rammeverk, database eller KI. Adaptere: `adaptere/api` (FastAPI), `adaptere/web` (React SPA), `adaptere/ki` (OpenRouter, eller demo-modus etter AD-6) og `adaptere/lagring` (SQLAlchemy/SQLite).
 - AD-1/AD-2: `domene/*` importerer aldri fra noen `adaptere/*`-pakke. Dette håndheves statisk med en import-linter-kontrakt og en test som feiler ved brudd.
-- AD-1: En kjøretidstest i `tester/` verifiserer at ingen kandidat-ID som `adaptere/api` sender til `adaptere/ki` finnes blant de utelukkede ID-ene fra regelmotoren, i et scenario med kjente utelukkelser.
+- AD-1: En kjøretidstest i `tester/` verifiserer at forklaringsporten og forklaringens output ikke inneholder utelukkede kandidater, og skiller dette fra tolkingsportens behandling av Ansattpreferanse før filtrering.
 - Porter (Pydantic, eid av `domene/porter`):
-  - `TolketPreferanse` konstrueres bare av `adaptere/ki`.
+  - Bare `adaptere/ki` fastsetter en ny semantisk `TolketPreferanse`; `adaptere/lagring` kan rekonstruere en tidligere lagret, validert verdi uten ny tolkning (AD-1).
   - `RangertKandidat` konstrueres bare av `domene/regelmotor`. Minimumsfelt: kandidat-referanse (id/navn), Kompetansenivå, kostnadstype + beløp, Timebelastning (timer + prosent av terskel), Ulempebelastning (Ulempepoeng, Ulempescore og timer fordelt på kveld, helg og natt), rangeringsplass og tilhørende `TolketPreferanse`.
   - `UtelukkelsesOppsummering` konstrueres bare av `domene/regelmotor` og gir antall per Hard regel til Ekskludert-boksen.
 - KI-adapteren har to ensrettede roller som begge orkestreres av `adaptere/api`: tolk (tekst → `TolketPreferanse`) før Rangering, og forklar (`RangertKandidat` → Avveining) etter Rangering. Domenekjernen kaller aldri KI.
-- Preferansetolkning skjer én gang per Ansatt/preferansetekst og caches/persisteres av `adaptere/lagring`. Regelmotoren får alltid en lagret, allerede tolket verdi, aldri et live KI-kall under Rangering.
+- Vellykket preferansetolkning lagres per Ansatt/preferansetekst av `adaptere/lagring`. Regelmotoren får lagret tolkning når den finnes; ved venting eller feil får den midlertidige 50 poeng med egen status (P-05), aldri et live KI-kall under Rangering.
 - Komposisjon og avhengighetsinjeksjon skjer i oppstartslaget til `adaptere/api`.
 
 **API og sesjon**
@@ -77,9 +77,9 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 **Lagring og data**
 - AD-5: `adaptere/lagring` eier SQLAlchemy-modeller og databaseskjema alene. Domenet kjenner bare egne Pydantic- og Python-typer, og konvertering skjer i lagringsadapteren.
 - AD-5: Det finnes én enkelt skrivefunksjon for Godkjenning. Den krever et fullstendig Godkjenning-objekt og er den eneste kodeveien som kan markere en Vakt som bemannet.
-- Lagrede entiteter: Turnus, Vakt, Ansatt (med Kompetansenivå og tolket preferanse), Godkjenning (hvem, hvilken Vakt, når) og innloggingssesjon/bruker.
+- Lagrede entiteter: Turnus, Vakt, Ansatt (med Kompetansenivå og tolket preferanse), bruker med passordhash og planlagt Godkjenning (hvem, hvilken Vakt, når; story 3.2). Innloggingssesjonen lagres ikke: API-et utsteder JWT, og nettleseren lagrer og sender cookien (AD-3, OP-10).
 - Vist Avveining lagres ikke historisk ved Godkjenning (P-12). Ny forklaring ved senere visning bygger på nytt beslutningsgrunnlag; P-12B er ikke v1-krav.
-- Alle Vakt-tidspunkt lagres og beregnes i `Europe/Oslo` med sommertid, ikke fast UTC-offset. Dette er avgjørende for 11- og 35-timersregelen rundt sommertidsovergangene.
+- Vakt-tidspunkt lagres som ISO 8601 i UTC og leses med tidssone. Kalendergrenser og visning følger `Europe/Oslo`; varighet, hvile, overlapp og intervallsammenligning beregnes fra faktiske tidspunkter i UTC, også ved sommertidsskifte (AV-04, P-02).
 - Primærnøkler tildeles av `adaptere/lagring`. ID-formatet er ikke fastsatt.
 - Testdata: én fiktiv Turnus med 20–30 ansatte (PRD §6.1). Ansattpreferanser er forhåndsdefinert for kjerneflyten (P-10/ÅB-4), med redigering planlagt i story 5.9. Testdataene må dekke scenarioene som suksesskriteriene krever: billigste Kandidat er ikke øverst (SM-6), ingen gyldige kandidater (FR6, Vakt #4189), tekstbaserte preferanser (SM-7) og kjente utelukkelser per Hard regel (SM-1). Historikk og Ulempebelastning følger story 1.2/4.7; KS-04 gjelder #4127/#4189, mens P-08 krever stopp på ufullstendig grunnlag ved #4261–#4265.
 - Rangeringsparametere: vektene (PRD §4.4) og taket for Ulempescore (300) ligger samlet som navngitte parametere i `domene/regelmotor`. De sendes inn som argumenter, slik at testene kan variere dem. De er ikke miljøvariabler, fordi samme input da kunne gitt ulikt resultat på ulike maskiner (NFR1).
@@ -96,8 +96,8 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Kjøres bare lokalt. Hosting er ikke besluttet.
 
 **Utsatte beslutninger som påvirker enkelte stories** (de tre som blokkerer implementering står under § Åpne beslutninger)
-- JWT-utløpstid, migreringsverktøy, SQLAlchemy-versjon og ID-format.
-- Retry/backoff-policy og klientbibliotek mot OpenRouter.
+- Migreringsverktøy og ID-format. Gjeldende SQLAlchemy-versjon står i `backend/requirements.txt`; JWT-utløpstiden er avklart i AD-3.
+- Preferansetolkningens feilbudsjett og klientbibliotek mot OpenRouter. Avveiningens takt og nye forsøk er avklart i AD-7.
 - Eksakte feilkoder og responsskjema per endepunkt.
 - Transport for progressiv lasting av Avveining (streaming, polling eller separate kall).
 - Historisk lagring av vist Avveining og beregningsgrunnlag er utsatt utenfor v1 (P-12).
@@ -252,7 +252,7 @@ So that jeg har en realistisk turnus å finne erstattere i, uten ekte personoppl
 
 **Given** en Vakt i testdataene
 **When** den leses
-**Then** den har vaktnummer, vakttype (dag, mellom, kveld eller natt; mellomvakten bruker Kompetansenivået for dag), start- og sluttidspunkt lagret i `Europe/Oslo` med sommertid, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
+**Then** den har vaktnummer, vakttype (dag, mellom, kveld eller natt; mellomvakten bruker Kompetansenivået for dag), start- og sluttidspunkt lagret som ISO 8601 i UTC og lest med tidssone for visning i `Europe/Oslo`, et kompetansekrav og en tildelt Ansatt eller markering som «mangler bemanning»
 **And** en Vakt som mangler bemanning, har hvem som var satt opp og tidspunktet det ble meldt fra (UX-DR5)
 
 **Given** en Ansatt i testdataene
@@ -660,11 +660,13 @@ So that vaktendringen blir gjennomført, men bare når jeg har bestemt det (FR12
 **When** jeg trykker «Godkjenn erstatning»
 **Then** API-et kjører de Harde reglene på nytt for Kandidaten før noe lagres
 **And** hvis Kandidaten fortsatt er gyldig, lagres en Godkjenning (hvem, hvilken Vakt, når), og Vakten blir bemannet med Kandidaten
+**And** kontroll av vist beslutningsgrunnlag, ny regelkontroll og skriving skjer mot én konsistent databasetilstand i en godkjenningsoperasjon eid av `adaptere/lagring` (AD-5, P-09)
 
 **Given** lagringsadapteren
 **When** storien er ferdig
 **Then** tabellen for Godkjenning er opprettet i denne storien
 **And** `adaptere/lagring` har én eneste skrivefunksjon for Godkjenning som krever et fullstendig Godkjenning-objekt, og den er den eneste kodeveien som kan markere en Vakt som bemannet (AD-5)
+**And** operasjonen mottar identiteten til beslutningsgrunnlaget som ble vist, og databasen håndhever høyst én Godkjenning per Vakt
 **And** en test verifiserer at ingen andre API-endepunkter endrer bemanningen av en Vakt
 
 **Given** at Kandidaten ikke lenger er gyldig når jeg trykker «Godkjenn erstatning», for eksempel fordi data er endret siden flaten ble åpnet
@@ -674,6 +676,8 @@ So that vaktendringen blir gjennomført, men bare når jeg har bestemt det (FR12
 **Given** endret kostnad, timer, preferansetolkning eller annet beslutningsgrunnlag siden visningen
 **When** Godkjenning forsøkes
 **Then** nye beregninger vises og jeg må bekrefte på nytt før lagring; et sent svar for en tidligere Vakt/Kandidat forkastes (P-09)
+**And** et samtidig kall eller en endring mellom visning, kontroll og skriving kan ikke lagre en foreldet eller dobbelt Godkjenning; tester dekker begge tilfellene
+**And** API-et skiller konflikten fra Datafeil og `ingen_gyldige_kandidater` (AD-4)
 
 **Given** ufullstendig nødvendig datagrunnlag (P-08)
 **When** Godkjenning forsøkes
@@ -903,7 +907,7 @@ So that jeg kan ha den på en skjerm på høykant eller ved siden av andre vindu
 > - **Brukes av story 4.4:** Ulempescoren inngår i totalscoren med 15 %. 4.4 kan ikke ferdigstilles før denne storien er ferdig.
 > - **Brukes av story 4.5:** ulempeindikatoren vises på kandidatkortet og i avviksnotatet.
 > - **Brukes av story 4.6:** ulempekolonnen må fungere i smale nettleservinduer (AV-17).
-> - **Påvirker story 5.3 og 5.7:** feltene i `RangertKandidat` endres, så forklaringen og demo-malen kan vise til ulempe. Forhåndsgenererte Avveininger må lages etter denne storien, fordi de er nøklet på en hash av `RangertKandidat`.
+> - **Påvirker story 5.3 og 5.7:** feltene i `RangertKandidat` endres, så forklaringen og demo-malen kan vise til ulempe. Forhåndsgenererte Avveininger må lages etter denne storien, fordi hele forklaringsgrunnlaget, inkludert `RangertKandidat` og referansefakta, inngår i identiteten (AD-6).
 
 As a turnusansvarlig,
 I want å se hvor mye kveld, helg og natt hver gyldig kandidat har hatt de siste fire ukene,
@@ -971,13 +975,16 @@ So that ønsker som «vil gjerne ha flere vakter» kan tas hensyn til (FR10).
 **Given** en Ansatt med forhåndsdefinert preferansetekst (ÅB-4)
 **When** tolkningen kjøres
 **Then** `adaptere/ki` sender teksten til språkmodellen via OpenRouter, med JSON-skjema for strukturert output, og returnerer en `TolketPreferanse` validert mot Pydantic-modellen i `domene/porter` (AD-1)
-**And** bare `adaptere/ki` konstruerer `TolketPreferanse`
+**And** bare `adaptere/ki` fastsetter en ny semantisk `TolketPreferanse` fra råteksten; `adaptere/lagring` kan deserialisere og validere en tidligere lagret, vellykket verdi til porttypen uten ny tolkning eller nytt KI-kall (AD-1)
+**And** tolkningen kan skje per Ansatt før filtrering, uten kandidatstatus for en bestemt Vakt; den er ikke en anbefaling av den Ansatte (AD-1)
+**And** kall med `openai/gpt-6-luna` bindes til leverandøren `openai` uten leverandørfallback, kontrollert i en test med falsk HTTP-klient (AD-7)
 
 **Given** en tolket preferanse
 **When** den er laget
 **Then** den lagres av `adaptere/lagring` knyttet til Ansatt, og feltene som trengs, legges til i denne storien (AD-1, AD-5)
 **And** tolkningen kjøres bare én gang per Ansatt og preferansetekst, og kjøres på nytt bare når teksten endres
 **And** Rangeringen kaller aldri KI live, men leser alltid den lagrede verdien (AD-1, NFR1)
+**And** den lagrede verdien brukes bare for samme Ansatt og preferansetekst; nødvendige lagringsfelt og eventuell formatversjon fastsettes og testes i denne storien (AD-1)
 
 **Given** at språkmodellen svarer med feil, tomt eller ugyldig svar under tolkning
 **When** tolkningen kjøres
@@ -1041,6 +1048,7 @@ So that jeg forstår hvorfor én er rangert over en annen og kan stå inne for v
 **And** KI returnerer strukturerte begrunnelser fra et avgrenset sett; koden validerer faktareferanser og retning mot uavrundede beregninger og setter inn navn/tall, uten at KI beregner dem (P-06)
 **And** kontrakten tillater bare påstandstypene i PRD FR-11: oppfyller de fire prototypereglene, navngitt faktor trekker opp/ned, eller faktor/totalscore er høyere/lavere/lik den angitte referansens. Navn, tall og sammenligningsretning kommer fra kontrollert grunnlag; «lik» krever lik uavrundet verdi
 **And** hver gyldige forklaring har minst én relevant, faktakontrollert påstand om en Myk faktor; ved én Gyldig kandidat brukes kandidatens egne faktorer uten referansesammenligning (SM-4, AV-15)
+**And** samme faktakontroll gjelder forhåndsgenererte forklaringer i Demo-modus (P-06, AD-6)
 **And** Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori/-status med poeng vises ved forklaringen, også når den erstattes med reservetekst
 
 **Given** rangeringstabellen
@@ -1130,7 +1138,8 @@ So that jeg kan stole på at de harde reglene alltid gjelder (NFR2, SM-2).
 
 **Given** et testscenario med kjente utelukkelser for hver av de fire Harde reglene
 **When** hele flyten kjøres gjennom `adaptere/api` med en falsk KI-adapter som registrerer alt den mottar
-**Then** ingen kandidat-ID som sendes til `adaptere/ki`, finnes blant de utelukkede ID-ene fra `domene/regelmotor` (AD-1)
+**Then** ingen utelukket kandidat-ID sendes til forklaringsporten i `adaptere/ki`, og forklaringens output nevner eller anbefaler ingen utelukket Kandidat (AD-1, SM-2)
+**And** testen skiller forklaringsporten fra tolkingsporten, som kan behandle Ansattpreferanse før filtrering uten kandidatstatus for en bestemt Vakt
 **And** ingen utelukket Kandidat finnes i Rangeringen eller i API-svaret til frontend
 
 **Given** den statiske import-linter-kontrakten fra story 2.1
@@ -1166,8 +1175,9 @@ So that jeg kan vurdere Turnushjelperen uten gruppens tjenester (NFR14, SM-9).
 
 **Given** demo-modus og en `RangertKandidat`
 **When** Avveiningen hentes
-**Then** en forhåndsgenerert Avveining brukes hvis (vakt, kandidat, hash av `RangertKandidat`) finnes i testdataene, med `ki_kilde: "forhandsgenerert"`
-**And** ellers lages en maltekst utelukkende fra feltene i `RangertKandidat`, med `ki_kilde: "mal"`
+**Then** en forhåndsgenerert Avveining brukes bare når identiteten for hele faktagrunnlaget finnes i testdataene og svaret består samme faktakontroll som live-svar; identiteten omfatter Vakt, Kandidat, `RangertKandidat`, referansens ID og beregnede sammenligningsfakta (eller ingen referanse), samt forklaringskontraktens versjon (AD-6, P-06/P-07)
+**And** ellers lages en maltekst fra gjeldende beregnede fakta, med `ki_kilde: "mal"`, eller en tydelig merket Reservetekst ved ugyldig svar
+**And** en test endrer referansen uten å endre kandidatens egen `RangertKandidat` og verifiserer at den gamle sammenligningen ikke vises
 
 **Given** de forhåndsgenererte svarene
 **When** de lages
