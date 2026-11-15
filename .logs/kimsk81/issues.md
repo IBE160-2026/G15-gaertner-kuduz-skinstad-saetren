@@ -84,7 +84,8 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før innlevering velge sensornøkkel, ansvar for betaling og kreditt ut fra faktisk forbruk (AV-16/ÅB-8).
 
 
-- [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Gi høy belastning synlig indikasjon utover farge og test sekundpresisjon gjennom begge API-ruter.
+- [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Gi høy belastning synlig indikasjon utover farge og test sekundpresisjon gjennom begge API-ruter. (løst 2026-11-15; visuell kontroll gjenstår)
+- [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Kontroller ny synlig tekst og layout i nettleser ved relevante vindusbredder og større skrift.
 - [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Samordne utelatte føringer i epic 4-konteksten før senere stories bruker den.
 - [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Kontroller faktisk skjermleseropplesing av høy belastning; tidligere VoiceOver-resultat er uavklart.
 - [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Løs konfliktene mellom 4.2 og 4.3 med begge funksjonene bevart, og verifiser det sammenslåtte resultatet.
