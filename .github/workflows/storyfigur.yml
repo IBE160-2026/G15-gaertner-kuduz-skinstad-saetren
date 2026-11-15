@@ -1,0 +1,14 @@
+name: Kontroller storyfigur
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  storyfigur:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s scripts -p "test_synkroniser_storyfigur.py"
+      - run: python scripts/synkroniser_storyfigur.py --sjekk
