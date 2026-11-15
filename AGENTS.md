@@ -10,13 +10,15 @@
 Beslutningsstøtte for turnusansvarlige som må bemanne én enkelt vakt på nytt: harde
 regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, og KI
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
-Planlagt stack er React/TypeScript med Vite, Python/FastAPI og SQLite via
-SQLAlchemy. KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Appen har et skjelett fra story 1.1 i `backend/` og `frontend/` og
-lagring med fiktive testdata fra story 1.2 i `backend/adaptere/lagring/` og
-innlogging med designtokens og appskall fra story 1.3. Domenekjernen i `backend/domene/`
-har regelmotoren med den første harde regelen (kompetanse-minstekrav) fra story 2.1, ren
-Python uten KI; `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+Stacken er React/TypeScript med Vite, Python/FastAPI og SQLite via SQLAlchemy.
+KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
+Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1 og 4.7 er ferdige: skjelett, lagring med fiktive
+testdata, innlogging med designtokens og appskall, beskyttede flater, vaktoversikt og
+valg av vakt, godkjenning og bemanning av vakten og Ekskludert-boksen. Domenekjernen i
+`backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
+kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden og
+ulempebelastning. Den er ren Python uten KI. Rangering (story 4.4) og KI-laget (epic 5)
+er ikke bygget ennå, og `backend/adaptere/ki/` er tom. `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
@@ -53,7 +55,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - `bmad-build` kjøres med underagenter: én samler epic-konteksten, og egne agenter
   gjennomgår koden uten å ha sett implementeringen. Det koster mer enn å gjøre alt i
   én økt, men gir en uavhengig gjennomgang. Valgt av Kuduz 2026-10-24 før story 1.2.
-  Ikke drøftet i gruppa ennå — er dere uenige, endre dette punktet.
+  Godkjent av Johannes på vegne av gruppa 2026-11-04 (OP-04, PR #5). Er dere uenige,
+  endre dette punktet.
 
 ## Hvor ting ligger
 
@@ -73,7 +76,7 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   mot Luna: følg skillen `api-nokkel-oppsett` (`.claude/skills/` og `.agents/skills/`).
   Les aldri `.env`.
 - Hold `_bmad/`, `.claude/skills/` og `.agents/skills/` utenfor søk i prosjektkoden —
-  det er BMAD-rammeverket og utgjør 446 av 455 sporede filer.
+  det er BMAD-rammeverket og utgjør godt over halvparten av de sporede filene.
 
 ## Kjøring og verifisering
 
