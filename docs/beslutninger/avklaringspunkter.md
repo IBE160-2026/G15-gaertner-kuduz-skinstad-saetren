@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -774,6 +774,15 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Konsekvens for Story 4.6:** Storien skrives om fra nettbrett og mobil til smale nettleservinduer. Forslaget om nettbrettrader og mobilkort i EXPERIENCE.md blir et innspill til v2, ikke et v1-krav. Kontrollbreddene i storien (1080, 960 og 680 px) er avledet fra eksemplene over og kan justeres i spesifikasjonen.
 - **Ikke endret:** P-13s oppgavebaserte forståelsestest (én testperson, ett operativsystem og én skjermflate) gjelder fortsatt og er ikke utført. AV-14, UX-DR24 og tilgjengelighetsgulvet er uendret.
 - **Endret:** OP-02, AV-16 og P-13-raden i §12 (pekere hit), raden for OP-02 i §8.4, `epic-2-context.md`, PRD §8 og §10, EXPERIENCE.md (Foundation, Responsive & Platform og UJ-1), DESIGN.md (Bredde), arkitektur § Deferred, ÅB-7, UX-DR25, UX-DR26, Story 4.6 og 4.7 i `epics.md`, handlingspunktet i `sprint-status.yaml` og vurderingsmatrisen.
+
+### 2026-11-15 – Faktarettelser i AGENTS.md (AV-08)
+
+- **Hvem:** Ragnhild Sætren, med Claude, 2026-11-15, før story 4.2. Det er rettelser av utdatert status, ikke et nytt vedtak eller et nytt punkt.
+- **Rettet:**
+  - Innledningen sa «planlagt stack» og at regelmotoren hadde «den første harde regelen». Den beskriver nå stacken som bygget, story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1 og 4.7 som ferdige, alle fire harde regler, timer i perioden og ulempebelastning, og at rangering og KI-laget ikke er bygget ennå.
+  - Regelen om underagenter sa «Ikke drøftet i gruppa ennå». Den viser nå til godkjenningen 2026-11-04 (OP-04, se PR #5 over). Selve regelen er uendret.
+  - «446 av 455 sporede filer» er erstattet med «godt over halvparten av de sporede filene», fordi tallet endrer seg ved hver commit. På rettetidspunktet var det 451 av 843.
+- **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter. `docs/ki-logg/README.md` har samme utdaterte tall (446 rammeverksfiler) og `deferred-work.md` har to åpne funn om den første harde regelen. Begge er ikke rørt og tas opp separat.
 
 ---
 

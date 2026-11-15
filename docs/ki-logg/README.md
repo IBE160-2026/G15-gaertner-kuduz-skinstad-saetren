@@ -21,7 +21,7 @@ uten en eneste innvending mot KI-en er ikke en vurdering.
 ## Spørringer til innlevering
 
 Alle er kjørt og verifisert mot repoet. `$EX` holder BMAD-rammeverket utenfor,
-ellers drukner prosjektets egne filer i 446 rammeverksfiler.
+ellers drukner prosjektets egne filer i rammeverksfilene.
 
 ```bash
 EX=(':(exclude)_bmad/*' ':(exclude).claude/*' ':(exclude).agents/*')

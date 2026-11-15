@@ -52,3 +52,19 @@ Oppdatere fargene for fullførte stories i avhengighetsfiguren, undersøke statu
 
 ### Åpne punkter
 - Den eksisterende oppfølgingen av faktisk skjermleseropplesing står i issues.md under gjennomgang av PR 25.
+## 2026-11-15 kl. 17:01 — Kimsk81
+
+### Oppgave
+Automatisere synkronisering av figurens status med sprintstatus og legge til CI-kontroll, etter brukerens ønske.
+
+### Plan
+- Bruke sprintstatus som kilde, beholde avhengighetsnotater og oppdatere faktiske statustekster.
+- Dokumentere kommandoen, teste feil og la en uavhengig agent gjennomgå endringen.
+
+### Resultat
+- La til Python-skript og GitHub Actions-kontroll, oppdaterte figuren og dokumenterte bruk i README. Figuren oppgir nå riktig antall stories og ingen foreldet statusdato.
+- Fire automatiske tester bestod, inkludert feilformede og dupliserte data samt kontroll- og skrivemodus. Kontroll av faktisk figur mot sprintstatus og git diff --check bestod.
+- Den uavhengige gjennomgangen fant mangelfull validering og et testgap; disse ble rettet og testet. Se spesifikasjonen og KI-loggen for detaljer.
+
+### Åpne punkter
+Ingen.

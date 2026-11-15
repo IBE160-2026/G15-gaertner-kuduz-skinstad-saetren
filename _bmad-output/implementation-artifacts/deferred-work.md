@@ -5,18 +5,18 @@
   summary: "[LØST 2026-11-14, komponenttester (OP-16)] Feil-, prøv-igjen- og 401-tilstandene i Vaktvalg har ingen automatisk test, og feiltilstanden er ikke kontrollert i nettleser."
   evidence: Frontend har ingen testrigg for komponenter (bare Node-tester av rene funksjoner). Det ville vært medium, men er ikke verifisert. Avgjøres av en komponenttest (for eksempel med jsdom) eller en manuell kontroll der `/api/vaktoversikt` feiler mens `/api/meg` svarer. Løst: `frontend/tester/komponenter/vaktvalg.test.tsx` (feil og «Prøv igjen») og `frontend/tester/komponenter/app.test.tsx` (401 fra `/api/vaktoversikt` etter `/api/meg` 200 viser innloggingen med `sesjonUtlopt`). Mutasjonene M1 og M2 i [KI-loggen](../../docs/ki-logg/2026-11-14-komponenttester.md) ga røde tester.
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-5-vaktoversikt-med-krever-handling.md`
-  summary: Innledningen og «Kjøring og verifisering» i AGENTS.md nevner ikke vaktoversikten fra 1.5 eller `npm run test`.
-  evidence: AGENTS.md er agentkontekst. Etter AV-08 endres den med registrering i §11 eller i egen PR, ikke som en del av denne storien. Delvis løst 2026-11-14: `npm run test` står nå i «Kjøring og verifisering» i AGENTS.md, med både `node --test` og komponenttestene (OP-16, branchen `frontend-komponenttester`). Delen om vaktoversikten fra 1.5 i innledningen er fortsatt åpen.
+  summary: "[LØST 2026-11-15, rettet i AGENTS.md] Innledningen og «Kjøring og verifisering» i AGENTS.md nevner ikke vaktoversikten fra 1.5 eller `npm run test`."
+  evidence: AGENTS.md er agentkontekst. Etter AV-08 endres den med registrering i §11 eller i egen PR, ikke som en del av denne storien. Delvis løst 2026-11-14: `npm run test` står nå i «Kjøring og verifisering» i AGENTS.md, med både `node --test` og komponenttestene (OP-16, branchen `frontend-komponenttester`). Delen om vaktoversikten fra 1.5 i innledningen er fortsatt åpen. Løst 2026-11-15: innledningen nevner nå vaktoversikten og valg av vakt (faktarettelse ført i §11, AV-08).
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-1-gyldige-kandidater-filtrert-pa-kompetanse-minstekrav.md`
   summary: "[LØST 2026-11-14, komponenttester (OP-16)] Frontend har ingen komponenttestrigg, så gjengivelsen av tilstandene og «Prøv igjen» i `Kandidatliste` testes ikke automatisk."
   evidence: Verification-gap 2026-11-11. `frontend/tester/kandidater.test.mjs` tester bare logikken i `src/kandidater.ts`. Fjernes `forsok` fra avhengighetene i `useEffect`, er alle tester fortsatt grønne. Komponenten dekkes bare av den manuelle nettleserkontrollen. Løst: `frontend/tester/komponenter/kandidatflate.test.tsx` (feil, «Prøv igjen» og datafeil). Mutasjonene M3 (`forsok` fjernet fra deps) og M3b i [KI-loggen](../../docs/ki-logg/2026-11-14-komponenttester.md) ga røde tester.
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-1-gyldige-kandidater-filtrert-pa-kompetanse-minstekrav.md`
-  summary: AGENTS.md sier fortsatt «ingen domenelogikk ennå» og nevner ikke `tester/regelmotor/` eller arkitekturtesten med import-linter.
-  evidence: Blind-hunter 2026-11-11. Story 2.1 legger inn `backend/domene/` med regelmotor. Rettingen gjelder en agentkontekstfil (AV-08) og krever et valg fra et gruppemedlem.
+  summary: "[LØST 2026-11-11, rettet i AGENTS.md] AGENTS.md sier fortsatt «ingen domenelogikk ennå» og nevner ikke `tester/regelmotor/` eller arkitekturtesten med import-linter."
+  evidence: Blind-hunter 2026-11-11. Story 2.1 legger inn `backend/domene/` med regelmotor. Rettingen gjelder en agentkontekstfil (AV-08) og krever et valg fra et gruppemedlem. Løst: AGENTS.md ble rettet 2026-11-11 på oppdrag fra Johannes (§11, PR #13) og nevner nå domenekjernen, `tester/regelmotor/` og import-linter-kontrakten. Bekreftet 2026-11-15.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-2-filtrere-bort-kandidater-med-kolliderende-vakt.md`
-  summary: AGENTS.md sier at regelmotoren har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter story 2.2 er det to regler.
-  evidence: Blind-hunter 2026-11-11. `domene/regelmotor/kolliderende_vakt.py` og `REGLER` har to regler. Rettingen gjelder en agentkontekstfil og rutes derfor til utsatt arbeid.
+  summary: "[LØST 2026-11-15, rettet i AGENTS.md] AGENTS.md sier at regelmotoren har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter story 2.2 er det to regler."
+  evidence: Blind-hunter 2026-11-11. `domene/regelmotor/kolliderende_vakt.py` og `REGLER` har to regler. Rettingen gjelder en agentkontekstfil og rutes derfor til utsatt arbeid. Løst: innledningen i AGENTS.md beskriver nå alle fire harde regler (faktarettelse ført i §11 i avklaringspunktene, AV-08).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-2-filtrere-bort-kandidater-med-kolliderende-vakt.md`
   summary: Når reglene kjøres på nytt ved Godkjenning (story 3.2), må Vaktens egen rad holdes utenfor Kandidatens `vakter`, ellers kolliderer den godkjente med sin egen vakt.
@@ -43,8 +43,8 @@
   evidence: Verification-gap 2026-11-12. `frontend/tester/kandidater-bunt.ts` bunter bare `src/kandidater` og `src/api`. En snudd betingelse (`!== 0`) ville gått gjennom alle 28 testene. Inntil videre dekker den manuelle nettleserkontrollen dette. Bør løses senest i 2.6, som erstatter grenen med tomtilstanden. Løst: `frontend/tester/komponenter/kandidatflate.test.tsx` (tom liste). Mutasjonen M4 (`=== 0` blir `!== 0`) i [KI-loggen](../../docs/ki-logg/2026-11-14-komponenttester.md) ga rød test. Story 2.6 må oppdatere testen når tomtilstanden erstatter teksten.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-4-filtrere-pa-35-timersregelen-ukentlig-fri.md`
-  summary: AGENTS.md sier at domenekjernen har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter 2.4 er alle fire harde regler på plass.
-  evidence: Blind-hunter 2026-11-12. AGENTS.md er agentkontekst for hele gruppa og oppdateres utenom storyen.
+  summary: "[LØST 2026-11-15, rettet i AGENTS.md] AGENTS.md sier at domenekjernen har «den første harde regelen (kompetanse-minstekrav) fra story 2.1», men etter 2.4 er alle fire harde regler på plass."
+  evidence: Blind-hunter 2026-11-12. AGENTS.md er agentkontekst for hele gruppa og oppdateres utenom storyen. Løst: innledningen i AGENTS.md beskriver nå alle fire harde regler (faktarettelse ført i §11 i avklaringspunktene, AV-08).
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-5-ekskludert-boks-med-oppsummering-av-utelukkelser.md`
   summary: "[LØST 2026-11-14, komponenttester (OP-16)] To rader i grensetabellen for Ekskludert-boksen hadde ingen automatisk test: ingen boks ved 0 utelukkede, og «Vis full liste» lukket → åpen → lukket med `aria-expanded`."
