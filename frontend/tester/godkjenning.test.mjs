@@ -39,8 +39,8 @@ const VAKT_4127 = {
   avdeling: "Kirurgisk sengepost", vaktnummer: 4127, vakttype: "dag",
   start: "2026-09-27T07:00:00+02:00", slutt: "2026-09-27T15:00:00+02:00", minstenivå: 3,
 };
-const JONAS = { status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3 }, grunnlagsmerke: "a".repeat(64) };
-const METTE = { status: "ok", vakt: VAKT_4127, kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4 }, grunnlagsmerke: "b".repeat(64) };
+const JONAS = { status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960 }, grunnlagsmerke: "a".repeat(64) };
+const METTE = { status: "ok", vakt: VAKT_4127, kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 }, grunnlagsmerke: "b".repeat(64) };
 const DATAFEIL = { status: "datafeil", kode: "mangler_turnusgrunnlag", datagrense: "2026-10-05T00:00:00+02:00" };
 const IKKE_FUNNET = { kode: "ikke_funnet", melding: "Fant ikke ressursen." };
 

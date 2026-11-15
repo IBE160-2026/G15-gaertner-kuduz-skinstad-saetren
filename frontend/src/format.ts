@@ -167,3 +167,9 @@ export function radklasser(
   const klasser = [i % 2 === 1 ? "row-alt" : "", i > 0 && nyttDogn ? "dogn-start" : ""].filter(Boolean);
   return { rad: klasser.length ? klasser.join(" ") : undefined, datoUthevet: nyttDogn };
 }
+
+/** «32:23» for hele minutter. Brøkdeler rundes ned; negative tall, NaN og uendelig gir «0:00». */
+export function timerOgMinutter(minutter: number): string {
+  const hele = Number.isFinite(minutter) && minutter > 0 ? Math.floor(minutter) : 0;
+  return `${Math.floor(hele / 60)}:${to(hele % 60)}`;
+}

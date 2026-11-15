@@ -137,8 +137,8 @@ export const TO_UTELUKKET: UtelukkelsesOppsummering = {
 export const TO_GYLDIGE = {
   status: "ok",
   kandidater: [
-    { id: 6, navn: "Jonas Bakke", kompetansenivå: 3 },
-    { id: 5, navn: "Mette Solberg", kompetansenivå: 4 },
+    { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960 },
+    { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
   ],
   utelukkelser: INGEN_UTELUKKET,
 } satisfies Kandidatsvar;
@@ -172,7 +172,7 @@ export const KANDIDATER_DATAFEIL = {
 } satisfies Kandidatsvar;
 
 export const GODKJENNING_JONAS = {
-  status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3 },
+  status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960 },
   grunnlagsmerke: "a".repeat(64),
 } satisfies Godkjenningssvar;
 

@@ -142,6 +142,19 @@ test("radklasser: fet dato på første rad i hvert døgn, linje bare ved døgnsk
   assert.equal(f.radklasser(toDogn, 2).rad, "dogn-start");
 });
 
+test("timerOgMinutter gir t:mm for hele minutter", () => {
+  assert.equal(f.timerOgMinutter(0), "0:00");
+  assert.equal(f.timerOgMinutter(1), "0:01");
+  assert.equal(f.timerOgMinutter(1920), "32:00");
+  assert.equal(f.timerOgMinutter(32 * 60 + 23), "32:23");
+  assert.equal(f.timerOgMinutter(32 * 60 + 24), "32:24");
+  assert.equal(f.timerOgMinutter(40 * 60), "40:00");
+  assert.equal(f.timerOgMinutter(105 * 60 + 5), "105:05");
+  assert.equal(f.timerOgMinutter(-5), "0:00");
+  assert.equal(f.timerOgMinutter(Number.NaN), "0:00");
+  assert.equal(f.timerOgMinutter(90.5), "1:30");
+});
+
 const ANNEN_SONE = "America/New_York";
 
 if (process.env.FORMAT_TEST_SONE) {

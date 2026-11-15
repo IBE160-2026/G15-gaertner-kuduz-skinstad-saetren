@@ -56,12 +56,12 @@ const UTELUKKELSER_4189 = {
 };
 const OK_4127 = {
   status: "ok",
-  kandidater: [{ id: 11, navn: "Anders Strand", kompetansenivå: 3 }],
+  kandidater: [{ id: 11, navn: "Anders Strand", kompetansenivå: 3, minutter_i_uka: 0 }],
   utelukkelser: UTELUKKELSER_4127,
 };
 const OK_4189 = {
   status: "ok",
-  kandidater: [{ id: 4, navn: "Ingrid Dahl", kompetansenivå: 3 }],
+  kandidater: [{ id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920 }],
   utelukkelser: UTELUKKELSER_4189,
 };
 const DATAFEIL = { status: "datafeil", kode: "mangler_turnusgrunnlag", datagrense: "2026-10-05T00:00:00+02:00" };
