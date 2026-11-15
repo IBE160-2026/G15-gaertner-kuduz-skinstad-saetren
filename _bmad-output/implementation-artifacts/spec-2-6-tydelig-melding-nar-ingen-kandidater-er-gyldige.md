@@ -110,3 +110,11 @@ Gjennomgang 1 (Blind Hunter, Edge Case Hunter, Verification Gap). Ingen funn ble
 
 **Manual checks (docs/testing.md, OP-16):**
 - Ekte backend: #4189 viser tomtilstanden, #4127 uendret. Layout ved smale datamaskinvinduer (AV-17, ca. 800 og 1024 px), farger (ikon i `danger`), fokus på «Vis full liste» med tastatur.
+
+**Manuell kontroll (docs/testing.md):** Ragnhild, 2026-11-15, macOS, story 2.6. Nettleser og versjon er ikke notert.
+1. Layout: bestått ved 1024×800 px. Andre bredder (1080, 960, 680, 1600) er ikke kontrollert.
+2. Tastatur og fokus: meldt som forventet resultat; ikke notert separat.
+3. Farger (ikon i `danger`): meldt som forventet resultat; ikke notert separat.
+4. Større skrift: ikke kontrollert.
+5. Ekte backend: bestått. #4189 viser tomtilstanden og #4127 er uendret, etter innlogging gjennom Vite-proxyen.
+Målrettet kontroll: med backend stoppet viste flaten «Får ikke kontakt med serveren» med «Prøv igjen» og uten «!»-ikon, og flaten kom tilbake etter at backend var startet igjen.

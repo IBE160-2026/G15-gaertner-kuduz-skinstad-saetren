@@ -17,4 +17,5 @@ Instruksjonen: «Read …/spec-2-6-tydelig-melding-nar-ingen-kandidater-er-gyldi
 - `test_uke_som_slutter_ved_datagrensen_vurderes` hevdet `status == "ok"` for #4189 og feilet etter endringen. Det er en følge av ny kontrakt, ikke en regelendring. Rettet til `ingen_gyldige_kandidater`. Fasiten er ikke endret (AV-07).
 - Fire-tilstander-testen sammenligner tekst, panelklasse og kombinasjonen av rolle, ikon og knapp, og sjekker i tillegg de forventede kombinasjonene hver for seg.
 - Kjørt: `pytest` 415 bestått (inkl. import-linter), `npm run build` bestått, `npm run test` 49 `node:test` og 14 komponenttester bestått.
-- Ikke gjort: manuell nettleserkontroll mot ekte backend (OP-16: layout ved 800 og 1024 px, ikonfarge, tastaturfokus). Ingen mutasjonstest er kjørt for de nye komponenttestene.
+- Manuell nettleserkontroll mot ekte backend (OP-16) er gjort av Ragnhild 2026-11-15: #4189 og #4127 som forventet, layout bestått ved 1024×800 px, og feiltilstanden med backend nede er ulik tomtilstanden. Se spesifikasjonens Verification.
+- Ikke gjort: ingen mutasjonstest er kjørt for de nye komponenttestene.

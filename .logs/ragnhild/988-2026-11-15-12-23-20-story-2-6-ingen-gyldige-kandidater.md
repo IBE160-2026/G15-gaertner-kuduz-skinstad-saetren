@@ -20,5 +20,22 @@ Bygge story 2.6 med `bmad-build`: tydelig tomtilstand når alle kandidater er ut
 - Dokumentasjon: README, `docs/testing.md`, vurderingsmatrisen, `epic-2-context.md` og KI-logg `docs/ki-logg/2026-11-15-ingen-gyldige-kandidater.md`. Sprintstatus satt til `review`, spesifikasjonen til `done`.
 
 ### Åpne punkter
-- Manuell kontroll mot ekte backend (OP-16) er ikke gjort: #4189 viser tomtilstanden og #4127 er uendret, layout ved ca. 800 og 1024 px (AV-17), ikonfarge i `danger`, tastaturfokus på «Vis full liste».
+- Manuell kontroll mot ekte backend (OP-16): løst 2026-11-15, se under.
 - Gjennomgangen rapporterte lav-alvorlige testhygienefunn som ble avvist (blant annet at fixturen `UTELUKKET_4189` har `totalt` 24 men bare to rader, og at fire-tilstander-testen mangler `finally` rundt `cleanup()`). Se Review Triage Log.
+
+## 2026-11-15 kl. 13:00 — Ragnhild
+
+### Oppgave
+Gjennomføre den manuelle kontrollen (OP-16) for story 2.6 mot ekte backend, før push og PR.
+
+### Plan
+- Seede testdata, starte backend og frontend, og la Ragnhild kontrollere #4189 og #4127 i nettleseren.
+- Stoppe backend en kort stund for å se feiltilstanden, starte den igjen og stoppe begge serverne til slutt.
+
+### Resultat
+- Kontrollen er gjort av Ragnhild selv. #4189 viste tomtilstanden og #4127 var uendret. Layout var bestått ved 1024×800 px. Med backend stoppet viste flaten «Får ikke kontakt med serveren» med «Prøv igjen» og uten «!»; flaten kom tilbake etter omstart.
+- Ikke kontrollert: andre bredder (1080, 960, 680, 1600) og større skrift. Tastaturfokus og ikonfarge er meldt som forventet resultat, men ikke notert separat. Nettleser og versjon er ikke notert.
+- Resultatet er ført i spesifikasjonens Verification, KI-loggen og vurderingsmatrisen. Begge servere er stoppet. Testdatabasen ble seedet på nytt (gitignorert).
+
+### Åpne punkter
+Ingen.
