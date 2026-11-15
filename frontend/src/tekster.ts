@@ -104,6 +104,10 @@ export const TEKSTER = {
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
     // Timer i uka Vakten starter i (story 4.1, FR8): «32:00 t i uka».
     timerIUka: (verdi: string) => `${verdi} t i uka`,
+    timerIUkaOpplest: (verdi: string) => {
+      const [timer, minutter] = verdi.split(":").map(Number);
+      return `${timer} ${timer === 1 ? "time" : "timer"} og ${minutter} ${minutter === 1 ? "minutt" : "minutter"} i uka`;
+    },
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },

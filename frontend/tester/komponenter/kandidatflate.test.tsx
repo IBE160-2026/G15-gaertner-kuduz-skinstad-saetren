@@ -47,13 +47,23 @@ describe("Kandidatliste (story 2.1)", () => {
         { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920 },
         { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
         { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23 },
+        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61 },
       ],
     } satisfies Kandidatsvar;
     const { del } = await rendreMed(ok(svar));
 
-    expect(within(del).getByText(t.timerIUka("32:00"))).toBeTruthy();
-    expect(within(del).getByText(t.timerIUka("0:00"))).toBeTruthy();
-    expect(within(del).getByText(t.timerIUka("32:23"))).toBeTruthy();
+    for (const [navn, verdi, opplest] of [
+      ["Ingrid Dahl", "32:00", "32 timer og 0 minutter i uka"],
+      ["Mette Solberg", "0:00", "0 timer og 0 minutter i uka"],
+      ["Jonas Bakke", "32:23", "32 timer og 23 minutter i uka"],
+      ["Ola Nord", "1:01", "1 time og 1 minutt i uka"],
+    ]) {
+      const rad = within(del).getByText(navn).closest("li");
+      expect(rad).not.toBeNull();
+      const synlig = within(rad!).getByText(t.timerIUka(verdi));
+      expect(synlig.getAttribute("aria-hidden")).toBe("true");
+      expect(within(rad!).getByText(opplest).classList.contains("visuelt-skjult")).toBe(true);
+    }
   });
 
   test("feil gir «Prøv igjen», og et trykk henter kandidatene på nytt", async () => {

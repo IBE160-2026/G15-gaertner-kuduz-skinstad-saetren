@@ -28,4 +28,10 @@ Hovedøkten leste diffen mot spesifikasjonen; alle oppgaver og matriserader var 
 
 Ett funn ble først utsatt som uverifisert: ugyldige vakter hoppes stille over, og startuka er ikke sjekket mot datagrensen. Ved nærmere undersøkelse var det ikke en feil: 35-timersregelens vindu er hele startuka, og `vurder_kandidater` gir `Datafeil` før tallet beregnes. Hovedøkten hadde antatt et smalere vindu uten å slå det opp. Funnet er avklart i `deferred-work.md`, og docstringen til `timer_i_startuka` sier nå at kalleren må ha vurdert grunnlaget.
 
-Etter rettingene kjørte hovedøkten hele pakken: **442 av 442 backendtester** og frontendbygg, modultester og komponenttester (24 av 24) bestod. Ingen tester gjorde KI-kall. Manuell kontroll (layout ved smale vinduer, tastaturfokus, skjermleser, ekte backend for #4127 og #4189) er ikke utført og står som åpent punkt.
+Etter rettingene kjørte hovedøkten hele pakken: **442 av 442 backendtester** og frontendbygg, modultester og komponenttester (24 av 24) bestod. Ingen tester gjorde KI-kall. Manuell kontroll ble deretter utført av Ragnhild på macOS/Safari; resultat og forbehold står i spesifikasjonens Verification. Skjermleseren utelot enheten og minuttene, og ny kontroll etter retting gjenstår.
+
+## Oppfølging etter PR 25-gjennomgang
+
+Kim ba Codex rette tre funn: ufullstendig skjermleseropplesing, foreldet dokumentstatus og komponenttest uten kobling mellom kandidat og timeverdi. Codex la til visuelt skjult, utvidet tekst og en radvis komponenttest, og samordnet kontrollstatusen. Den opprinnelige synlige teksten er skjult for hjelpeteknologi slik at verdien ikke leses dobbelt. Faktisk opplesing med skjermleser må fortsatt kontrolleres; automatisk test bekrefter bare HTML og tekst.
+
+Kvalitetssikring: frontendbygg, 50 modultester og 25 komponenttester bestod. En uavhengig gjennomgang fant ingen konkrete feil. Oppfølgingen rettet tidligere generert kode som lot VoiceOver utelate timeenhet og minutter, samt en test som ikke kontrollerte koblingen mellom kandidat og verdi.
