@@ -34,13 +34,32 @@ class Kandidatgrunnlag:
 HISTORIKK = timedelta(hours=672)
 
 
+# Tabeller som kan påvirke visning, harde regler eller rangering (P-09). Alle
+# kolonner tas med, så nye felt på disse tabellene dekkes automatisk. En ny
+# tabell må føres her eller i UTENFOR_GRUNNLAG; testen i
+# `tester/lagring/test_grunnlagsmerke.py` feiler ellers. Story 5.1 må ta stilling
+# til tabellen for TolketPreferanse hvis den ikke blir kolonner på `ansatt`.
+GRUNNLAGSTABELLER = (TurnusRad, AnsattRad, VaktRad)
+
+# Tabeller som bevisst holdes utenfor merket, med begrunnelse.
+UTENFOR_GRUNNLAG: dict[str, str] = {
+    "bruker": "innlogging, ingen beslutningsdata",
+    "godkjenning": "speiles i vakt.tildelt_ansatt_id og vakt.mangler_bemanning",
+}
+
+
 def grunnlagsmerke(session: Session, bruker_id: int, vaktnummer: int, ansatt_id: int) -> str:
     """Opakt merke over alle lagrede felt som kan påvirke visning eller regler.
 
-    Nye beregninger i Epic 4/5 må legge egne innganger til her (P-09).
+    Merket dekker bare databasen. Konstanter i `domene/` (terskler, satser, vekter)
+    endres bare ved omstart, og da lages en ny JWT-nøkkel, så alle logges ut og
+    godkjenningsflaten henter et nytt merke. Gjøres JWT-nøkkelen varig over
+    omstart, må en versjon for beregningene inn i merket. KI-forklaringer skal
+    ikke inn: de er ikke deterministiske og bindes til merket i frontend
+    (story 5.3/5.5, P-09).
     """
     rader = []
-    for modell in (TurnusRad, AnsattRad, VaktRad):
+    for modell in GRUNNLAGSTABELLER:
         kolonner = tuple(modell.__table__.columns)
         rader.append([
             tuple(getattr(rad, kolonne.key) for kolonne in kolonner)

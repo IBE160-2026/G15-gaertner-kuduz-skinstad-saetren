@@ -15,7 +15,10 @@ export type Godkjenningstilstand =
   | { type: "ikke_funnet" }
   | { type: "feil"; tekst: string }
   | { type: "datafeil"; datagrense: string }
-  | { type: "klar"; vakt: Vaktdetaljer; kandidat: Kandidat; grunnlagsmerke: string };
+  // Bare fra POST: vakten ble bemannet etter at flaten ble lastet. Et nytt forsøk
+  // kan ikke lykkes, så flaten gir bare vei videre til Vaktvalg.
+  | { type: "allerede_bemannet" }
+  | { type: "klar";vakt: Vaktdetaljer; kandidat: Kandidat; grunnlagsmerke: string };
 
 export function tilstandFraSvar(svar: Godkjenningssvar): Godkjenningstilstand {
   if (svar.status === "ok") return { type: "klar", vakt: svar.vakt, kandidat: svar.kandidat, grunnlagsmerke: svar.grunnlagsmerke };

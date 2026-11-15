@@ -14,7 +14,8 @@ type Props = {
   /** Til kandidatflaten for vakten, uten kall til API-et. */
   onTilbake: () => void;
   onGodkjent: (navn: string, vaktnummer: number) => void;
-  onTilOversikt?: () => void;
+  /** Til Vaktvalg. Påkrevd, så tilstander uten nytt forsøk alltid har en vei ut. */
+  onTilOversikt: () => void;
 };
 
 export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onGodkjent, onTilOversikt }: Props) {
@@ -29,6 +30,7 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
   const aktivtValg = useRef(`${vaktnummer}/${ansattId}`);
   aktivtValg.current = `${vaktnummer}/${ansattId}`;
   const retryknapp = useRef<HTMLButtonElement>(null);
+  const vaktvalgknapp = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     aktiv.current = true;
@@ -64,7 +66,7 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
       } else if (feil instanceof ApiFeil && feil.kode === "ugyldig_kandidat") {
         setTilstand({ type: "ikke_funnet" });
       } else if (feil instanceof ApiFeil && feil.kode === "allerede_bemannet") {
-        setTilstand({ type: "feil", tekst: feiltekst(feil.kode) });
+        setTilstand({ type: "allerede_bemannet" });
       } else {
         setUsikkert(true);
         setMelding(t.usikkert);
@@ -76,6 +78,7 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
 
   useEffect(() => {
     if (tilstand.type === "feil") retryknapp.current?.focus();
+    if (tilstand.type === "allerede_bemannet") vaktvalgknapp.current?.focus();
   }, [tilstand]);
 
   // Vanlig lenke, så den kan åpnes i ny fane. Et vanlig klikk blir i appen.
@@ -109,6 +112,14 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
       <p className="brodtekst">{tilstand.tekst}</p>
       <button ref={retryknapp} type="button" className="button-secondary" onClick={() => setForsok((n) => n + 1)}>
         {TEKSTER.provIgjen}
+      </button>
+    </section></main>
+  );
+  if (tilstand.type === "allerede_bemannet") return (
+    <main className="innhold"><section className="panel" role="alert">
+      <h1 className="overskrift">{feiltekst("allerede_bemannet")}</h1>
+      <button ref={vaktvalgknapp} type="button" className="button-secondary" onClick={onTilOversikt}>
+        {t.tilVaktvalg}
       </button>
     </section></main>
   );
@@ -160,7 +171,7 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
           <button type="button" className="button-primary button-kompakt" disabled={venter || usikkert} onClick={bekreft}>
             {t.godkjenn}
           </button>
-          {usikkert && onTilOversikt && <button type="button" className="button-secondary" onClick={onTilOversikt}>{t.tilVaktvalg}</button>}
+          {usikkert && <button type="button" className="button-secondary" onClick={onTilOversikt}>{t.tilVaktvalg}</button>}
         </div>
         <p className="meta bekreftelse-melding" role="status">{venter ? t.lagrer : melding}</p>
       </section>
