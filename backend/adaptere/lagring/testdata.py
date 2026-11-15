@@ -33,7 +33,7 @@ from sqlalchemy.orm import Session
 
 from adaptere.lagring.database import database_sti, lag_engine, lag_sessionmaker, opprett_skjema
 from adaptere.lagring.brukere import hash_passord
-from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
+from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, GodkjenningRad, TurnusRad, VaktRad
 
 AVDELING = "Kirurgisk sengepost"
 PASSORD_VARIABEL = "TURNUSHJELPEREN_PASSORD"
@@ -825,15 +825,16 @@ def _vaktrad(vaktnummer: int, dato: str, vakttype: str, ansatt_id: int | None, m
 
 
 def fyll_testdata(session: Session) -> dict[str, int]:
-    """Tømmer de fire tabellene og fyller `turnus`, `ansatt` og `vakt`.
+    """Tømmer de fem tabellene og fyller `turnus`, `ansatt` og `vakt`.
 
     `bruker` tømmes først på grunn av fremmednøkkelen til `turnus`, og fylles av
     `legg_til_turnusansvarlig`.
 
     Kalleren eier transaksjonen, slik at tømming og fylling blir én enhet.
-    Dette er den eneste kodeveien som markerer en vakt som bemannet, inntil
-    skrivefunksjonen for Godkjenning kommer i Epic 3.
+    Historiske og ordinære vakter er bemannet i testdata. I appflyten er
+    `lagre_godkjenning` eneste skrivevei for ny bemanning.
     """
+    session.execute(delete(GodkjenningRad))
     session.execute(delete(BrukerRad))
     session.execute(delete(VaktRad))
     session.execute(delete(AnsattRad))

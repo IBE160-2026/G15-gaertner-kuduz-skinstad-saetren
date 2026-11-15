@@ -66,7 +66,7 @@ export type Kandidatsvar =
 // GET /api/vakter/{nr}/kandidater/{ansatt_id} (story 3.1). Bare for en Gyldig
 // kandidat. Utelukket eller ukjent Ansatt gir 404 `ikke_funnet` (NFR2).
 export type Godkjenningssvar =
-  | { status: "ok"; vakt: Vaktdetaljer; kandidat: Kandidat }
+  | { status: "ok"; vakt: Vaktdetaljer; kandidat: Kandidat; grunnlagsmerke: string }
   | { status: "datafeil"; kode: string; datagrense: string };
 
 /** API-et svarte med feilformen `{ kode, melding }`. */
@@ -180,4 +180,14 @@ export function hentKandidater(vaktnummer: number): Promise<Kandidatsvar> {
 
 export function hentGodkjenningsgrunnlag(vaktnummer: number, ansattId: number): Promise<Godkjenningssvar> {
   return kall<Godkjenningssvar>(`/api/vakter/${vaktnummer}/kandidater/${ansattId}`, {}, true);
+}
+
+export function godkjennErstatning(vaktnummer: number, ansattId: number, grunnlagsmerke: string): Promise<
+  { status: "godkjent" } | { status: "datafeil"; kode: string; datagrense: string }
+> {
+  return kall(`/api/vakter/${vaktnummer}/kandidater/${ansattId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ grunnlagsmerke }),
+  }, true);
 }

@@ -72,11 +72,12 @@ python -m venv .venv
 
 Testdatakommandoen legger inn de fiktive testdataene (Kirurgisk sengepost, uke 39–40
 2026, 25 ansatte) og turnusansvarlig Kari Vestby med brukernavnet `kari.vestby`.
-Databasen har fire tabeller: `turnus`, `ansatt`, `vakt` og `bruker`. Kommandoen tømmer
-og fyller tabellene på nytt og kan kjøres flere ganger. Databasen havner i
+Databasen har fem tabeller: `turnus`, `ansatt`, `vakt`, `bruker` og `godkjenning`.
+Kommandoen tømmer og fyller tabellene på nytt og kan kjøres flere ganger. Databasen havner i
 `backend/turnushjelperen.db`, med mindre miljøvariabelen `TURNUSHJELPEREN_DB` peker et
 annet sted. Slett filen hvis skjemaet er endret. En database fra før story 1.3 trenger
-ikke slettes: kommandoen legger til tabellen `bruker`.
+ikke slettes: kommandoen legger til tabellene som mangler. Ved skjemaendring i en
+eksisterende tabell må databasefilen fortsatt slettes.
 
 Passordet kan lages på to måter. Backend leser ikke `.env`, så variabelen må settes i
 terminalen før kommandoen kjøres.
@@ -206,11 +207,17 @@ Hver kandidat i listen har knappen «Velg», som går til godkjenningsflaten på
 `Turnus > <avdeling> > Vakt #<nr> > Kandidater > Godkjenning`, vakten, et
 kandidatkort med navn og nivå, en bekreftelsesboks som sier hvem som settes inn i
 hvilken vakt, og statuslinjen «Ikke gjennomført — venter på eksplisitt godkjenning».
-«Avbryt» går tilbake til kandidatlisten. «Godkjenn erstatning» lagrer ingenting ennå:
-den viser bare «Godkjenningen lagres ikke ennå. Ingenting er endret.». Lagringen kommer
-i story 3.2. En adresse for en Ansatt som ikke er en gyldig kandidat for vakten, eller
-for en vakt som ikke mangler bemanning, gir «Kandidaten kan ikke velges for denne
-vakten.» med lenke tilbake til kandidatlisten.
+«Avbryt» går tilbake til kandidatlisten. «Godkjenn erstatning» kontrollerer alle harde
+regler på nytt og bemanner vakten når grunnlaget er uendret. Godkjenningen lagres med
+valgt ansatt, vakt, godkjennende bruker og tidspunkt. Vaktvalg åpnes med en bekreftelse
+som navngir den ansatte og vaktens nummer, og vakten står blant de bemannede. Er
+grunnlaget endret, hentes opplysningene på nytt og
+du må trykke igjen. Ugyldig kandidat, datafeil og allerede bemannet vakt får egne
+meldinger uten ny godkjenning. Hvis POST-svaret går tapt, sier flaten at utfallet er
+usikkert og ber deg kontrollere Vaktvalg før du prøver igjen. En adresse for en
+Ansatt som ikke er en gyldig kandidat for vakten, eller for en vakt som ikke
+mangler bemanning, gir «Kandidaten kan ikke velges for denne vakten.» med lenke
+tilbake til kandidatlisten.
 
 Beskyttede adresser kontrollerer sesjonen før innhold vises. Uten gyldig sesjon
 sendes du til `/logg-inn`; en sesjon som bortfaller mens du bruker appen, gir
@@ -231,10 +238,14 @@ er svaret fortsatt 200, men `{"status": "datafeil", "kode": "mangler_turnusgrunn
 "datagrense": "2026-10-05T00:00:00+02:00"}` uten liste (P-08).
 `GET /api/vakter/{vaktnummer}/kandidater/{ansatt_id}` gir grunnlaget for
 godkjenningsflaten: `{"status": "ok", "vakt": {…som vaktdetaljene}, "kandidat": {id,
-navn, kompetansenivå}}`, eller samme datafeilsvar. Det svarer bare for Ansatte som er
+navn, kompetansenivå}, "grunnlagsmerke": "…"}`, eller samme datafeilsvar.
+Det svarer bare for Ansatte som er
 i kandidatlisten for vakten. En utelukket, ukjent eller opprinnelig oppsatt Ansatt gir
-samme 404 `ikke_funnet`, uten å si hvorfor (NFR2). Endepunktet er lesende og har ingen
-`POST` (FR12). Reglene beregnes i `backend/domene/regelmotor/` uten KI.
+samme 404 `ikke_funnet`, uten å si hvorfor (NFR2). `POST` på samme sti krever
+`{"grunnlagsmerke": "…"}` og svarer `{"status": "godkjent"}` ved vellykket lagring.
+Endret grunnlag, ugyldig kandidat og allerede bemannet vakt gir 409 med ulike
+`{kode, melding}`. Datafeil gir 200 med `status: "datafeil"` og datagrense.
+Reglene beregnes i `backend/domene/regelmotor/` uten KI.
 API-dokumentasjon er deaktivert.
 
 ### Tester

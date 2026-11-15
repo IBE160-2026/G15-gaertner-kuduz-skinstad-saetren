@@ -170,6 +170,13 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Kjente fallgruver
 
+- SQLite-transaksjonene bygger på standardoppførselen til Pythons `sqlite3`.
+  GET-grunnlaget kjører `BEGIN`, og `lagre_godkjenning` kjører `BEGIN IMMEDIATE`
+  (AD-5, P-09). Endre ikke `isolation_level` eller `autocommit` på engine eller
+  tilkobling uten å lese docstringen til `lag_engine` i
+  `backend/adaptere/lagring/database.py`. Med `autocommit=False` feiler `BEGIN`.
+  Med `AUTOCOMMIT` mister andre skriveveier, som testdataene, transaksjonen sin.
+
 - `.agents/`-kopien har CRLF i arbeidstreet, `.claude/`-kopien har LF. Sammenlign dem
   med linjeskift ignorert — `diff <(tr -d '\r' < a) <(tr -d '\r' < b)` — ellers ser
   alle de identiske filene ut som endret.

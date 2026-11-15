@@ -26,3 +26,21 @@ test("feil gir «Prøv igjen», og et trykk henter oversikten på nytt", async (
   expect(screen.queryByRole("alert")).toBeNull();
   expect(kallTil(fetch, URL)).toBe(2);
 });
+
+test("bekreftelse vises over oppdatert oversikt etter bemanning", async () => {
+  const bemannet = {
+    ...VAKTOVERSIKT,
+    krever_handling: [],
+    bemannet: [...VAKTOVERSIKT.bemannet, {
+      vaktnummer: 4127, vakttype: "dag" as const,
+      start: VAKTOVERSIKT.krever_handling[0].start,
+      slutt: VAKTOVERSIKT.krever_handling[0].slutt,
+      ansatt: { navn: "Jonas Bakke", stilling: "Sykepleier", ansiennitet: 5 },
+    }],
+  };
+  falskFetch({ [URL]: ok(bemannet) });
+  render(<Vaktvalg onVelgVakt={vi.fn()} bekreftelse={{ navn: "Jonas Bakke", vaktnummer: 4127 }} />);
+  expect(await screen.findByText(t.godkjent("Jonas Bakke", 4127))).toBeTruthy();
+  expect(screen.queryByRole("heading", { name: t.vaktoverskrift(4127, "Dagvakt", bemannet.avdeling) })).toBeNull();
+  expect(screen.getByText("Jonas Bakke")).toBeTruthy();
+});

@@ -20,6 +20,7 @@ export default function App() {
   const [kontrollfeil, setKontrollfeil] = useState(false);
   const [navigasjonsfeil, setNavigasjonsfeil] = useState<string | null>(null);
   const [sti, setSti] = useState(window.location.pathname);
+  const [bekreftelse, setBekreftelse] = useState<{ navn: string; vaktnummer: number } | null>(null);
   const bekreftetSesjon = useRef(false);
   const utloggingSperrer = useRef(false);
   const utloggingVenter = useRef(false);
@@ -33,6 +34,7 @@ export default function App() {
 
   function visInnlogging(utlopt: boolean) {
     nySesjonsgenerasjon();
+    setBekreftelse(null);
     setBruker(null);
     setKontrollfeil(false);
     setNavigasjonsfeil(null);
@@ -45,6 +47,7 @@ export default function App() {
 
   function kontroller() {
     if (utloggingSperrer.current) return;
+    setBekreftelse(null);
     const generasjon = nySesjonsgenerasjon();
     setBruker(undefined);
     setKontrollfeil(false);
@@ -84,6 +87,7 @@ export default function App() {
 
   function innlogget(svar: Innlogget) {
     nySesjonsgenerasjon();
+    setBekreftelse(null);
     bekreftetSesjon.current = true;
     setBruker(svar);
     setStartfeil(null);
@@ -93,6 +97,7 @@ export default function App() {
   }
 
   function velgVakt(vaktnummer: number) {
+    setBekreftelse(null);
     const nySti = kandidatsti(vaktnummer);
     naviger(nySti);
     setSti(nySti);
@@ -103,6 +108,18 @@ export default function App() {
     const nySti = godkjenningssti(vaktnummer, ansattId);
     naviger(nySti);
     setSti(nySti);
+  }
+
+  function godkjent(navn: string, vaktnummer: number) {
+    setBekreftelse({ navn, vaktnummer });
+    naviger(OVERSIKT_STI);
+    setSti(OVERSIKT_STI);
+  }
+
+  function tilVaktvalg() {
+    setBekreftelse(null);
+    naviger(OVERSIKT_STI);
+    setSti(OVERSIKT_STI);
   }
 
   async function loggUtNaa() {
@@ -147,7 +164,7 @@ export default function App() {
         </main>
       )}
       {bruker === null && <LoggInn onInnlogget={innlogget} onForsinketInnlogging={kontroller} startfeil={startfeil} />}
-      {bruker && sti === OVERSIKT_STI && <Vaktvalg onVelgVakt={velgVakt} />}
+      {bruker && sti === OVERSIKT_STI && <Vaktvalg onVelgVakt={velgVakt} bekreftelse={bekreftelse} />}
       {bruker && vaktnummer !== null && <Kandidatflate key={vaktnummer} vaktnummer={vaktnummer} onVelg={velgKandidat} />}
       {bruker && godkjenning !== null && (
         <Godkjenningsflate
@@ -155,6 +172,8 @@ export default function App() {
           vaktnummer={godkjenning.vaktnummer}
           ansattId={godkjenning.ansattId}
           onTilbake={() => velgVakt(godkjenning.vaktnummer)}
+          onGodkjent={godkjent}
+          onTilOversikt={tilVaktvalg}
         />
       )}
       {bruker && sti !== OVERSIKT_STI && vaktnummer === null && godkjenning === null && (
