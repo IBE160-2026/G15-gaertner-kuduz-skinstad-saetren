@@ -94,3 +94,6 @@ enkeltvis. Verifikasjonslaget rapporterte ingen funn.
 **Commands:**
 - 2026-11-15: `backend/.venv/Scripts/python -m pytest -q` – 438 bestått.
 - 2026-11-15: `npm.cmd run build` og `npm.cmd run test` fra `frontend/` – bygg bestått, 49 Node-tester og 15 komponenttester bestått. Vitest varslet om fremtidig endring i Vites config-loader.
+- 2026-11-15, etter at `main` med story 4.1 og 3.2 var slått inn: `backend/.venv/bin/python -m pytest -q` – 468 bestått. `npm run build` og `npm run test` fra `frontend/` – bygg bestått, 50 Node-tester og 26 komponenttester bestått. Testen «hver rad viser timer i uka» fra 4.1 måtte få `ulempebelastning`, fordi typen krever feltet.
+
+**Manuell kontroll (Ragnhild Sætren, 2026-11-15):** ekte backend med testdata, vakt #4127 og #4189. Ulempeblokken står etter timekolonnen. Ved smale vinduer klippes ingenting, og siden rulles ikke vannrett. Godkjenningsflaten er uendret (den viser bare navn og nivå; nøkkeltallene hører til story 4.5), og #4189 viser fortsatt «Ingen gyldige kandidater». Skjermleser er ikke kontrollert for ulempeblokken.
