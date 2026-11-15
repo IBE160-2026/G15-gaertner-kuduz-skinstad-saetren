@@ -112,3 +112,13 @@ En nattevakt søndag 23:00 til mandag 07:00 deles på ukeskiftet: 1 t i uka som 
 
 **Manual checks (if no CLI):**
 - Layout ved flere vindusbredder, også smale (AV-17), med lange navn og verdier som 40:00, tastaturfokus på «Velg» og at verdien leses riktig av skjermleser. Ekte backend: #4127 viser Ingrid 32:00, #4189 er uendret (OP-16).
+
+**Manuell kontroll (docs/testing.md):** Ragnhild, 2026-11-15, Safari 26.6.2 (21624.5.1.11.3) på macOS, story 4.1, ekte backend med testdata i egen database
+1. 1080, 960, 680 og 1600 px: bestått (oppgitt samlet: «alle funksjoner fungerte som forventet»)
+2. Tastatur og fokus: bestått. «Velg» med Enter på Ingrid Dahl for #4127 godkjente og bemannet vakten
+3. Farger: bestått
+4. Større skrift: bestått, men først etter at testdataene ble tilbakestilt (vakten var bemannet av punkt 2)
+5. Ekte backend: bestått. #4127 viser Ingrid med 32:00, vakten var ubemannet etter tilbakestilling
+Målrettet kontroll av flyt uten komponenttest: ikke relevant
+Skjermleser (valgfri): observasjon, ikke avvik mot akseptkriteriene. «32:00 t i uka» ble lest som «32 uka», altså uten «t» og uten minuttene. Ikke utbedret i 4.1 etter Ragnhilds valg; se issues.md.
+Merknad: resultatene per punkt er oppgitt samlet av Ragnhild, ikke avkrysset enkeltvis.
