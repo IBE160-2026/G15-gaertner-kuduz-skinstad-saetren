@@ -314,7 +314,11 @@ button {
   padding: var(--button-compact-padding);
 }
 
+/* `position: relative` gjør beholderen til forelder for `.visuelt-skjult` (absolutt
+   posisjonert) i cellene. Uten den slipper slike elementer ut av rullingen og gjør
+   siden bredere enn vinduet (funnet i nettleserkontrollen av story 4.4, AV-14). */
 .tabellbeholder {
+  position: relative;
   overflow-x: auto;
   background: var(--color-bg-panel);
   border: var(--border-width) solid var(--color-border);
@@ -427,6 +431,13 @@ button {
    aldri siden (AV-14). Annenhver rad har `row-alt` fra `.tabell`. */
 .rangeringstabell {
   margin-top: var(--space-3);
+}
+
+/* Statusteksten «Preferanse venter på tolkning» kan brytes over to linjer. Ellers blir
+   tabellen bredere enn innholdsbredden ved 1600 px, og Velg-kolonnen klippes
+   (funnet i nettleserkontrollen av story 4.4). `.tabell td` er ellers `nowrap`. */
+.rangeringstabell .preferansecelle {
+  white-space: normal;
 }
 
 /* Rangeringsnummeret: det første tallet blikket skal lande på (UX-DR8). */

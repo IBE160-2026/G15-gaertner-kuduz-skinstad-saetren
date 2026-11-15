@@ -270,7 +270,7 @@ function Kandidatrad({ kandidat: r, alt, onVelg, knappRef }: RadProps) {
           )}</span>
         </div>
       </td>
-      <td>
+      <td className="preferansecelle">
         <span className="tag">{preferansetekst(r)}</span>
         <div className="undertekst">{t.preferansePoeng(tall.format(r.preferansepoeng))}</div>
       </td>

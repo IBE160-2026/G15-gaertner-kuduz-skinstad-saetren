@@ -117,3 +117,5 @@ Spesifikasjonen er på ca. 2000 tokens, over grensen på 1600. Johannes valgte 2
 **Manual checks:**
 - Ekte backend med seed for #4127: rekkefølgen er Jonas, Mette, Thomas, Ingrid, og plassnummeret er i `accent`, fett, 14px.
 - Ved 1080 og 1600 px: tabellen ruller i sin egen beholder, ikke siden (AV-14). Fokusmarkering på Velg og «Vis alle» er synlig.
+
+**Resultat av manuell kontroll (2026-11-15, Claude med headless Chrome, se `docs/ki-logg/2026-11-15-rangering/`):** alle punktene bestod etter to rettinger. Siden var 7 px for bred, fordi `.visuelt-skjult` slapp ut av `.tabellbeholder`. Velg-kolonnen ble klippet ved 1600 px, fordi preferansetaggen ikke kunne brytes.
