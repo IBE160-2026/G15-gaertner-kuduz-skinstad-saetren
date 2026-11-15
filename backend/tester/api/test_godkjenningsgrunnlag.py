@@ -18,6 +18,7 @@ from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.modeller import OSLO, AnsattRad, Base, GodkjenningRad, VaktRad
 from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING, fyll_testdata
 from domene.regelmotor.vurdering import REGLER
+from tester.api.test_kandidater import forleng_ingrids_første_vakt_i_uka
 from tester.api.test_innlogging import COOKIE_NAVN, engine, feilsvar, klient, logg_inn  # noqa: F401
 
 NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
@@ -89,10 +90,25 @@ def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
         "kandidat": {
             "id": JONAS, "navn": "Jonas Bakke", "kompetansenivå": KOMPETANSE[JONAS]["dag"],
             "minutter_i_uka": 960,  # 16 t i uke 39
+            "timebelastning_prosent": 100 * 16 / 36, "hoy_belastning": False,
             "ulempebelastning": {"dagtimer": 67, "kveldstimer": 4, "helgetimer": 15,
                                  "natttimer": 2, "poeng": 40, "score": 100 * (1 - 40 / 300)},
         },
     }
+
+
+@pytest.mark.parametrize("ekstra,høy", [(23, False), (24, True)])
+def test_timebelastning_i_godkjenningsgrunnlaget_følger_32_24_grensen(
+    klient: TestClient, engine: Engine, ekstra: int, høy: bool
+) -> None:
+    """Samme grense som i kandidatlisten (story 4.2, P-04), via godkjenningsgrunnlaget."""
+    INGRID = 4
+    forleng_ingrids_første_vakt_i_uka(engine, ekstra)
+    logg_inn(klient)
+    kandidat = klient.get(sti(4127, INGRID)).json()["kandidat"]
+
+    assert kandidat["hoy_belastning"] is høy
+    assert kandidat["timebelastning_prosent"] == pytest.approx(100 * (1920 + ekstra) / 2160)
 
 
 @pytest.mark.parametrize("vaktnummer", [4127, 4189])
@@ -141,7 +157,8 @@ def test_svaret_for_gyldig_nevner_ingen_utelukket(klient: TestClient) -> None:
 def test_kandidaten_har_bare_kontraktsfeltene(klient: TestClient) -> None:
     logg_inn(klient)
     svar = klient.get(sti(4127, JONAS)).json()
-    assert set(svar["kandidat"]) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
+    assert set(svar["kandidat"]) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
+                                  "hoy_belastning", "ulempebelastning"}
     assert set(svar["vakt"]) == {"avdeling", "vaktnummer", "vakttype", "start", "slutt", "minstenivå"}
 
 

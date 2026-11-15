@@ -130,7 +130,8 @@ def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
     svar = hent(klient, nummer)
 
     for k in svar["kandidater"]:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
+                      "hoy_belastning", "ulempebelastning"}
     tekst = str(svar)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
@@ -221,7 +222,8 @@ def test_alfabetisk_med_kompetansenivå_for_vakttypen(klient: TestClient, nummer
     nøkkel = {4127: "dag", 4189: "natt"}[nummer]
 
     for k in kandidater:
-        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "ulempebelastning"}
+        assert set(k) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
+                      "hoy_belastning", "ulempebelastning"}
         assert NAVN[k["id"]] == k["navn"]
         assert k["kompetansenivå"] == KOMPETANSE[k["navn"]][nøkkel]
         assert k["kompetansenivå"] >= 3
@@ -455,3 +457,34 @@ def test_minutter_i_startuka_ingrid_32_timer_og_alle_har_feltet(klient: TestClie
     assert minutter["Ingrid Dahl"] == 1920  # 32 t, fasit AV-07
     assert all(isinstance(m, int) and m >= 0 for m in minutter.values())
     assert hent(klient, 4127)["kandidater"] == kandidater
+
+
+def forleng_ingrids_første_vakt_i_uka(engine: Engine, minutter: int) -> None:
+    """Gjør Ingrids 32:00 i uke 39 til 32:00 + `minutter`, uten å flytte starten."""
+    uke_start, uke_slutt = datetime(2026, 9, 21, tzinfo=OSLO), datetime(2026, 9, 28, tzinfo=OSLO)
+    with lag_sessionmaker(engine).begin() as session:
+        rad = session.scalars(
+            select(VaktRad)
+            .where(VaktRad.tildelt_ansatt_id == 4, VaktRad.start >= uke_start, VaktRad.start < uke_slutt)
+            .order_by(VaktRad.start)
+        ).first()
+        assert rad is not None
+        rad.slutt = rad.slutt + timedelta(minutes=minutter)
+
+
+def test_timebelastning_ingrid_er_88_9_prosent_og_ikke_høy(klient: TestClient) -> None:
+    ingrid = next(k for k in hent(klient, 4127)["kandidater"] if k["navn"] == "Ingrid Dahl")
+    assert round(ingrid["timebelastning_prosent"], 1) == 88.9
+    assert ingrid["hoy_belastning"] is False
+    assert all(isinstance(k["hoy_belastning"], bool) for k in hent(klient, 4127)["kandidater"])
+    assert hent(klient, 4127)["kandidater"] == hent(klient, 4127)["kandidater"]
+
+
+@pytest.mark.parametrize("ekstra,høy", [(23, False), (24, True), (25, True)])
+def test_timebelastning_grensen_32_23_og_32_24(klient: TestClient, engine: Engine, ekstra: int, høy: bool) -> None:
+    forleng_ingrids_første_vakt_i_uka(engine, ekstra)
+    kandidater = hent(klient, 4127)["kandidater"]
+    ingrid = next(k for k in kandidater if k["navn"] == "Ingrid Dahl")
+    assert ingrid["minutter_i_uka"] == 1920 + ekstra
+    assert ingrid["hoy_belastning"] is høy
+    assert ingrid["timebelastning_prosent"] == pytest.approx(100 * (1920 + ekstra) / 2160)

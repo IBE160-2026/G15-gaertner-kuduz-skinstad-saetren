@@ -167,6 +167,15 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
               <span aria-hidden="true">{t.timerIUka(timerOgMinutter(k.minutter_i_uka))}</span>
               <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(k.minutter_i_uka))}</span>
             </span>
+            <span className="belastning">
+              <span className="belastningslinje" aria-hidden="true">
+                <span
+                  className={k.hoy_belastning ? "belastningsfyll hoy" : "belastningsfyll"}
+                  style={{ width: `${Math.min(Math.max(k.timebelastning_prosent, 0), 100)}%` }}
+                />
+              </span>
+              {k.hoy_belastning && <span className="visuelt-skjult">{t.hoyBelastning}</span>}
+            </span>
             <div className="kandidat-ulempe">
               <span>{t.ulempeOverskrift}: {t.ulempePoeng(tall.format(k.ulempebelastning.poeng))}</span>
               <span className="meta">{t.ulempeFordeling(

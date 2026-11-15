@@ -29,9 +29,10 @@ from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
-from domene.regelmotor.timer_i_uka import minutter_i_uka
+from domene.regelmotor.timebelastning import timebelastning
+from domene.regelmotor.timer_i_uka import minutter_i_uka, timer_i_startuka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
-from domene.typer import Datafeil, Godkjenning
+from domene.typer import Datafeil, Godkjenning, Kandidat, Vakt
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -141,7 +142,16 @@ class KandidatUt(BaseModel):
     kompetansenivå: int
     # Hele minutter i uka Vakten starter i, uten Vakten selv (FR8, P-02, story 4.1).
     minutter_i_uka: int
+    # Prosent av 36 t (uavrundet, ikke kuttet) og om uavrundet tid er minst 32,4 t (story 4.2, P-04).
+    timebelastning_prosent: float
+    hoy_belastning: bool
     ulempebelastning: UlempebelastningUt
+
+
+def belastning(kandidat: Kandidat, vakt: Vakt) -> dict[str, float | bool]:
+    """Feltene for timebelastning, regnet fra uavrundet tid (story 4.2)."""
+    b = timebelastning(timer_i_startuka(kandidat, vakt))
+    return {"timebelastning_prosent": b.prosent, "hoy_belastning": b.høy}
 
 
 class RegelAntallUt(BaseModel):
@@ -330,6 +340,7 @@ def lag_app(
                 KandidatUt(
                     id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
                     minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
+                    **belastning(k, grunnlag.vakt),
                     ulempebelastning=UlempebelastningUt.model_validate(
                         vurdering.ulempe_per_kandidat[k.id], from_attributes=True,
                     ),
@@ -369,6 +380,7 @@ def lag_app(
             kandidat=KandidatUt(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
                 minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
+                **belastning(kandidat, grunnlag.vakt),
                 ulempebelastning=UlempebelastningUt.model_validate(
                     vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
                 ),
