@@ -1,6 +1,6 @@
-# Åpne punkter
+﻿# Åpne punkter
 
-- [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Følg opp skjermleseropplesing av timeverdien, foreldet status for manuell kontroll i KI-logg og issues, og komponenttest som ikke kobler timeverdi til riktig kandidat.
+- [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Kontroller den nye teksten med faktisk skjermleser, inkludert hele timer og minutter. Kode, radvis komponenttest og foreldet dokumentstatus er rettet; automatisk test kan ikke bekrefte faktisk opplesing.
 
 - [ ] 2026-11-15 [Story 3.2 – godkjenning og bemanning](975-2026-11-15-09-39-23-story-3-2-godkjenning-bemanning.md) — Kontroller tastaturfokus og fargekontrast på godkjenningsflyten i nettleser mot ekte backend (OP-16); funksjonsflyten ved 1000 px er kontrollert, men disse manuelle punktene gjenstår.
 
@@ -80,3 +80,4 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [x] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Kontroller PRD mot Bårds tilbakemelding og sammenheng med brief/UX/arkitektur; løs mergekonflikten i Mithads issues-fil med begge oppfølgingslinjer bevart. (løst 2026-11-13: to underagentrapporter, rettede dokumentfunn og mergecommit `51e47c7`)
 - [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før story 5.1 vedta preferansetolkningens ventetrinn, antall automatiske forsøk, tidsbudsjett og startpunkt samt sluttstatus ved 429/5xx/nettverksfeil; oppdater deretter FR-10, AD-7 og story 5.1 med den samme kontrakten.
 - [ ] 2026-11-13 [PR #18: PRD-gjennomgang](995-2026-10-31-19-18-05-prd-review.md) — Hele gruppa må før innlevering velge sensornøkkel, ansvar for betaling og kreditt ut fra faktisk forbruk (AV-16/ÅB-8).
+

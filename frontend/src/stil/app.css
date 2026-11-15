@@ -449,6 +449,15 @@ button {
   margin-left: auto;
 }
 
+/* Timer i uka (story 4.1): kolonnelignende verdi med tabelltall og fast bredde.
+   Teksten kan brytes ved behov, så ingenting klippes eller overlapper (AV-17). */
+.kandidatliste li .timer-i-uka {
+  flex: 0 0 var(--column-hours-width);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
 /* Datafeil er ikke en utelukkelse og ikke en lastefeil (P-08): nøytral kant
    til venstre, aldri `danger` eller `warn` (DESIGN.md). */
 .datafeil {

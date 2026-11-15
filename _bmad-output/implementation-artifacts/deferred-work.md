@@ -61,3 +61,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-pr-20-samordning-testplan.md`
   summary: "[LØST 2026-11-14, PR #20] Fristen for P-13s forståelsestest var ikke samordnet mellom beslutningsreferatet og planfilene."
   evidence: P-13-raden i `docs/beslutninger/avklaringspunkter.md` beskriver testen uten frist, og Review Triage Log B13 i `spec-frontend-komponenttester.md` avviste «før story 4.6» som ikke vedtatt. Kim valgte 2026-11-14 å beholde før story 4.6 som planlagt arbeidsmål, ikke som eget gruppevedtak om frist. `epics.md`, PRD og sprintstatus er presisert tilsvarende. Selve forståelsestesten er fortsatt ikke utført.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-timer-i-perioden-per-kandidat.md`
+  summary: "[AVKLART 2026-11-15, ikke en feil] `timer_i_startuka` hopper over ugyldige vakter og sjekker ikke datagrensen selv, men API-et når den bare etter `vurder_kandidater`."
+  evidence: 35-timersregelens vindu er hele mandag–mandag-uka Vakten starter i (`berørte_uker`), samme uke som `timer_i_startuka` bruker. `vurder_kandidater` gir `Datafeil` for ugyldige vakter i vinduet (`kandidatvaktdatafeil`) og for vindu utenfor `[historikkstart, datagrense]` (`vindusdatafeil`), før noen kandidatliste eller `minutter_i_uka` finnes. Det opprinnelige funnet bygget på en feil antakelse om at vinduet var smalere. Gjenstående: funksjonen krever at kalleren har vurdert grunnlaget; dokumentert i docstringen for 4.3 og 4.4.

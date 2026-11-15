@@ -16,6 +16,8 @@ Oppdatert 2026-11-10 med dokumentmilepælen for P-01–P-13/E-01/E-02. Lenke til
 
 ## Dokumentgjennomgang 2026-10-26
 
+Oppfølging av PR 25, 2026-11-15: [KI-loggen for story 4.1](../ki-logg/2026-11-15-timer-i-perioden.md#oppfølging-etter-pr-25-gjennomgang) beskriver retting av opplesing og kandidatvis komponenttest. Frontendbygg, 50 modultester og 25 komponenttester bestod. Dette er prosess- og testbevis for kriterium 1, 3 og 4; faktisk skjermleserkontroll av rettingen gjenstår.
+
 Planleggingsmilepæl 2026-11-08: [Story 1.4-spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-1-4-beskyttede-flater-og-utlopt-sesjon.md) kobler FR13/NFR6 til planlagt API-vern, URL-vern, utlogging og kontrollscenarier. Epic-kontekst og kode/UX ble undersøkt av separate underagenter (OP-04). Dette er planleggingsbevis for kriterium 1; implementering, testresultater og kodegjennomgang foreligger ikke ennå.
 
 Implementeringsmilepæl 2026-11-08: API-vern, utlogging og URL-/sesjonskontroll er implementert etter [Story 1.4-spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-1-4-beskyttede-flater-og-utlopt-sesjon.md), med [KI-logg](../ki-logg/2026-11-08-beskyttede-flater.md), 127 beståtte backendtester og 3 frontendtester. Bygget bestod. Tre uavhengige reviewlag fant løpssituasjoner som ble rettet. [Playwright-kontrollen](../ki-logg/2026-11-08-beskyttede-flater.md#nettleserkontroll-med-playwright-mcp-2026-11-08) verifiserte alle fem akseptansekriterier, tastatur og 360/1600 px, samt to forsinkede svar. Ingen funksjonsfeil ble funnet. Storyen står fortsatt `in-review` til PR-gjennomgangen er fullført; den er ikke `done`.
