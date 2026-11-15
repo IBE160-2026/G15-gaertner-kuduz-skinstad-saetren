@@ -552,3 +552,18 @@ button {
 .ekskludert-liste li {
   padding: var(--space-1) 0;
 }
+
+/* Tomtilstanden i kandidatflaten (story 2.6). Ikonet er .alert-icon, ingen nye farger. */
+.tomtilstand-innhold {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tomtilstand-innhold p {
+  margin: 0;
+}
+
+.tomtilstand-innleie {
+  margin: var(--space-3) 0 0;
+}

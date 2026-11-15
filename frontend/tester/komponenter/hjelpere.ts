@@ -143,7 +143,29 @@ export const TO_GYLDIGE = {
   utelukkelser: INGEN_UTELUKKET,
 } satisfies Kandidatsvar;
 
-export const INGEN_GYLDIGE = { status: "ok", kandidater: [], utelukkelser: INGEN_UTELUKKET } satisfies Kandidatsvar;
+/** #4189: alle 24 utelukket (3 kompetanse, 2 kollisjon, 18 på 11 t, 1 på 35 t). */
+export const UTELUKKET_4189: UtelukkelsesOppsummering = {
+  totalt: 24,
+  per_regel: [
+    { årsak: "kompetanse-minstekrav", antall: 3 },
+    { årsak: "kolliderende vakt", antall: 2 },
+    { årsak: "11-timersregelen", antall: 18 },
+    { årsak: "35-timersregelen", antall: 1 },
+  ],
+  utelukkede: [
+    { id: 11, navn: "Lars Holm", årsaker: ["kompetanse-minstekrav"] },
+    { id: 12, navn: "Nora Lie", årsaker: ["11-timersregelen"] },
+  ],
+};
+
+export const INGEN_GYLDIGE = {
+  status: "ingen_gyldige_kandidater", kandidater: [], utelukkelser: UTELUKKET_4189,
+} satisfies Kandidatsvar;
+
+/** Kontraktsbrudd: `ok` skal aldri ha tom liste (FR6). */
+export const OK_MED_TOM_LISTE = {
+  status: "ok", kandidater: [], utelukkelser: UTELUKKET_4189,
+} satisfies Kandidatsvar;
 
 export const KANDIDATER_DATAFEIL = {
   status: "datafeil", kode: "mangler_turnusgrunnlag", datagrense: "2026-10-05T00:00:00+02:00",

@@ -114,13 +114,13 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
   const overskrift = <h2 id="kandidater-tittel" className="overskrift">{t.kandidaterOverskrift}</h2>;
 
   if (tilstand.type === "laster") return (
-    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+    <section className="panel kandidater kandidater-laster" aria-labelledby="kandidater-tittel">
       {overskrift}
       <p className="meta kandidater-status" role="status">{t.kandidaterLaster}</p>
     </section>
   );
   if (tilstand.type === "feil") return (
-    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+    <section className="panel kandidater kandidater-feil" aria-labelledby="kandidater-tittel">
       {overskrift}
       <div role="alert">
         <p className="brodtekst kandidater-status">{tilstand.tekst}</p>
@@ -131,7 +131,7 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
     </section>
   );
   if (tilstand.type === "datafeil") return (
-    <section className="panel kandidater datafeil" aria-labelledby="kandidater-tittel">
+    <section className="panel kandidater kandidater-datafeil datafeil" aria-labelledby="kandidater-tittel">
       {overskrift}
       <div role="alert">
         <p className="brodtekst datafeil-tekst">{t.datafeil}</p>
@@ -140,17 +140,21 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
     </section>
   );
 
-  // Tom liste: nøytral tekst i meta-stil til story 2.6 (beslutning B).
-  if (tilstand.kandidater.length === 0) return (
-    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+  // Tomtilstanden (story 2.6, UX-DR16, P-11): ikon, tekst, Ekskludert-boks og ren innleietekst.
+  if (tilstand.type === "ingen_gyldige") return (
+    <section className="panel kandidater tomtilstand" aria-labelledby="kandidater-tittel">
       {overskrift}
-      <p className="meta kandidater-status" role="status">{t.ingenGyldige}</p>
+      <div className="tomtilstand-innhold" role="status">
+        <span className="alert-icon" aria-hidden="true">!</span>
+        <p className="brodtekst">{t.ingenGyldige}</p>
+      </div>
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
+      <p className="meta tomtilstand-innleie">{t.innleie}</p>
     </section>
   );
 
   return (
-    <section className="panel kandidater" aria-labelledby="kandidater-tittel">
+    <section className="panel kandidater kandidater-klar" aria-labelledby="kandidater-tittel">
       {overskrift}
       <ul className="kandidatliste">
         {tilstand.kandidater.map((k) => (

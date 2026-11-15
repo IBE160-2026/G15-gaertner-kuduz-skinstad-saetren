@@ -181,9 +181,12 @@ og under dem de gyldige kandidatene alfabetisk med kompetansenivå («Nivå 3/4�
 Listen hentes automatisk. Etter story 2.4 er den filtrert på alle fire harde
 regler: kompetanse-minstekravet (FR2), kolliderende vakt (FR3), 11-timersregelen
 (FR4) og 35-timersregelen (FR5). I testdataene gir #4127 4 gyldige (Ingrid Dahl,
-Jonas Bakke, Mette Solberg og Thomas Nygård) og #4189 0. Når ingen er gyldige, står
-det «Ingen gyldige kandidater for denne vakten.», til story 2.6 innfører
-tomtilstanden. Under listen (eller under tomteksten) viser Ekskludert-boksen
+Jonas Bakke, Mette Solberg og Thomas Nygård) og #4189 0. Når ingen er gyldige, svarer API-et 200 med
+`status: "ingen_gyldige_kandidater"` og tom liste, og flaten viser tomtilstanden
+(story 2.6, FR6, UX-DR16): «!»-ikon, «Ingen gyldige kandidater for denne vakten. Dette
+er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null
+treff.», Ekskludert-boksen og «Innleie av personell kan vurderes» som ren tekst, uten
+knapp (P-11). Under listen (eller under tomteksten) viser Ekskludert-boksen
 (story 2.5, UX-DR15) hvor mange som er utelukket og av hvilken regel, for eksempel
 «20 utelukket av harde regler · 8 under kompetanse-minstekrav · 7 kolliderende
 vakt · 4 brudd på 11-timersregelen · 1 brudd på 35-timersregelen» for #4127 og

@@ -2,7 +2,7 @@
 
 Fasiten kommer fra `testdata.FASIT` (AV-07). Med alle fire harde regler på plass
 er de gyldige alle som fasiten ikke utelukker: 4 for #4127 og 0 for #4189. En tom
-liste gir `status: "ok"` til story 2.6 innfører `ingen_gyldige_kandidater`.
+liste gir `status: "ingen_gyldige_kandidater"` (story 2.6, FR6); `ok` har alltid minst én Kandidat.
 """
 
 from datetime import UTC, datetime, timedelta
@@ -83,7 +83,7 @@ def test_gyldige_stemmer_med_fasiten(klient: TestClient, nummer: int, antall: in
     svar = hent(klient, nummer)
 
     assert set(svar) == {"status", "kandidater", "utelukkelser"}
-    assert svar["status"] == "ok"
+    assert svar["status"] == ("ok" if antall else "ingen_gyldige_kandidater")
     navn = [k["navn"] for k in svar["kandidater"]]
     assert len(navn) == len(set(navn)) == antall
     assert set(navn) == forventet_gyldige(nummer)
@@ -150,13 +150,34 @@ def test_ingen_med_brudd_på_35_timersregelen_i_fasiten_er_med(klient: TestClien
     assert not navn & trettifem
 
 
-def test_4189_gir_tom_liste_med_status_ok_til_story_2_6(klient: TestClient) -> None:
-    # Alle 24 er utelukket. API-et er uendret til 2.6 (beslutning B).
-    assert hent(klient, 4189) == {
-        "status": "ok",
+def test_4189_gir_ingen_gyldige_kandidater(klient: TestClient) -> None:
+    # Alle 24 er utelukket (3/2/18/1). Fasiten er uendret (AV-07).
+    svar = hent(klient, 4189)
+    assert svar == {
+        "status": "ingen_gyldige_kandidater",
         "kandidater": [],
         "utelukkelser": forventet_utelukkelser(4189),
     }
+    assert svar["utelukkelser"]["totalt"] == 24
+
+
+@pytest.mark.parametrize("nummer", [4127, 4189])
+def test_status_og_liste_følger_invariantene(klient: TestClient, nummer: int) -> None:
+    svar = hent(klient, nummer)
+    if svar["status"] == "ok":
+        assert svar["kandidater"] != []
+    else:
+        assert svar["status"] == "ingen_gyldige_kandidater"
+        assert svar["kandidater"] == []
+
+
+def test_datafeil_blir_aldri_ingen_gyldige(klient: TestClient, engine: Engine) -> None:
+    start = datetime(2026, 10, 4, 5, 1, tzinfo=OSLO)
+    endre_vakt(engine, start=start, slutt=start + timedelta(hours=8))
+    svar = hent(klient, 4127)
+    assert svar["status"] == "datafeil"
+    assert "kandidater" not in svar
+    assert "utelukkelser" not in svar
 
 
 @pytest.mark.parametrize("nummer,forventet", [(4127, [8, 7, 4, 1]), (4189, [3, 2, 18, 1])])
@@ -332,7 +353,7 @@ def test_vindu_som_slutter_etter_datagrensen_gir_datafeil(
 
 def test_uke_som_slutter_ved_datagrensen_vurderes(klient: TestClient) -> None:
     # #4189 (mandag 28.09 23–07) berører uka [28.09, 05.10), som slutter på datagrensen.
-    assert hent(klient, 4189)["status"] == "ok"
+    assert hent(klient, 4189)["status"] == "ingen_gyldige_kandidater"
 
 
 def test_uke_som_slutter_etter_datagrensen_gir_datafeil(
