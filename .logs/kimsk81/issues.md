@@ -1,5 +1,7 @@
 # Åpne punkter
 
+- [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Følg opp skjermleseropplesing av timeverdien, foreldet status for manuell kontroll i KI-logg og issues, og komponenttest som ikke kobler timeverdi til riktig kandidat.
+
 - [ ] 2026-11-15 [Story 3.2 – godkjenning og bemanning](975-2026-11-15-09-39-23-story-3-2-godkjenning-bemanning.md) — Kontroller tastaturfokus og fargekontrast på godkjenningsflyten i nettleser mot ekte backend (OP-16); funksjonsflyten ved 1000 px er kontrollert, men disse manuelle punktene gjenstår.
 
 - [x] 2026-11-15 [Arkitekturvalidering](976-2026-11-14-23-31-27-arkitekturvalidering.md) — Følg opp nye dokumentfunn i [Validate-rapporten](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/reviews/validation-2026-11-15.md): rett feil sesjonslagring, avklar semantisk produksjon mot deserialisering av `TolketPreferanse`, og presiser Oslo/UTC-konvensjonen. Ta også de tre små dokumentpresiseringene ved senere Update, med AD-ID-ene beholdt. (løst som dokument-Update 2026-11-15; se [Reviewer Gate](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/reviews/reviewer-gate-update-2026-11-15.md); implementasjon og tester i story 3.2 og 5.x gjenstår)
