@@ -11,6 +11,7 @@ import { ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, type Kandidatt
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
 import Kostnadsvisning from "./Kostnadsvisning";
+import Varselmerke from "./Varselmerke";
 
 type Tilstand =
   | { type: "laster" }
@@ -167,6 +168,15 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
             <span className="timer-i-uka">
               <span aria-hidden="true">{t.timerIUka(timerOgMinutter(k.minutter_i_uka))}</span>
               <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(k.minutter_i_uka))}</span>
+            </span>
+            <span className="belastning">
+              <span className="belastningslinje" aria-hidden="true">
+                <span
+                  className={k.hoy_belastning ? "belastningsfyll hoy" : "belastningsfyll"}
+                  style={{ width: `${Math.min(Math.max(k.timebelastning_prosent, 0), 100)}%` }}
+                />
+              </span>
+              {k.hoy_belastning && <Varselmerke>{t.hoyBelastning}</Varselmerke>}
             </span>
             <Kostnadsvisning kostnad={k.kostnad} />
             <div className="kandidat-ulempe">

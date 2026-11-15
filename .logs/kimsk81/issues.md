@@ -86,3 +86,11 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [x] 2026-11-15 [Story 4.3](973-2026-11-15-18-55-14-story-4-3-forenklet-kostnad.md) — Fullfør implementasjon, tester, uavhengig gjennomgang og dokumentasjon. (løst 2026-11-15; kontroller nedenfor gjenstår)
 - [ ] 2026-11-15 [Story 4.3](973-2026-11-15-18-55-14-story-4-3-forenklet-kostnad.md) — Kontroller tastaturfokus, større skrift og faktisk skjermleser på kostnadsflatene; koordiner felles frontend-filer med story 4.2.
 - [ ] 2026-11-15 [Story 4.3](973-2026-11-15-18-55-14-story-4-3-forenklet-kostnad.md) — Vurder mer presis datafeilmelding ved ugyldig lønn og en lønnsspesifikk P-09 POST-test.
+
+- [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Gi høy belastning synlig indikasjon utover farge og test sekundpresisjon gjennom begge API-ruter. (løst 2026-11-15; visuell kontroll gjenstår)
+- [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Kontroller ny synlig tekst og layout i nettleser ved relevante vindusbredder og større skrift. (løst 2026-11-15 med Chromium og falske API-svar; integrert 4.3 gjenstår)
+- [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Samordne utelatte føringer i epic 4-konteksten før senere stories bruker den.
+- [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Kontroller faktisk skjermleseropplesing av høy belastning; tidligere VoiceOver-resultat er uavklart.
+- [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Løs konfliktene mellom 4.2 og 4.3 med begge funksjonene bevart, og verifiser det sammenslåtte resultatet.
+- [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Koble overtidsvisningen i 4.3 til Varselmerke ved integrering; test høy belastning alene, overtid alene og begge samtidig.
+- [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Tilbakefør lokalt testscenario etter skjermlesertesten: Ingrids vakt #4102 slutt 21.09.2026 kl. 15:00, ikke 15:24. (løst 2026-11-15; sluttid tilbakeført til 15:00)

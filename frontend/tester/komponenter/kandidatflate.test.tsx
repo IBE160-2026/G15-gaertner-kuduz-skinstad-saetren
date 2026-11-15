@@ -40,6 +40,15 @@ const begynnerMed = (tekst: string) => new RegExp(`^${regexTekst(tekst)}`);
 // Timerkolonnen (4.1) er testens tema; ulempen (4.7) er påkrevd av typen, men uten betydning her.
 const INGEN_ULEMPE = TO_GYLDIGE.kandidater[1].ulempebelastning;
 
+/** Kandidat slik backend sender den: prosent uavrundet, høy-flagget fra 1944 minutter (story 4.2). */
+const kandidat = (id: number, navn: string, minutter: number) => ({
+  id, navn, kompetansenivå: 3, minutter_i_uka: minutter,
+  timebelastning_prosent: (100 * minutter) / 2160, hoy_belastning: minutter >= 1944,
+  ulempebelastning: INGEN_ULEMPE,
+  // Kostnaden (4.3) er påkrevd av typen; ordinær som standard, så den ikke gir varselmerke.
+  kostnad: TO_GYLDIGE.kandidater[1].kostnad,
+});
+
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
 describe("Kandidatliste (story 2.1)", () => {
@@ -58,8 +67,8 @@ describe("Kandidatliste (story 2.1)", () => {
     expect(within(rad("Blandet")).getByText(t.kostnadOvertid)).toBeTruthy();
     expect(within(rad("Overtid")).getByText(t.kostnadOvertid)).toBeTruthy();
     expect(within(rad("Blandet")).getByText(`${t.kostnadOrdinaer}: ${t.kostnadDetalj("4:00", format(300))}`)).toBeTruthy();
-    expect(within(rad("Blandet")).getByText(`Overtid: ${t.kostnadDetalj("4:00", format(450))}`)).toBeTruthy();
-    expect(within(rad("Overtid")).getByText(`Overtid: ${t.kostnadDetalj("8:00", format(450))}`)).toBeTruthy();
+    expect(within(rad("Blandet")).getByText(`${t.kostnadOvertidDel}: ${t.kostnadDetalj("4:00", format(450))}`)).toBeTruthy();
+    expect(within(rad("Overtid")).getByText(`${t.kostnadOvertidDel}: ${t.kostnadDetalj("8:00", format(450))}`)).toBeTruthy();
     expect(within(rad("Overtid")).queryByText(/^Ordinær:/)).toBeNull();
   });
 
@@ -78,10 +87,10 @@ describe("Kandidatliste (story 2.1)", () => {
     const svar = {
       ...TO_GYLDIGE,
       kandidater: [
-        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
-        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
-        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
-        { id: 7, navn: "Ola Nord", kompetansenivå: 3, minutter_i_uka: 61, kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 }, ulempebelastning: INGEN_ULEMPE },
+        kandidat(4, "Ingrid Dahl", 1920),
+        kandidat(5, "Mette Solberg", 0),
+        kandidat(6, "Jonas Bakke", 32 * 60 + 23),
+        kandidat(7, "Ola Nord", 61),
       ],
     } satisfies Kandidatsvar;
     const { del } = await rendreMed(ok(svar));
@@ -140,6 +149,81 @@ test("viser hver kandidats ulempepoeng og fordeling, også null (story 4.7)", as
   expect(within(jonas).getByText("Kveld 1,6 t · helg 2,0 t · natt 3,0 t")).toBeTruthy();
   expect(within(mette).getByText("Ulempebelastning: 0,0 p")).toBeTruthy();
   expect(within(mette).getByText("Kveld 0,0 t · helg 0,0 t · natt 0,0 t")).toBeTruthy();
+});
+
+test("belastningslinja er accent under 32,4 t og warn på og over, kuttet ved 100 % (story 4.2)", async () => {
+  const svar = {
+    ...TO_GYLDIGE,
+    kandidater: [
+      kandidat(4, "Ingrid Dahl", 1920),
+      kandidat(5, "Mette Solberg", 0),
+      kandidat(6, "Jonas Bakke", 32 * 60 + 23),
+      kandidat(7, "Ola Nord", 32 * 60 + 24),
+      kandidat(8, "Per Vik", 32 * 60 + 25),
+      kandidat(9, "Eva Lund", 40 * 60),
+    ],
+  } satisfies Kandidatsvar;
+  const { del } = await rendreMed(ok(svar));
+
+  for (const [navn, høy, bredde] of [
+    ["Ingrid Dahl", false, "88.8888"],
+    ["Mette Solberg", false, "0%"],
+    ["Jonas Bakke", false, "89.9537"],
+    ["Ola Nord", true, "90%"],
+    ["Per Vik", true, "90.0462"],
+    ["Eva Lund", true, "100%"],
+  ] as const) {
+    const rad = within(del).getByText(navn).closest("li")!;
+    const fyll = rad.querySelector(".belastningsfyll") as HTMLElement;
+    expect(fyll.classList.contains("hoy")).toBe(høy);
+    expect(fyll.style.width.startsWith(bredde)).toBe(true);
+    expect(rad.querySelector(".belastningslinje")!.getAttribute("aria-hidden")).toBe("true");
+    expect(within(rad).queryByText(t.hoyBelastning) !== null).toBe(høy);
+    if (høy) {
+      const tekst = within(rad).getByText(t.hoyBelastning);
+      expect(tekst.classList.contains("visuelt-skjult")).toBe(false);
+      expect(tekst.closest('[aria-hidden="true"]')).toBeNull();
+      const merke = tekst.closest(".varselmerke");
+      expect(merke).not.toBeNull();
+      expect(merke!.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    }
+    // 4.1-verdien og ulempeblokken er uendret.
+    expect(within(rad).getByText(/ t i uka$/)).toBeTruthy();
+    expect(within(rad).getByText(/^Ulempebelastning: /)).toBeTruthy();
+  }
+});
+
+test("høy belastning og overtid vises som hvert sitt varselmerke, alene og samtidig (4.2 + 4.3)", async () => {
+  const ordinær = { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 };
+  const overtid = { total: 3000, ordinære_timer: 4, overtidstimer: 4, ordinær_sats: 300, overtidssats: 450 };
+  // Høy belastning uten overtid finnes i virkeligheten for en nattevakt over ukeskiftet
+  // (1 t i startuka); overtid uten høy belastning er Ingrid på #4127 (32 t + 8 t).
+  const svar = {
+    ...TO_GYLDIGE,
+    kandidater: [
+      { ...kandidat(1, "Ingen varsler", 0), kostnad: ordinær },
+      { ...kandidat(2, "Bare høy belastning", 33 * 60), kostnad: ordinær },
+      { ...kandidat(3, "Bare overtid", 32 * 60), kostnad: overtid },
+      { ...kandidat(4, "Begge varsler", 33 * 60), kostnad: overtid },
+    ],
+  } satisfies Kandidatsvar;
+  const { del } = await rendreMed(ok(svar));
+
+  for (const [navn, forventet] of [
+    ["Ingen varsler", []],
+    ["Bare høy belastning", [t.hoyBelastning]],
+    ["Bare overtid", [t.kostnadOvertid]],
+    ["Begge varsler", [t.hoyBelastning, t.kostnadOvertid]],
+  ] as const) {
+    const rad = within(del).getByText(navn, { selector: ".ansattnavn" }).closest("li")!;
+    const merker = [...rad.querySelectorAll(".varselmerke")];
+    expect(merker.map((m) => m.textContent)).toEqual(forventet);
+    // Samme komponent: begge varslene har det samme skjulte ikonet.
+    for (const merke of merker) expect(merke.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
+    // «Ordinær» vises bare når kostnaden ikke har overtid.
+    const harOvertid = forventet.some((v) => v === t.kostnadOvertid);
+    expect(within(rad).queryByText(t.kostnadOrdinaer, { selector: ".kostnad-ordinaer" }) === null).toBe(harOvertid);
+  }
 });
 
 describe("Tomtilstanden (story 2.6)", () => {

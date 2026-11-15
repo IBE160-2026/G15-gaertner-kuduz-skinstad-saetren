@@ -2,7 +2,7 @@
 title: 'Story 4.3: Forenklet kostnad per kandidat'
 type: 'feature'
 created: '2026-11-15'
-status: 'in-review'
+status: 'done'
 baseline_commit: 'a677020d14eb8b3dfe3b0343c7c041a67470d502'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -66,6 +66,8 @@ Kostnadsvisning ble også lagt på godkjenningsflaten slik at P-09s nye bekrefte
 
 ## Spec Change Log
 
+- 2026-11-15, PR-gjennomgang (Johannes): integrert med story 4.2 etter merge av PR #27. «Inkluderer overtid» bruker nå `Varselmerke` fra 4.2, slik at høy belastning og overtid vises som to like, synlige varsler (Kims krav ved integreringen). Etiketten «Overtid» i detaljlinjen er flyttet til `tekster.ts`. Intensjonen er uendret.
+
 ## Review Triage Log
 
 | Funn | Verdikt og bevis | Tiltak |
@@ -74,8 +76,8 @@ Kostnadsvisning ble også lagt på godkjenningsflaten slik at P-09s nye bekrefte
 | Store lønnstall kunne gi ugyldig JSON | medium: lønnsvalideringen tillot vilkårlige desimaltall | Rettet til positivt SQLite-heltall med tester |
 | Lønn med tekst eller desimal ble godtatt | medium: lagringskontrakten er heltall | Rettet og testet |
 | Avrundede timer kunne gi misvisende regnestykke | medium: ett minutt ble vist som 0,02 timer | Timer:minutter, «ca.» ved sekunder; testet |
-| Datafeilmeldingen forklarer ikke lønnsfeil | low: generisk melding angir ikke årsak | Åpent punkt for vurdering |
-| POST etter ugyldiggjort lønn manglet egen test | low: grunnlagsmerket dekker ansattkolonner og P-09 har POST-tester | Målrettet test er åpent punkt |
+| Datafeilmeldingen forklarer ikke lønnsfeil | low: generisk melding angir ikke årsak | Lukket i PR-gjennomgangen (Johannes): årsaken logges i backend (`Datafeil for vakt …: ansatt …: ugyldig timelønn`), og meldingen i brukerflaten er fast per kode (AD-4) |
+| POST etter ugyldiggjort lønn manglet egen test | low: grunnlagsmerket dekker ansattkolonner og P-09 har POST-tester | Rettet i PR-gjennomgangen: `test_endret_lønn_krever_nytt_trykk_og_gir_ny_kostnad`, med negativ kontroll |
 | Sommertidstest uten eksisterende timer | medium: viste ikke overtidsfordeling | Begge skifter over grensen testet |
 | API-test manglet full blandet fordeling | medium: totale beløp og like svar beviser ikke fordelingen | Ingrid-fasit utvidet |
 | Status for overtid var ikke testet | medium: feil etikett kunne vises | Testet per rad |

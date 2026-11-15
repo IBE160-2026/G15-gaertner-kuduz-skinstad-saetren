@@ -108,9 +108,12 @@ export const TEKSTER = {
       const [timer, minutter] = verdi.split(":").map(Number);
       return `${timer} ${timer === 1 ? "time" : "timer"} og ${minutter} ${minutter === 1 ? "minutt" : "minutter"} i uka`;
     },
+    // Belastningslinja (story 4.2): fargen alene bærer ikke «høy», så den har også tekst.
+    hoyBelastning: "Høy belastning",
     kostnadOverskrift: "Kostnad",
     kostnadOrdinaer: "Ordinær",
     kostnadOvertid: "Inkluderer overtid",
+    kostnadOvertidDel: "Overtid",
     kostnadDetalj: (timer: string, sats: string) => `${timer} t:min ved ${sats} kr/t`,
     ulempeOverskrift: "Ulempebelastning",
     ulempePeriode: "Ulempebelastning gjelder de siste 672 timene før vakten og vises avrundet.",

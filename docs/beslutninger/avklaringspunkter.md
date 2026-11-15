@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -261,7 +261,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### K-02 – Terskel for høy timebelastning
 
-**Senere vedtak 2026-11-09 (P-04, gjeldende status):** Minst 32,4 timer før visningsavrunding. Ingrid beholdes på 32 timer og ligger under grensen. Story 1.2s dokumentforventning er rettet 2026-11-10; implementert visning og grensetester gjenstår. Linjene nedenfor gjengir den historiske statusen fra 02.11.
+**Senere vedtak 2026-11-09 (P-04, gjeldende status):** Minst 32,4 timer før visningsavrunding. Ingrid beholdes på 32 timer og ligger under grensen. Story 1.2s dokumentforventning er rettet 2026-11-10. Visning og grensetester er implementert i story 4.2 (2026-11-15, [KI-logg](../ki-logg/2026-11-15-arbeidsbelastningslinje.md)): 32:23 og 32:23:59 er under, 32:24 og 32:25 er på og over grensen, og Ingrid (32:00) er under. Manuell nettleserkontroll er gjort 2026-11-15 (Safari på macOS): 32:23 `accent`, 32:24 og 32:25 `warn`, ingen avvik i layout. Linjene nedenfor gjengir den historiske statusen fra 02.11.
 
 - **Funn:** Codex anbefaler nøyaktig `0,90 × 36 = 32,4 timer`; Ingrid med 32 timer ligger under **den anbefalte** terskelen.
 - **Status:** Åpent. **32,4 timer er en Codex-anbefaling, ikke et gruppevedtak.**
@@ -774,6 +774,23 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Konsekvens for Story 4.6:** Storien skrives om fra nettbrett og mobil til smale nettleservinduer. Forslaget om nettbrettrader og mobilkort i EXPERIENCE.md blir et innspill til v2, ikke et v1-krav. Kontrollbreddene i storien (1080, 960 og 680 px) er avledet fra eksemplene over og kan justeres i spesifikasjonen.
 - **Ikke endret:** P-13s oppgavebaserte forståelsestest (én testperson, ett operativsystem og én skjermflate) gjelder fortsatt og er ikke utført. AV-14, UX-DR24 og tilgjengelighetsgulvet er uendret.
 - **Endret:** OP-02, AV-16 og P-13-raden i §12 (pekere hit), raden for OP-02 i §8.4, `epic-2-context.md`, PRD §8 og §10, EXPERIENCE.md (Foundation, Responsive & Platform og UJ-1), DESIGN.md (Bredde), arkitektur § Deferred, ÅB-7, UX-DR25, UX-DR26, Story 4.6 og 4.7 i `epics.md`, handlingspunktet i `sprint-status.yaml` og vurderingsmatrisen.
+
+### 2026-11-15 – Kostnad som `float` i rangeringen (story 4.4)
+
+- **Hvem:** Johannes W. Gaertner, på vegne av gruppa, 2026-11-15, under gjennomgangen av PR #28 (story 4.3).
+- **Beslutning:** Story 4.4 rangerer på kostnaden som `float`, ikke `Decimal`. `beregn_kostnad` regner fortsatt i `Decimal` uten avrunding underveis (P-01–P-03), og API-et leverer `float`.
+- **Begrunnelse:** Ryddigere kode. Ulempescoren fra 4.7 er allerede `float`, og Python kan ikke blande `Decimal` og `float` i regnestykker. `Decimal` gir ingen praktisk fordel senere.
+- **Merknad til 4.4, ikke vedtatt:** Lik totalscore skal avgjøres av stigende ansatt-ID på uavrundet verdi (AV-05, K-03). Med min–maks-poeng kan to matematisk like totaler skille seg i siste siffer, både med `float` og med `Decimal`. Eksempel: `[0, 0, 0, 42,857…]` gir 10.714285714285714, og `[0, 14,286…, 28,571…, 14,286…]` gir 10.714285714285715. Spesifikasjonen for 4.4 bør si hvordan likhet sjekkes.
+- **Berørte filer:** `epics.md` (story 4.4).
+
+### 2026-11-15 – Faktarettelser i AGENTS.md (AV-08)
+
+- **Hvem:** Ragnhild Sætren, med Claude, 2026-11-15, før story 4.2. Det er rettelser av utdatert status, ikke et nytt vedtak eller et nytt punkt.
+- **Rettet:**
+  - Innledningen sa «planlagt stack» og at regelmotoren hadde «den første harde regelen». Den beskriver nå stacken som bygget, story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1 og 4.7 som ferdige, alle fire harde regler, timer i perioden og ulempebelastning, og at rangering og KI-laget ikke er bygget ennå.
+  - Regelen om underagenter sa «Ikke drøftet i gruppa ennå». Den viser nå til godkjenningen 2026-11-04 (OP-04, se PR #5 over). Selve regelen er uendret.
+  - «446 av 455 sporede filer» er erstattet med «godt over halvparten av de sporede filene», fordi tallet endrer seg ved hver commit. På rettetidspunktet var det 451 av 843.
+- **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter. `docs/ki-logg/README.md` har samme utdaterte tall (446 rammeverksfiler) og `deferred-work.md` har to åpne funn om den første harde regelen. Begge er ikke rørt og tas opp separat.
 
 ---
 

@@ -59,7 +59,10 @@ export type Kostnad = {
   total: number; ordinære_timer: number; overtidstimer: number; ordinær_sats: number; overtidssats: number;
 };
 export type Kandidat = {
-  id: number; navn: string; kompetansenivå: number; minutter_i_uka: number; ulempebelastning: Ulempebelastning; kostnad: Kostnad;
+  id: number; navn: string; kompetansenivå: number; minutter_i_uka: number;
+  // Fra backend (story 4.2, P-04): prosent av 36 t, uavrundet og ikke kuttet, og om uavrundet tid er minst 32,4 t.
+  timebelastning_prosent: number; hoy_belastning: boolean;
+  ulempebelastning: Ulempebelastning; kostnad: Kostnad;
 };
 
 // Ekskludert-boksen (story 2.5, UX-DR15). `per_regel` følger regelmotorens
