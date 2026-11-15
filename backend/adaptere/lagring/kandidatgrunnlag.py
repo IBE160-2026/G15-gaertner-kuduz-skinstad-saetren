@@ -7,11 +7,13 @@ ferdige domenetyper og vet ikke at det finnes en database.
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from hashlib import sha256
+import json
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from adaptere.lagring.modeller import AnsattRad, VaktRad
+from adaptere.lagring.modeller import AnsattRad, TurnusRad, VaktRad
 from adaptere.lagring.vaktdetaljer import finn_ubemannet_vakt
 from domene.typer import Kandidat, Tidsrom, Vakt
 
@@ -30,6 +32,25 @@ class Kandidatgrunnlag:
 # 672 faktiske timer. Trekkes fra i UTC: `- timedelta` på en `ZoneInfo`-tid
 # regner på veggklokka og gir feil over sommertidsskiftet.
 HISTORIKK = timedelta(hours=672)
+
+
+def grunnlagsmerke(session: Session, bruker_id: int, vaktnummer: int, ansatt_id: int) -> str:
+    """Opakt merke over alle lagrede felt som kan påvirke visning eller regler.
+
+    Nye beregninger i Epic 4/5 må legge egne innganger til her (P-09).
+    """
+    rader = []
+    for modell in (TurnusRad, AnsattRad, VaktRad):
+        kolonner = tuple(modell.__table__.columns)
+        rader.append([
+            tuple(getattr(rad, kolonne.key) for kolonne in kolonner)
+            for rad in session.scalars(select(modell).order_by(modell.id))
+        ])
+    data = json.dumps(
+        [bruker_id, vaktnummer, ansatt_id, rader],
+        sort_keys=True, default=str, ensure_ascii=False,
+    ).encode("utf-8")
+    return sha256(data).hexdigest()
 
 
 def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> Kandidatgrunnlag | None:

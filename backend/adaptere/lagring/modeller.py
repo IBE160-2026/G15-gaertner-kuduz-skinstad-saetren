@@ -150,3 +150,13 @@ class BrukerRad(Base):
     turnus_id: Mapped[int] = mapped_column(ForeignKey("turnus.id"))
 
     turnus: Mapped[TurnusRad] = relationship()
+
+
+class GodkjenningRad(Base):
+    __tablename__ = "godkjenning"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    vakt_id: Mapped[int] = mapped_column(ForeignKey("vakt.id"), unique=True)
+    ansatt_id: Mapped[int] = mapped_column(ForeignKey("ansatt.id"))
+    bruker_id: Mapped[int] = mapped_column(ForeignKey("bruker.id"))
+    godkjent: Mapped[datetime] = mapped_column(OsloTid)

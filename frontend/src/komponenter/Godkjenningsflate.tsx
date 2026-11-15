@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { ApiFeil, gjeldendeSesjonsgenerasjon, godkjennErstatning } from "../api";
 import { datoOgKlokke, datoOgTidsrom, vaktlinje, vakttypenavn } from "../format";
 import { lastGodkjenning, type Godkjenningstilstand } from "../godkjenning";
 import { kandidatsti } from "../navigasjon";
-import { TEKSTER } from "../tekster";
+import { TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
 
 const t = TEKSTER.godkjenning;
@@ -12,17 +13,66 @@ type Props = {
   ansattId: number;
   /** Til kandidatflaten for vakten, uten kall til API-et. */
   onTilbake: () => void;
+  onGodkjent: (navn: string, vaktnummer: number) => void;
+  onTilOversikt?: () => void;
 };
 
-// Egen flate med egen URL, ikke en dialog (UX-DR17). Første steg i den
-// to-stegs godkjenningen: ingenting skrives før story 3.2 (FR12).
-export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake }: Props) {
+export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onGodkjent, onTilOversikt }: Props) {
   const [tilstand, setTilstand] = useState<Godkjenningstilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
-  const [trykket, setTrykket] = useState(false);
+  const [venter, setVenter] = useState(false);
+  const [melding, setMelding] = useState("");
+  const [usikkert, setUsikkert] = useState(false);
+  const aktiv = useRef(true);
+  const foresporsel = useRef(0);
+  const sender = useRef(false);
+  const aktivtValg = useRef(`${vaktnummer}/${ansattId}`);
+  aktivtValg.current = `${vaktnummer}/${ansattId}`;
   const retryknapp = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => lastGodkjenning(vaktnummer, ansattId, setTilstand), [vaktnummer, ansattId, forsok]);
+  useEffect(() => {
+    aktiv.current = true;
+    ++foresporsel.current;
+    sender.current = false;
+    setUsikkert(false);
+    setVenter(false);
+    const avbryt = lastGodkjenning(vaktnummer, ansattId, setTilstand);
+    return () => { aktiv.current = false; ++foresporsel.current; avbryt(); };
+  }, [vaktnummer, ansattId, forsok]);
+
+  async function bekreft() {
+    if (tilstand.type !== "klar" || sender.current || usikkert) return;
+    sender.current = true;
+    const generasjon = gjeldendeSesjonsgenerasjon();
+    const identitet = foresporsel.current;
+    const valg = `${vaktnummer}/${ansattId}`;
+    const gjelder = () => aktiv.current && identitet === foresporsel.current
+      && valg === aktivtValg.current && generasjon === gjeldendeSesjonsgenerasjon();
+    setVenter(true);
+    setMelding("");
+    try {
+      const svar = await godkjennErstatning(vaktnummer, ansattId, tilstand.grunnlagsmerke);
+      if (!gjelder()) return;
+      if (svar.status === "godkjent") { onGodkjent(tilstand.kandidat.navn, tilstand.vakt.vaktnummer); return; }
+      setTilstand({ type: "datafeil", datagrense: svar.datagrense });
+    } catch (feil) {
+      if (!gjelder()) return;
+      if (feil instanceof ApiFeil && feil.status === 401) return;
+      if (feil instanceof ApiFeil && feil.kode === "endret_grunnlag") {
+        setMelding(t.endret);
+        setForsok((n) => n + 1);
+      } else if (feil instanceof ApiFeil && feil.kode === "ugyldig_kandidat") {
+        setTilstand({ type: "ikke_funnet" });
+      } else if (feil instanceof ApiFeil && feil.kode === "allerede_bemannet") {
+        setTilstand({ type: "feil", tekst: feiltekst(feil.kode) });
+      } else {
+        setUsikkert(true);
+        setMelding(t.usikkert);
+      }
+    } finally {
+      if (gjelder()) { sender.current = false; setVenter(false); }
+    }
+  }
 
   useEffect(() => {
     if (tilstand.type === "feil") retryknapp.current?.focus();
@@ -107,12 +157,12 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake }: P
         </p>
         <div className="bekreftelse-handlinger">
           <button type="button" className="button-secondary" onClick={onTilbake}>{t.avbryt}</button>
-          {/* Beslutning 2A: aktiv før story 3.2, men uten kall til API-et. */}
-          <button type="button" className="button-primary button-kompakt" onClick={() => setTrykket(true)}>
+          <button type="button" className="button-primary button-kompakt" disabled={venter || usikkert} onClick={bekreft}>
             {t.godkjenn}
           </button>
+          {usikkert && onTilOversikt && <button type="button" className="button-secondary" onClick={onTilOversikt}>{t.tilVaktvalg}</button>}
         </div>
-        <p className="meta bekreftelse-melding" role="status">{trykket ? t.ikkeLagret : ""}</p>
+        <p className="meta bekreftelse-melding" role="status">{venter ? t.lagrer : melding}</p>
       </section>
       <p className="meta statuslinje">{t.statuslinje}</p>
     </main>

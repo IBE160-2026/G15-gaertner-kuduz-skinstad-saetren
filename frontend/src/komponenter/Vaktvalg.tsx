@@ -9,7 +9,7 @@ import {
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
 
-type Props = { onVelgVakt: (vaktnummer: number) => void };
+type Props = { onVelgVakt: (vaktnummer: number) => void; bekreftelse?: { navn: string; vaktnummer: number } | null };
 
 type Tilstand =
   | { type: "laster" }
@@ -21,7 +21,7 @@ type Tilstand =
 const t = TEKSTER.vaktvalg;
 
 // Vaktvalg (story 1.5, UX-DR5, UX-DR6). Erstatter plassholderen fra 1.3.
-export default function Vaktvalg({ onVelgVakt }: Props) {
+export default function Vaktvalg({ onVelgVakt, bekreftelse = null }: Props) {
   const [tilstand, setTilstand] = useState<Tilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
   const retryknapp = useRef<HTMLButtonElement>(null);
@@ -90,6 +90,7 @@ export default function Vaktvalg({ onVelgVakt }: Props) {
       <main className="innhold">
         <h1 className="visuelt-skjult">{t.overskrift}</h1>
 
+        {bekreftelse && <p className="panel brodtekst" role="status">{t.godkjent(bekreftelse.navn, bekreftelse.vaktnummer)}</p>}
         <section aria-labelledby="krever-handling">
           <h2 id="krever-handling" className="section-label section-label-forste">{t.kreverHandling}</h2>
           {data.krever_handling.length === 0
