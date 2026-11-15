@@ -69,3 +69,26 @@ Kjøre en ny full BMAD Validate av den oppdaterte arkitekturspinen, med mekanisk
 ### Åpne punkter
 
 - Ta de nye dokumentfunnene inn i en senere BMAD Update med AD-ID-ene beholdt, særlig sesjonslagring, `TolketPreferanse`-eierskap og tidssoneordlyd; se rapporten for lavere presiseringer. Ført i `issues.md`.
+
+## 2026-11-15 kl. 01:03 — Kimsk81
+
+### Oppgave
+
+Gå gjennom D1–D6 fra Validate-rapporten 15.11 ett funn om gangen, få brukerens valg og rette den eksisterende arkitekturspinen i BMAD Update-modus. Bevar eksisterende arbeidsendringer og skill dokumentkontrakter fra framtidig kode.
+
+### Plan
+
+- Sjekket git status først; leste AGENTS, arkitekturens memlog, samlet rapport og tre delrapporter, sensorveiledning, beslutningsreferat, PRD, epics, UX og relevante kodepunkter.
+- La fram D1–D6 enkeltvis med kilder og konkret ordlyd; brukeren godkjente alle før filendring. Førte beslutningene med `memlog.py append`, oppdaterte spine og berørte dokumentsetninger.
+- Kjørte arkitekturlint og tre uavhengige Reviewer Gate-linser, rettet gjenværende dokumentsamordning og oppdaterte vurderingsmatrisen med bevislenker.
+
+### Resultat
+
+- Spinen presiserer persistert bruker fremfor sesjon (D1), semantisk KI-tolkning mot deserialisering av lagret verdi (D2), Oslo-kalender mot UTC-lagring og faktisk tid (D3), lokal HTTP (D4), dokumenterte variabler i `.env.example` (D5) og `updated: 2026-11-15` med append-only memlog (D6). AD-1–AD-7 er beholdt.
+- `epics.md` og arkitekturens forklaring/presentasjon er samordnet. PRD og øvrige eksisterende arbeidsendringer ble bevart. Ingen kode er endret.
+- [Reviewer Gate](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/reviews/reviewer-gate-update-2026-11-15.md): lint `ok: true`, 0 funn; rubrikk, adversarial og teknologi/kode fullført. En foreldet setning om at Rangeringen alltid har lagret tolkning ble funnet og rettet i epics og forklaringsfilene. `git diff --check` er ren. Ingen apptester eller live KI-kall ble kjørt; story 3.2 og 5.x er ikke implementert av dokumentendringen.
+- [Vurderingsmatrisen](../../docs/emne/vurderingsmatrise.md) lenker til faktisk gate- og dokumentbevis under kriterium 1 og 5. Dokumentpunktet i `issues.md` er lukket; eksisterende implementasjons- og testpunkter står fortsatt åpne.
+
+### Åpne punkter
+
+Ingen.
