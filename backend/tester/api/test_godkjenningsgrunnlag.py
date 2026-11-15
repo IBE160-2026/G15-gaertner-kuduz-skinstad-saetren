@@ -7,16 +7,18 @@ bundet til en regel: den sammenligner med svaret fra `/kandidater`.
 """
 
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor
+from importlib import import_module
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine, select, update
+from sqlalchemy import Engine, event, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
-from adaptere.lagring.modeller import OSLO, Base, VaktRad
-from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING
+from adaptere.lagring.modeller import OSLO, AnsattRad, Base, GodkjenningRad, VaktRad
+from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING, fyll_testdata
 from domene.regelmotor.vurdering import REGLER
-from tester.api.test_innlogging import engine, feilsvar, klient, logg_inn  # noqa: F401
+from tester.api.test_innlogging import COOKIE_NAVN, engine, feilsvar, klient, logg_inn  # noqa: F401
 
 NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
 KOMPETANSE = {ansatt_id: kompetanse for ansatt_id, _, _, _, _, kompetanse, _ in ANSATTE}
@@ -60,7 +62,8 @@ def test_gyldig_kandidat_gir_vakt_og_kandidat(klient: TestClient, ansatt_id: int
 
     assert respons.status_code == 200
     svar = respons.json()
-    assert set(svar) == {"status", "vakt", "kandidat"}
+    assert set(svar) == {"status", "vakt", "kandidat", "grunnlagsmerke"}
+    assert len(svar["grunnlagsmerke"]) == 64
     assert svar["status"] == "ok"
     # Vakten er den samme som vaktdetaljene gir, og Kandidaten den samme som i listen.
     assert svar["vakt"] == klient.get("/api/vakter/4127").json()
@@ -71,7 +74,9 @@ def test_gyldig_kandidat_gir_vakt_og_kandidat(klient: TestClient, ansatt_id: int
 
 def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
     logg_inn(klient)
-    assert klient.get(sti(4127, JONAS)).json() == {
+    svar = klient.get(sti(4127, JONAS)).json()
+    assert len(svar.pop("grunnlagsmerke")) == 64
+    assert svar == {
         "status": "ok",
         "vakt": {
             "avdeling": "Kirurgisk sengepost",
@@ -151,9 +156,8 @@ def test_uten_sesjon_gir_401(klient: TestClient) -> None:
     assert "Jonas" not in respons.text
 
 
-@pytest.mark.parametrize("metode", ["POST", "PUT", "PATCH", "DELETE"])
+@pytest.mark.parametrize("metode", ["PUT", "PATCH", "DELETE"])
 def test_ingen_skrivende_metode(klient: TestClient, engine: Engine, metode: str) -> None:
-    # Godkjenningen skrives først i story 3.2.
     logg_inn(klient)
     før = øyeblikksbilde(engine)
     respons = klient.request(metode, sti(4127, JONAS))
@@ -232,3 +236,210 @@ def test_4127_mangler_fortsatt_bemanning_etter_visning(klient: TestClient, engin
         assert rad.mangler_bemanning is True
         assert rad.tildelt_ansatt_id is None
     assert 4127 in {v["vaktnummer"] for v in klient.get("/api/vaktoversikt").json()["krever_handling"]}
+
+
+def test_post_lagrer_en_godkjenning_og_bemanner_vakten(klient: TestClient, engine: Engine) -> None:
+    logg_inn(klient)
+    merke = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": merke}).json() == {"status": "godkjent"}
+    with lag_sessionmaker(engine)() as session:
+        (godkjenning,) = session.scalars(select(GodkjenningRad)).all()
+        vakt = session.scalar(select(VaktRad).where(VaktRad.vaktnummer == 4127))
+        assert godkjenning.ansatt_id == JONAS
+        assert godkjenning.vakt_id == vakt.id
+        assert godkjenning.bruker_id is not None
+        assert godkjenning.godkjent.utcoffset() is not None
+        assert vakt.tildelt_ansatt_id == JONAS
+        assert not vakt.mangler_bemanning
+    oversikt = klient.get("/api/vaktoversikt").json()
+    assert 4127 not in {v["vaktnummer"] for v in oversikt["krever_handling"]}
+    assert next(v for v in oversikt["bemannet"] if v["vaktnummer"] == 4127)["ansatt"]["navn"] == "Jonas Bakke"
+    dublett = klient.post(sti(4127, JONAS), json={"grunnlagsmerke": merke})
+    assert dublett.status_code == 409
+    assert feilsvar("allerede_bemannet")(dublett.json())
+
+
+def test_endret_grunnlag_krever_nytt_trykk(klient: TestClient, engine: Engine) -> None:
+    logg_inn(klient)
+    gammelt = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    with lag_sessionmaker(engine).begin() as session:
+        session.execute(update(VaktRad).where(VaktRad.vaktnummer == 4127).values(minstenivå=2))
+    før = øyeblikksbilde(engine)
+    svar = klient.post(sti(4127, JONAS), json={"grunnlagsmerke": gammelt})
+    assert svar.status_code == 409
+    assert feilsvar("endret_grunnlag")(svar.json())
+    assert øyeblikksbilde(engine) == før
+    nytt = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    assert nytt != gammelt
+    assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": nytt}).status_code == 200
+
+
+@pytest.mark.parametrize("endring", ["ansatt", "vakttid"])
+def test_ansatt_og_vakttid_endrer_merket_uten_lagring(
+    klient: TestClient, engine: Engine, endring: str,
+) -> None:
+    logg_inn(klient)
+    gammelt = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    with lag_sessionmaker(engine).begin() as session:
+        if endring == "ansatt":
+            session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(navn="Jonas Oppdatert"))
+        else:
+            vakt = session.scalar(select(VaktRad).where(VaktRad.vaktnummer == 4127))
+            session.execute(update(VaktRad).where(VaktRad.id == vakt.id).values(
+                start=vakt.start + timedelta(minutes=1), slutt=vakt.slutt + timedelta(minutes=1),
+            ))
+    før = øyeblikksbilde(engine)
+    svar = klient.post(sti(4127, JONAS), json={"grunnlagsmerke": gammelt})
+    assert svar.status_code == 409
+    assert feilsvar("endret_grunnlag")(svar.json())
+    assert øyeblikksbilde(engine) == før
+    nytt = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    assert nytt != gammelt
+    assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": nytt}).status_code == 200
+
+
+def test_merket_er_knyttet_til_valgt_kandidat(klient: TestClient, engine: Engine) -> None:
+    logg_inn(klient)
+    jonas = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    mette = klient.get(sti(4127, METTE)).json()["grunnlagsmerke"]
+    assert jonas != mette
+    før = øyeblikksbilde(engine)
+    svar = klient.post(sti(4127, METTE), json={"grunnlagsmerke": jonas})
+    assert svar.status_code == 409
+    assert feilsvar("endret_grunnlag")(svar.json())
+    assert øyeblikksbilde(engine) == før
+
+
+def test_get_visning_og_merke_kommer_fra_samme_snapshot(
+    klient: TestClient, engine: Engine, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # WAL lar den andre forbindelsen committe mens GET holder et lesesnapshot.
+    with engine.connect() as forbindelse:
+        forbindelse.exec_driver_sql("PRAGMA journal_mode=WAL")
+    logg_inn(klient)
+    gammelt = klient.get(sti(4127, JONAS)).json()
+    api = import_module("adaptere.api.main")
+    opprinnelig = api.hent_vaktdetaljer
+
+    def endre_etter_grunnlag(*args):  # type: ignore[no-untyped-def]
+        with lag_sessionmaker(engine).begin() as session:
+            session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(navn="Jonas Nytt Navn"))
+        return opprinnelig(*args)
+
+    monkeypatch.setattr(api, "hent_vaktdetaljer", endre_etter_grunnlag)
+    svar = klient.get(sti(4127, JONAS))
+    assert svar.status_code == 200
+    assert svar.json()["kandidat"] == gammelt["kandidat"]
+    assert svar.json()["grunnlagsmerke"] == gammelt["grunnlagsmerke"]
+
+
+def test_feil_etter_vaktoppdatering_ruller_tilbake_begge_endringer(
+    klient: TestClient, engine: Engine,
+) -> None:
+    logg_inn(klient)
+    merke = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    før = øyeblikksbilde(engine)
+    def feiler_ved_innsetting(_mapper, _connection, _rad):  # type: ignore[no-untyped-def]
+        raise RuntimeError("simulert feil etter oppdatering")
+
+    event.listen(GodkjenningRad, "before_insert", feiler_ved_innsetting)
+    try:
+        assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": merke}).status_code == 500
+    finally:
+        event.remove(GodkjenningRad, "before_insert", feiler_ved_innsetting)
+    assert øyeblikksbilde(engine) == før
+
+
+def test_lagringsoperasjonen_tar_skrivelas_for_lesing(
+    klient: TestClient, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    logg_inn(klient)
+    merke = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    lagring = import_module("adaptere.lagring.godkjenninger")
+    opprinnelig = lagring.hent_kandidatgrunnlag
+    kontrollert = False
+
+    def kontroller_transaksjon(session, bruker_id, vaktnummer):  # type: ignore[no-untyped-def]
+        nonlocal kontrollert
+        # SQLite-transaksjonen må være startet før første kandidatspørring.
+        assert session.connection().connection.driver_connection.in_transaction
+        kontrollert = True
+        return opprinnelig(session, bruker_id, vaktnummer)
+
+    monkeypatch.setattr(lagring, "hent_kandidatgrunnlag", kontroller_transaksjon)
+    assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": merke}).status_code == 200
+    assert kontrollert
+
+
+def test_ugyldig_og_datafeil_skriver_ingenting(klient: TestClient, engine: Engine) -> None:
+    logg_inn(klient)
+    merke = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    før = øyeblikksbilde(engine)
+    ugyldig = klient.post(sti(4127, SILJE), json={"grunnlagsmerke": merke})
+    assert ugyldig.status_code == 409
+    assert feilsvar("ugyldig_kandidat")(ugyldig.json())
+    assert øyeblikksbilde(engine) == før
+    flytt_4127_til_periodekanten(engine)
+    etter = øyeblikksbilde(engine)
+    datafeil = klient.post(sti(4127, JONAS), json={"grunnlagsmerke": merke})
+    assert datafeil.status_code == 200
+    assert datafeil.json()["status"] == "datafeil"
+    assert øyeblikksbilde(engine) == etter
+
+
+def test_samtidige_post_gir_bare_en_godkjenning(klient: TestClient, engine: Engine) -> None:
+    token = logg_inn(klient)
+    merke = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+
+    def forsok() -> int:
+        with TestClient(klient.app, raise_server_exceptions=False) as egen:
+            return egen.post(
+                sti(4127, JONAS), json={"grunnlagsmerke": merke},
+                headers={"Cookie": f"{COOKIE_NAVN}={token}"},
+            ).status_code
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        svar = list(pool.map(lambda _: forsok(), range(2)))
+    assert sorted(svar) == [200, 409]
+    with lag_sessionmaker(engine)() as session:
+        assert len(session.scalars(select(GodkjenningRad)).all()) == 1
+
+
+def test_ny_seeding_sletter_godkjenning_for_vakter(klient: TestClient, engine: Engine) -> None:
+    logg_inn(klient)
+    merke = klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
+    assert klient.post(sti(4127, JONAS), json={"grunnlagsmerke": merke}).status_code == 200
+    with lag_sessionmaker(engine).begin() as session:
+        fyll_testdata(session)
+    with lag_sessionmaker(engine)() as session:
+        assert session.scalars(select(GodkjenningRad)).all() == []
+        vakt = session.scalar(select(VaktRad).where(VaktRad.vaktnummer == 4127))
+        assert vakt.mangler_bemanning
+
+
+def test_post_uten_sesjon_skriver_ingenting(klient: TestClient, engine: Engine) -> None:
+    før = øyeblikksbilde(engine)
+    svar = klient.post(sti(4127, JONAS), json={"grunnlagsmerke": "a" * 64})
+    assert svar.status_code == 401
+    assert feilsvar("mangler_sesjon")(svar.json())
+    assert øyeblikksbilde(engine) == før
+
+
+def test_andre_api_ruter_bemanner_ikke_og_lager_ingen_godkjenning(
+    klient: TestClient, engine: Engine,
+) -> None:
+    logg_inn(klient)
+    før = øyeblikksbilde(engine)
+    for rute in (
+        "/api/meg", "/api/vaktoversikt", "/api/vakter/4127",
+        "/api/vakter/4127/kandidater", sti(4127, JONAS),
+        "/api/innloggingsinfo", "/api/helse",
+    ):
+        assert klient.get(rute).status_code == 200
+    assert klient.post("/api/utlogging").status_code == 204
+    assert øyeblikksbilde(engine) == før
+    with lag_sessionmaker(engine)() as session:
+        assert session.scalars(select(GodkjenningRad)).all() == []
+        vakt = session.scalar(select(VaktRad).where(VaktRad.vaktnummer == 4127))
+        assert vakt.mangler_bemanning
+        assert vakt.tildelt_ansatt_id is None

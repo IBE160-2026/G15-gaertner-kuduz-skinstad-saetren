@@ -274,8 +274,8 @@ def test_ulempepoeng_per_vakt_og_vindusgrense() -> None:
 # --- Første og ny kjøring ----------------------------------------------------
 
 
-def test_forste_kjoring_lager_bare_de_fire_tabellene(engine: Engine, data: Data) -> None:
-    assert sorted(inspect(engine).get_table_names()) == ["ansatt", "bruker", "turnus", "vakt"]
+def test_forste_kjoring_lager_fem_tabeller(engine: Engine, data: Data) -> None:
+    assert sorted(inspect(engine).get_table_names()) == ["ansatt", "bruker", "godkjenning", "turnus", "vakt"]
     assert len(data.ansatte) == 25
     assert sorted(data.ansatte) == list(range(1, 26))
     periode = [v for v in data.vakter if data.turnus.periode_start <= v.start < data.turnus.periode_slutt]

@@ -8,6 +8,9 @@ export const FEILTEKSTER: Readonly<Record<string, string>> = {
   ikke_funnet: "Fant ikke det du ba om.",
   metode_ikke_tillatt: "Forespørselen ble avvist. Last siden på nytt.",
   intern_feil: "Feil på serveren. Er testdataene lastet? Se README.",
+  endret_grunnlag: "Grunnlaget er endret. Se de oppdaterte opplysningene før du godkjenner på nytt.",
+  ugyldig_kandidat: "Kandidaten kan ikke godkjennes for denne vakten.",
+  allerede_bemannet: "Vakten er allerede bemannet.",
 };
 
 export const RESERVETEKST = "Noe gikk galt. Prøv igjen.";
@@ -68,6 +71,7 @@ export const TEKSTER = {
     ingenKreverHandling: "Ingen vakter krever handling nå",
     bemannet: "Øvrige vakter denne perioden — bemannet",
     ingenBemannet: "Ingen bemannede vakter i perioden",
+    godkjent: (navn: string, vaktnummer: number) => `${navn} er godkjent for vakt #${vaktnummer}. Vakten er bemannet.`,
     velgVakt: "Velg vakt — finn erstatter →",
     statusBemannet: "Bemannet",
     kolonner: { vakt: "Vakt", dato: "Dato", tid: "Tid", ansatt: "Ansatt", status: "Status" },
@@ -132,8 +136,10 @@ export const TEKSTER = {
     },
     avbryt: "Avbryt",
     godkjenn: "Godkjenn erstatning",
-    // Beslutning 2A: knappen er aktiv før story 3.2, men lagrer ingenting.
-    ikkeLagret: "Godkjenningen lagres ikke ennå. Ingenting er endret.",
+    lagrer: "Godkjenner erstatningen …",
+    usikkert: "Vi fikk ikke bekreftet om godkjenningen ble lagret. Kontroller Vaktvalg før du prøver igjen.",
+    tilVaktvalg: "Til Vaktvalg",
+    endret: "Grunnlaget er endret. Se de oppdaterte opplysningene før du godkjenner på nytt.",
     statuslinje: "Ikke gjennomført — venter på eksplisitt godkjenning",
     // Beslutning 3A: samme tekst for utelukket og ukjent Ansatt og for en vakt
     // som ikke lenger mangler bemanning.

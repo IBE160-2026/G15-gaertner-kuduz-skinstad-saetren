@@ -173,6 +173,7 @@ export const KANDIDATER_DATAFEIL = {
 
 export const GODKJENNING_JONAS = {
   status: "ok", vakt: VAKT_4127, kandidat: { id: 6, navn: "Jonas Bakke", kompetansenivå: 3 },
+  grunnlagsmerke: "a".repeat(64),
 } satisfies Godkjenningssvar;
 
 export const GODKJENNING_DATAFEIL = {
