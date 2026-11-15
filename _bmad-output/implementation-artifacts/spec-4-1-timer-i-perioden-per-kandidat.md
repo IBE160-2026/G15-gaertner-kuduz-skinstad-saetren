@@ -2,7 +2,8 @@
 title: 'Story 4.1: Timer i perioden per kandidat'
 type: 'feature'
 created: '2026-11-15'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '1e620d32153af6ea93b346ab5a8cd55660d6240a'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -81,6 +82,23 @@ context:
 ## Spec Change Log
 
 ## Review Triage Log
+
+| Funn | Lag | Verdikt | Rute | Bevis |
+|---|---|---|---|---|
+| Formattesten for `timerOgMinutter` lå i New York-grenen med ødelagt innrykk | Blind, Edge, Gap | medium | patch | Testen kjørte bare i underprosessen; flyttet ut av `if`. Rettet. |
+| Komma inne i kommentaren i `test_godkjenningsgrunnlag.py` | Blind, Gap | low | patch | Dict brutt over flere linjer. Rettet. |
+| Testnavn `…bare_id_navn_og_nivå` stemte ikke med fire felt | Blind | low | patch | Omdøpt til `…bare_kontraktsfeltene`. |
+| Docstring for `timerOgMinutter` motsa koden | Blind | low | patch | Docstring rettet; tester for brøk, negativ og NaN lagt til. |
+| Mangler test når Vakten selv starter søndag natt / mandag 00:00 | Blind | medium | patch | Begge tester lagt til i `test_timer_i_uka.py`. |
+| Avrunding til hele minutter utestet | Blind | low | patch | Test for 59 sekunder og 0 lagt til. |
+| Vakten som bemannes er ikke eksplisitt ekskludert | Edge | false | – | `kandidatgrunnlag.py` tar aldri med Vakten (Code Map); spec-beslutning 2. |
+| Manglende/ugyldig `minutter_i_uka` vises som 0:00 | Edge | false | – | Backend sender alltid heltall (Pydantic `int`); ingen vei til undefined. |
+| Ugyldige vakter og startuke utenfor datagrensen undertelles stille | Blind | maybe-false | defer | Se deferred-work. |
+| Layout uten test ved smale vinduer | Edge | maybe-false | – | Dekkes av «Manual checks» (AV-17); ikke utført ennå. |
+| Duplisert klipping mot `lengste_fri` | Blind | low | avvist | Refaktorering av regelmotoren, ikke direkte retting. |
+| «t i uka»-tekst, aria, token-plassering, `overflow-wrap` | Blind | low | avvist | Tekstvalget er Ragnhilds beslutning 3; resten er smak uten navngitt skade. |
+| Feltet brukes ikke i godkjenningsflaten | Blind | false | – | Spec-beslutning 2 krever feltet der; 4.4 flytter tallet. |
+| docs/testing.md, KI-logg, AGENTS.md-status mangler | Blind | medium | oppfølging | Prosesskrav, ikke kode; gjøres ved avslutning (se presentasjon). |
 
 ## Design Notes
 

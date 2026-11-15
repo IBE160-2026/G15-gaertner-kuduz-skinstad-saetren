@@ -61,3 +61,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-pr-20-samordning-testplan.md`
   summary: "[LØST 2026-11-14, PR #20] Fristen for P-13s forståelsestest var ikke samordnet mellom beslutningsreferatet og planfilene."
   evidence: P-13-raden i `docs/beslutninger/avklaringspunkter.md` beskriver testen uten frist, og Review Triage Log B13 i `spec-frontend-komponenttester.md` avviste «før story 4.6» som ikke vedtatt. Kim valgte 2026-11-14 å beholde før story 4.6 som planlagt arbeidsmål, ikke som eget gruppevedtak om frist. `epics.md`, PRD og sprintstatus er presisert tilsvarende. Selve forståelsestesten er fortsatt ikke utført.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-1-timer-i-perioden-per-kandidat.md`
+  summary: `timer_i_startuka` hopper stille over ugyldige vakter og sjekker ikke at startuka ligger innenfor turnusgrunnlaget (`datagrense`), så summen kan bli for lav uten feilmelding (ikke verifisert, ville vært medium).
+  evidence: `gyldig_tidsrom` hoppes over uten datafeil, og vurderingen validerer bare vinduet rundt Vakten, ikke hele mandag–mandag-uka. Avgjøres ved å teste en kandidat med ugyldig vakt eller en startuke som går forbi datagrensen.

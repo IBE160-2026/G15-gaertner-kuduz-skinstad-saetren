@@ -104,7 +104,7 @@ har satt opp, feiler testen.
 | [`vaktvalg.test.tsx`](../frontend/tester/komponenter/vaktvalg.test.tsx) | Feil gir «Prøv igjen»; etter godkjenning vises bekreftelse med ansatt og vakt over oppdatert oversikt | 1.5, 3.2 |
 | [`app.test.tsx`](../frontend/tester/komponenter/app.test.tsx) | 401 etter bekreftet sesjon viser innloggingen med «Sesjonen er utløpt» | 1.5 |
 | | Stien `/vakt/4127/godkjenning/6` viser godkjenningsflaten; vellykket POST går via `App` til ny Vaktvalg-visning | 3.1, 3.2 |
-| [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx) | Feil i kandidatlisten gir «Prøv igjen», og trykket henter listen på nytt. Datafeil viser tekst og datagrense uten liste | 2.1 |
+| [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx) | Feil i kandidatlisten gir «Prøv igjen», og trykket henter listen på nytt. Datafeil viser tekst og datagrense uten liste. Hver rad viser timer i startuka som t:mm, også 0:00 uten vakter | 2.1, 4.1 |
 | | Tomtilstanden (`ingen_gyldige_kandidater`) har ikon, full tekst, boks og innleietekst uten knapp utenom «Vis full liste». `ok` med tom liste gir feiltilstand. Lasting, feil, datafeil og ingen gyldige har ulik tekst, panelklasse og kombinasjon av rolle, ikon og knapp | 2.6 |
 | | Ingen Ekskludert-boks ved 0 utelukkede. «Vis full liste» lukket, åpen og lukket med `aria-expanded` | 2.5 |
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |

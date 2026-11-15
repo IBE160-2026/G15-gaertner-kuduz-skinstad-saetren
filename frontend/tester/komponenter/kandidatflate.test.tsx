@@ -40,6 +40,22 @@ const begynnerMed = (tekst: string) => new RegExp(`^${regexTekst(tekst)}`);
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
 
 describe("Kandidatliste (story 2.1)", () => {
+  test("hver rad viser timer i uka som t:mm, og 0:00 uten vakter (story 4.1)", async () => {
+    const svar = {
+      ...TO_GYLDIGE,
+      kandidater: [
+        { id: 4, navn: "Ingrid Dahl", kompetansenivå: 3, minutter_i_uka: 1920 },
+        { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
+        { id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 32 * 60 + 23 },
+      ],
+    } satisfies Kandidatsvar;
+    const { del } = await rendreMed(ok(svar));
+
+    expect(within(del).getByText(t.timerIUka("32:00"))).toBeTruthy();
+    expect(within(del).getByText(t.timerIUka("0:00"))).toBeTruthy();
+    expect(within(del).getByText(t.timerIUka("32:23"))).toBeTruthy();
+  });
+
   test("feil gir «Prøv igjen», og et trykk henter kandidatene på nytt", async () => {
     const { fetch, bruker, del } = await rendreMed([feil(500, "intern_feil"), ok(TO_GYLDIGE)]);
 

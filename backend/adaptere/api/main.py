@@ -29,6 +29,7 @@ from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
+from domene.regelmotor.timer_i_uka import minutter_i_uka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
 from domene.typer import Datafeil, Godkjenning
 
@@ -129,6 +130,8 @@ class KandidatUt(BaseModel):
     navn: str
     # Nivået for Vaktens vakttype, 1–4. Vises som tag (UX-DR11).
     kompetansenivå: int
+    # Hele minutter i uka Vakten starter i, uten Vakten selv (FR8, P-02, story 4.1).
+    minutter_i_uka: int
 
 
 class RegelAntallUt(BaseModel):
@@ -314,7 +317,10 @@ def lag_app(
         return KandidaterUt(
             status="ok",
             kandidater=[
-                KandidatUt(id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt))
+                KandidatUt(
+                    id=k.id, navn=k.navn, kompetansenivå=kompetansenivå(k, grunnlag.vakt),
+                    minutter_i_uka=minutter_i_uka(k, grunnlag.vakt),
+                )
                 for k in vurdering.gyldige
             ],
             utelukkelser=utelukkelser,
@@ -349,6 +355,7 @@ def lag_app(
             vakt=VaktdetaljerUt.model_validate(detaljer, from_attributes=True),
             kandidat=KandidatUt(
                 id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
+                minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
             ),
             grunnlagsmerke=grunnlagsmerke(okt, request.state.bruker.id, vaktnummer, ansatt_id),
         )

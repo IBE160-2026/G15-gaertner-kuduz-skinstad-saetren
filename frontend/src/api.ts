@@ -46,7 +46,8 @@ export type Vaktdetaljer = {
 
 // GET /api/vakter/{nr}/kandidater (story 2.1). Bare Gyldige kandidater,
 // alfabetisk. Datafeil er et 200-svar uten liste (P-08).
-export type Kandidat = { id: number; navn: string; kompetansenivå: number };
+// `minutter_i_uka`: hele minutter i uka Vakten starter i, uten Vakten selv (story 4.1, FR8).
+export type Kandidat = { id: number; navn: string; kompetansenivå: number; minutter_i_uka: number };
 
 // Ekskludert-boksen (story 2.5, UX-DR15). `per_regel` følger regelmotorens
 // rekkefølge, og summen der kan være større enn `totalt`.

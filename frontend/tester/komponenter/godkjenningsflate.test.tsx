@@ -100,7 +100,7 @@ test("sent POST-svar for forrige kandidat kan ikke navigere fra nytt valg", asyn
   let svarPaGammeltPost: ((svar: Response) => void) | undefined;
   const mette = {
     ...GODKJENNING_JONAS,
-    kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4 },
+    kandidat: { id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 0 },
     grunnlagsmerke: "b".repeat(64),
   };
   vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL, init?: RequestInit) => {

@@ -102,6 +102,8 @@ export const TEKSTER = {
     innleie: "Innleie av personell kan vurderes",
     kandidaterLaster: "Henter kandidatene …",
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
+    // Timer i uka Vakten starter i (story 4.1, FR8): «32:00 t i uka».
+    timerIUka: (verdi: string) => `${verdi} t i uka`,
     datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
   },
