@@ -458,6 +458,49 @@ button {
   overflow-wrap: anywhere;
 }
 
+/* Belastningslinja (story 4.2): fast 110×7 px, fylt proporsjonalt. `accent` under
+   32,4 t og `warn` fra og med, aldri rød. Linja er ikke fokuserbar. */
+.belastning {
+  flex: 0 0 var(--load-bar-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.belastningslinje {
+  display: block;
+  width: var(--load-bar-width);
+  max-width: 100%;
+  height: var(--load-bar-height);
+  background: var(--color-tag-bg);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.belastningsfyll {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+}
+
+.belastningsfyll.hoy {
+  background: var(--color-warn);
+}
+
+.varselmerke {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-warn);
+  font-size: var(--font-size-meta);
+}
+
+.varselmerke-ikon {
+  flex: none;
+  width: var(--font-size-body);
+  height: var(--font-size-body);
+}
+
 .kandidat-ulempe {
   display: flex;
   flex-direction: column;

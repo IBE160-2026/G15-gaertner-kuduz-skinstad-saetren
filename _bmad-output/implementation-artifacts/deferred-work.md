@@ -65,3 +65,13 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-1-timer-i-perioden-per-kandidat.md`
   summary: "[AVKLART 2026-11-15, ikke en feil] `timer_i_startuka` hopper over ugyldige vakter og sjekker ikke datagrensen selv, men API-et når den bare etter `vurder_kandidater`."
   evidence: 35-timersregelens vindu er hele mandag–mandag-uka Vakten starter i (`berørte_uker`), samme uke som `timer_i_startuka` bruker. `vurder_kandidater` gir `Datafeil` for ugyldige vakter i vinduet (`kandidatvaktdatafeil`) og for vindu utenfor `[historikkstart, datagrense]` (`vindusdatafeil`), før noen kandidatliste eller `minutter_i_uka` finnes. Det opprinnelige funnet bygget på en feil antakelse om at vinduet var smalere. Gjenstående: funksjonen krever at kalleren har vurdert grunnlaget; dokumentert i docstringen for 4.3 og 4.4.
+
+- source_spec: `spec-4-2-belastningslinje-med-terskel.md`
+  summary: Kontrast mellom sporet (`--color-tag-bg`) og fyllet i `accent`/`warn` er ikke målt med verktøy (maybe-false, ville vært medium). Sett manuelt i lys drakt 2026-11-15 uten avvik; appen har ingen mørk drakt.
+  evidence: Linja har ingen tallverdi av sin egen, bare farge og tekst ved høy belastning. Avgjøres av en målt kontrast (WCAG 1.4.11, 3:1) i lys drakt.
+- source_spec: `spec-4-2-belastningslinje-med-terskel.md`
+  summary: Fast bredde 110 px (`flex: 0 0`) kan gi overlapp eller klipp ved smale vinduer (maybe-false, ville vært medium).
+  evidence: Kodegjennomgangen kunne ikke avgjøre det uten nettleser. Manuell layoutkontroll ved 1600, 1080, 960, 680 og 360 px mot ekte backend 2026-11-15: ingen overlapp, klipp eller vannrett scroll. Kan lukkes.
+## Deferred from: code review of spec-4-2-belastningslinje-med-terskel.md (2026-11-15)
+
+- Epic 4-konteksten er forkortet og har mistet sentrale detaljer om normalisering over alle gyldige (lavest gir 100), preferanseskala, uavhengig fasit, P-09, opprinnelig ansatts lønn og referansesammenligning. Samordne mot styrende dokumenter før senere stories bruker konteksten.

@@ -261,7 +261,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 
 ### K-02 – Terskel for høy timebelastning
 
-**Senere vedtak 2026-11-09 (P-04, gjeldende status):** Minst 32,4 timer før visningsavrunding. Ingrid beholdes på 32 timer og ligger under grensen. Story 1.2s dokumentforventning er rettet 2026-11-10; implementert visning og grensetester gjenstår. Linjene nedenfor gjengir den historiske statusen fra 02.11.
+**Senere vedtak 2026-11-09 (P-04, gjeldende status):** Minst 32,4 timer før visningsavrunding. Ingrid beholdes på 32 timer og ligger under grensen. Story 1.2s dokumentforventning er rettet 2026-11-10. Visning og grensetester er implementert i story 4.2 (2026-11-15, [KI-logg](../ki-logg/2026-11-15-arbeidsbelastningslinje.md)): 32:23 og 32:23:59 er under, 32:24 og 32:25 er på og over grensen, og Ingrid (32:00) er under. Manuell nettleserkontroll er gjort 2026-11-15 (Safari på macOS): 32:23 `accent`, 32:24 og 32:25 `warn`, ingen avvik i layout. Linjene nedenfor gjengir den historiske statusen fra 02.11.
 
 - **Funn:** Codex anbefaler nøyaktig `0,90 × 36 = 32,4 timer`; Ingrid med 32 timer ligger under **den anbefalte** terskelen.
 - **Status:** Åpent. **32,4 timer er en Codex-anbefaling, ikke et gruppevedtak.**
