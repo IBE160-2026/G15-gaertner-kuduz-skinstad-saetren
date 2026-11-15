@@ -93,7 +93,7 @@ context:
 | Avrunding til hele minutter utestet | Blind | low | patch | Test for 59 sekunder og 0 lagt til. |
 | Vakten som bemannes er ikke eksplisitt ekskludert | Edge | false | – | `kandidatgrunnlag.py` tar aldri med Vakten (Code Map); spec-beslutning 2. |
 | Manglende/ugyldig `minutter_i_uka` vises som 0:00 | Edge | false | – | Backend sender alltid heltall (Pydantic `int`); ingen vei til undefined. |
-| Ugyldige vakter og startuke utenfor datagrensen undertelles stille | Blind | maybe-false | defer | Se deferred-work. |
+| Ugyldige vakter og startuke utenfor datagrensen undertelles stille | Blind | false | avklart | Rettet etter første triage: 35-timersregelens vindu er hele startuka, og `vurder_kandidater` gir `Datafeil` for ugyldige vakter og for vindu utenfor `[historikkstart, datagrense]` før `minutter_i_uka` beregnes. Docstringen sier nå at kalleren må ha vurdert grunnlaget. Se deferred-work (AVKLART). |
 | Layout uten test ved smale vinduer | Edge | maybe-false | – | Dekkes av «Manual checks» (AV-17); ikke utført ennå. |
 | Duplisert klipping mot `lengste_fri` | Blind | low | avvist | Refaktorering av regelmotoren, ikke direkte retting. |
 | «t i uka»-tekst, aria, token-plassering, `overflow-wrap` | Blind | low | avvist | Tekstvalget er Ragnhilds beslutning 3; resten er smak uten navngitt skade. |

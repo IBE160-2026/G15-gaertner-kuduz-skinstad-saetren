@@ -17,7 +17,14 @@ from domene.typer import Kandidat, Vakt
 
 
 def timer_i_startuka(kandidat: Kandidat, vakt: Vakt) -> timedelta:
-    """Kandidatens eksisterende arbeidstid i uka `vakt` starter i. 0 uten vakter."""
+    """Kandidatens eksisterende arbeidstid i uka `vakt` starter i. 0 uten vakter.
+
+    Krever at grunnlaget er vurdert med `vurder_kandidater` først. Vinduet der er
+    hele uka (35-timersregelens `vindu`), og ugyldige vakter eller dekning utenfor
+    `[historikkstart, datagrense]` gir `Datafeil` før tallet beregnes (P-08). Her
+    hoppes ugyldige vakter over uten melding, så kall ikke funksjonen på kandidater
+    som ikke har vært gjennom vurderingen.
+    """
     uke = berørte_uker(vakt)[0]
     uke_start, uke_slutt = uke.start.astimezone(UTC), uke.slutt.astimezone(UTC)
     klippet = sorted(

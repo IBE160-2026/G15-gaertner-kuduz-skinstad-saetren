@@ -26,6 +26,6 @@ Hovedøkten leste diffen mot spesifikasjonen; alle oppgaver og matriserader var 
 - Kommaet i `test_godkjenningsgrunnlag.py` havnet inne i en kommentar, og testnavnet sa «bare id, navn og nivå» mens det nå er fire felt. Begge rettet.
 - Manglende grensetester: Vakten som bemannes starter søndag natt (teller uka den starter i), Vakten starter mandag 00:00, og avrunding av sekunder til hele minutter. Lagt til.
 
-Ett funn er utsatt som uverifisert: ugyldige vakter hoppes stille over, og startuka er ikke sjekket mot datagrensen (se `deferred-work.md`).
+Ett funn ble først utsatt som uverifisert: ugyldige vakter hoppes stille over, og startuka er ikke sjekket mot datagrensen. Ved nærmere undersøkelse var det ikke en feil: 35-timersregelens vindu er hele startuka, og `vurder_kandidater` gir `Datafeil` før tallet beregnes. Hovedøkten hadde antatt et smalere vindu uten å slå det opp. Funnet er avklart i `deferred-work.md`, og docstringen til `timer_i_startuka` sier nå at kalleren må ha vurdert grunnlaget.
 
 Etter rettingene kjørte hovedøkten hele pakken: **442 av 442 backendtester** og frontendbygg, modultester og komponenttester (24 av 24) bestod. Ingen tester gjorde KI-kall. Manuell kontroll (layout ved smale vinduer, tastaturfokus, skjermleser, ekte backend for #4127 og #4189) er ikke utført og står som åpent punkt.
