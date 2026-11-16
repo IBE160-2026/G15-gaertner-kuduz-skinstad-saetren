@@ -81,7 +81,9 @@ Kommandoen tømmer og fyller tabellene på nytt og kan kjøres flere ganger. Dat
 `backend/turnushjelperen.db`, med mindre miljøvariabelen `TURNUSHJELPEREN_DB` peker et
 annet sted. Slett filen hvis skjemaet er endret. En database fra før story 1.3 trenger
 ikke slettes: kommandoen legger til tabellene som mangler. Ved skjemaendring i en
-eksisterende tabell må databasefilen fortsatt slettes.
+eksisterende tabell må databasefilen fortsatt slettes. Story 5.1 har lagt til
+kolonner for preferansetolkningen i `ansatt`, så en database fra før story 5.1 må
+slettes før kommandoen kjøres på nytt. Ellers feiler backend med «no such column».
 
 Passordet kan lages på to måter. Backend leser ikke `.env`, så variabelen må settes i
 terminalen før kommandoen kjøres.
@@ -152,6 +154,61 @@ starter ikke API-et.
 Nøkkelen som signerer innloggingen, lages tilfeldig hver gang API-et starter, og lagres
 ingen steder. Derfor logges alle ut når serveren starter på nytt, også når `--reload`
 starter den på nytt etter en kodeendring. Logg da inn igjen.
+
+#### Preferansetolkning med KI (story 5.1)
+
+Når backend starter, tolker den preferansetekstene til de ansatte med
+`openai/gpt-6-luna` via OpenRouter, i bakgrunnen. Appen kan brukes mens det pågår.
+Hver tekst får én av fem kategorier, og koden gir poengene (100/75/50/25/0). Til en
+tekst er tolket, viser kandidatlisten «Preferanse venter på tolkning» med midlertidig
+50 poeng. Hent listen på nytt for å se ferdige tolkninger. Testdataene har 19 tekster,
+og hver Ansatt tolkes for seg, så det blir 19 betalte kall. Med høyst 18 kall i
+minuttet tar det ca. 1–2 minutter. Ferdige tolkninger lagres i databasen og tolkes
+ikke på nytt. En tekst som ikke kunne tolkes, vises som «Preferanse kunne ikke
+tolkes» og prøves igjen neste gang backend starter. Det finnes ennå ingen knapp for
+nytt forsøk.
+
+Backend leser ikke `.env`. Nøkkelen settes i terminalen før uvicorn startes, uten at
+den vises på skjermen:
+
+PowerShell:
+
+```
+$env:OPENROUTER_API_KEY = [Net.NetworkCredential]::new('', (Read-Host -AsSecureString 'OpenRouter-nøkkel')).Password
+.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload
+```
+
+bash:
+
+```
+IFS= read -rsp 'OpenRouter-nøkkel: ' OPENROUTER_API_KEY && export OPENROUTER_API_KEY
+.venv/bin/python -m uvicorn adaptere.api.main:app --reload
+```
+
+`OPENROUTER_MODEL` velger en annen modell (tom gir `openai/gpt-6-luna`). `KI_MODUS`
+er `openrouter` (standard) eller `demo`. Uten nøkkel, med `demo` eller med en ukjent
+verdi starter backend som vanlig, men tolker ingenting og skriver én linje i
+terminalen, for eksempel `Preferansetolkning er av: OPENROUTER_API_KEY er ikke satt.
+Se README.` Demo-modus med ferdige svar kommer i story 5.7.
+
+Dette er verdt å vite:
+
+- `--reload` starter backend på nytt ved hver kodeendring, og da startes tolkningen
+  på nytt for tekstene som ikke er ferdige. Det kan gi flere betalte kall. Uten
+  `--reload` skjer det bare når du starter backend selv.
+- En ny tolkning endrer beslutningsgrunnlaget. Står du på godkjenningsflaten mens
+  tolkningen pågår, kan «Godkjenn erstatning» gi «grunnlaget er endret». Flaten
+  henter da grunnlaget på nytt, og du trykker igjen.
+- Ved 5xx-feil og nettverksfeil prøver backend tre ganger til, etter 2, 4 og 8 s. Ved
+  429 venter den til OpenRouter sier at grensen er nullstilt. All venting for én tekst
+  er begrenset til 90 s. 402, andre 4xx-feil og svar som ikke følger formatet prøves
+  ikke på nytt. Tallene er et forslag fra Mithad (2026-11-16), ikke et gruppevedtak.
+- Mangler `X-RateLimit-Reset` eller kan ikke leses, venter backend 60 s ved 429, og
+  aldri under 1 s. 3xx og andre uventede statuser lagres som feiltypen `4xx`.
+  `KI_MODUS` skiller mellom store og små bokstaver: `OpenRouter` slår av tolkningen.
+  En nøkkel med andre tegn enn synlige ASCII-tegn slår også av tolkningen.
+- Er databasen fra før story 5.1, stopper tolkningen med én feilmelding som ber deg
+  slette databasen og laste testdata på nytt.
 
 ### 4. Start frontend i en egen terminal
 
@@ -249,7 +306,8 @@ samme 404 `ikke_funnet`, uten å si hvorfor (NFR2). `POST` på samme sti krever
 `{"grunnlagsmerke": "…"}` og svarer `{"status": "godkjent"}` ved vellykket lagring.
 Endret grunnlag, ugyldig kandidat og allerede bemannet vakt gir 409 med ulike
 `{kode, melding}`. Datafeil gir 200 med `status: "datafeil"` og datagrense.
-Reglene beregnes i `backend/domene/regelmotor/` uten KI.
+Reglene og Rangeringen beregnes i `backend/domene/regelmotor/` uten KI. Rangeringen
+bruker bare lagrede tolkninger og gjør aldri et KI-kall.
 API-dokumentasjon er deaktivert.
 
 ### Tester

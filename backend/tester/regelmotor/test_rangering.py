@@ -39,6 +39,11 @@ from domene.regelmotor.vurdering import vurder_kandidater
 from domene.typer import Datafeil, Kandidat, Kandidatvurdering, Tidsrom, Ulempebelastning, Vakt
 from tester.api.test_innlogging import engine  # noqa: F401
 
+
+def tolket(kategori: str) -> TolketPreferanse:
+    return TolketPreferanse(kategori, "Testbegrunnelse.", "test/modell")
+
+
 OSLO = ZoneInfo("Europe/Oslo")
 BACKEND = Path(__file__).resolve().parents[2]
 
@@ -111,10 +116,10 @@ UTEN_TOLKNING_4127 = [
 ]
 # Kategoriene for seedtekstene nr. 4, 5, 13 og 1 (PRD §4.5).
 TOLKEDE_4127 = {
-    6: TolketPreferanse("positiv_ved_behov"),  # Jonas
-    5: TolketPreferanse("positiv_ved_behov"),  # Mette
-    3: TolketPreferanse("vil_unnga"),  # Thomas
-    4: TolketPreferanse("onsker_flere"),  # Ingrid
+    6: tolket("positiv_ved_behov"),  # Jonas
+    5: tolket("positiv_ved_behov"),  # Mette
+    3: tolket("vil_unnga"),  # Thomas
+    4: tolket("onsker_flere"),  # Ingrid
 }
 
 
@@ -268,7 +273,7 @@ def test_lik_total_med_ulike_faktorer_sorteres_etter_id() -> None:
         kandidat(2, lønn=306, timer=14, preferanse=TEKST),
         kandidat(10, lønn=300, timer=8), kandidat(11, lønn=307, timer=15),
     )
-    tolkede = {1: TolketPreferanse("vil_unnga"), 2: TolketPreferanse("vil_unnga")}
+    tolkede = {1: tolket("vil_unnga"), 2: tolket("vil_unnga")}
     rangert = {r.id: r for r in ranger(vurdering, VAKT, tolkede)}
     én, to = rangert[1], rangert[2]
     assert (én.kostnadspoeng, én.timebelastningspoeng) == (0, float(Fraction(300, 7)))
@@ -288,7 +293,7 @@ def test_lik_total_med_ulike_faktorer_sorteres_etter_id() -> None:
     ("onsker_flere", 100), ("positiv_ved_behov", 75), ("noytral", 50), ("foretrekker_a_slippe", 25), ("vil_unnga", 0),
 ])
 def test_tolket_kategori_gir_fast_poeng(kategori: str, poeng: int) -> None:
-    tolkning = TolketPreferanse(kategori)
+    tolkning = tolket(kategori)
     (r,) = ranger(vurder(kandidat(1)), VAKT, {1: tolkning})
     assert (r.preferansepoeng, r.tolkestatus, r.tolket_preferanse) == (poeng, Tolkestatus.TOLKET, tolkning)
     assert PREFERANSEPOENG[kategori] == poeng
@@ -300,7 +305,7 @@ def test_alle_fire_tolkestatuser() -> None:
     vurdering = vurder(
         kandidat(1), kandidat(2), kandidat(3), kandidat(4, preferanse=None), kandidat(5, preferanse="   "),
     )
-    rangert = {r.id: r for r in ranger(vurdering, VAKT, {1: TolketPreferanse("onsker_flere")}, frozenset({2}))}
+    rangert = {r.id: r for r in ranger(vurdering, VAKT, {1: tolket("onsker_flere")}, frozenset({2}))}
     assert {i: (r.tolkestatus, r.preferansepoeng) for i, r in rangert.items()} == {
         1: (Tolkestatus.TOLKET, 100),
         2: (Tolkestatus.KUNNE_IKKE_TOLKES, 50),
@@ -314,12 +319,12 @@ def test_alle_fire_tolkestatuser() -> None:
 
 
 def test_ugyldig_kategori_følger_feilflyten() -> None:
-    (r,) = ranger(vurder(kandidat(1)), VAKT, {1: TolketPreferanse("uklar")})
+    (r,) = ranger(vurder(kandidat(1)), VAKT, {1: tolket("uklar")})
     assert (r.tolkestatus, r.preferansepoeng, r.tolket_preferanse) == (Tolkestatus.KUNNE_IKKE_TOLKES, 50, None)
 
 
 def test_lagret_tolkning_går_foran_feil_men_ikke_manglende_tekst() -> None:
-    tolkning = TolketPreferanse("vil_unnga")
+    tolkning = tolket("vil_unnga")
     (med_tekst,) = ranger(vurder(kandidat(1)), VAKT, {1: tolkning}, frozenset({1}))
     assert (med_tekst.tolkestatus, med_tekst.preferansepoeng) == (Tolkestatus.TOLKET, 0)
     (uten_tekst,) = ranger(vurder(kandidat(1, preferanse=None)), VAKT, {1: tolkning})
@@ -334,7 +339,7 @@ def test_utelukkede_rangeres_aldri() -> None:
     vurdering = vurder_kandidater(VAKT, [kandidat(1), utelukket, kandidat(2)], DATAGRENSE, HISTORIKKSTART)
     assert isinstance(vurdering, Kandidatvurdering)
     assert [u.kandidat.id for u in vurdering.utelukkede] == [9]
-    rangert = ranger(vurdering, VAKT, {9: TolketPreferanse("onsker_flere")}, frozenset({9}))
+    rangert = ranger(vurdering, VAKT, {9: tolket("onsker_flere")}, frozenset({9}))
     assert plasser(rangert) == [1, 2]
     # Den utelukkede er billigst, men påvirker ikke min–maks: begge har samme kostnad og får 50.
     assert {r.kostnadspoeng for r in rangert} == {50}
@@ -381,7 +386,7 @@ def test_samme_input_i_ulik_rekkefølge_gir_samme_rangering() -> None:
         kandidat(1, lønn=307, timer=12), kandidat(2, lønn=306, timer=14), kandidat(3, lønn=300, timer=8),
         kandidat(4, lønn=307, timer=15), kandidat(5, timer=10, preferanse=None), kandidat(6, nivå=4, timer=10),
     ]
-    tolkede = {1: TolketPreferanse("vil_unnga"), 2: TolketPreferanse("vil_unnga")}
+    tolkede = {1: tolket("vil_unnga"), 2: tolket("vil_unnga")}
     forventet = ranger(vurder(*kandidater), VAKT, tolkede)
     tilfeldig = random.Random(4127)
     for _ in range(20):

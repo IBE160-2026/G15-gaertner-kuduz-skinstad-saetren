@@ -1,13 +1,17 @@
 """Oppstartslaget i adaptere/api. Komposisjon av adaptere skjer her (AD-2).
 
-`lag_app` bygger appen, slik at testene kan gi den egen nøkkel, utløpstid og
-database. `app` er appen uvicorn starter, med tilfeldig nøkkel, utløpstid fra
-miljøet og databasen fra `lag_engine()`.
+`lag_app` bygger appen, slik at testene kan gi den egen nøkkel, utløpstid,
+database og KI-adapter. `app` er appen uvicorn starter, med tilfeldig nøkkel,
+utløpstid fra miljøet, databasen fra `lag_engine()` og KI-adapteren fra
+`ki_fra_miljo()`. Bare `app` leser KI-konfigurasjonen fra miljøet.
 """
 
 import logging
+import os
 import secrets
-from collections.abc import Iterator
+import threading
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Annotated, Literal
 
@@ -16,18 +20,20 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, StrictStr
 from sqlalchemy import Engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from adaptere.api import sesjon
+from adaptere.ki.openrouter import STANDARD_MODELL, OpenRouterKiAdapter, Tolker, leverandør
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke, hent_kandidatgrunnlag
 from adaptere.lagring.godkjenninger import lagre_godkjenning
 from adaptere.lagring.modeller import OSLO
+from adaptere.lagring.preferansetolkning import lagre_resultat, ventende_tekster
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
-from domene.porter.rangering import RangertKandidat
+from domene.porter.rangering import RangertKandidat, TolketPreferanse
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
 from domene.regelmotor.kompetanse import kompetansenivå
 from domene.regelmotor.kostnad import beregn_kostnad
@@ -289,15 +295,94 @@ class DatafeilUt(BaseModel):
     datagrense: datetime
 
 
+KI_MODUSER = ("openrouter", "demo")
+TOLKETRÅD = "preferansetolkning"
+
+
+def ki_fra_miljo() -> Tolker | None:
+    """KI-adapteren fra miljøet, eller None når preferansetolkningen er av (AD-6, story 5.1).
+
+    `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` (tom gir `openai/gpt-6-luna`) og
+    `KI_MODUS` (`openrouter` | `demo`, tom gir `openrouter`). Mangler nøkkelen, er
+    modus `demo` eller ukjent, eller har modellen feil form, logges én WARNING og
+    ingen tolkning startes. `DemoKiAdapter` kommer i story 5.7. Brukes bare for
+    modulobjektet `app`; nøkkelen logges aldri.
+    """
+    modus = os.environ.get("KI_MODUS", "").strip() or "openrouter"
+    nøkkel = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    modell = os.environ.get("OPENROUTER_MODEL", "").strip() or STANDARD_MODELL
+    if modus not in KI_MODUSER:
+        grunn = "KI_MODUS er ukjent (gyldig: openrouter, demo)"
+    elif modus == "demo":
+        grunn = "KI_MODUS er demo, og demo-modus er ikke bygget ennå"
+    elif not nøkkel:
+        grunn = "OPENROUTER_API_KEY er ikke satt"
+    elif not nøkkel.isascii() or not nøkkel.isprintable():
+        # http.client gjengir headerverdien i feilmeldingen, så nøkkelen kunne havnet i loggen.
+        grunn = "OPENROUTER_API_KEY har ugyldige tegn"
+    else:
+        try:
+            leverandør(modell)
+        except ValueError:
+            grunn = "OPENROUTER_MODEL må ha formen <leverandør>/<modell>"
+        else:
+            return OpenRouterKiAdapter(nøkkel, modell)
+    logger.warning("Preferansetolkning er av: %s. Se README.", grunn)
+    return None
+
+
+def tolk_ventende(okter: sessionmaker[Session], ki: Tolker) -> None:
+    """Tolker alle ventende tekster én gang og lagrer sluttresultatet per tekst (story 5.1).
+
+    Synkron. Leser listen i én kort økt og holder ingen transaksjon åpen under
+    KI-kallene. Er teksten endret mens kallet pågikk, forkastes resultatet. En
+    uventet feil for én tekst logges, og de andre tolkes videre.
+    """
+    try:
+        with okter() as okt:
+            ventende = ventende_tekster(okt)
+    except Exception:
+        logger.exception(
+            "Preferansetolkning stoppet: kunne ikke lese ansatt-tabellen. Er databasen fra før "
+            "story 5.1? Slett den og last testdata på nytt."
+        )
+        return
+    if ventende:
+        logger.info("Preferansetolkning: %d tekster venter.", len(ventende))
+    for ansatt_id, tekst in ventende:
+        try:
+            resultat = ki.tolk(tekst)
+            verdi = resultat if isinstance(resultat, TolketPreferanse) else resultat.feiltype
+            if not lagre_resultat(okter, ansatt_id, tekst, verdi):
+                logger.info("Preferansetolkning for ansatt %s forkastet: teksten er endret.", ansatt_id)
+            elif isinstance(verdi, TolketPreferanse):
+                logger.info("Preferansetolkning for ansatt %s: tolket.", ansatt_id)
+            else:
+                logger.warning("Preferansetolkning for ansatt %s: kunne ikke tolkes (%s).", ansatt_id, verdi)
+        except Exception:
+            logger.exception("Preferansetolkning for ansatt %s feilet uventet.", ansatt_id)
+
+
 def lag_app(
     nokkel: bytes | None = None,
     minutter: int | None = None,
     engine: Engine | None = None,
+    ki: Tolker | None = None,
 ) -> FastAPI:
+    """`ki=None` starter aldri tolkning. Med `ki` tolkes ventende tekster i en
+    daemon-tråd når appen starter (lifespan), og appen kan brukes imens."""
     nokkel = nokkel or secrets.token_bytes(32)
     minutter = sesjon.les_minutter(None if minutter is None else str(minutter))
     engine = engine or lag_engine()
     okter = lag_sessionmaker(engine)
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        if ki is not None:
+            tråd = threading.Thread(target=tolk_ventende, args=(okter, ki), name=TOLKETRÅD, daemon=True)
+            app.state.tolketråd = tråd
+            tråd.start()
+        yield
 
     def databaseokt() -> Iterator[Session]:
         with okter() as okt:
@@ -305,7 +390,11 @@ def lag_app(
 
     Okt = Annotated[Session, Depends(databaseokt)]
 
-    app = FastAPI(title="Turnushjelperen", docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(
+        title="Turnushjelperen", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan,
+    )
+    app.state.tolketråd = None
+    app.state.ki = ki
 
     offentlige_ruter = {
         ("GET", "/api/helse"),
@@ -395,13 +484,14 @@ def lag_app(
         utelukkelser = UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True)
         if not vurdering.gyldige:
             return IngenGyldigeUt(status="ingen_gyldige_kandidater", kandidater=[], utelukkelser=utelukkelser)
-        # Ingen lagrede tolkninger før epic 5: alle med tekst venter på tolkning (P-05).
+        # Lagrede tolkninger og feil fra samme lesing som tekstene (P-05, story 5.1).
+        # Rangeringen gjør aldri et KI-kall.
         gyldige = {k.id: k for k in vurdering.gyldige}
         return KandidaterUt(
             status="ok",
             kandidater=[
                 rangert_ut(r, gyldige[r.id], grunnlag.vakt, vurdering.ulempe_per_kandidat[r.id])
-                for r in ranger(vurdering, grunnlag.vakt)
+                for r in ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede)
             ],
             utelukkelser=utelukkelser,
         )
@@ -472,4 +562,4 @@ def lag_app(
     return app
 
 
-app = lag_app()
+app = lag_app(ki=ki_fra_miljo())
