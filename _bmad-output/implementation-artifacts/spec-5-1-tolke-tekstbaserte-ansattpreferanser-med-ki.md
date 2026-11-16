@@ -2,7 +2,7 @@
 title: 'Story 5.1: Tolke tekstbaserte ansattpreferanser med KI'
 type: 'feature'
 created: '2026-11-16'
-status: 'done'
+status: 'in-progress'
 route: 'dispatch'
 baseline_commit: '35bf789cdfac580588757894f0bb71f39d1fe128'
 review_loop_iteration: 0

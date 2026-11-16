@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -846,6 +846,13 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kontrollert:** 671 backendtester, alle med falsk transport og klokke. Live-kontroll mot OpenRouter 2026-11-16: 19 av 19 tolket uten feil, så feilreglene (5xx, 429, tidsbudsjett) er bare testet mot falsk transport og ikke mot ekte feil.
 - **Samordnet:** `epics.md` (story 5.1), `ARCHITECTURE-SPINE.md`, PRD §8 og FR-10, README og `deferred-work.md`. Kommentaren i `openrouter.py` som kaller verdiene «forslag, ikke gruppevedtak» er ikke endret (kode).
 - **Ikke endret:** Koden, spesifikasjonen for 5.1 (frosset), P-05, AD-7 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-16 – Story 5.1 forblir `in-progress`; «Prøv igjen» er utsatt (AV-08)
+
+- **Hvem:** Claude, på oppdrag fra Ragnhild Sætren ved gjennomgangen av PR #30. Det er en statusbeslutning om utsettelsen som allerede er dokumentert i `deferred-work.md`, ikke et nytt vedtak om kravet.
+- **Beslutning:** Ragnhild beholder utsettelsen av brukerutløst nytt forsøk («Prøv igjen»-knapp og endepunkt). Akseptansekriteriet i story 5.1 er ikke endret og er ikke oppfylt, så story 5.1 settes ikke til `done` ved merge av PR #30. Den står som `in-progress` til funksjonen er levert eller gruppa endrer kriteriet.
+- **Rettet:** `sprint-status.yaml` har 5.1 som `in-progress` (var `review`), og statusen i spesifikasjonen for 5.1 er `in-progress` (var `done`). Innledningen i AGENTS.md sier nå at 5.1 er delvis levert og `in-progress`, i stedet for «implementert og til gjennomgang». Den daterte merknaden «Delvis levert» står under story 5.1 i `epics.md`.
+- **Ikke endret:** Akseptansekriteriene, AV-19, P-05, OP-03 og andre AV-, K-, OP- og KS-punkter. Storyfiguren er uendret, siden den bare skiller `done` fra resten (kontrollert med `--sjekk`).
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 

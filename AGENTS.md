@@ -19,8 +19,8 @@ rangeringstabell. Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
 kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,
 timebelastning, kostnad, ulempebelastning og rangeringen med porten `RangertKandidat`.
-Den er ren Python uten KI. Story 5.1 (preferansetolkning) er implementert og til
-gjennomgang: `backend/adaptere/ki/` har `OpenRouterKiAdapter` og begrenseren (AD-7),
+Den er ren Python uten KI. Story 5.1 (preferansetolkning) er delvis levert og står som
+`in-progress` fordi brukerutløst nytt forsøk («Prøv igjen») gjenstår: `backend/adaptere/ki/` har `OpenRouterKiAdapter` og begrenseren (AD-7),
 tolkningene lagres som kolonner på `ansatt`, og backend tolker ventende tekster i en
 daemon-tråd ved oppstart. Rangeringen leser bare lagrede tolkninger. Uten gyldig
 lagret tolkning får en preferanse midlertidig 50 poeng (P-05). `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
