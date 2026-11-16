@@ -1,8 +1,8 @@
 """Portene for Rangeringen: `TolketPreferanse` inn og `RangertKandidat` ut (story 4.4, AD-1).
 
-Bare datatyper, uten logikk, som `utelukkelse.py` (story 2.5). Arkitekturen sier
-Pydantic, men domenet holder seg til frosne dataklasser etter presedensen fra 2.5,
-og `adaptere/api` gjør dem om til Pydantic-svar. Avviket står i KI-loggen for 4.4.
+Bare datatyper, uten logikk, som `utelukkelse.py` (story 2.5). Portene er frosne
+dataklasser og ikke Pydantic-modeller (AV-18). `adaptere/api` gjør dem om til
+Pydantic-svar.
 
 `RangertKandidat` konstrueres bare av `domene/regelmotor/rangering.py` (AD-1), og
 bare for Gyldige kandidater (NFR2). `TolketPreferanse` lages ny bare av
@@ -33,8 +33,8 @@ class TolketPreferanse:
     `kategori` er en av nøklene i `rangering.PREFERANSEPOENG`, for eksempel
     `"positiv_ved_behov"`. `begrunnelse` er modellens korte begrunnelse på bokmål,
     og `modell` er OpenRouter-modellen som tolket teksten. Frossen dataklasse, ikke
-    Pydantic (presedensen fra 2.5 og 4.4). Svaret valideres i `adaptere/ki`, og en
-    lagret verdi valideres ved lesing i `adaptere/lagring`.
+    Pydantic (AV-18). Svaret valideres i `adaptere/ki`, og en lagret verdi
+    valideres ved lesing i `adaptere/lagring`.
     """
 
     kategori: str
