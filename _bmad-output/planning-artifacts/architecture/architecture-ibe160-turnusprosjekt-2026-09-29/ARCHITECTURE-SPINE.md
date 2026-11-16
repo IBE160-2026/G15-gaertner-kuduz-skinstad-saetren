@@ -38,7 +38,7 @@ Domenekjernen kaller aldri `adaptere/ki` selv i noen av retningene — `adaptere
 | Driving adapter | `adaptere/api` | FastAPI-endepunkter. Komponerer/kobler sammen domenekjerne og driven adapters (KI, lagring). |
 | Driving adapter | `adaptere/web` | React-SPA. Snakker kun med `adaptere/api` over HTTP. |
 
-**Porttyper (oppdatert 2026-11-16, story 4.4):** Portene i `domene/porter` er frosne Python-dataklasser (`@dataclass(frozen=True)`) uten logikk, ikke Pydantic-modeller. Det følger presedensen fra `UtelukkelsesOppsummering` (story 2.5) og holder domenekjernen fri for rammeverk. Pydantic brukes i `adaptere/api`, som gjør portene om til svarmodeller, og validering av KI-svar skjer i `adaptere/ki` før en `TolketPreferanse` lages (AD-1, AD-2). Avviket fra tidligere ordlyd er dokumentert som AV-18 i `docs/beslutninger/avklaringspunkter.md` og bekreftes av gruppa ved godkjenning av PR #29.
+**Porttyper (oppdatert 2026-11-16, story 4.4):** Portene i `domene/porter` er frosne Python-dataklasser (`@dataclass(frozen=True)`) uten logikk, ikke Pydantic-modeller. Det følger presedensen fra `UtelukkelsesOppsummering` (story 2.5) og holder domenekjernen fri for rammeverk. Pydantic brukes i `adaptere/api`, som gjør portene om til svarmodeller, og validering av KI-svar skjer i `adaptere/ki` før en `TolketPreferanse` lages (AD-1, AD-2). Avviket fra tidligere ordlyd er dokumentert som AV-18 i `docs/beslutninger/avklaringspunkter.md` og vedtatt ved godkjenningen av PR #29 (2026-11-16).
 
 ## Invariants & Rules
 

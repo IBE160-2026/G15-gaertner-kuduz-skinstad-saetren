@@ -77,7 +77,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-15 | Målbare suksessmål i PRD §7 | Vedtatt 2026-11-13 | SM-3 etter ferdig kandidatberegning uten ekstra handling; SM-4 med faktakontrollert relevant myk faktor og særtilfeller; SM-C2 med faktakontroll og 90 s for live avveining (§13). | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
 | AV-16 | Beslutningseiere i PRD §8 | Vedtatt 2026-11-13 | Hele gruppa eier åpne valg om mobil/nettbrett og sensors OpenRouter-nøkkel. Fristene og åpne valg står i §13. | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
 | AV-17 | Mobil, nettbrett og smale vinduer | Vedtatt 2026-11-14 | Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer, for eksempel på en skjerm på høykant eller med flere vinduer side om side. Story 4.6 skrives om (§11). | Johannes W. Gaertner, Mithad Kuduz og Ragnhild Sætren |
-| AV-18 | Porttyper i `domene/porter` | Dokumentert ved gjennomgang av PR #29 den 16.11.2026. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Bekreftes av gruppen ved godkjenning av PR. | Portene `TolketPreferanse` og `RangertKandidat` er frosne dataklasser uten logikk, ikke Pydantic-modeller som arkitekturen opprinnelig sa. Pydantic brukes i `adaptere/api` (§11). | Ragnhild Sætren (gjennomgang av PR #29); bekreftes av gruppa |
+| AV-18 | Porttyper i `domene/porter` | Vedtatt ved godkjenning av PR #29 den 16.11.2026 (Ragnhild Sætren), gjennom gruppas vanlige PR-prosess der ett medlem gjennomgår og godkjenner på vegne av gruppa. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Krever ingen separat gruppegodkjenning. | Portene `TolketPreferanse` og `RangertKandidat` er frosne dataklasser uten logikk, ikke Pydantic-modeller som arkitekturen opprinnelig sa. Pydantic brukes i `adaptere/api` (§11). | Ragnhild Sætren (gjennomgang av PR #29); bekreftes av gruppa |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
@@ -809,8 +809,8 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 
 ### 2026-11-16 – Porttyper som frosne dataklasser (AV-18, story 4.4)
 
-- **Status:** Dokumentert ved gjennomgang av PR #29 den 16.11.2026. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Bekreftes av gruppen ved godkjenning av PR.
-- **Hvem:** Ragnhild Sætren dokumenterte avviket som gjennomgangsansvarlig for PR #29. Implementasjonen er Johannes W. Gaertners, og den følger presedensen fra story 2.5 (`UtelukkelsesOppsummering`).
+- **Status:** Vedtatt ved godkjenning av PR #29 den 16.11.2026 (Ragnhild Sætren), gjennom gruppas vanlige PR-prosess der ett medlem gjennomgår og godkjenner på vegne av gruppa. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Krever ingen separat gruppegodkjenning.
+- **Hvem:** Ragnhild Sætren dokumenterte avviket og godkjente PR #29, som er Johannes W. Gaertners implementasjon. PR-en ble merget 2026-11-16 (`908ab83`). Slik er gruppas vanlige praksis: ett medlem gjennomgår og godkjenner på vegne av gruppa (som ved PR #5 og AV-13/AV-14). Implementasjonen følger presedensen fra story 2.5 (`UtelukkelsesOppsummering`).
 - **Planlagt:** Arkitekturen (AD-1, `ARCHITECTURE-SPINE.md`) og epics sa at portene i `domene/porter` er Pydantic-modeller. Akseptansekriteriet i story 5.1 sier at `TolketPreferanse` valideres «mot Pydantic-modellen i `domene/porter`».
 - **Implementert:** `RangertKandidat` og `TolketPreferanse` er frosne dataklasser (`@dataclass(frozen=True)`) uten logikk. `adaptere/api` gjør dem om til Pydantic-svar. `adaptere/ki` validerer KI-svar mot JSON-skjemaet og kategorilisten `PREFERANSEPOENG` før en `TolketPreferanse` lages, og `adaptere/lagring` validerer en lagret verdi ved lesing.
 - **Begrunnelse:** Presedensen fra story 2.5 holder domenekjernen fri for rammeverk (AD-1, AD-2) og gir samme garanti som Pydantic: bare gyldige verdier kommer inn i porten, og bare `domene/regelmotor` lager `RangertKandidat`.
@@ -822,7 +822,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 
 - **Hvem:** Claude, på oppdrag fra Ragnhild Sætren etter at PR #29 var godkjent og merget (`908ab83`). Det er en rettelse av status, ikke et nytt vedtak.
 - **Rettet:** Innledningen i AGENTS.md sier nå at story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.4 og 4.7 er ferdige, og setningen om at 4.4 er «til gjennomgang» er fjernet. `sprint-status.yaml` har 4.4 som `done`. Funnet B11 i `deferred-work.md` er markert som løst.
-- **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter. AV-18 venter fortsatt på at gruppa bekrefter den. P-08/KS-04 står åpent i sprintstatus og blokkerte ikke 4.4.
+- **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter. AV-18 krever ingen separat gruppegodkjenning. P-08/KS-04 står åpent i sprintstatus og blokkerte ikke 4.4.
 
 ---
 
