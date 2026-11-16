@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -817,6 +817,12 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Opprinnelig kriterium beholdes:** Akseptansekriteriet i story 5.1 er ikke omskrevet. Avviket er dokumentert i stedet, så det står hva som var planlagt, hva som er implementert og hvorfor. Den daterte merknaden under story 5.1 i `epics.md` og rettelsen i `epic-5-context.md` hører til PR #30 og føres av den som arbeider med den branchen.
 - **Berørte filer:** `ARCHITECTURE-SPINE.md` og `ARKITEKTUR-FORKLARING.md` i arkitekturmappen, `epics.md` (AD-1-listen, ikke akseptansekriteriene), `epic-4-context.md` og `docs/ki-logg/2026-11-15-rangering.md`.
 - **Ikke endret:** Akseptansekriteriene i `epics.md`, koden, AD-1, AD-2, AV-05, K-04 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-16 – Story 4.4 er ferdig; statuslinjen i AGENTS.md og sprintstatus (AV-08)
+
+- **Hvem:** Claude, på oppdrag fra Ragnhild Sætren etter at PR #29 var godkjent og merget (`908ab83`). Det er en rettelse av status, ikke et nytt vedtak.
+- **Rettet:** Innledningen i AGENTS.md sier nå at story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.4 og 4.7 er ferdige, og setningen om at 4.4 er «til gjennomgang» er fjernet. `sprint-status.yaml` har 4.4 som `done`. Funnet B11 i `deferred-work.md` er markert som løst.
+- **Ikke endret:** Regler, krav og policy i AGENTS.md, og alle AV-, K-, OP- og KS-punkter. AV-18 venter fortsatt på at gruppa bekrefter den. P-08/KS-04 står åpent i sprintstatus og blokkerte ikke 4.4.
 
 ---
 
