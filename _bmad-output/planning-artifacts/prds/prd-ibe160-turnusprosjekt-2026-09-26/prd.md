@@ -459,7 +459,7 @@ Disse spørsmålene er ikke avgjort. Hvert har eier og frist.
 | Spørsmål | Eier | Frist |
 |---|---|---|
 | Hvilken OpenRouter-nøkkel får sensor, hvem betaler, og hvor mye kreditt får den? Den felles utviklingsnøkkelen eller en egen sensornøkkel. | Hele gruppa (AV-16) | Før innlevering, ut fra faktisk forbruk |
-| Hvilke ventetrinn, hvor mange nye forsøk, hvilket tidsbudsjett og startpunkt for målingen, samt hvilken sluttstatus skal preferansetolkning ha ved nettverks-/serverfeil og 429? P-05 krever avgrensede forsøk og egen status; AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver Avveining. | Hele gruppa | Før story 5.1 starter |
+| Hvilke ventetrinn, hvor mange nye forsøk, hvilket tidsbudsjett og startpunkt for målingen, samt hvilken sluttstatus skal preferansetolkning ha ved nettverks-/serverfeil og 429? P-05 krever avgrensede forsøk og egen status; AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver Avveining. **Avklart 2026-11-16 (AV-19):** 3 nye forsøk etter 2, 4 og 8 s ved 5xx/nettverksfeil, 429 teller ikke som forsøk, 90 s per tekst og sluttstatus `kunne_ikke_tolkes` med feiltype. | Hele gruppa | Avklart 2026-11-16 |
 
 ### 8.1 Gjennomføring og kontroll (ikke krav)
 
@@ -501,7 +501,7 @@ Kravene i §4 står alene. Tabellen viser hvor de kommer fra, slik at den som sk
 | §4.3 Ulempemodell, FR-14 | ÅB-3 (utvidet), AV-09 (672 t), AV-11 (tak 300). Regneeksemplene: `scripts/ulempe_regneeksempler.py`. | 4.7 |
 | FR-8 | P-02, P-04 (32,4 t). Ingrid i testdataene har 32 t og er under grensen. | 4.1, 4.2 |
 | §4.4, FR-9 | AV-05, K-03, AV-12 (#4127: Jonas og Mette, 7,0 totalpoeng), KS-02 | 4.4 |
-| FR-10 | P-05, OP-03, AV-06. AD-7 gir felles takt og 429-venting; tolkningens ventetrinn, antall forsøk, tidsbudsjett/startpunkt og sluttstatus avklares før story 5.1. | 5.1, 5.2 |
+| FR-10 | P-05, OP-03, AV-06. AD-7 gir felles takt og 429-venting; tolkningens ventetrinn, antall forsøk, tidsbudsjett/startpunkt og sluttstatus er fastsatt i AV-19 (2026-11-16). | 5.1, 5.2 |
 | FR-11 | P-06, P-07, K-04, AD-6 (Demo-modus) | 5.3–5.7 |
 | FR-12 | P-08, P-09, P-12, AD-5 | 3.1, 3.2 |
 | FR-13 | Brief (én rolle), OP-10/AD-3. Bygd i story 1.3 og 1.4: scrypt med salt, standardøkt 480 minutter som kan overstyres med `TURNUSHJELPEREN_JWT_MINUTTER`, ny kontroll og utlogging. | 1.3, 1.4 |

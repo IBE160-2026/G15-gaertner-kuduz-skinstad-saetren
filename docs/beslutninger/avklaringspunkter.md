@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -56,7 +56,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | K-06 | Dokumentkvalitet | Samordning pågår 2026-11-10 | P-vedtakene føres i planleggingsdokumentene; endelig dokumentkontroll gjenstår. | Gruppen |
 | OP-01 | Avgrensninger i v1 | Vedtatt | Ingen omfattende tariff-, fraværs-, stillingsprosent-, helligdags- eller juridisk modell. | Ikke bestemt |
 | OP-02 | UX og mobil | Vedtatt; ansvar presisert 2026-11-13 (AV-16) | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. Mobil-/nettbrettvalg før story 4.6 ferdigstilles (§13). | Hele gruppa |
-| OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); teknisk detalj åpen §13 | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. Ventetrinn, antall forsøk, tidsbudsjett/startpunkt og sluttstatus avklares før story 5.1. | Gruppen |
+| OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); feilreglene vedtatt 2026-11-16 (AV-19); «Prøv igjen» gjenstår | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. Ventetrinn, antall forsøk, tidsbudsjett og sluttstatus er fastsatt i AV-19. Brukerutløst nytt forsøk er ikke bygget (utsatt i `deferred-work.md`). | Gruppen |
 | OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
 | OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07; macOS og ren klone testet 2026-11-11 og 2026-11-12 | Koden skrives for å virke på tvers av operativsystem og testes fysisk først og fremst på Windows. Begrunnelsen 07.11 om at ingen i gruppa har Mac, var feil: Ragnhild har Mac. Appen er testet på macOS (275 av 275 backendtester 11.11) og fra ren klone på macOS (337 av 337 backendtester og 26 av 26 frontendtester 12.11). Linux kjøres bare i CI (§11). | Johannes W. Gaertner |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
@@ -78,6 +78,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-16 | Beslutningseiere i PRD §8 | Vedtatt 2026-11-13 | Hele gruppa eier åpne valg om mobil/nettbrett og sensors OpenRouter-nøkkel. Fristene og åpne valg står i §13. | Hele gruppa; Kim O. Skinstad bekreftet på vegne av gruppa |
 | AV-17 | Mobil, nettbrett og smale vinduer | Vedtatt 2026-11-14 | Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer, for eksempel på en skjerm på høykant eller med flere vinduer side om side. Story 4.6 skrives om (§11). | Johannes W. Gaertner, Mithad Kuduz og Ragnhild Sætren |
 | AV-18 | Porttyper i `domene/porter` | Vedtatt ved godkjenning av PR #29 den 16.11.2026 (Ragnhild Sætren), gjennom gruppas vanlige PR-prosess der ett medlem gjennomgår og godkjenner på vegne av gruppa. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Krever ingen separat gruppegodkjenning. | Portene `TolketPreferanse` og `RangertKandidat` er frosne dataklasser uten logikk, ikke Pydantic-modeller som arkitekturen opprinnelig sa. Pydantic brukes i `adaptere/api` (§11). | Ragnhild Sætren (gjennomgang av PR #29); bekreftes av gruppa |
+| AV-19 | Feilregler for preferansetolkning (P-05/OP-03) | Vedtatt 2026-11-16 (Ragnhild Sætren, på vegne av gruppa) | Ved 5xx og nettverksfeil 3 nye forsøk etter 2, 4 og 8 s. 429 teller ikke som forsøk og venter til `X-RateLimit-Reset` (minst 1 s; 60 s uten lesbar verdi). All venting for én tekst er begrenset til 90 s. 402, andre 4xx og ubrukelige svar prøves ikke på nytt. Sluttstatus er `kunne_ikke_tolkes` med feiltype lagret. Se §11. «Prøv igjen»-knappen er ikke en del av dette vedtaket. | Ragnhild Sætren (verdiene er Mithad Kuduz' forslag i PR #30) |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
@@ -330,6 +331,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Beslutning:** Detaljert håndtering kan utsettes, **men skal være avklart før Story 5.1 og 5.2 er `done`**.
 - **Konsekvens:** Ingen bestemt fallback eller feilrespons vedtas nå; manglende svar, feil format og feil tolking er aktuelle forhold å avklare senere.
 - **Ansvarlig:** Ikke bestemt. **Frist:** Før `done` for Story 5.1/5.2; ingen kalenderdato.
+- **Oppdatering 2026-11-16 (AV-19):** Ventetrinn, antall forsøk, tidsbudsjett og sluttstatus for preferansetolkning er fastsatt (§11). Det som gjenstår av OP-03 for story 5.1/5.2, er brukerutløst nytt forsøk («Prøv igjen»), som er utsatt og ikke levert.
 
 ### OP-04 – Agentoppsett og underagenter
 
@@ -451,7 +453,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Kontroller tidskategorier for fire vakttyper. | KS-03 | **Før implementasjon av Story 4.7** og ferdigstilling av tilhørende fasit. | Ikke bestemt |
 | Verifiser rangeringsformelen mot PRD/Story 4.7. | KS-02 | **Før godkjenning av relevant testfasit.** Utført for fasiten i Story 1.2 2026-11-04 (§11); ny fasit kontrolleres på nytt. | Ikke bestemt |
 | Implementer/test ulempmodell etter vedtakene uten å endre dem. | AV-01, AV-09, AV-11/12 | Som del av Story 4.7 i v1, etter gjeldende story-kriterier. | Ikke bestemt |
-| Avklar relevant KI-feilhåndtering ved preferansetolkning. | OP-03 | **Før Story 5.1 og 5.2 er `done`.** | Ikke bestemt |
+| Avklar relevant KI-feilhåndtering ved preferansetolkning. | OP-03 | **Før Story 5.1 og 5.2 er `done`.** Feilreglene er avklart 2026-11-16 (AV-19); brukerutløst nytt forsøk gjenstår. | Ikke bestemt |
 
 ### 8.4 Kan vente / ikke tidfestet
 
@@ -828,6 +830,30 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 
 **Dokumentvedlikehold:** Endre status til «Vedtatt», «Utsatt» eller «Løst» for et åpent punkt **bare etter faktisk avklaring**, med dato, beslutning og kilde/henvisning. Behold opprinnelig beslutnings-ID for sporbarhet. Nye punkter gis nye ID-er uten å omskrive historiske vedtak.
 
+### 2026-11-16 – Feilregler for preferansetolkning (AV-19, P-05/OP-03, story 5.1)
+
+- **Status:** Vedtatt av Ragnhild Sætren på vegne av gruppa 2026-11-16, etter gruppas praksis om å stole på hverandres faglige vurderinger. Verdiene er Mithad Kuduz' forslag i PR #30 (2026-11-16), som Ragnhild anser som avklart i gruppa. Det er ikke holdt en egen godkjenningsrunde, og det kreves ingen (som for AV-18).
+- **Planlagt:** P-05 vedtok 2026-11-09 avgrensede automatiske forsøk og egen vente-/feilstatus, men lot ventetrinn, antall forsøk, tidsbudsjett, startpunkt for målingen og sluttstatus stå åpne til før story 5.1 (OP-03, PRD §8).
+- **Vedtatt:**
+  - **5xx og nettverksfeil:** 3 nye forsøk (4 kall) etter 2, 4 og 8 s.
+  - **429:** teller ikke mot de tre forsøkene. Adapteren venter til `X-RateLimit-Reset` (epoke-ms), men minst 1 s. Kan ikke tidspunktet leses, venter den 60 s.
+  - **Tidsbudsjett:** all venting for én tekst (også i begrenseren og ved 429) er begrenset til 90 s, målt med monoton klokke fra første forsøk på å få plass i begrenseren. Tidsavbrudd per kall er det minste av 45 s og gjenstående budsjett.
+  - **Ingen nye forsøk:** 402, andre 4xx og svar som ikke følger formatet. 3xx og andre uventede statuser lagres som feiltypen `4xx`.
+  - **Sluttstatus:** `kunne_ikke_tolkes`, med feiltypen (`429`, `5xx`, `nettverk`, `4xx`, `ubrukelig` eller `tidsbudsjett`) i en egen kolonne. Preferansen får midlertidig 50 poeng, og en feil utelukker aldri Kandidaten. Feilede tekster prøves på nytt ved neste oppstart.
+- **Begrunnelse:** Trinnene 2, 4 og 8 s og budsjettet på 90 s er samme størrelser som AD-7 bruker for Avveining, men gjelder her tolkningen uten å gjøre Avveiningens `avveining_feilet` til tolkningens kontrakt. 429 telles ikke som feil fordi det er regulering, ikke en tjenestefeil, og gruppekontoen har en grense på 20 kall per minutt (AD-7). Minst 1 s og 60 s uten lesbar reset hindrer at gjentatte kall bruker opp vinduet på 18 per minutt (`docs/ki-logg/2026-10-16-robusthet-luna.md`).
+- **Verdiene står som konstanter** i `backend/adaptere/ki/openrouter.py` og er endret med én linje hvis gruppa ombestemmer seg.
+- **Ikke en del av vedtaket:** brukerutløst nytt forsøk («Prøv igjen»-knapp og endepunkt). Det er utsatt i `deferred-work.md`, og story 5.1 kan ikke settes `done` før det er levert eller gruppa godtar utsettelsen. Konstanten til Avveining (story 5.3) er ikke vedtatt her.
+- **Kontrollert:** 671 backendtester, alle med falsk transport og klokke. Live-kontroll mot OpenRouter 2026-11-16: 19 av 19 tolket uten feil, så feilreglene (5xx, 429, tidsbudsjett) er bare testet mot falsk transport og ikke mot ekte feil.
+- **Samordnet:** `epics.md` (story 5.1), `ARCHITECTURE-SPINE.md`, PRD §8 og FR-10, README og `deferred-work.md`. Kommentaren i `openrouter.py` som kaller verdiene «forslag, ikke gruppevedtak» er ikke endret (kode).
+- **Ikke endret:** Koden, spesifikasjonen for 5.1 (frosset), P-05, AD-7 og de andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-16 – Story 5.1 forblir `in-progress`; «Prøv igjen» er utsatt (AV-08)
+
+- **Hvem:** Claude, på oppdrag fra Ragnhild Sætren ved gjennomgangen av PR #30. Det er en statusbeslutning om utsettelsen som allerede er dokumentert i `deferred-work.md`, ikke et nytt vedtak om kravet.
+- **Beslutning:** Ragnhild beholder utsettelsen av brukerutløst nytt forsøk («Prøv igjen»-knapp og endepunkt). Akseptansekriteriet i story 5.1 er ikke endret og er ikke oppfylt, så story 5.1 settes ikke til `done` ved merge av PR #30. Den står som `in-progress` til funksjonen er levert eller gruppa endrer kriteriet.
+- **Rettet:** `sprint-status.yaml` har 5.1 som `in-progress` (var `review`), og statusen i spesifikasjonen for 5.1 er `in-progress` (var `done`). Innledningen i AGENTS.md sier nå at 5.1 er delvis levert og `in-progress`, i stedet for «implementert og til gjennomgang». Den daterte merknaden «Delvis levert» står under story 5.1 i `epics.md`.
+- **Ikke endret:** Akseptansekriteriene, AV-19, P-05, OP-03 og andre AV-, K-, OP- og KS-punkter. Storyfiguren er uendret, siden den bare skiller `done` fra resten (kontrollert med `--sjekk`).
+
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
 Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.
@@ -868,4 +894,4 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 - **Mobil/nettbrett (OP-02/P-13):** AV-16 gjorde hele gruppa til beslutningseier 2026-11-13. Valget ble tatt 2026-11-14 (AV-17, §11): mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer. Desktop og gjeldende tilgjengelighetskrav gjelder fortsatt. P-13s oppgavebaserte forståelsestest er ikke utført.
 - **Sensornøkkel (ÅB-8):** Hele gruppa er beslutningseier. Hvilken OpenRouter-nøkkel sensor får, hvem som betaler og hvor mye kreditt som trengs, avgjøres før innlevering ut fra faktisk forbruk. Ingen nøkkel eller verdi skal inn i repoet.
 
-**Fortsatt åpent:** P-05 vedtar avgrensede nye forsøk ved forbigående feil i preferansetolkning, men ventetrinn ved 5xx/nettverksfeil, konkret antall, tidsbudsjett og startpunkt for målingen samt sluttstatus for 429/nettverks-/serverfeil må avklares før story 5.1. AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver avveining; de overføres ikke automatisk til tolkning. FR-13s 480 minutter er en overstyrbar standard etter OP-10/AD-3. P-12B om historisk lagring av forklaring er fortsatt utenfor v1 og krever eget vedtak og story.
+**Avklart 2026-11-16 (AV-19):** P-05 vedtok avgrensede nye forsøk ved forbigående feil i preferansetolkning. Ventetrinn, antall forsøk, tidsbudsjett, startpunkt for målingen og sluttstatus er nå fastsatt i §11 (AV-19). **Fortsatt åpent:** brukerutløst «Prøv igjen». AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver avveining; de overføres ikke automatisk til tolkning. FR-13s 480 minutter er en overstyrbar standard etter OP-10/AD-3. P-12B om historisk lagring av forklaring er fortsatt utenfor v1 og krever eget vedtak og story.

@@ -5,6 +5,7 @@ ferdige domenetyper og vet ikke at det finnes en database.
 """
 
 from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from hashlib import sha256
@@ -14,7 +15,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from adaptere.lagring.modeller import AnsattRad, TurnusRad, VaktRad
+from adaptere.lagring.preferansetolkning import tolkninger
 from adaptere.lagring.vaktdetaljer import finn_ubemannet_vakt
+from domene.porter.rangering import TolketPreferanse
 from domene.typer import Kandidat, Tidsrom, Vakt
 
 
@@ -27,6 +30,10 @@ class Kandidatgrunnlag:
     # Der turnusgrunnlaget starter: `turnus.periode_start` − 672 faktiske timer,
     # samme vindu som ulempemålingen (AV-09, beslutning 2A i story 2.3).
     historikkstart: datetime
+    # Lagrede, gyldige tolkninger og lagrede feil per ansatt-ID (story 5.1, P-05),
+    # lest fra de samme radene som `ansatte`, så tekst og tolkning hører sammen.
+    tolkede: Mapping[int, TolketPreferanse]
+    feilede: frozenset[int]
 
 
 # 672 faktiske timer. Trekkes fra i UTC: `- timedelta` på en `ZoneInfo`-tid
@@ -37,8 +44,8 @@ HISTORIKK = timedelta(hours=672)
 # Tabeller som kan påvirke visning, harde regler eller rangering (P-09). Alle
 # kolonner tas med, så nye felt på disse tabellene dekkes automatisk. En ny
 # tabell må føres her eller i UTENFOR_GRUNNLAG; testen i
-# `tester/lagring/test_grunnlagsmerke.py` feiler ellers. Story 5.1 må ta stilling
-# til tabellen for TolketPreferanse hvis den ikke blir kolonner på `ansatt`.
+# `tester/lagring/test_grunnlagsmerke.py` feiler ellers. Tolkningene er kolonner på
+# `ansatt` (story 5.1), så en ny tolkning eller feil endrer merket.
 GRUNNLAGSTABELLER = (TurnusRad, AnsattRad, VaktRad)
 
 # Tabeller som bevisst holdes utenfor merket, med begrunnelse.
@@ -87,6 +94,7 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
         return None
     vaktrad, turnus = funnet
     ansatte = session.scalars(select(AnsattRad).order_by(AnsattRad.id)).all()
+    lagret = tolkninger(ansatte)
     egne: defaultdict[int, list[Tidsrom]] = defaultdict(list)
     for tildelt_id, start, slutt in session.execute(
         select(VaktRad.tildelt_ansatt_id, VaktRad.start, VaktRad.slutt)
@@ -113,4 +121,6 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
         ),
         datagrense=turnus.periode_slutt,
         historikkstart=turnus.periode_start.astimezone(UTC) - HISTORIKK,
+        tolkede=lagret.tolkede,
+        feilede=lagret.feilede,
     )

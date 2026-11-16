@@ -84,6 +84,14 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
 - **Lagring** ([`tester/lagring/`](../backend/tester/lagring/)): testdataene mot fasiten,
   brukere og passord, og at hver tabell er tatt med i grunnlagsmerket eller
   bevisst holdt utenfor (P-09).
+- **Preferansetolkning med KI** (story 5.1): [`tester/ki/`](../backend/tester/ki/) tester
+  `OpenRouterKiAdapter` og begrenseren med falsk transport og falsk klokke,
+  [`test_preferansetolkning.py`](../backend/tester/lagring/test_preferansetolkning.py) i
+  `tester/lagring/` lagring og validering ved lesing, og
+  [`test_preferansetolkning.py`](../backend/tester/api/test_preferansetolkning.py) i
+  `tester/api/` bakgrunnstolkningen, Rangeringen med lagrede tolkninger og oppstarten.
+  [`tester/conftest.py`](../backend/tester/conftest.py) fjerner KI-variablene fra
+  miljøet i hver test.
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
   import-linter-kontrakten som forbyr `domene` å importere `adaptere` (AD-1, AD-2).
 
@@ -207,3 +215,44 @@ Domenetester i [`test_kostnad.py`](../backend/tester/regelmotor/test_kostnad.py)
 ## Story 4.4 – rangering av gyldige kandidater (2026-11-15)
 
 Domenetestene i [`test_rangering.py`](../backend/tester/regelmotor/test_rangering.py) har fasiten regnet for hånd som brøker (KS-02). API-testene i [`test_kandidater.py`](../backend/tester/api/test_kandidater.py) kontrollerer rangert svar for #4127 med totaler, plass og tolkestatus, og at feltene fra `KandidatUt` er de samme som i godkjenningsgrunnlaget. #4189 og datafeil er uendret. Komponenttestene for rangeringstabellen står i tabellen over. Mutasjonene som viste at testene kan feile, står i [KI-loggen](ki-logg/2026-11-15-rangering.md). Layout, farger og fokusmarkering i nettleser (`rank-badge` i `accent`, 14px, rulling i egen beholder ved 1080 og 1600 px) er ikke kontrollert og står som «Manual checks» i [spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md).
+
+## Story 5.1 – preferansetolkning med KI (2026-11-16)
+
+Ingen test bruker nettverk, en ekte nøkkel eller faktisk venting. Adapteren får en falsk
+transport, en falsk monoton klokke og en falsk `sleep`, så testene kan måle ventetidene
+eksakt.
+
+- **Forespørselen (AD-7):** modell, `provider` (`only` med prefikset før «/»,
+  `allow_fallbacks: false`, `require_parameters: true`), `reasoning` av, systemprompten,
+  brukerinnholdet som JSON og det strenge JSON-skjemaet med de fem kategoriene. En annen
+  modell gir en annen leverandør, og en modell uten leverandørprefiks avvises.
+- **Matrisen i spesifikasjonen:** vellykket svar, 5xx og nettverksfeil hver gang (4 kall,
+  venting 2/4/8 s), 503 så gyldig, 429 med reset 5 s fram, 429 med reset 100 s fram
+  (ingen venting, `tidsbudsjett`), 429 som ikke teller mot de tre nye forsøkene, 402/400
+  og andre statuser uten nytt forsøk, og 15 varianter av ubrukelige svar. Tidsavbruddet
+  per kall er min(45 s, gjenstående budsjett).
+- **Begrenseren:** det 19. kallet venter 60 s, venting i begrenseren teller mot
+  budsjettet, og et sjette samtidig kall slipper ikke inn.
+- **Lagring:** 19 ventende tekster (15 unike) etter testdataene, validering ved lesing
+  (hash, `tolkeformat`, kategori, begrunnelse, modell, feil og tolkning samtidig),
+  nullstilling ved suksess og feil, og at en endret tekst gjør at ingenting lagres.
+- **API og oppstart:** etter `tolk_ventende` med en falsk adapter etter fasiten gir #4127
+  totalene i `FASIT` (85,65 / 78,65 / 59,0 / 37,0) og preferansepoeng 75/75/0/100. En
+  lagret tolkning gir ingen nye kall. Lagrede feil gir `kunne_ikke_tolkes` og prøves på
+  nytt. En tekst som endres under kallet, lagres ikke. En tolkning lagret etter visning
+  gir 409 `endret_grunnlag`, og forsøkene underveis endrer ikke merket. `with
+  TestClient(lag_app(ki=...))` starter tråden, og appen svarer mens tolkningen pågår.
+  Uten `ki` startes ingen tråd. `ki_fra_miljo` logger én WARNING uten nøkkel, med `demo`
+  og med ukjent modus, og nøkkelen havner ikke i loggen.
+- **Etter gjennomgangen:** modulobjektet `app` får adapteren når nøkkelen er satt
+  (`importlib.reload`, uten lifespan), en nøkkel med kontrolltegn eller ikke-ASCII slår
+  av tolkningen, 429 med reset i fortiden eller i sekunder venter minst 1 s, en reset med
+  ikke-ASCII-sifre venter 60 s, en database fra før 5.1 stopper tolkningen med én
+  feilmelding, og `urllib_transport` testes med falsk `build_opener` (200, 402, 429 med
+  blandede store og små bokstaver i headerne, `URLError` og `TimeoutError`).
+  `tester/conftest.py` fjerner også KI-variablene fra `os.environ` før testene samles inn.
+
+Fem mutasjoner gjorde testene røde og står i [KI-loggen](ki-logg/2026-11-16-preferansetolkning.md).
+Ikke testet automatisk: `urllib_transport` mot ekte OpenRouter, og at tolkningene med en
+ekte nøkkel følger fasiten. Det er en valgfri manuell kontroll (19 betalte kall) i
+[spesifikasjonen](../_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md).

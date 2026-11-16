@@ -966,9 +966,13 @@ Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avve
 
 ### Story 5.1: Tolke tekstbaserte ansattpreferanser med KI
 
-> **Åpent før start (P-05/AD-7, PRD §8):** Felles takt og 429-venting er bestemt. Ventetrinn ved 5xx/nettverksfeil, antall automatiske forsøk, tidsbudsjett og startpunkt for målingen, samt sluttstatus for preferansetolkning ved 429, 5xx og nettverksfeil må avklares før implementasjon. Avveiningens 2/4/8 sekunder, 90 sekunder og `avveining_feilet` er ikke automatisk tolkningens kontrakt.
+> **Avklart 2026-11-16 (AV-19, tidligere åpent før start):** Felles takt og 429-venting er bestemt (AD-7). For tolkningen er ventetrinn ved 5xx/nettverksfeil (3 nye forsøk etter 2, 4 og 8 s), tidsbudsjett (90 s per tekst, målt fra første forsøk på å få plass i begrenseren) og sluttstatus (`kunne_ikke_tolkes` med feiltype) fastsatt i AV-19 i `avklaringspunkter.md` §11. Brukerutløst «Prøv igjen» er ikke en del av vedtaket og er utsatt. Avveiningens 2/4/8 sekunder, 90 sekunder og `avveining_feilet` er ikke automatisk tolkningens kontrakt.
+
+> **Delvis levert 2026-11-16 (utsatt «Prøv igjen», gjennomgang av PR #30):** Brukerutløst nytt forsøk etter endelig feil (siste ledd i det tredje akseptansekriteriet) er ikke bygget. Utsettelsen er dokumentert i `deferred-work.md`, og Ragnhild Sætren beholdt den 2026-11-16. Kriteriet er ikke endret og er ikke oppfylt. Story 5.1 står derfor som `in-progress` også etter at PR #30 er merget, til knappen og endepunktet er levert eller gruppa endrer kriteriet. Til da prøves feilede tekster på nytt ved neste oppstart.
 
 > **Lagt til 2026-11-15 (P-09, gjennomgang av PR #23):** Grunnlagsmerket fra story 3.2 hasher alle kolonner i tabellene i `GRUNNLAGSTABELLER` (`backend/adaptere/lagring/kandidatgrunnlag.py`). Lagres `TolketPreferanse` og tolkestatus som kolonner på `ansatt`, dekkes de automatisk. Får de en egen tabell, feiler `backend/tester/lagring/test_grunnlagsmerke.py` til tabellen er ført i `GRUNNLAGSTABELLER`, fordi den påvirker Rangeringen. `UTENFOR_GRUNNLAG` er bare for tabeller uten beslutningsdata. Tolkningen skjer i bakgrunnen. En tolkning som blir ferdig mellom visning og godkjenning, skal derfor endre merket og gi `endret_grunnlag` og ny bekreftelse (story 5.2, P-05/P-09). Dekk dette med en API-test.
+
+> **Lagt til 2026-11-16 (AV-18, gjennomgang av PR #29 og #30):** Akseptansekriteriet under sier «Pydantic-modellen i `domene/porter`». Portene er frosne dataklasser (AV-18), så valideringen skjer i `adaptere/ki` ved svar og i `adaptere/lagring` ved lesing. Kriteriet er ikke endret; avviket er dokumentert i KI-loggen `docs/ki-logg/2026-11-16-preferansetolkning.md`.
 
 As a turnusansvarlig,
 I want at de skrevne preferansene til de ansatte blir tolket til noe systemet kan bruke,

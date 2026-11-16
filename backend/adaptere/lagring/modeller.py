@@ -81,6 +81,17 @@ class AnsattRad(Base):
     # opplært for vakttypen. `mellom` bruker nivået for `dag`.
     kompetanse: Mapped[dict[str, int]] = mapped_column(JSON)
     preferanse: Mapped[str | None] = mapped_column(Text)
+    # Sluttresultatet av siste tolkning av `preferanse` (story 5.1, P-05). Skrives bare
+    # av `adaptere.lagring.preferansetolkning.lagre_resultat` og valideres ved lesing.
+    # `tolket_teksthash` er SHA-256 av teksten som ble tolket. Ved suksess er
+    # kategori, begrunnelse og modell satt og `tolkefeil` tom; ved feil er bare
+    # `tolkefeil` satt (feiltypen). Alle er tomme før første tolkning.
+    tolket_kategori: Mapped[str | None] = mapped_column(String(30))
+    tolket_begrunnelse: Mapped[str | None] = mapped_column(Text)
+    tolket_modell: Mapped[str | None] = mapped_column(String(100))
+    tolket_teksthash: Mapped[str | None] = mapped_column(String(64))
+    tolkefeil: Mapped[str | None] = mapped_column(String(20))
+    tolkeformat: Mapped[int | None]
 
 
 class VaktRad(Base):

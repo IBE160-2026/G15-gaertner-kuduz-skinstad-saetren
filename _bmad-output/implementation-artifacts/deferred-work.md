@@ -1,3 +1,15 @@
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: `urllib_transport` skjuler årsaken til en nettverksfeil. `except` i `adaptere/ki/openrouter.py` gir `Nettverksfeil(type(feil).__name__)` uten kjede, og `OpenRouterKiAdapter.tolk` kaster den uten å logge. Brukeren og loggen ser bare `nettverk`, aldri for eksempel `CERTIFICATE_VERIFY_FAILED`.
+  evidence: Live-kontroll 2026-11-16 på macOS (Python 3.15.2): første forsøk ga 3 av 3 `nettverk` etter 14 s, og årsaken ble funnet først ved å kjøre `urllib` for hånd. Midlertidig løsning er `SSL_CERT_FILE=/etc/ssl/cert.pem` (README). Dokumentasjonsendringen er gjort; å logge feiltypen på nivå WARNING er en kodeendring og er ikke gjort.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Fremdriftsmeldingene fra `tolk_ventende` («N tekster venter», «tolket») er `logger.info`, og backend har ingen loggoppsett. Med `uvicorn adaptere.api.main:app` vises bare advarsler og feil, så ingen ser fremdriften i terminalen.
+  evidence: Live-kontroll 2026-11-16: 19 tolkninger ga ingen linjer i terminalen, bare uvicorns egne. Fremdriften ble fulgt i databasen. README er rettet til å si at fremdriften ikke vises. Å vise den krever en kodeendring (loggoppsett eller `--log-level`-avklaring) og er ikke gjort.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Testdataene kan ikke vise at preferansepoeng endrer rekkefølgen. Bare #4127 har gyldige kandidater (fire), og marginene er så store at 25 % preferansevekt ikke snur dem. Jonas, Mette, Thomas og Ingrid står i samme rekkefølge før og etter tolkning.
+  evidence: Live-kontroll 2026-11-16: scorene endret seg som regnet (+6,25, +6,25, −12,50, +12,50), rekkefølgen ikke. At poengene kan snu en rekkefølge dekkes bare av enhetstestene i `tester/regelmotor/test_rangering.py`.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Kostnaden for live-kontrollen er ikke målt. Anslaget er ca. 1 øre for 22 kall (3 + 19), regnet fra USD 0,057 per 1000 tolkninger i `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`.
+  evidence: Live-kontroll 2026-11-16. Faktisk forbruk står i OpenRouter-kontoen til gruppa og er ikke lest.
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-3-innlogging-for-turnusansvarlig.md`
   summary: Ingen test binder frontendens `FEILTEKSTER` i `frontend/src/tekster.ts` til feilkodene fra backend (`MELDINGER` i `backend/adaptere/api/main.py`), og ingen test viser at 401 fra `/api/meg` ikke gir melding.
   evidence: Verification Gap 2026-11-07: en skrivefeil i en nøkkel, for eksempel `feil_inlogging`, består `npm run build` og alle pytest-testene og gir reserveteksten ved feil passord. Story 1.3 utelukker frontendtester i Never-lista. Ta det opp når frontend får testverktøy, senest i story 1.4.
@@ -79,3 +91,12 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md`
   summary: "[LØST 2026-11-16, rettet i AGENTS.md] Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på."
   evidence: Blind Hunter B11 (2026-11-15). Endringen gjelder en agentkontekstfil og er derfor utsatt. Rett linjen når 4.4 settes til `done`, eller vurder å fjerne storystatus fra AGENTS.md. Løst 2026-11-16: PR #29 er merget, 4.4 er `done`, og innledningen i AGENTS.md sier at 4.1–4.4 og 4.7 er ferdige (faktarettelse ført i §11, AV-08). Storystatus står fortsatt i AGENTS.md; å fjerne den er ikke vurdert.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (API-endepunkt og knapp i preferansecellen) er ikke bygget (FR-10, P-05, AC i story 5.1).
+  evidence: Utsatt av Mithad 2026-11-16 for å holde PR-en for 5.1 til backend (adapter, lagring og bakgrunnstolkning). Story 5.1 kan ikke settes `done` før dette er levert, eller gruppa godtar utsettelsen. Ragnhild Sætren beholdt utsettelsen 2026-11-16 ved gjennomgangen av PR #30: story 5.1 står som `in-progress` etter merge, og akseptansekriteriet er ikke endret.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: "[LØST 2026-11-16, AV-19] Gruppa har ikke vedtatt feilreglene for preferansetolkning (3 nye forsøk etter 2/4/8 s, 90 s budsjett, minst 1 s og 60 s ved 429, sluttstatus `kunne_ikke_tolkes` med feiltype). Konstantene i `backend/adaptere/ki/openrouter.py` er Mithads forslag 2026-11-16."
+  evidence: P-05/OP-03 og PRD §8 krever avklaring før story 5.1 og 5.2 kan bli `done`. Funnet i kodegjennomgangen 2026-11-16 (blind). Vedtaket føres i `docs/beslutninger/avklaringspunkter.md`. Løst 2026-11-16: Ragnhild Sætren vedtok verdiene på vegne av gruppa (AV-19, `avklaringspunkter.md` §11). «Prøv igjen» er ikke en del av vedtaket og står som eget funn.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: AGENTS.md sier at story 5.1 er «implementert og til gjennomgang», og setningen om `scripts/modelltest_*.py` er slått sammen med en svært lang linje.
+  evidence: Kodegjennomgang 2026-11-16 (blind). Status i AGENTS.md blir foreldet ved merge, som tidligere funn om storystatus i agentkontekst. Rettes med registrering etter AV-08.

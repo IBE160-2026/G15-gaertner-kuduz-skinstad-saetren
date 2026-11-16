@@ -19,9 +19,11 @@ rangeringstabell. Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
 kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,
 timebelastning, kostnad, ulempebelastning og rangeringen med porten `RangertKandidat`.
-Den er ren Python uten KI. KI-laget (epic 5) er ikke bygget ennå, og
-`backend/adaptere/ki/` er tom. Uten lagret tolkning får alle preferanser midlertidig
-50 poeng (P-05). `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+Den er ren Python uten KI. Story 5.1 (preferansetolkning) er delvis levert og står som
+`in-progress` fordi brukerutløst nytt forsøk («Prøv igjen») gjenstår: `backend/adaptere/ki/` har `OpenRouterKiAdapter` og begrenseren (AD-7),
+tolkningene lagres som kolonner på `ansatt`, og backend tolker ventende tekster i en
+daemon-tråd ved oppstart. Rangeringen leser bare lagrede tolkninger. Uten gyldig
+lagret tolkning får en preferanse midlertidig 50 poeng (P-05). `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy
@@ -117,11 +119,21 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
      på `http://127.0.0.1:8000/api/helse`. JWT-nøkkelen lages ved hver oppstart, så alle
      logges ut ved omstart, også ved `--reload`. `TURNUSHJELPEREN_JWT_MINUTTER`
      (standard 480) må være et positivt heltall, ellers starter ikke API-et.
+     Med `OPENROUTER_API_KEY` satt i terminalen tolkes ventende preferansetekster i
+     bakgrunnen ved oppstart (19 betalte kall med testdataene, ca. 1–2 min). `--reload`
+     starter tolkningen på nytt for tekster som ikke er ferdige. `KI_MODUS` er
+     `openrouter` (standard) eller `demo`; uten nøkkel, med `demo` eller ukjent verdi
+     tolkes ingenting, og én WARNING-linje logges. En tolkning som lagres mens
+     godkjenningsflaten er åpen, gir `endret_grunnlag` (P-09). Etter story 5.1 må en
+     eldre database slettes, fordi `ansatt` har nye kolonner.
   - Test: `.venv\Scripts\python -m pytest`. Testene bygger appen med `lag_app` mot en
     database i `tmp_path` og rører ikke `backend/turnushjelperen.db`. Hver hard regel har
     egen testmodul i `tester/regelmotor/`. `tester/test_arkitektur.py` kjører
     import-linter-kontrakten i `pyproject.toml`, som forbyr `domene` å importere
     `adaptere` (AD-1, AD-2). Nye moduler under `domene/` faller inn under kontrakten.
+    KI-testene i `tester/ki/` bruker falsk transport og falsk klokke, og
+    `tester/conftest.py` fjerner `OPENROUTER_API_KEY`, `KI_MODUS` og
+    `OPENROUTER_MODEL` fra miljøet i hver test. Ingen test gjør nettverkskall.
 - Frontend (Node 22.12 eller nyere), fra `frontend/` i en egen terminal mens backend
   kjører: `npm install`, deretter `npm run dev` (http://localhost:5173). Vite sender
   `/api` videre til `http://127.0.0.1:8000`. `npm run build` typesjekker kode og
