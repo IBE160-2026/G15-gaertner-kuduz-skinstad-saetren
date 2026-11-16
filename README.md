@@ -208,7 +208,7 @@ Dette er verdt å vite:
 - Ved 5xx-feil og nettverksfeil prøver backend tre ganger til, etter 2, 4 og 8 s. Ved
   429 venter den til OpenRouter sier at grensen er nullstilt. All venting for én tekst
   er begrenset til 90 s. 402, andre 4xx-feil og svar som ikke følger formatet prøves
-  ikke på nytt. Tallene er et forslag fra Mithad (2026-11-16), ikke et gruppevedtak.
+  ikke på nytt. Tallene er vedtatt som AV-19 (2026-11-16) og står som konstanter i `backend/adaptere/ki/openrouter.py`.
 - Mangler `X-RateLimit-Reset` eller kan ikke leses, venter backend 60 s ved 429, og
   aldri under 1 s. 3xx og andre uventede statuser lagres som feiltypen `4xx`.
   `KI_MODUS` skiller mellom store og små bokstaver: `OpenRouter` slår av tolkningen.

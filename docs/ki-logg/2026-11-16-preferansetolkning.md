@@ -73,3 +73,7 @@ Utført av Ragnhild med Claude i en gjennomgang av PR #30. Ingen programkode ble
 - **Før og etter for vakt #4127:** Jonas 79,40 → 85,65, Mette 72,40 → 78,65, Thomas 71,50 → 59,00, Ingrid 24,50 → 37,00. Scorene endret seg som regnet på forhånd (preferansevekt 25 %). Rekkefølgen var den samme før og etter. To påfølgende henvendelser ga identisk svar.
 - **Hva som ikke ble bevist:** at preferansepoeng kan snu en rekkefølge (testdataene har ingen vakt med små marginer; dekket bare av enhetstester), at begrenseren holder seg under 20 kall per minutt (19 kall ga ingen 429, men det er ikke tilstrekkelig bevis for 18 per minutt) og kostnaden (ikke lest fra OpenRouter).
 - **Funn:** transporten skjuler feilårsaken, og INFO-meldingene vises ikke i terminalen. Begge står i `deferred-work.md`. README er rettet (macOS-sertifikat og fremdrift). Ingen kodeendring er gjort.
+
+## Feilreglene er vedtatt som AV-19 (2026-11-16)
+
+Etter live-kontrollen bekreftet Ragnhild Sætren at feilreglene i `openrouter.py` (Mithads forslag) er avklart i gruppa. Claude skrev dem inn som AV-19 i `docs/beslutninger/avklaringspunkter.md` (§2.3, §11 og §13) og samordnet `epics.md`, `ARCHITECTURE-SPINE.md`, PRD §8 og FR-10, README og `deferred-work.md`. Verdiene ble lest fra koden (`openrouter.py`) og spesifikasjonen, ikke funnet på. Begrunnelsen i AV-19 er bare det som står i kode, spesifikasjon og robusthetsloggen. Ingen kode og ingen akseptansekriterier er endret, og spesifikasjonen for 5.1 (frosset) står urørt. «Prøv igjen» er uttrykkelig holdt utenfor vedtaket.

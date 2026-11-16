@@ -95,8 +95,8 @@
   summary: Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (API-endepunkt og knapp i preferansecellen) er ikke bygget (FR-10, P-05, AC i story 5.1).
   evidence: Utsatt av Mithad 2026-11-16 for å holde PR-en for 5.1 til backend (adapter, lagring og bakgrunnstolkning). Story 5.1 kan ikke settes `done` før dette er levert, eller gruppa godtar utsettelsen.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
-  summary: Gruppa har ikke vedtatt feilreglene for preferansetolkning (3 nye forsøk etter 2/4/8 s, 90 s budsjett, minst 1 s og 60 s ved 429, sluttstatus `kunne_ikke_tolkes` med feiltype). Konstantene i `backend/adaptere/ki/openrouter.py` er Mithads forslag 2026-11-16.
-  evidence: P-05/OP-03 og PRD §8 krever avklaring før story 5.1 og 5.2 kan bli `done`. Funnet i kodegjennomgangen 2026-11-16 (blind). Vedtaket føres i `docs/beslutninger/avklaringspunkter.md`.
+  summary: "[LØST 2026-11-16, AV-19] Gruppa har ikke vedtatt feilreglene for preferansetolkning (3 nye forsøk etter 2/4/8 s, 90 s budsjett, minst 1 s og 60 s ved 429, sluttstatus `kunne_ikke_tolkes` med feiltype). Konstantene i `backend/adaptere/ki/openrouter.py` er Mithads forslag 2026-11-16."
+  evidence: P-05/OP-03 og PRD §8 krever avklaring før story 5.1 og 5.2 kan bli `done`. Funnet i kodegjennomgangen 2026-11-16 (blind). Vedtaket føres i `docs/beslutninger/avklaringspunkter.md`. Løst 2026-11-16: Ragnhild Sætren vedtok verdiene på vegne av gruppa (AV-19, `avklaringspunkter.md` §11). «Prøv igjen» er ikke en del av vedtaket og står som eget funn.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: AGENTS.md sier at story 5.1 er «implementert og til gjennomgang», og setningen om `scripts/modelltest_*.py` er slått sammen med en svært lang linje.
   evidence: Kodegjennomgang 2026-11-16 (blind). Status i AGENTS.md blir foreldet ved merge, som tidligere funn om storystatus i agentkontekst. Rettes med registrering etter AV-08.
