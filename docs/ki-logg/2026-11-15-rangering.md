@@ -17,7 +17,7 @@ Implementeringen ble delegert til en underagent (Claude Opus 5.5 i Claude Code) 
 
 Disse står ikke i spesifikasjonen og bør ses over i PR-gjennomgangen:
 
-- **Frosne dataklasser, ikke Pydantic, i porten.** Arkitekturen sier Pydantic. Spesifikasjonen ba om å følge presedensen fra `utelukkelse.py` (story 2.5), og avviket føres her. Pydantic-modellene ligger i `adaptere/api`.
+- **Frosne dataklasser, ikke Pydantic, i porten.** Arkitekturen sier Pydantic. Spesifikasjonen ba om å følge presedensen fra `utelukkelse.py` (story 2.5), og avviket føres her. Pydantic-modellene ligger i `adaptere/api`. Avviket er ført som AV-18 i beslutningsreferatet ved gjennomgangen av PR #29 (2026-11-16), og bekreftes av gruppa ved godkjenning av PR-en.
 - **Kategorinøklene** `onsker_flere`, `positiv_ved_behov`, `noytral`, `foretrekker_a_slippe` og `vil_unnga` er hentet fra modelltestene (`scripts/modelltest_prd_fasit.json`). Story 5.1 fastsetter den endelige kontrakten.
 - **Rekkefølgen for tolkestatus:** uten tekst (None, tom eller bare mellomrom) blir det alltid «ingen registrert», også om en gammel tolkning finnes. Ellers gir en lagret tolkning `tolket`, og den går foran `feilede`. En kategori som ikke finnes i `PREFERANSEPOENG`, gir `kunne_ikke_tolkes` (P-05: en ugyldig kategori følger feilflyten).
 - **Vektene må være `Fraction` eller heltall, være ikke-negative og summere til 1.** `Fraction(0.4)` er ikke 2/5, og da blir summene ikke eksakte. Taket valideres som i `beregn_ulempebelastning`.

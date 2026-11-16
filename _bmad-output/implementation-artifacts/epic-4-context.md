@@ -47,7 +47,7 @@ De gyldige kandidatene, altså de som har passert de fire harde reglene fra epic
 ## Technical Decisions
 
 - Heksagonal arkitektur. `domene/*` importerer aldri `adaptere/*`, og import-linter-testen håndhever det (AD-1, AD-2). Domenet kaller aldri KI. Rangeringen leser bare en lagret `TolketPreferanse` som vanlig input og gjør aldri et live KI-kall (AD-1).
-- `RangertKandidat` (Pydantic) eies av `domene/porter` og konstrueres **bare** av `domene/regelmotor`. Minimumsfeltene er:
+- `RangertKandidat` (frossen dataklasse, AV-18) eies av `domene/porter` og konstrueres **bare** av `domene/regelmotor`. Minimumsfeltene er:
   - kandidat-ID og navn og Kompetansenivå
   - Vaktkostnad med fordeling på ordinær tid og overtid (kostnadstype og beløp)
   - Timebelastning i timer og prosent av terskelen

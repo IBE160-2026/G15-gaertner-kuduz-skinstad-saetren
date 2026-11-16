@@ -41,7 +41,7 @@ Derfor er ansvarsdelingen i Turnushjelperen ikke en høflig konvensjon, den er s
 
 ### Hvorfor det er strukturelt, ikke bare en avtale
 
-Ingeniørarbeidet her ligger ikke i å skrive "KI skal ikke overstyre reglene" i et dokument — det ligger i skjøten mellom lagene, altså i selve grensesnittet mellom dem. Dette er løst med to eksplisitt typede porter (Pydantic-modeller, eid av `domene/porter`), som er de *eneste* stedene data krysser grensen:
+Ingeniørarbeidet her ligger ikke i å skrive "KI skal ikke overstyre reglene" i et dokument — det ligger i skjøten mellom lagene, altså i selve grensesnittet mellom dem. Dette er løst med to eksplisitt typede porter (frosne dataklasser, eid av `domene/porter`, se AV-18), som er de *eneste* stedene data krysser grensen:
 
 - **`TolketPreferanse`** — den semantiske kategorien KI-adapteren produserer *inn* til rangeringen. Regelmotoren bruker en lagret tolkning når den finnes; ved venting eller feil får den midlertidige 50 poeng med egen status (P-05), aldri et live KI-kall midt i selve beregningen. Lagringsadapteren kan deserialisere en tidligere validert verdi uten ny tolkning (AD-1). Slik er rangeringen reproduserbar for samme strukturerte input selv om selve tolkningssteget bruker en språkmodell.
 - **`RangertKandidat`** — det regelmotoren produserer *ut* av rangeringen, og som KI-adapterens forklaringsport mottar for å generere Avveining. Forklaringsporten ser kun de feltene porten definerer for gyldige kandidater, og ingen kandidat som en hard regel har utelukket. Tolkingsporten kan behandle en Ansatts rå preferansetekst før filtrering, uten kandidatstatus for en bestemt Vakt. Kun regelmotoren konstruerer `RangertKandidat`.

@@ -59,7 +59,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Heksagonal arkitektur (lett): `domene/regelmotor` og `domene/porter` er domenekjernen, ren Python uten avhengighet til rammeverk, database eller KI. Adaptere: `adaptere/api` (FastAPI), `adaptere/web` (React SPA), `adaptere/ki` (OpenRouter, eller demo-modus etter AD-6) og `adaptere/lagring` (SQLAlchemy/SQLite).
 - AD-1/AD-2: `domene/*` importerer aldri fra noen `adaptere/*`-pakke. Dette håndheves statisk med en import-linter-kontrakt og en test som feiler ved brudd.
 - AD-1: En kjøretidstest i `tester/` verifiserer at forklaringsporten og forklaringens output ikke inneholder utelukkede kandidater, og skiller dette fra tolkingsportens behandling av Ansattpreferanse før filtrering.
-- Porter (Pydantic, eid av `domene/porter`):
+- Porter (frosne dataklasser, eid av `domene/porter`, AV-18):
   - Bare `adaptere/ki` fastsetter en ny semantisk `TolketPreferanse`; `adaptere/lagring` kan rekonstruere en tidligere lagret, validert verdi uten ny tolkning (AD-1).
   - `RangertKandidat` konstrueres bare av `domene/regelmotor`. Minimumsfelt: kandidat-referanse (id/navn), Kompetansenivå, kostnadstype + beløp, Timebelastning (timer + prosent av terskel), Ulempebelastning (Ulempepoeng, Ulempescore og timer fordelt på kveld, helg og natt), rangeringsplass og tilhørende `TolketPreferanse`.
   - `UtelukkelsesOppsummering` konstrueres bare av `domene/regelmotor` og gir antall per Hard regel til Ekskludert-boksen.
