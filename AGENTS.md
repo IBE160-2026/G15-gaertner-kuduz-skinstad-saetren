@@ -12,13 +12,16 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Stacken er React/TypeScript med Vite, Python/FastAPI og SQLite via SQLAlchemy.
 KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1 og 4.7 er ferdige: skjelett, lagring med fiktive
+Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.3 og 4.7 er ferdige: skjelett, lagring med fiktive
 testdata, innlogging med designtokens og appskall, beskyttede flater, vaktoversikt og
-valg av vakt, godkjenning og bemanning av vakten og Ekskludert-boksen. Domenekjernen i
+valg av vakt, godkjenning og bemanning av vakten og Ekskludert-boksen. Story 4.4
+(rangering og rangeringstabell) er implementert og til gjennomgang. Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
-kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden og
-ulempebelastning. Den er ren Python uten KI. Rangering (story 4.4) og KI-laget (epic 5)
-er ikke bygget ennå, og `backend/adaptere/ki/` er tom. `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,
+timebelastning, kostnad, ulempebelastning og rangeringen med porten `RangertKandidat`.
+Den er ren Python uten KI. KI-laget (epic 5) er ikke bygget ennå, og
+`backend/adaptere/ki/` er tom. Uten lagret tolkning får alle preferanser midlertidig
+50 poeng (P-05). `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy

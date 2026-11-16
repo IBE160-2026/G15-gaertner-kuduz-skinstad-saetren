@@ -8,8 +8,8 @@ import {
   gjeldendeSesjonsgenerasjon,
   hentKandidater,
   type EkskludertKandidat,
-  type Kandidat,
   type Kandidatsvar,
+  type RangertKandidat,
   type UtelukkelsesOppsummering,
 } from "./api";
 import { INGEN_KONTAKT, RESERVETEKST, TEKSTER, feiltekst } from "./tekster";
@@ -20,7 +20,19 @@ export type Kandidattilstand =
   | { type: "feil"; tekst: string }
   | { type: "datafeil"; datagrense: string }
   | { type: "ingen_gyldige"; utelukkelser: UtelukkelsesOppsummering }
-  | { type: "klar"; kandidater: Kandidat[]; utelukkelser: UtelukkelsesOppsummering };
+  | { type: "klar"; kandidater: RangertKandidat[]; utelukkelser: UtelukkelsesOppsummering };
+
+/** Så mange av de høyest rangerte vises før «Vis alle gyldige kandidater» (SM-3, AV-15). */
+export const SYNLIGE_KANDIDATER = 5;
+
+/**
+ * De fem første i rangert rekkefølge, eller alle når `visAlle` er satt (FR9).
+ * Listen fra API-et er allerede sortert etter plass, og min–maks er regnet over
+ * alle Gyldige før kuttet, så kuttet endrer ingen poeng.
+ */
+export function synligeKandidater<T>(kandidater: readonly T[], visAlle: boolean): T[] {
+  return visAlle ? [...kandidater] : kandidater.slice(0, SYNLIGE_KANDIDATER);
+}
 
 export function tilstandFraSvar(svar: Kandidatsvar): Kandidattilstand {
   if (svar.status === "ok") {
@@ -71,6 +83,19 @@ export function ekskludertBoksTekst(oppsummering: UtelukkelsesOppsummering): str
  */
 export function ekskludertRadTekst(kandidat: EkskludertKandidat): string {
   return `${kandidat.navn} — ${kandidat.årsaker.join(", ")}`;
+}
+
+/**
+ * Teksten i preferansetaggen (UX-DR11, P-05): kategorien når preferansen er tolket,
+ * ellers statusen. En kategori frontend ikke kjenner, vises som den er.
+ */
+export function preferansetekst(kandidat: Pick<RangertKandidat, "tolkestatus" | "preferansekategori">): string {
+  const t = TEKSTER.kandidatflate;
+  if (kandidat.tolkestatus === "tolket") {
+    const kategori = kandidat.preferansekategori ?? "";
+    return t.preferansekategorier[kategori] ?? kategori;
+  }
+  return t.tolkestatuser[kandidat.tolkestatus];
 }
 
 /**

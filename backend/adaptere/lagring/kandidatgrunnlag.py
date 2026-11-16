@@ -104,7 +104,11 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
             satt_opp_ansatt_id=vaktrad.satt_opp_ansatt_id,
         ),
         ansatte=tuple(
-            Kandidat(id=rad.id, navn=rad.navn, kompetanse=rad.kompetanse, vakter=tuple(egne[rad.id]), timelønn=rad.timelønn)
+            Kandidat(
+                id=rad.id, navn=rad.navn, kompetanse=rad.kompetanse, vakter=tuple(egne[rad.id]),
+                timelønn=rad.timelønn, preferanse=rad.preferanse, stilling=rad.stilling,
+                ansiennitet=rad.ansiennitet,
+            )
             for rad in ansatte
         ),
         datagrense=turnus.periode_slutt,

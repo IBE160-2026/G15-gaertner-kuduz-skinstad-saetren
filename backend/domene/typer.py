@@ -55,6 +55,10 @@ class Kandidat:
 
     `vakter` er Kandidatens egne tildelte vakter, uavhengig av periode. Standard er
     tom, så kall som bare trenger kompetanse virker uendret.
+
+    `preferanse` er den registrerte preferanseteksten, eller None når den mangler
+    (P-05). `stilling` og `ansiennitet` (år) vises bare, og ingen regel bruker dem
+    (story 4.4).
     """
 
     id: int
@@ -63,6 +67,9 @@ class Kandidat:
     vakter: tuple[Tidsrom, ...] = field(default=(), compare=False)
 
     timelønn: object = None
+    preferanse: str | None = field(default=None, compare=False)
+    stilling: str = field(default="", compare=False)
+    ansiennitet: int = field(default=0, compare=False)
 
     def __post_init__(self) -> None:
         if isinstance(self.kompetanse, Mapping):

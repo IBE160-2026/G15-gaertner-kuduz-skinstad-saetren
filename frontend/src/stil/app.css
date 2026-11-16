@@ -314,7 +314,11 @@ button {
   padding: var(--button-compact-padding);
 }
 
+/* `position: relative` gjør beholderen til forelder for `.visuelt-skjult` (absolutt
+   posisjonert) i cellene. Uten den slipper slike elementer ut av rullingen og gjør
+   siden bredere enn vinduet (funnet i nettleserkontrollen av story 4.4, AV-14). */
 .tabellbeholder {
+  position: relative;
   overflow-x: auto;
   background: var(--color-bg-panel);
   border: var(--border-width) solid var(--color-border);
@@ -423,45 +427,49 @@ button {
   margin-top: var(--space-3);
 }
 
-.kandidatliste {
-  margin: var(--space-3) 0 0;
-  padding: 0;
-  list-style: none;
-  border-top: var(--border-width) solid var(--color-border);
+/* Rangeringstabellen (story 4.4, UX-DR7–DR11). Ruller vannrett i egen beholder,
+   aldri siden (AV-14). Annenhver rad har `row-alt` fra `.tabell`. */
+.rangeringstabell {
+  margin-top: var(--space-3);
 }
 
-.kandidatliste li {
+/* Statusteksten «Preferanse venter på tolkning» kan brytes over to linjer. Ellers blir
+   tabellen bredere enn innholdsbredden ved 1600 px, og Velg-kolonnen klippes
+   (funnet i nettleserkontrollen av story 4.4). `.tabell td` er ellers `nowrap`. */
+.rangeringstabell .preferansecelle {
+  white-space: normal;
+}
+
+/* Rangeringsnummeret: det første tallet blikket skal lande på (UX-DR8). */
+.rank-badge {
+  color: var(--color-accent);
+  font-size: var(--font-size-rank);
+  font-weight: var(--font-weight-bold);
+}
+
+.vis-alle {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-1) var(--space-3);
-  padding: var(--row-padding);
-  border-bottom: var(--border-width) solid var(--color-border);
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-3);
 }
 
-.kandidatliste li:nth-child(even) {
-  background: var(--color-row-alt);
+.vis-alle .button-secondary {
+  margin-top: 0;
 }
 
-/* Taggen og «Velg» står til høyre, navnet til venstre (story 3.1). */
-.kandidatliste li .tag {
-  margin-left: auto;
-}
-
-/* Timer i uka (story 4.1): kolonnelignende verdi med tabelltall og fast bredde.
-   Teksten kan brytes ved behov, så ingenting klippes eller overlapper (AV-17). */
-.kandidatliste li .timer-i-uka {
-  flex: 0 0 var(--column-hours-width);
-  text-align: right;
+/* Timer i uka (story 4.1) over belastningslinja, med tabelltall. */
+.timer-i-uka {
+  display: block;
+  margin-bottom: var(--space-1);
   font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
 }
 
 /* Belastningslinja (story 4.2): fast 110×7 px, fylt proporsjonalt. `accent` under
    32,4 t og `warn` fra og med, aldri rød. Linja er ikke fokuserbar. */
 .belastning {
-  flex: 0 0 var(--load-bar-width);
+  width: var(--load-bar-width);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -536,7 +544,7 @@ button {
   font-weight: var(--font-weight-bold);
 }
 
-.kandidatliste .button-secondary.button-kompakt {
+.rangeringstabell .button-secondary.button-kompakt {
   padding: var(--space-1) var(--space-3);
 }
 

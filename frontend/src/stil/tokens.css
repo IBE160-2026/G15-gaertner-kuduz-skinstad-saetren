@@ -45,13 +45,14 @@
   --font-size-column-header: 0.65625rem; /* 10.5px */
   --font-size-body: 0.78125rem; /* 12.5px */
   --font-size-meta: 0.6875rem; /* 11px */
+  /* Rangeringsnummeret (story 4.4, UX-DR8). */
+  --font-size-rank: 0.875rem; /* 14px */
 
   --letter-spacing-brand: 0.3px;
   --letter-spacing-section-label: 0.5px;
   --letter-spacing-column-header: 0.4px;
 
   /* Spacing */
-  --column-hours-width: 7rem;
   /* Belastningslinja (story 4.2, UX): 110×7 px. */
   --load-bar-width: 110px;
   --load-bar-height: 7px;
