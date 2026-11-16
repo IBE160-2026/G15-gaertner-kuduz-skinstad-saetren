@@ -24,7 +24,7 @@ Prompten er kopiert ordrett fra `PROMPT` i `scripts/modelltest_prd_fasit.py`, de
 Disse står ikke i spesifikasjonen og bør ses over i PR-gjennomgangen:
 
 - **`urllib`, ikke OpenAI-SDK eller `httpx`.** Backend har ingen HTTP-klient i kjøretid (`httpx2` er bare en testavhengighet for `TestClient`), modelltestene bruker `urllib`, og spesifikasjonen forbyr nye pakker. Valget mellom SDK og ren HTTP-klient var åpent i arkitekturen (§ Deferred). Feilkropper fra OpenRouter leses ikke, fordi de kan gjengi prompten.
-- **Frosne dataklasser, ikke Pydantic, i porten.** AC-en sier «Pydantic-modellen». Spesifikasjonen ba om å følge presedensen fra 2.5 og 4.4. Valideringen som Pydantic ville gitt, skjer i stedet i `les_svar` (svar fra modellen) og `les_tolkning` (lagret verdi).
+- **Frosne dataklasser, ikke Pydantic, i porten.** AC-en sier «Pydantic-modellen». Spesifikasjonen ba om å følge presedensen fra 2.5 og 4.4, som er vedtatt som AV-18. Valideringen som Pydantic ville gitt, skjer i stedet i `les_svar` (svar fra modellen) og `les_tolkning` (lagret verdi).
 - **`Tolkefeil` og `Tolker` ligger i `adaptere/ki`, ikke i `domene/porter`.** Domenet trenger bare å vite hvem som har feilet (`feilede`), ikke hvorfor. `Tolker` er en `Protocol`, så `DemoKiAdapter` i 5.7 og de falske adapterne i testene har samme form.
 - **429 uten lesbar `X-RateLimit-Reset`** venter 60 s (ett vindu), innenfor budsjettet. Spesifikasjonen sier ikke hva som skal skje da. Konstanten er merket som forslag.
 - **Andre statuser enn 200, 429 og 5xx** (også 3xx, siden omdirigering er slått av) gir `4xx` uten nytt forsøk.

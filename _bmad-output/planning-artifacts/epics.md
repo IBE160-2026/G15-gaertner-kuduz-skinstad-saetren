@@ -59,7 +59,7 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Heksagonal arkitektur (lett): `domene/regelmotor` og `domene/porter` er domenekjernen, ren Python uten avhengighet til rammeverk, database eller KI. Adaptere: `adaptere/api` (FastAPI), `adaptere/web` (React SPA), `adaptere/ki` (OpenRouter, eller demo-modus etter AD-6) og `adaptere/lagring` (SQLAlchemy/SQLite).
 - AD-1/AD-2: `domene/*` importerer aldri fra noen `adaptere/*`-pakke. Dette håndheves statisk med en import-linter-kontrakt og en test som feiler ved brudd.
 - AD-1: En kjøretidstest i `tester/` verifiserer at forklaringsporten og forklaringens output ikke inneholder utelukkede kandidater, og skiller dette fra tolkingsportens behandling av Ansattpreferanse før filtrering.
-- Porter (Pydantic, eid av `domene/porter`):
+- Porter (frosne dataklasser, eid av `domene/porter`, AV-18):
   - Bare `adaptere/ki` fastsetter en ny semantisk `TolketPreferanse`; `adaptere/lagring` kan rekonstruere en tidligere lagret, validert verdi uten ny tolkning (AD-1).
   - `RangertKandidat` konstrueres bare av `domene/regelmotor`. Minimumsfelt: kandidat-referanse (id/navn), Kompetansenivå, kostnadstype + beløp, Timebelastning (timer + prosent av terskel), Ulempebelastning (Ulempepoeng, Ulempescore og timer fordelt på kveld, helg og natt), rangeringsplass og tilhørende `TolketPreferanse`.
   - `UtelukkelsesOppsummering` konstrueres bare av `domene/regelmotor` og gir antall per Hard regel til Ekskludert-boksen.
@@ -969,6 +969,8 @@ Preferansetekstene tolkes én gang og lagres. Hver rangert kandidat får en Avve
 > **Åpent før start (P-05/AD-7, PRD §8):** Felles takt og 429-venting er bestemt. Ventetrinn ved 5xx/nettverksfeil, antall automatiske forsøk, tidsbudsjett og startpunkt for målingen, samt sluttstatus for preferansetolkning ved 429, 5xx og nettverksfeil må avklares før implementasjon. Avveiningens 2/4/8 sekunder, 90 sekunder og `avveining_feilet` er ikke automatisk tolkningens kontrakt.
 
 > **Lagt til 2026-11-15 (P-09, gjennomgang av PR #23):** Grunnlagsmerket fra story 3.2 hasher alle kolonner i tabellene i `GRUNNLAGSTABELLER` (`backend/adaptere/lagring/kandidatgrunnlag.py`). Lagres `TolketPreferanse` og tolkestatus som kolonner på `ansatt`, dekkes de automatisk. Får de en egen tabell, feiler `backend/tester/lagring/test_grunnlagsmerke.py` til tabellen er ført i `GRUNNLAGSTABELLER`, fordi den påvirker Rangeringen. `UTENFOR_GRUNNLAG` er bare for tabeller uten beslutningsdata. Tolkningen skjer i bakgrunnen. En tolkning som blir ferdig mellom visning og godkjenning, skal derfor endre merket og gi `endret_grunnlag` og ny bekreftelse (story 5.2, P-05/P-09). Dekk dette med en API-test.
+
+> **Lagt til 2026-11-16 (AV-18, gjennomgang av PR #29 og #30):** Akseptansekriteriet under sier «Pydantic-modellen i `domene/porter`». Portene er frosne dataklasser (AV-18), så valideringen skjer i `adaptere/ki` ved svar og i `adaptere/lagring` ved lesing. Kriteriet er ikke endret; avviket er dokumentert i KI-loggen `docs/ki-logg/2026-11-16-preferansetolkning.md`.
 
 As a turnusansvarlig,
 I want at de skrevne preferansene til de ansatte blir tolket til noe systemet kan bruke,

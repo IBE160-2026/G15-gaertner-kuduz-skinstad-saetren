@@ -54,7 +54,7 @@ context:
 
 ## Code Map
 
-- `backend/domene/porter/rangering.py` -- `TolketPreferanse(kategori)` og `Tolkestatus` finnes (4.4). Utvid med `begrunnelse: str` og `modell: str`. Frosne dataklasser, ikke Pydantic (2.5/4.4-presedensen); avviket fra AC «Pydantic-modellen» føres i KI-loggen, og valideringen skjer i `adaptere/ki` (svar) og `adaptere/lagring` (lesing).
+- `backend/domene/porter/rangering.py` -- `TolketPreferanse(kategori)` og `Tolkestatus` finnes (4.4). Utvid med `begrunnelse: str` og `modell: str`. Frosne dataklasser, ikke Pydantic (2.5/4.4-presedensen, AV-18); avviket fra AC «Pydantic-modellen» føres i KI-loggen, og valideringen skjer i `adaptere/ki` (svar) og `adaptere/lagring` (lesing).
 - `backend/domene/regelmotor/rangering.py` -- `ranger(vurdering, vakt, tolkede, feilede)` og `preferanse()` håndterer statusene. Ikke endre.
 - `backend/adaptere/lagring/modeller.py` -- `AnsattRad`: nullbare `tolket_kategori`, `tolket_begrunnelse`, `tolket_modell`, `tolket_teksthash`, `tolkefeil`, `tolkeformat`. Kolonner på `ansatt` dekkes av `GRUNNLAGSTABELLER` (P-09).
 - `backend/adaptere/lagring/kandidatgrunnlag.py` -- `Kandidatgrunnlag` får `tolkede: Mapping[int, TolketPreferanse]` og `feilede: frozenset[int]`, beregnet fra de samme `AnsattRad`-radene som `ansatte` (tekst og tolkning fra samme lesing). Fjern kommentaren om «story 5.1 må ta stilling».

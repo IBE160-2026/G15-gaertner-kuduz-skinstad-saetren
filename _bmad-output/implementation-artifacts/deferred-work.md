@@ -77,8 +77,8 @@
 - Epic 4-konteksten er forkortet og har mistet sentrale detaljer om normalisering over alle gyldige (lavest gir 100), preferanseskala, uavhengig fasit, P-09, opprinnelig ansatts lønn og referansesammenligning. Samordne mot styrende dokumenter før senere stories bruker konteksten.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md`
-  summary: Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på.
-  evidence: Blind Hunter B11 (2026-11-15). Endringen gjelder en agentkontekstfil og er derfor utsatt. Rett linjen når 4.4 settes til `done`, eller vurder å fjerne storystatus fra AGENTS.md.
+  summary: "[LØST 2026-11-16, rettet i AGENTS.md] Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på."
+  evidence: Blind Hunter B11 (2026-11-15). Endringen gjelder en agentkontekstfil og er derfor utsatt. Rett linjen når 4.4 settes til `done`, eller vurder å fjerne storystatus fra AGENTS.md. Løst 2026-11-16: PR #29 er merget, 4.4 er `done`, og innledningen i AGENTS.md sier at 4.1–4.4 og 4.7 er ferdige (faktarettelse ført i §11, AV-08). Storystatus står fortsatt i AGENTS.md; å fjerne den er ikke vurdert.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (API-endepunkt og knapp i preferansecellen) er ikke bygget (FR-10, P-05, AC i story 5.1).
   evidence: Utsatt av Mithad 2026-11-16 for å holde PR-en for 5.1 til backend (adapter, lagring og bakgrunnstolkning). Story 5.1 kan ikke settes `done` før dette er levert, eller gruppa godtar utsettelsen.

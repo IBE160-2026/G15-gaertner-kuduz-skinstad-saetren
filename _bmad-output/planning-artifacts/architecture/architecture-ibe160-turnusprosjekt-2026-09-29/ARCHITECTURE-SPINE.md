@@ -21,7 +21,7 @@ companions: []
 
 ## Design Paradigm
 
-Hexagonal (Ports & Adapters), lett utgave. Domenekjernen er regelmotoren — ren Python, ingen avhengighet til rammeverk eller KI. To eksplisitte typede grensesnitt (Pydantic-modellene `TolketPreferanse` og `RangertKandidat`), begge eid av `domene/porter`, er de eneste kontaktflatene mellom domenekjernen og KI-adapteren; alt annet er adaptere som avhenger av kjernen, aldri omvendt.
+Hexagonal (Ports & Adapters), lett utgave. Domenekjernen er regelmotoren — ren Python, ingen avhengighet til rammeverk eller KI. To eksplisitte typede grensesnitt (de frosne dataklassene `TolketPreferanse` og `RangertKandidat`, se «Porttyper» under), begge eid av `domene/porter`, er de eneste kontaktflatene mellom domenekjernen og KI-adapteren; alt annet er adaptere som avhenger av kjernen, aldri omvendt.
 
 KI-adapteren har to atskilte, ensrettede roller — den kaller aldri inn i domenekjernen i noen av dem:
 1. **Tolker** (før Rangering): `adaptere/ki` tar imot rå Ansattpreferanse-tekst og returnerer en `TolketPreferanse` — `adaptere/api` sender denne videre inn i `domene/regelmotor` som ordinær input, på linje med Kompetansenivå og Vakt-data (FR-10).
@@ -32,11 +32,13 @@ Domenekjernen kaller aldri `adaptere/ki` selv i noen av retningene — `adaptere
 | Lag | Modul | Rolle |
 | --- | --- | --- |
 | Domenekjerne | `domene/regelmotor` | Harde regler (kompetanse-minstekrav, kolliderende vakt, 11-timersregelen, 35-timersregelen), kostnadsberegning, Rangering (tar `TolketPreferanse` som input, produserer `RangertKandidat`). Ren Python, null avhengighet til KI eller rammeverk. |
-| Domenekjerne | `domene/porter` | Typede grensesnitt (Pydantic-modeller: `TolketPreferanse` inn til Rangering, `RangertKandidat` ut av Rangering) — eneste kontaktflate mot driven adapters. |
+| Domenekjerne | `domene/porter` | Typede grensesnitt (frosne dataklasser uten logikk: `TolketPreferanse` inn til Rangering, `RangertKandidat` ut av Rangering) — eneste kontaktflate mot driven adapters. |
 | Driven adapter | `adaptere/ki` | Språkmodell-integrasjon via OpenRouter (standardmodell `openai/gpt-6-luna`, satt i miljøvariabel). To implementasjoner bak samme port: `OpenRouterKiAdapter` (live) og `DemoKiAdapter` (forhåndsgenererte svar + mal), se AD-6. Takt og nye forsøk mot leverandøren: se AD-7. To ensrettede funksjoner: tolker Ansattpreferanse-tekst → `TolketPreferanse`, og genererer Avveining fra `RangertKandidat`. Ser og produserer kun det portene definerer. |
 | Driven adapter | `adaptere/lagring` | SQLAlchemy/SQLite. Persisterer Turnus, Vakt, Ansatt, Godkjenning og bruker med passordhash. Ingen innloggingssesjon lagres; JWT-flyten følger AD-3. |
 | Driving adapter | `adaptere/api` | FastAPI-endepunkter. Komponerer/kobler sammen domenekjerne og driven adapters (KI, lagring). |
 | Driving adapter | `adaptere/web` | React-SPA. Snakker kun med `adaptere/api` over HTTP. |
+
+**Porttyper (oppdatert 2026-11-16, story 4.4):** Portene i `domene/porter` er frosne Python-dataklasser (`@dataclass(frozen=True)`) uten logikk, ikke Pydantic-modeller. Det følger presedensen fra `UtelukkelsesOppsummering` (story 2.5) og holder domenekjernen fri for rammeverk. Pydantic brukes i `adaptere/api`, som gjør portene om til svarmodeller, og validering av KI-svar skjer i `adaptere/ki` før en `TolketPreferanse` lages (AD-1, AD-2). Avviket fra tidligere ordlyd er dokumentert som AV-18 i `docs/beslutninger/avklaringspunkter.md` og vedtatt ved godkjenningen av PR #29 (2026-11-16).
 
 ## Invariants & Rules
 
@@ -167,7 +169,7 @@ turnushjelperen/
   backend/
     domene/
       regelmotor/      # harde regler, kostnadsberegning, rangering — domenekjerne
-      porter/          # typede grensesnitt (Pydantic), f.eks. RangertKandidat
+      porter/          # typede grensesnitt (frosne dataklasser), f.eks. RangertKandidat
     adaptere/
       api/             # FastAPI-endepunkter (driving adapter)
       ki/               # OpenRouter- og demo-adapter (driven adapter, ser kun porten, AD-6)
