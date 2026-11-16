@@ -60,4 +60,16 @@ Disse står ikke i spesifikasjonen og bør ses over i PR-gjennomgangen:
   - Budsjettkontrollen før venting fjernet: 3 tester feilet.
   - Kandidatruten kaller `ranger` uten `tolkede` og `feilede`: 5 tester feilet.
 - **Oppstart uten nøkkel:** `python -c "import adaptere.api.main"` uten nøkkel skrev `Preferansetolkning er av: OPENROUTER_API_KEY er ikke satt. Se README.` til stderr, og med `KI_MODUS=demo` tilsvarende linje for demo.
-- **Ikke kontrollert:** ingen kall mot ekte OpenRouter er gjort, så `urllib_transport` og at Luna gir fasiten i appen (ikke bare i modelltesten) er ikke prøvd. Frontend er ikke endret. `npm run test` ga 52 Node-tester og 37 komponenttester bestått. Gjennomgang av agenter som ikke har sett implementeringen (OP-04) og menneskelig PR-gjennomgang gjenstår.
+- **Ikke kontrollert før live-kontrollen under:** ingen kall mot ekte OpenRouter var gjort, så `urllib_transport` og at Luna gir fasiten i appen (ikke bare i modelltesten) var ikke prøvd. Frontend er ikke endret. `npm run test` ga 52 Node-tester og 37 komponenttester bestått. Gjennomgang av agenter som ikke har sett implementeringen (OP-04) og menneskelig PR-gjennomgang gjenstår.
+
+## Live-kontroll mot ekte OpenRouter (2026-11-16, gjennomgang av PR #30)
+
+Utført av Ragnhild med Claude i en gjennomgang av PR #30. Ingen programkode ble endret; scriptet lå utenfor repoet.
+
+- **Oppsett:** egen testdatabase utenfor `backend/turnushjelperen.db` (`TURNUSHJELPEREN_DB`), ferske testdata, backend uten `--reload`. Nøkkelen ble lagt i en fil med tilgang 600 utenfor repoet av Ragnhild selv. Claude leste aldri filen, brukte den bare som `OPENROUTER_API_KEY="$(cat …)"` for hver prosess, og slettet den etterpå. Hvert sett betalte kall ble godkjent av Ragnhild først.
+- **Prompt til Claude (sammendrag):** «ta ansvar for den tekniske gjennomføringen, automatiser det som er mulig, ett steg om gangen fra meg, nøkkelen skal ikke eksponeres i logger, chat eller Git, og be om godkjenning før betalte kall».
+- **Liten test, 3 kall:** et script i scratchpad kalte `OpenRouterKiAdapter.tolk` på PRD-tekstene nr. 4, 10 og 13. Første forsøk ga `nettverk` ×3 etter 14 s (4 forsøk, 2/4/8 s). Årsaken var `CERTIFICATE_VERIFY_FAILED` i Python på macOS, ikke nettet. Med `SSL_CERT_FILE=/etc/ssl/cert.pem` ga kallene `positiv_ved_behov`, `foretrekker_a_slippe` og `vil_unnga`, alle som forventet, på 1,2–2,6 s.
+- **Full kjøring, 19 kall:** alle tolket, 0 feil, 0 advarsler. Alle 19 samsvarer med fasiten i PRD §4.5 (`PREFERANSER` i `testdata.py`). Fordeling: 4 `vil_unnga`, 3 `foretrekker_a_slippe`, 4 `onsker_flere`, 4 `noytral`, 4 `positiv_ved_behov`. Modell `openai/gpt-6-luna`.
+- **Før og etter for vakt #4127:** Jonas 79,40 → 85,65, Mette 72,40 → 78,65, Thomas 71,50 → 59,00, Ingrid 24,50 → 37,00. Scorene endret seg som regnet på forhånd (preferansevekt 25 %). Rekkefølgen var den samme før og etter. To påfølgende henvendelser ga identisk svar.
+- **Hva som ikke ble bevist:** at preferansepoeng kan snu en rekkefølge (testdataene har ingen vakt med små marginer; dekket bare av enhetstester), at begrenseren holder seg under 20 kall per minutt (19 kall ga ingen 429, men det er ikke tilstrekkelig bevis for 18 per minutt) og kostnaden (ikke lest fra OpenRouter).
+- **Funn:** transporten skjuler feilårsaken, og INFO-meldingene vises ikke i terminalen. Begge står i `deferred-work.md`. README er rettet (macOS-sertifikat og fremdrift). Ingen kodeendring er gjort.

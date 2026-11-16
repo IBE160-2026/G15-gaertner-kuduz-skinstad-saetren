@@ -1,3 +1,15 @@
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: `urllib_transport` skjuler årsaken til en nettverksfeil. `except` i `adaptere/ki/openrouter.py` gir `Nettverksfeil(type(feil).__name__)` uten kjede, og `OpenRouterKiAdapter.tolk` kaster den uten å logge. Brukeren og loggen ser bare `nettverk`, aldri for eksempel `CERTIFICATE_VERIFY_FAILED`.
+  evidence: Live-kontroll 2026-11-16 på macOS (Python 3.15.2): første forsøk ga 3 av 3 `nettverk` etter 14 s, og årsaken ble funnet først ved å kjøre `urllib` for hånd. Midlertidig løsning er `SSL_CERT_FILE=/etc/ssl/cert.pem` (README). Dokumentasjonsendringen er gjort; å logge feiltypen på nivå WARNING er en kodeendring og er ikke gjort.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Fremdriftsmeldingene fra `tolk_ventende` («N tekster venter», «tolket») er `logger.info`, og backend har ingen loggoppsett. Med `uvicorn adaptere.api.main:app` vises bare advarsler og feil, så ingen ser fremdriften i terminalen.
+  evidence: Live-kontroll 2026-11-16: 19 tolkninger ga ingen linjer i terminalen, bare uvicorns egne. Fremdriften ble fulgt i databasen. README er rettet til å si at fremdriften ikke vises. Å vise den krever en kodeendring (loggoppsett eller `--log-level`-avklaring) og er ikke gjort.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Testdataene kan ikke vise at preferansepoeng endrer rekkefølgen. Bare #4127 har gyldige kandidater (fire), og marginene er så store at 25 % preferansevekt ikke snur dem. Jonas, Mette, Thomas og Ingrid står i samme rekkefølge før og etter tolkning.
+  evidence: Live-kontroll 2026-11-16: scorene endret seg som regnet (+6,25, +6,25, −12,50, +12,50), rekkefølgen ikke. At poengene kan snu en rekkefølge dekkes bare av enhetstestene i `tester/regelmotor/test_rangering.py`.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
+  summary: Kostnaden for live-kontrollen er ikke målt. Anslaget er ca. 1 øre for 22 kall (3 + 19), regnet fra USD 0,057 per 1000 tolkninger i `docs/ki-logg/2026-10-16-beslutningstest-haiku-luna.md`.
+  evidence: Live-kontroll 2026-11-16. Faktisk forbruk står i OpenRouter-kontoen til gruppa og er ikke lest.
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-3-innlogging-for-turnusansvarlig.md`
   summary: Ingen test binder frontendens `FEILTEKSTER` i `frontend/src/tekster.ts` til feilkodene fra backend (`MELDINGER` i `backend/adaptere/api/main.py`), og ingen test viser at 401 fra `/api/meg` ikke gir melding.
   evidence: Verification Gap 2026-11-07: en skrivefeil i en nøkkel, for eksempel `feil_inlogging`, består `npm run build` og alle pytest-testene og gir reserveteksten ved feil passord. Story 1.3 utelukker frontendtester i Never-lista. Ta det opp når frontend får testverktøy, senest i story 1.4.

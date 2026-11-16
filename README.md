@@ -168,6 +168,12 @@ ikke på nytt. En tekst som ikke kunne tolkes, vises som «Preferanse kunne ikke
 tolkes» og prøves igjen neste gang backend starter. Det finnes ennå ingen knapp for
 nytt forsøk.
 
+Fremdriften vises ikke i terminalen. Backend logger hver tekst på nivå INFO, og
+uvicorn viser ikke INFO fra appens egne meldinger i oppsettet over. I terminalen ser du
+bare advarsler, for eksempel `kunne ikke tolkes (nettverk)`, og feil. Hent
+kandidatlisten på nytt for å følge med: tolkingen er ferdig når ingen rad lenger sier
+«Preferanse venter på tolkning».
+
 Backend leser ikke `.env`. Nøkkelen settes i terminalen før uvicorn startes, uten at
 den vises på skjermen:
 
@@ -209,6 +215,17 @@ Dette er verdt å vite:
   En nøkkel med andre tegn enn synlige ASCII-tegn slår også av tolkningen.
 - Er databasen fra før story 5.1, stopper tolkningen med én feilmelding som ber deg
   slette databasen og laste testdata på nytt.
+- På macOS kan Python mangle rotsertifikater. Da feiler alle kall etter ca. 14 s, og
+  hver tekst står som «Preferanse kunne ikke tolkes» med feiltypen `nettverk`, selv om
+  nettet virker. Årsaken er `CERTIFICATE_VERIFY_FAILED`, som backend ikke skriver ut.
+  Pek Python til systemets sertifikater når du starter backend (bash/zsh):
+
+  ```
+  SSL_CERT_FILE=/etc/ssl/cert.pem .venv/bin/python -m uvicorn adaptere.api.main:app
+  ```
+
+  Dette er prøvd på macOS 2026-11-16 (Python 3.15.2). Tekster som feilet, prøves på nytt
+  ved neste oppstart. Ikke sjekket på Windows.
 
 ### 4. Start frontend i en egen terminal
 
