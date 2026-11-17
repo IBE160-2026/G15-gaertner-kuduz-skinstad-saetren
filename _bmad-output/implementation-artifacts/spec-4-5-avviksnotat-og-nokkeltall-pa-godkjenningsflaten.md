@@ -2,7 +2,7 @@
 title: 'Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten'
 type: 'feature'
 created: '2026-11-17'
-status: 'in-progress'
+status: 'done'
 baseline_commit: 'edd41341c753b6967ee03b67a3404380f34e9dfb'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -82,14 +82,14 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `backend/adaptere/api/main.py` — `RangertKandidatUt` og `topprangert` i `GodkjenningsgrunnlagUt`, bygget i `godkjenningsgrunnlag()`.
-- [ ] `backend/tester/api/test_godkjenningsgrunnlag.py` — oppdater berørte tester og test `topprangert` både uten tolkninger og med lagret tolkning som endrer rangeringen.
-- [ ] `frontend/src/api.ts`, `godkjenning.ts`, `tester/godkjenning.test.mjs` — ny type og felt.
-- [ ] `frontend/src/komponenter/Kandidatflate.tsx` — skill ut `Belastningslinje` og `Ulempeindikator`.
-- [ ] `frontend/src/komponenter/Godkjenningsflate.tsx`, `tekster.ts`, `stil/app.css` — nøkkeltall på kortet og `Avviksnotat`.
-- [ ] `frontend/tester/komponenter/hjelpere.ts` — oppdater `JONAS`/`GODKJENNING_JONAS` til `RangertKandidat` + `topprangert: null`, og legg til `GODKJENNING_METTE`.
-- [ ] `frontend/tester/komponenter/godkjenningsflate.test.tsx` — test tilgjengelig timetall, begge kandidatgruppenes verdier og endret rangering etter `endret_grunnlag` (OP-16, P-09).
-- [ ] `docs/testing.md`, `docs/ki-logg/<dato>-avviksnotat.md`, `docs/emne/vurderingsmatrise.md`, `epic-4-context.md` — dokumenter flyt, KI-arbeid, bevis og status.
+- [x] `backend/adaptere/api/main.py` — `RangertKandidatUt` og `topprangert` i `GodkjenningsgrunnlagUt`, bygget i `godkjenningsgrunnlag()`.
+- [x] `backend/tester/api/test_godkjenningsgrunnlag.py` — oppdater berørte tester og test `topprangert` både uten tolkninger og med lagret tolkning som endrer rangeringen.
+- [x] `frontend/src/api.ts`, `godkjenning.ts`, `tester/godkjenning.test.mjs` — ny type og felt.
+- [x] `frontend/src/komponenter/Kandidatflate.tsx` — skill ut `Belastningslinje` og `Ulempeindikator`.
+- [x] `frontend/src/komponenter/Godkjenningsflate.tsx`, `tekster.ts`, `stil/app.css` — nøkkeltall på kortet og `Avviksnotat`.
+- [x] `frontend/tester/komponenter/hjelpere.ts` — oppdater `JONAS`/`GODKJENNING_JONAS` til `RangertKandidat` + `topprangert: null`, og legg til `GODKJENNING_METTE`.
+- [x] `frontend/tester/komponenter/godkjenningsflate.test.tsx` — test tilgjengelig timetall, begge kandidatgruppenes verdier og endret rangering etter `endret_grunnlag` (OP-16, P-09).
+- [x] `docs/testing.md`, `docs/ki-logg/<dato>-avviksnotat.md`, `docs/emne/vurderingsmatrise.md`, `epic-4-context.md` — dokumenter flyt, KI-arbeid, bevis og status.
 
 **Acceptance Criteria:**
 - Given #4127 uten lagrede tolkninger og Jonas Bakke valgt, when godkjenningsflaten vises, then kandidatkortet viser tilgjengelig timetall, timebelastningslinjen og ulempeindikatoren, og ingen avviksnotat vises.
@@ -99,6 +99,17 @@ context:
 
 ## Implementation Notes
 
+- Implementert 2026-11-17 av Claude (Sonnet 5), direkte mot spesifikasjonen i én økt
+  (ikke `bmad-build`s underagent-oppsett). Se
+  [KI-loggen](../../docs/ki-logg/2026-11-17-avviksnotat.md) for prompt, leveranse og
+  rettelser, blant annet at `test_kandidater.py::test_kandidatfeltene_er_de_samme_som_i_godkjenningsgrunnlaget`
+  og en eksisterende story 4.7-komponenttest (hardkodet Jonas' gamle, syntetiske
+  ulempetall) måtte oppdateres som følge av denne storyen.
+- `kompetansenivå`-importen i `main.py` ble fjernet: `godkjenningsgrunnlag()` henter nå
+  kompetansenivå fra `rangert_ut` i stedet for å kalle `kompetansenivå()` direkte.
+- Menneskelig gjennomgang er ikke gjort. Storyen forblir `in-progress` i
+  `sprint-status.yaml` til det er gjort.
+
 ## Spec Change Log
 
 - 2026-11-17: Presisert timeverdier og tilgjengelighet, aktiv bruk av lagrede preferansetolkninger, kandidatgrupper med indikatorer og test av endret grunnlag etter gjennomgang av PR 31. Endringene i låst del er godkjent av Kim i samtalen etter gjennomgangen.
@@ -107,6 +118,21 @@ context:
 ## Review Triage Log
 
 En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spesifikasjonen 2026-11-17, før godkjenning. Fasittallene uten tolkning og valget av `plass` fremfor `totalscore` ble kontrollert. Påstanden om at preferanser ikke var koblet inn, ble senere korrigert i Spec Change Log.
+
+Kodegjennomgang 2026-11-17 (etter implementering) med blind-hunter (BH), edge-case-hunter (ECH) og verification-gap (VG), alle Sonnet. ECH fant ingen funn. Ett funn fra VG var allerede verifisert av laget selv (gap-funn, iht. instruksen) og er tatt inn med dets egen dom.
+
+| Lag | Funn | Dom og bevis | Rute |
+|---|---|---|---|
+| VG | Avviksnotatets «høy belastning»-varsel testes ikke for noen av de to kandidatene i selve notatet; testen med `hoy_belastning: true` har `topprangert: null` og når aldri notat-grenen, og notat-testen bruker bare `hoy_belastning: false` på begge | lav (gap-funn, forhåndsverifisert): en regresjon i varselet for notatets to kandidater ville ikke blitt fanget | patch: utvid notat-testen med én side som har høy belastning |
+| BH | Avviksnotatets overskrift er et `<p>` (`avviksnotat-lbl`), ikke en overskrift, ulikt søsterseksjonen «Bekreft erstatning» rett under (`<h2>`) | lav: reelt avvik fra sidens egen overskriftshierarki, triviell retting | patch: bytt til `<h2>` med samme klasse |
+| BH | `epic-4-context.md`s nye punkt sier «675 backendtester og 41 komponenttester», og utelater «52 modultester» som `docs/testing.md`, vurderingsmatrisen og KI-loggen alle har med | lav: kontrollert, vurderingsmatrisen har faktisk med 52-tallet, bare epic-4-context.md mangler det | patch: legg til tallet |
+| BH | Verken `epic-4-context.md` eller vurderingsmatrisens nye avsnitt nevner AV-07 eller P-05/P-09 ved navn, selv om innholdet (fasitdisiplin, lagret tolkning som endrer topplassering) er nettopp det; story 4.4s tilsvarende avsnitt siterer sammenlignbare ID-er | lav: reelt, og i tråd med AGENTS.md og presedens fra 4.4 | patch: legg til ID-ene i begge avsnitt |
+| BH | Innrykket i `ulempebelastning`-literalen i den nye `JONAS_SOM_TOPPRANGERT`-fiksturen i `test_godkjenningsgrunnlag.py` er ikke på linje med den tilsvarende Mette-literalen i samme test | lav: kosmetisk, triviell retting | patch |
+| BH | Spesifikasjonens `status`-felt sier `in-review`, mens sprint-status, KI-loggen, vurderingsmatrisen og Implementation Notes sier `in-progress` | false: `in-review` er riktig akkurat nå — steg 4 i `bmad-build` setter den eksplisitt før kodegjennomgangen starter, og de andre dokumentene ble skrevet av implementeringsagenten før det. Alle blir `done` sammen i steg 5 | avvist |
+| BH | Ingen test dekker tilfellet der `ansatt_id` ikke lenger finnes i `vurdering.gyldige` når `next(...)` kalles uten standardverdi | false: ECH kontrollerte uavhengig at `ranger()` gir nøyaktig én `RangertKandidat` per medlem av `vurdering.gyldige`, og `kandidat`-oppslaget rett over bekrefter allerede medlemskapet. Tilstanden er structurally unreachable, ikke bare hevdet | avvist |
+| BH | Avviksnotatets kolonner har ingen «Din valgte»/«Topprangert»-etikett, bare navn | false: følger mockupen (`key-godkjenning.html`), som heller ikke har noen etikett — innledningssetningen navngir allerede hvem som er topprangert, og hvert navn er unikt | avvist |
+| BH | `godkjenningsgrunnlag()` kjører `ranger()` på nytt for hvert kall, uten gjenbruk fra kandidatruten | false: den låste delen krever uttrykkelig «på samme måte som kandidatruten»; de to rutene er separate sidelastinger uten delt tilstand noe sted i kodebasen i dag | avvist |
+| BH | Spec Change Log nevner ikke rettingen av den gamle 4.7-komponenttesten | false: Spec Change Log er for funn fra kodegjennomgangen, ikke en generell implementeringslogg; rettingen står riktig i Implementation Notes og KI-loggen | avvist |
 
 | # | Funn | Dom | Rute |
 |---|---|---|---|
@@ -127,3 +153,5 @@ En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spes
 - `frontend/`: `npm.cmd run build` og `npm.cmd run test`. Forventet: begge består (`node --test` og Vitest).
 
 **Manual checks (docs/testing.md):** 1080/960/680/1600 px, tastatur og fokus, farger (tokens, ikke rå verdier), større skrift, ekte backend mot #4127 (Jonas og Mette). For fasiten må testdatabasen være nyfylt uten lagrede tolkninger og bakgrunnstolkning være avslått; bruk separat testdatabase og ikke en database med data som skal beholdes. Kontroller også et grunnlag med lagret tolkning, uten å forutsette Jonas som nr. 1.
+
+**Resultat (2026-11-17):** `backend/.venv\Scripts\python -m pytest` — 675 bestått, inkludert import-linter-kontrakten. `npm.cmd run build` og `npm.cmd run test` (fra `frontend/`) — bygget og 52 `node --test` og 41 Vitest-komponenttester (37 eksisterende + 4 nye) bestod. Manuelle kontroller er ikke utført: ingen nettleser var tilgjengelig i denne økten. Dette er et åpent punkt, ikke et bestått resultat.

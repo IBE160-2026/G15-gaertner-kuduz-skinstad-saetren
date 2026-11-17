@@ -113,6 +113,16 @@ story-/sprint-nøkler.
   ulempe side om side for valgt mot topprangert kandidat, inkluderer linjen
   «Turnushjelperen anbefaler, den bestemmer aldri selv», og blokkerer aldri godkjenningen
   eller antyder at valget er feil.
+  - Story 4.5 er implementert 2026-11-17: `godkjenningsgrunnlag()` svarer med en fullt
+    rangert kandidat og et nytt `topprangert`-felt, bygget fra samme rangering og
+    #4127-fasit som kandidatlisten (AV-07) — en direkte lagret tolkning kan endre
+    topplasseringen uten live KI-kall (P-05) — og godkjenningsflaten viser
+    `Belastningslinje`/`Ulempeindikator` (gjenbrukt fra rangeringstabellen) og
+    `Avviksnotat`-komponenten over, som også dekker endret grunnlag før ny
+    bekreftelse (P-09). 675 backendtester, 52 modultester og 41 komponenttester
+    besto. Se [KI-loggen](../../docs/ki-logg/2026-11-17-avviksnotat.md).
+    Nettleserkontroll og menneskelig gjennomgang gjenstår, så storyen er fortsatt
+    `in-progress` i `sprint-status.yaml`, ikke ferdig.
 - Desktop og gjeldende tilgjengelighetskrav er bindende for dette epicet. Mobil-/
   nettbrettstøtte er utsatt til v2 — den smale skjermen-storyen (4.6) gjelder bare smale
   skrivebordsvinduer (1080 px, 960 px, 680 px), ikke telefon eller nettbrett: full tabell

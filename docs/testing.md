@@ -124,6 +124,8 @@ har satt opp, feiler testen.
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
 | | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. «Vis bare de 5 øverste» lukker listen igjen, med `aria-expanded` og fokus på knappen. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
 | [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
+| | Kandidatkortets timetall, timebelastningslinje og ulempeindikator for den topprangerte kandidaten, uten avviksnotat, og tekstvarsel ved høy belastning | 4.5 |
+| | Avviksnotatet viser kostnad, nivå, timebelastning og ulempe for valgt og topprangert kandidat side om side uten å blokkere godkjenning, og oppdateres (her: forsvinner) ved endret grunnlag før ny bekreftelse kreves | 4.5 |
 
 Hver test er vist å kunne feile: en bevisst feil i komponenten gjorde den rød. Mutasjonene
 og de røde meldingene står i [KI-loggen](ki-logg/2026-11-14-komponenttester.md).
@@ -256,3 +258,35 @@ Fem mutasjoner gjorde testene røde og står i [KI-loggen](ki-logg/2026-11-16-pr
 Ikke testet automatisk: `urllib_transport` mot ekte OpenRouter, og at tolkningene med en
 ekte nøkkel følger fasiten. Det er en valgfri manuell kontroll (19 betalte kall) i
 [spesifikasjonen](../_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md).
+
+## Story 4.5 – avviksnotat og nøkkeltall (2026-11-17)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-5-avviksnotat-og-nokkeltall-pa-godkjenningsflaten.md)
+knytter FR12 og UX-DR18/UX-DR23 til `godkjenningsgrunnlag()` i
+[`main.py`](../backend/adaptere/api/main.py), som nå svarer med en fullt
+rangert kandidat (`RangertKandidatUt`) og et nytt felt `topprangert`.
+[API-testene](../backend/tester/api/test_godkjenningsgrunnlag.py) dekker
+Jonas (plass 1, `topprangert: null`) og Mette (plass 2, `topprangert` er
+Jonas' fulle svar) som eksakte fasitsvar for #4127 uten lagrede tolkninger
+(AV-07), at `topprangert` er `null` nøyaktig ved plass 1 (også med bare én
+Gyldig kandidat), og at en direkte lagret tolkning (uten live KI-kall) kan
+endre topplasseringen uten å gjøre rangeringen om i seg selv.
+
+Frontend skilte ut `Belastningslinje` og `Ulempeindikator` fra
+`Kandidatrad` i `Kandidatflate.tsx`, gjenbrukt i godkjenningsflatens
+kandidatkort og i den nye `Avviksnotat`-komponenten i
+`Godkjenningsflate.tsx`. De to nye komponenttestene i
+[`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx)
+står i tabellen over. Den delte `JONAS`-testfixturen i
+[`hjelpere.ts`](../frontend/tester/komponenter/hjelpere.ts) ble oppgradert
+til `RangertKandidat` med #4127s fasit (79,40, uten lagrede tolkninger), og
+en ny `METTE`/`GODKJENNING_METTE`-fixture (72,40, topprangert Jonas) kom
+til; en eksisterende story 4.7-test som hardkodet Jonas' gamle, syntetiske
+ulempetall ble oppdatert til de nye, se [KI-loggen](ki-logg/2026-11-17-avviksnotat.md).
+
+Etter endringene: 675 backendtester, frontendbygget, 52 `node --test` og 41
+komponenttester (37 eksisterende + 4 nye) bestod. Layout, farger,
+fokusmarkering og ekte backend (Jonas og Mette på #4127, samt et grunnlag
+med lagret tolkning) er ikke kontrollert i nettleser denne økten og står
+som «Manual checks» i spesifikasjonen. Menneskelig gjennomgang av koden
+gjenstår; storyen er `in-progress`, ikke `review` eller `done`.

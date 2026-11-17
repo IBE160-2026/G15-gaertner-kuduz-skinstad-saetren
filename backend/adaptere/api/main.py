@@ -35,7 +35,6 @@ from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.rangering import RangertKandidat, TolketPreferanse
 from domene.porter.utelukkelse import UtelukkelsesOppsummering
-from domene.regelmotor.kompetanse import kompetansenivå
 from domene.regelmotor.kostnad import beregn_kostnad
 from domene.regelmotor.rangering import ranger
 from domene.regelmotor.timebelastning import timebelastning
@@ -271,7 +270,8 @@ class GodkjenningsgrunnlagUt(BaseModel):
 
     status: Literal["ok"]
     vakt: VaktdetaljerUt
-    kandidat: KandidatUt
+    kandidat: RangertKandidatUt
+    topprangert: RangertKandidatUt | None
     grunnlagsmerke: str
 
 
@@ -520,17 +520,25 @@ def lag_app(
         if kandidat is None:
             # Utelukket, satt opp og ukjent gir samme svar (NFR2).
             return feil(404, "ikke_funnet")
+        # Fullt rangert kandidat og topprangert ved siden av (story 4.5, FR12, UX-DR18).
+        # `ranger()` rangerer bare `vurdering.gyldige`, og `ansatt_id` er allerede
+        # bekreftet der over, så `valgt` finnes garantert.
+        rangert = ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede)
+        gyldige = {k.id: k for k in vurdering.gyldige}
+        valgt = next(r for r in rangert if r.id == ansatt_id)
+        topprangert_r = None if valgt.plass == 1 else next(r for r in rangert if r.plass == 1)
         return GodkjenningsgrunnlagUt(
             status="ok",
             vakt=VaktdetaljerUt.model_validate(detaljer, from_attributes=True),
-            kandidat=KandidatUt(
-                id=kandidat.id, navn=kandidat.navn, kompetansenivå=kompetansenivå(kandidat, grunnlag.vakt),
-                minutter_i_uka=minutter_i_uka(kandidat, grunnlag.vakt),
-                **belastning(kandidat, grunnlag.vakt),
-                kostnad=KostnadUt.model_validate(beregn_kostnad(kandidat, grunnlag.vakt), from_attributes=True),
-                ulempebelastning=UlempebelastningUt.model_validate(
-                    vurdering.ulempe_per_kandidat[kandidat.id], from_attributes=True,
-                ),
+            kandidat=rangert_ut(
+                valgt, gyldige[ansatt_id], grunnlag.vakt, vurdering.ulempe_per_kandidat[ansatt_id],
+            ),
+            topprangert=(
+                None if topprangert_r is None
+                else rangert_ut(
+                    topprangert_r, gyldige[topprangert_r.id], grunnlag.vakt,
+                    vurdering.ulempe_per_kandidat[topprangert_r.id],
+                )
             ),
             grunnlagsmerke=grunnlagsmerke(okt, request.state.bruker.id, vaktnummer, ansatt_id),
         )

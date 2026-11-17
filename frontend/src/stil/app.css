@@ -573,6 +573,44 @@ button {
   margin-top: var(--space-2);
 }
 
+/* Avviksnotatet (story 4.5, UX-DR18, UX-DR23): stiplet kant som Ekskludert-
+   boksen, nøytral tone. Overskriften er som `.lbl` i mockupen (accent, store
+   bokstaver), ikke `.section-label`s dempede farge, så den skiller seg fra de
+   vanlige avsnittsoverskriftene på flaten. */
+.avviksnotat {
+  margin-top: var(--space-4);
+  padding: var(--content-padding);
+  border: var(--border-width) dashed var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-breadcrumb-bg);
+}
+
+.avviksnotat-lbl {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-meta);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-column-header);
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.avviksnotat-sammenligning {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.avviksnotat-kandidat {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.avviksnotat-navn {
+  margin: 0 0 var(--space-1);
+  font-weight: var(--font-weight-bold);
+}
+
 .bekreftelsesboks {
   margin-top: var(--space-4);
 }

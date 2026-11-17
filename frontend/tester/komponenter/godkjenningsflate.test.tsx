@@ -7,7 +7,7 @@ import Godkjenningsflate from "../../src/komponenter/Godkjenningsflate";
 import { datoOgKlokke } from "../../src/format";
 import { kandidatsti } from "../../src/navigasjon";
 import { FEILTEKSTER, TEKSTER } from "../../src/tekster";
-import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, falskFetch, feil, json, ok, type Svar } from "./hjelpere";
+import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, GODKJENNING_METTE, falskFetch, feil, json, ok, type Svar } from "./hjelpere";
 
 const t = TEKSTER.godkjenning;
 const URL = "/api/vakter/4127/kandidater/6";
@@ -33,6 +33,86 @@ test("«Godkjenn erstatning» sender merket og navigerer bare etter suksess", as
   expect(fetch).toHaveBeenCalledTimes(2);
   expect(fetch.mock.calls[1][1]?.method).toBe("POST");
   expect(JSON.parse(String(fetch.mock.calls[1][1]?.body))).toEqual({ grunnlagsmerke: GODKJENNING_JONAS.grunnlagsmerke });
+});
+
+// --- Nøkkeltall og avviksnotat (story 4.5, FR12, UX-DR18, UX-DR23) ---------------
+
+test("kandidatkortet viser tilgjengelig timetall og ulempe for topprangert kandidat, uten avviksnotat", async () => {
+  rendreMed(ok(GODKJENNING_JONAS));
+  const kort = await screen.findByRole("region", { name: "Jonas Bakke" });
+
+  expect(within(kort).getByText("16:00 t i uka")).toBeTruthy();
+  expect(within(kort).getByText("16 timer og 0 minutter i uka")).toBeTruthy();
+  expect(within(kort).getByText("40,0 p")).toBeTruthy();
+  expect(within(kort).getByText("Kveld 4,0 t · helg 15,0 t · natt 2,0 t")).toBeTruthy();
+  // Jonas er topprangert selv (plass 1): ingen avviksnotat (`topprangert` er null).
+  expect(screen.queryByText(t.avviksnotat.overskrift)).toBeNull();
+});
+
+test("høy belastning gir tekstvarsel på kandidatkortet", async () => {
+  const svar = { ...GODKJENNING_JONAS, kandidat: { ...GODKJENNING_JONAS.kandidat, hoy_belastning: true, timebelastning_prosent: 90 } };
+  rendreMed(ok(svar));
+  const kort = await screen.findByRole("region", { name: "Jonas Bakke" });
+
+  expect(within(kort).getByText(TEKSTER.kandidatflate.hoyBelastning)).toBeTruthy();
+});
+
+test("avviksnotatet viser kostnad, nivå, timebelastning og ulempe for Mette og Jonas side om side, uten å blokkere godkjenning", async () => {
+  const url = "/api/vakter/4127/kandidater/5";
+  // Mette får høy belastning her, så testen også dekker at varselteksten vises
+  // skilt per kandidatgruppe (bare hos Mette, ikke hos Jonas).
+  const svar = {
+    ...GODKJENNING_METTE,
+    kandidat: { ...GODKJENNING_METTE.kandidat, hoy_belastning: true, timebelastning_prosent: 90 },
+  };
+  falskFetch({ [url]: ok(svar) });
+  render(<Godkjenningsflate vaktnummer={4127} ansattId={5} onTilbake={vi.fn()} onGodkjent={vi.fn()} onTilOversikt={vi.fn()} />);
+  await screen.findByRole("heading", { name: "Mette Solberg" });
+
+  expect(screen.getByText(t.avviksnotat.overskrift)).toBeTruthy();
+  expect(screen.getByText(`${t.avviksnotat.innledning("Jonas Bakke")} ${t.avviksnotat.anbefaling}`)).toBeTruthy();
+
+  const mette = screen.getByText("Mette Solberg", { selector: ".avviksnotat-navn" }).closest(".avviksnotat-kandidat") as HTMLElement;
+  const jonas = screen.getByText("Jonas Bakke", { selector: ".avviksnotat-navn" }).closest(".avviksnotat-kandidat") as HTMLElement;
+
+  expect(within(mette).getByText(/Kostnad: 2\s960,00 kr/)).toBeTruthy();
+  expect(within(mette).getByText(t.nivaaTag(4))).toBeTruthy();
+  expect(within(mette).getByText("16:00 t i uka")).toBeTruthy();
+  expect(within(mette).getByText("180,0 p")).toBeTruthy();
+  expect(within(mette).getByText(TEKSTER.kandidatflate.hoyBelastning)).toBeTruthy();
+
+  expect(within(jonas).getByText(/Kostnad: 2\s960,00 kr/)).toBeTruthy();
+  expect(within(jonas).getByText(t.nivaaTag(3))).toBeTruthy();
+  expect(within(jonas).getByText("16:00 t i uka")).toBeTruthy();
+  expect(within(jonas).getByText("40,0 p")).toBeTruthy();
+  expect(within(jonas).queryByText(TEKSTER.kandidatflate.hoyBelastning)).toBeNull();
+
+  // Avviksnotatet er bare informativt: godkjenningsknappen er fortsatt aktiv.
+  expect((screen.getByRole("button", { name: t.godkjenn }) as HTMLButtonElement).disabled).toBe(false);
+});
+
+test("endret grunnlag oppdaterer avviksnotatet (ny topprangert) og krever nytt trykk (P-09)", async () => {
+  const url = "/api/vakter/4127/kandidater/5";
+  const oppdatert = { ...GODKJENNING_METTE, grunnlagsmerke: "c".repeat(64), topprangert: null };
+  const fetch = falskFetch({
+    [url]: [ok(GODKJENNING_METTE), ok(oppdatert)],
+    [`POST ${url}`]: [feil(409, "endret_grunnlag"), ok({ status: "godkjent" })],
+  });
+  const onGodkjent = vi.fn();
+  render(<Godkjenningsflate vaktnummer={4127} ansattId={5} onTilbake={vi.fn()} onGodkjent={onGodkjent} onTilOversikt={vi.fn()} />);
+  const bruker = userEvent.setup();
+  await screen.findByRole("heading", { name: "Mette Solberg" });
+  expect(screen.getByText(t.avviksnotat.overskrift)).toBeTruthy();
+
+  await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
+  expect(await screen.findByText(t.endret)).toBeTruthy();
+  // Nytt grunnlag: Mette er nå selv topprangert (plass 1), så notatet forsvinner.
+  await vi.waitFor(() => expect(screen.queryByText(t.avviksnotat.overskrift)).toBeNull());
+  expect(onGodkjent).not.toHaveBeenCalled();
+
+  await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
+  expect(onGodkjent).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(String(fetch.mock.calls[3][1]?.body))).toEqual({ grunnlagsmerke: oppdatert.grunnlagsmerke });
 });
 
 test("datafeil viser ingen knapper for godkjenning", async () => {

@@ -193,6 +193,14 @@ export const TEKSTER = {
     tilbake: "Tilbake til kandidatlisten",
     datafeil: "Kan ikke vise godkjenningen fordi nødvendig turnusgrunnlag mangler.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
+    // Avviksnotatet (story 4.5, UX-DR18, UX-DR23): bare vist når valgt kandidat
+    // ikke er den topprangerte. Nøytral tekst — ingen antydning om at valget er feil.
+    avviksnotat: {
+      overskrift: "Avvik fra anbefalt rangering",
+      innledning: (navn: string) => `${navn} er rangert øverst for denne vakten.`,
+      anbefaling: "Turnushjelperen anbefaler, den bestemmer aldri selv.",
+      kompetanse: "Kompetanse",
+    },
   },
 
   // Ekskludert-boksen (story 2.5, UX-DR15). Egen mal per årsak: grammatikken er

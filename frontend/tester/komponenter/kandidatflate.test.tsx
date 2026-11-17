@@ -151,8 +151,9 @@ test("viser hver kandidats ulempepoeng og fordeling, også null (story 4.7)", as
   const mette = radFor(del, "Mette Solberg");
 
   // Kolonneoverskriften er «Ulempe» (4.4); cellen har bare poengene.
-  expect(within(jonas).getByText("14,6 p")).toBeTruthy();
-  expect(within(jonas).getByText("Kveld 1,6 t · helg 2,0 t · natt 3,0 t")).toBeTruthy();
+  // Jonas' tall er #4127s fasit uten lagrede tolkninger (story 4.5, AV-07).
+  expect(within(jonas).getByText("40,0 p")).toBeTruthy();
+  expect(within(jonas).getByText("Kveld 4,0 t · helg 15,0 t · natt 2,0 t")).toBeTruthy();
   expect(within(mette).getByText("0,0 p")).toBeTruthy();
   expect(within(mette).getByText("Kveld 0,0 t · helg 0,0 t · natt 0,0 t")).toBeTruthy();
 });
