@@ -25,11 +25,11 @@ context:
 **Always:**
 - `GodkjenningsgrunnlagUt.kandidat` blir `RangertKandidatUt` (var `KandidatUt`). Ruten kjører `ranger(...)` på samme måte som kandidatruten, finner valgt kandidat i resultatet via `ansatt_id`, og bygger den med `rangert_ut`.
 - Nytt felt `topprangert: RangertKandidatUt | None`. `None` nøyaktig når valgt kandidats `plass == 1`. Ellers er det kandidaten med `plass == 1` i samme rangering, bygget med samme `rangert_ut`. Bruk `plass`, ikke en egen sammenligning av `totalscore` (de uavrundede totalene er allerede riktig avgjort i `domene/regelmotor`, inkludert likhetsbryting).
-- Kandidatkortet viser, i tillegg til det som er der i dag: timebelastningslinjen (som i rangeringstabellen, `warn`-farge ved `hoy_belastning`, aldri `danger`) og ulempeindikatoren (poengsum + kveld/helg/natt-fordeling). Ingen terskel eller fargeskifte på ulempe (UX-DR28).
-- Avviksnotatet («Avvik fra anbefalt rangering», stiplet kant, `--color-breadcrumb-bg`) vises bare når `topprangert` ikke er `null`. Det viser kostnad, kompetansenivå, timebelastning og ulempebelastning for valgt og topprangert kandidat, i den rekkefølgen, side om side i én kompakt linje (som mockupen), med navn foran hvert sett med tall. Inkluderer teksten «Turnushjelperen anbefaler, den bestemmer aldri selv.». Blokkerer aldri godkjenningsknappen og antyder aldri at valget er feil (UX-DR23).
-- `timebelastningslinje` og `ulempeindikator` (i dag inline JSX i `Kandidatrad` i `Kandidatflate.tsx`) skilles ut som egne komponenter og gjenbrukes uendret i rangeringstabellen, kandidatkortet og begge sidene av avviksnotatet.
+- Kandidatkortet viser timebelastningslinjen med synlig timetall og forståelig skjermlesertekst, som i rangeringstabellen (`warn`-farge og tekstvarsel ved `hoy_belastning`, aldri `danger`), og ulempeindikatoren (poengsum + kveld/helg/natt-fordeling). Ingen terskel eller fargeskifte på ulempe (UX-DR28).
+- Avviksnotatet («Avvik fra anbefalt rangering», stiplet kant, `--color-breadcrumb-bg`) vises bare når `topprangert` ikke er `null`. Det viser kostnad, kompetansenivå, timebelastning og ulempebelastning for valgt og topprangert kandidat, i den rekkefølgen, som to kompakte kandidatgrupper side om side, med navn foran hvert sett med tall; innholdet kan brytes over flere linjer. Inkluderer teksten «Turnushjelperen anbefaler, den bestemmer aldri selv.». Blokkerer aldri godkjenningsknappen og antyder aldri at valget er feil (UX-DR23).
+- Timebelastning med timetall og `ulempeindikator` (i dag inline JSX i `Kandidatrad` i `Kandidatflate.tsx`) skilles ut og gjenbrukes i rangeringstabellen, kandidatkortet og begge kandidatgruppene i avviksnotatet. Hver gruppe har navn, kostnad, nivå, timebelastning og ulempeindikator med fordeling; verdiene trenger ikke utgjøre én sammenhengende tekstnode.
 - Nye eller endrede koblinger får komponenttester (OP-16, `docs/testing.md`): kandidatkortets nye indikatorer, og avviksnotatets vis/skjul og sammenligningslinje, i `frontend/tester/komponenter/godkjenningsflate.test.tsx`.
-- Testdatafasiten tilpasses aldri koden (AV-07). For #4127 uten tolkede preferanser (gjeldende, siden 5.2 ikke er koblet inn): Jonas Bakke er nr. 1 (79,40), Mette Solberg nr. 2 (72,40). Velges Mette, viser avviksnotatet Jonas som topprangert.
+- Testdatafasiten tilpasses aldri koden (AV-07). For #4127 i et kontrollert grunnlag uten lagrede tolkninger: Jonas Bakke er nr. 1 (79,40), Mette Solberg nr. 2 (72,40). Velges Mette, viser avviksnotatet Jonas som topprangert. Lagrede tolkninger fra 5.1 brukes allerede i rangeringen og kan endre rekkefølgen (P-05).
 
 **Never:** Endre rangeringsformelen, vektene eller `RangertKandidat`s felt. Endre godkjenningslogikken, `grunnlagsmerke` eller POST-ruten. Story 4.6 (smale skjermer) og Epic 5 (KI-forklaring, utvidelseskolonnen).
 
@@ -40,7 +40,7 @@ context:
 | Topprangert valgt | #4127, Jonas Bakke (plass 1) | kandidatkort med timebelastningslinje og ulempeindikator; `topprangert` er `null`; ikke noe avviksnotat | — |
 | Ikke topprangert valgt | #4127, Mette Solberg (plass 2) | avviksnotat vises: Mette (2 960 kr, nivå 4/4, 16 t, 180 p) og Jonas (2 960 kr, nivå 3/4, 16 t, 40 p) side om side | — |
 | Datafeil | som i dag | `DatafeilUt`, ingen kandidat eller topprangert | uendret fra i dag |
-| Endret grunnlag før bekreftelse | rangeringen endrer plassering mens flaten er åpen | nytt GET med nytt `grunnlagsmerke`, `plass` og `topprangert` oppdateres fra samme snapshot | uendret fra i dag (P-09) |
+| Endret grunnlag før bekreftelse | rangeringen endrer plassering mens flaten er åpen; brukeren bekrefter | POST svarer `endret_grunnlag`; nytt GET gir nytt `grunnlagsmerke`, `plass` og `topprangert` fra samme snapshot, og ny bekreftelse kreves | uendret fra i dag (P-09); ingen automatisk oppdatering før bekreftelsesforsøket |
 | Én gyldig kandidat | bare én Gyldig for vakten | `plass == 1`, `topprangert` er `null` | — |
 
 </frozen-after-approval>
@@ -57,22 +57,24 @@ context:
   - `test_kandidaten_har_bare_kontraktsfeltene` (l.168): nøkkelsettet for `kandidat` blir `RANGERT_FELT` (allerede definert i `test_kandidater.py`, importer eller dupliser).
   - `test_svaret_for_gyldig_nevner_ingen_utelukket` (l.157): sjekk også at `topprangert`, der den finnes, ikke nevner noen utelukket.
   - Ny test: `topprangert` er nøyaktig `None` når valgt er nr. 1, og nøyaktig nr. 1-kandidaten (ikke en kopi av valgt) når valgt ikke er nr. 1.
+  - Styr fasittesten slik at ingen lagrede tolkninger finnes. Legg til en test uten live-kall med lagret tolkning som endrer topplasseringen, og sammenlign valgt kandidat og `topprangert` med samme grunnlags kandidatliste (P-05). Et syntetisk eksempel er Mette med «ønsker flere» (100 preferansepoeng) og Jonas med 50; dette er en testtilstand, ikke en påstand om seedteksten.
 - `frontend/src/api.ts`:
   - `Godkjenningssvar`s `"ok"`-gren: `kandidat: Kandidat` → `kandidat: RangertKandidat`, nytt felt `topprangert: RangertKandidat | null`.
 - `frontend/src/godkjenning.ts`:
   - `Godkjenningstilstand`s `"klar"`-gren får `kandidat: RangertKandidat` og `topprangert: RangertKandidat | null`, satt i `tilstandFraSvar`.
   - `frontend/tester/godkjenning.test.mjs`: oppdater fixturene til `RangertKandidat`-formen og `topprangert`.
 - `frontend/src/komponenter/Kandidatflate.tsx`:
-  - Skill ut `Belastningslinje({ prosent, høy }: { prosent: number; høy: boolean })` og `Ulempeindikator({ ulempe }: { ulempe: Ulempebelastning })` fra dagens inline JSX i `Kandidatrad` (linjene med `belastningslinje`/`belastningsfyll` og `kandidat-ulempe`). Eksporter dem (de brukes fra `Godkjenningsflate.tsx`), og bruk dem uendret i `Kandidatrad`.
+  - Skill ut `Belastningslinje({ minutter, prosent, høy })` med dagens synlige timer, skjermlesertekst, grafiske linje og eventuelle varsel, samt `Ulempeindikator({ ulempe })` med poeng og fordeling. Eksporter og gjenbruk dem i `Kandidatrad` og `Godkjenningsflate.tsx`.
 - `frontend/src/komponenter/Godkjenningsflate.tsx`:
   - Kandidatkortet (`<section className="panel kandidatkort">`, l.157): legg til `Belastningslinje` og `Ulempeindikator` fra `tilstand.kandidat` etter `Kostnadsvisning`.
   - Ny komponent `Avviksnotat({ valgt, topprangert })`, vist mellom kandidatkortet og bekreftelsesboksen, bare når `tilstand.topprangert` ikke er `null`.
 - `frontend/src/tekster.ts`: i `godkjenning`-seksjonen (l.157), legg til teksten for avviksnotatets overskrift, sammenligningslinjen (mal per kandidat: navn, kostnad, nivå, timer, ulempe) og «Turnushjelperen anbefaler, den bestemmer aldri selv.».
 - `frontend/src/stil/app.css`: `.avviksnotat` som `.ekskludert-boks` (`border: var(--border-width) dashed var(--color-border); background: var(--color-breadcrumb-bg);`), med en liten overskriftsstil for «Avvik fra anbefalt rangering» (som `.lbl` i mockupen: `accent`-farge, store bokstaver). Bare tokens (AV-13).
 - `frontend/tester/komponenter/hjelpere.ts`: `JONAS` og `GODKJENNING_JONAS` (brukt av alle 12 eksisterende tester i `godkjenningsflate.test.tsx`) typer `kandidat` som `Kandidat`, uten rangeringsfelt eller `topprangert`. Må oppdateres til `RangertKandidat` med Jonas' fasitverdier (plass 1, totalscore 79,40 osv. fra `test_rangering.py`/`UTEN_TOLKNING_4127`) og `topprangert: null`, ellers feiler `satisfies Godkjenningssvar`-typesjekken og `npm.cmd run build`. Legg til en tilsvarende `GODKJENNING_METTE`-fixture (plass 2, `topprangert` er Jonas' fulle `RangertKandidat`).
-- `frontend/tester/komponenter/godkjenningsflate.test.tsx`: to nye tester.
-  1. Med `GODKJENNING_JONAS`: kandidatkortet viser timebelastningslinjen og ulempeindikatoren, og avviksnotatet finnes ikke i DOM-en (`queryByText`/`queryByRole` på overskriften «Avvik fra anbefalt rangering» gir `null`) — ikke bare at det ikke er synlig.
-  2. Med `GODKJENNING_METTE`: avviksnotatet vises med den eksakte sammenligningsteksten for begge kandidatene («Mette Solberg: 2 960,00 kr, Nivå 4/4, 16 t i startuken, 180 ulempepoeng · Jonas Bakke: 2 960,00 kr, Nivå 3/4, 16 t i startuken, 40 ulempepoeng.»), ikke bare at en linje finnes.
+- `frontend/tester/komponenter/godkjenningsflate.test.tsx`:
+  1. Med `GODKJENNING_JONAS`: kontroller synlig og tilgjengelig timetall, ulempepoeng og fordeling på kandidatkortet; avviksnotatet finnes ikke i DOM-en. Kontroller også tekstvarsel ved høy belastning.
+  2. Med `GODKJENNING_METTE`: kontroller hver kandidatgruppe separat: navn, 2 960 kr, nivå 4/4 mot 3/4, 16 t, 180 mot 40 ulempepoeng og riktig kveld/helg/natt-fordeling. Kontroller at bekreftelsesknappen er aktiv.
+  3. Utvid testen av `endret_grunnlag`: POST avvises, nytt GET gir endret toppkandidat og nytt merke, notatet oppdateres eller forsvinner riktig, og ny bekreftelse sender det nye merket (P-09).
 - `docs/testing.md`: ny rad i komponenttest-tabellen for de to nye flytene, og et nytt avsnitt «Story 4.5 – avviksnotat og nøkkeltall» etter mønsteret fra 4.3/4.4.
 - Ikke endre: `domene/regelmotor/rangering.py`, `domene/porter/rangering.py`, `kandidater()`-ruten, POST-ruten for godkjenning, `grunnlagsmerke`.
 
@@ -80,26 +82,29 @@ context:
 
 **Execution:**
 - [ ] `backend/adaptere/api/main.py` — `RangertKandidatUt` og `topprangert` i `GodkjenningsgrunnlagUt`, bygget i `godkjenningsgrunnlag()`.
-- [ ] `backend/tester/api/test_godkjenningsgrunnlag.py` — oppdater de fire berørte testene og legg til testen for `topprangert`.
+- [ ] `backend/tester/api/test_godkjenningsgrunnlag.py` — oppdater berørte tester og test `topprangert` både uten tolkninger og med lagret tolkning som endrer rangeringen.
 - [ ] `frontend/src/api.ts`, `godkjenning.ts`, `tester/godkjenning.test.mjs` — ny type og felt.
 - [ ] `frontend/src/komponenter/Kandidatflate.tsx` — skill ut `Belastningslinje` og `Ulempeindikator`.
 - [ ] `frontend/src/komponenter/Godkjenningsflate.tsx`, `tekster.ts`, `stil/app.css` — nøkkeltall på kortet og `Avviksnotat`.
 - [ ] `frontend/tester/komponenter/hjelpere.ts` — oppdater `JONAS`/`GODKJENNING_JONAS` til `RangertKandidat` + `topprangert: null`, og legg til `GODKJENNING_METTE`.
-- [ ] `frontend/tester/komponenter/godkjenningsflate.test.tsx` — komponenttester for begge flytene, inkl. eksplisitt fravær av notatet for Jonas og de eksakte sammenligningstallene for Mette (OP-16).
+- [ ] `frontend/tester/komponenter/godkjenningsflate.test.tsx` — test tilgjengelig timetall, begge kandidatgruppenes verdier og endret rangering etter `endret_grunnlag` (OP-16, P-09).
 - [ ] `docs/testing.md`, `docs/ki-logg/<dato>-avviksnotat.md`, `docs/emne/vurderingsmatrise.md`, `epic-4-context.md` — dokumenter flyt, KI-arbeid, bevis og status.
 
 **Acceptance Criteria:**
-- Given #4127 og Jonas Bakke valgt, when godkjenningsflaten vises, then kandidatkortet viser timebelastningslinjen og ulempeindikatoren, og ingen avviksnotat vises.
-- Given #4127 og Mette Solberg valgt, when flaten vises, then avviksnotatet viser kostnad, kompetansenivå, timebelastning og ulempe for Mette og Jonas side om side, med teksten «Turnushjelperen anbefaler, den bestemmer aldri selv.», og godkjenningsknappen er fortsatt aktiv.
+- Given #4127 uten lagrede tolkninger og Jonas Bakke valgt, when godkjenningsflaten vises, then kandidatkortet viser tilgjengelig timetall, timebelastningslinjen og ulempeindikatoren, og ingen avviksnotat vises.
+- Given #4127 uten lagrede tolkninger og Mette Solberg valgt, when flaten vises, then avviksnotatet viser kostnad, kompetansenivå, timebelastning og ulempe med fordeling for Mette og Jonas side om side, med teksten «Turnushjelperen anbefaler, den bestemmer aldri selv.», og godkjenningsknappen er fortsatt aktiv.
+- Given at rangeringen endres mens godkjenningsflaten er åpen, when bekreftelse avvises med `endret_grunnlag`, then vises oppdatert sammenligning fra nytt grunnlag og ny bekreftelse kreves (P-09).
 - Given hele testpakken, when `pytest`, `npm.cmd run build` og `npm.cmd run test` kjøres, then alt består.
 
 ## Implementation Notes
 
 ## Spec Change Log
 
+- 2026-11-17: Presisert timeverdier og tilgjengelighet, aktiv bruk av lagrede preferansetolkninger, kandidatgrupper med indikatorer og test av endret grunnlag etter gjennomgang av PR 31. Endringene i låst del er godkjent av Kim i samtalen etter gjennomgangen.
+
 ## Review Triage Log
 
-En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spesifikasjonen 2026-11-17, før godkjenning. Fasittallene (kostnad 2960/2960, nivå 4/4 Mette mot 3/4 Jonas, ulempe 180/40, uten tolkning: Jonas 79,40/plass 1, Mette 72,40/plass 2), valget av `plass` fremfor `totalscore`, og utelatelsen av preferansepoeng (5.2 ikke koblet inn) ble alle kontrollert og funnet i orden. Ingen funn i den låste delen.
+En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spesifikasjonen 2026-11-17, før godkjenning. Fasittallene uten tolkning og valget av `plass` fremfor `totalscore` ble kontrollert. Påstanden om at preferanser ikke var koblet inn, ble senere korrigert i Spec Change Log.
 
 | # | Funn | Dom | Rute |
 |---|---|---|---|
@@ -111,7 +116,7 @@ En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spes
 ## Design Notes
 
 - **Hvorfor `plass` og ikke `totalscore`:** Epic 4-konteksten påpeker at kostnad er `float`, så nær-like totaler kan i prinsippet avvike i siste siffer uten å utløse likhetsbrytingen på ansatt-ID. `plass` er allerede regnet ferdig i domenekjernen med nøyaktige `Fraction`-verdier og den riktige likhetsbrytingen, så å sammenligne `plass == 1` her er korrekt og unngår å gjenta den logikken i API- eller frontend-laget.
-- **Sammenligningslinjens form:** følger mockupen (`key-godkjenning.html`, `.deviation-note .compare`) med ekte, gjeldende fasittall: «Mette Solberg: 2 960,00 kr, Nivå 4/4, 16 t i startuken, 180 ulempepoeng · Jonas Bakke: 2 960,00 kr, Nivå 3/4, 16 t i startuken, 40 ulempepoeng.» Valgt kandidat står først. Mockupens eksempel har 75 preferansepoeng for begge fordi den antar tolkede preferanser; det er ikke koblet inn før story 5.2, så preferansepoeng tas ikke med i sammenligningen ennå.
+- **Sammenligningens form:** bygger på mockupen (`key-godkjenning.html`, `.deviation-note .compare`), men hver kandidatgruppe inneholder også de gjenbrukte indikatorene med fordeling. Valgt kandidat står først. Preferansepoeng tas ikke med i notatet; lagrede tolkninger kan likevel påvirke hvilken kandidat som er topprangert.
 
 ## Verification
 
@@ -119,4 +124,4 @@ En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spes
 - `backend/`: `.venv\Scripts\python -m pytest`. Forventet: alt består, også import-linter.
 - `frontend/`: `npm.cmd run build` og `npm.cmd run test`. Forventet: begge består (`node --test` og Vitest).
 
-**Manual checks (docs/testing.md):** 1080/960/680/1600 px, tastatur og fokus, farger (tokens, ikke rå verdier), større skrift, ekte backend mot #4127 (Jonas og Mette).
+**Manual checks (docs/testing.md):** 1080/960/680/1600 px, tastatur og fokus, farger (tokens, ikke rå verdier), større skrift, ekte backend mot #4127 (Jonas og Mette). For fasiten må testdatabasen være nyfylt uten lagrede tolkninger og bakgrunnstolkning være avslått; bruk separat testdatabase og ikke en database med data som skal beholdes. Kontroller også et grunnlag med lagret tolkning, uten å forutsette Jonas som nr. 1.
