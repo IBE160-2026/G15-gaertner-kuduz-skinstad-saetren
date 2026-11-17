@@ -101,6 +101,7 @@ context:
 ## Spec Change Log
 
 - 2026-11-17: Presisert timeverdier og tilgjengelighet, aktiv bruk av lagrede preferansetolkninger, kandidatgrupper med indikatorer og test av endret grunnlag etter gjennomgang av PR 31. Endringene i låst del er godkjent av Kim i samtalen etter gjennomgangen.
+- 2026-11-17: Mithad Kuduz (storyens eier, OP-17) godkjente endringene over i denne økten, etter å ha gått gjennom dem linje for linje. PR #31 hadde ingen registrerte kommentarer eller gjennomganger da Kims commits ble pushet direkte til branchen; godkjenningen her er derfor sporet i sesjonsloggen i stedet.
 
 ## Review Triage Log
 
