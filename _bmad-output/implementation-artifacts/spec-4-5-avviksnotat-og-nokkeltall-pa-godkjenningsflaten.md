@@ -2,7 +2,7 @@
 title: 'Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten'
 type: 'feature'
 created: '2026-11-17'
-status: 'draft'
+status: 'ready-for-dev'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -49,7 +49,7 @@ context:
 
 - `backend/adaptere/api/main.py`:
   - `GodkjenningsgrunnlagUt.kandidat` endres fra `KandidatUt` til `RangertKandidatUt`. Nytt felt `topprangert: RangertKandidatUt | None`.
-  - I `godkjenningsgrunnlag()` (l.~503): etter at `vurdering` er klar (ikke `Datafeil`), kjør `rangert = ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede)` (samme mønster som `kandidater()`, l.~490). Finn `valgt = next((r for r in rangert if r.id == ansatt_id), None)`; `None` gir fortsatt 404 (samme NFR2-begrunnelse som i dag). Bygg `kandidat = rangert_ut(valgt, grunnlag.ansatte_ved_id[ansatt_id], grunnlag.vakt, vurdering.ulempe_per_kandidat[ansatt_id])` — se om `kandidatgrunnlag.py` allerede har et oppslag fra id til `Kandidat`, ellers lag et lite `{k.id: k for k in grunnlag.ansatte}`. `topprangert_r = None if valgt.plass == 1 else next(r for r in rangert if r.plass == 1)`, og bygg `RangertKandidatUt` for den på samme måte når den ikke er `None`.
+  - I `godkjenningsgrunnlag()` (l.~503): den eksisterende linjen `kandidat = next((k for k in vurdering.gyldige if k.id == ansatt_id), None)` (l.~519) avgjør fortsatt 404 som i dag — ikke endre den grenen. Når `kandidat` ikke er `None`: kjør `rangert = ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede)` (samme mønster som `kandidater()`, l.~490), og bygg `gyldige = {k.id: k for k in vurdering.gyldige}` lokalt (samme uttrykk som allerede brukes i `kandidater()`, l.~489) for oppslag fra id til `Kandidat`. Siden `ranger()` bare rangerer `vurdering.gyldige`, og `ansatt_id` allerede er bekreftet der, finnes den garantert i `rangert`: `valgt = next(r for r in rangert if r.id == ansatt_id)`, uten en `None`-gren — det er ikke en ny feiltilstand. Bygg `kandidat = rangert_ut(valgt, gyldige[ansatt_id], grunnlag.vakt, vurdering.ulempe_per_kandidat[ansatt_id])`. `topprangert_r = None if valgt.plass == 1 else next(r for r in rangert if r.plass == 1)`, og bygg `RangertKandidatUt` for den på samme måte (med `gyldige[topprangert_r.id]`) når den ikke er `None`.
   - Gjenbruk `rangert_ut` uendret (den tar allerede `RangertKandidat, Kandidat, Vakt, Ulempebelastning`).
 - `backend/tester/api/test_godkjenningsgrunnlag.py`:
   - `test_gyldig_kandidat_gir_vakt_og_kandidat` (l.60): nøkkelsettet blir `{"status", "vakt", "kandidat", "topprangert", "grunnlagsmerke"}`.
@@ -69,7 +69,10 @@ context:
   - Ny komponent `Avviksnotat({ valgt, topprangert })`, vist mellom kandidatkortet og bekreftelsesboksen, bare når `tilstand.topprangert` ikke er `null`.
 - `frontend/src/tekster.ts`: i `godkjenning`-seksjonen (l.157), legg til teksten for avviksnotatets overskrift, sammenligningslinjen (mal per kandidat: navn, kostnad, nivå, timer, ulempe) og «Turnushjelperen anbefaler, den bestemmer aldri selv.».
 - `frontend/src/stil/app.css`: `.avviksnotat` som `.ekskludert-boks` (`border: var(--border-width) dashed var(--color-border); background: var(--color-breadcrumb-bg);`), med en liten overskriftsstil for «Avvik fra anbefalt rangering» (som `.lbl` i mockupen: `accent`-farge, store bokstaver). Bare tokens (AV-13).
-- `frontend/tester/komponenter/godkjenningsflate.test.tsx`: utvid med Jonas (nr. 1, ingen notat, kort viser begge indikatorene) og Mette (nr. 2, notat med riktig sammenligningslinje), etter mønsteret i `hjelpere.ts`.
+- `frontend/tester/komponenter/hjelpere.ts`: `JONAS` og `GODKJENNING_JONAS` (brukt av alle 12 eksisterende tester i `godkjenningsflate.test.tsx`) typer `kandidat` som `Kandidat`, uten rangeringsfelt eller `topprangert`. Må oppdateres til `RangertKandidat` med Jonas' fasitverdier (plass 1, totalscore 79,40 osv. fra `test_rangering.py`/`UTEN_TOLKNING_4127`) og `topprangert: null`, ellers feiler `satisfies Godkjenningssvar`-typesjekken og `npm.cmd run build`. Legg til en tilsvarende `GODKJENNING_METTE`-fixture (plass 2, `topprangert` er Jonas' fulle `RangertKandidat`).
+- `frontend/tester/komponenter/godkjenningsflate.test.tsx`: to nye tester.
+  1. Med `GODKJENNING_JONAS`: kandidatkortet viser timebelastningslinjen og ulempeindikatoren, og avviksnotatet finnes ikke i DOM-en (`queryByText`/`queryByRole` på overskriften «Avvik fra anbefalt rangering» gir `null`) — ikke bare at det ikke er synlig.
+  2. Med `GODKJENNING_METTE`: avviksnotatet vises med den eksakte sammenligningsteksten for begge kandidatene («Mette Solberg: 2 960,00 kr, Nivå 4/4, 16 t i startuken, 180 ulempepoeng · Jonas Bakke: 2 960,00 kr, Nivå 3/4, 16 t i startuken, 40 ulempepoeng.»), ikke bare at en linje finnes.
 - `docs/testing.md`: ny rad i komponenttest-tabellen for de to nye flytene, og et nytt avsnitt «Story 4.5 – avviksnotat og nøkkeltall» etter mønsteret fra 4.3/4.4.
 - Ikke endre: `domene/regelmotor/rangering.py`, `domene/porter/rangering.py`, `kandidater()`-ruten, POST-ruten for godkjenning, `grunnlagsmerke`.
 
@@ -81,7 +84,8 @@ context:
 - [ ] `frontend/src/api.ts`, `godkjenning.ts`, `tester/godkjenning.test.mjs` — ny type og felt.
 - [ ] `frontend/src/komponenter/Kandidatflate.tsx` — skill ut `Belastningslinje` og `Ulempeindikator`.
 - [ ] `frontend/src/komponenter/Godkjenningsflate.tsx`, `tekster.ts`, `stil/app.css` — nøkkeltall på kortet og `Avviksnotat`.
-- [ ] `frontend/tester/komponenter/godkjenningsflate.test.tsx` — komponenttester for begge flytene (OP-16).
+- [ ] `frontend/tester/komponenter/hjelpere.ts` — oppdater `JONAS`/`GODKJENNING_JONAS` til `RangertKandidat` + `topprangert: null`, og legg til `GODKJENNING_METTE`.
+- [ ] `frontend/tester/komponenter/godkjenningsflate.test.tsx` — komponenttester for begge flytene, inkl. eksplisitt fravær av notatet for Jonas og de eksakte sammenligningstallene for Mette (OP-16).
 - [ ] `docs/testing.md`, `docs/ki-logg/<dato>-avviksnotat.md`, `docs/emne/vurderingsmatrise.md`, `epic-4-context.md` — dokumenter flyt, KI-arbeid, bevis og status.
 
 **Acceptance Criteria:**
@@ -94,6 +98,15 @@ context:
 ## Spec Change Log
 
 ## Review Triage Log
+
+En uavhengig underagent (Sonnet, samme modellnivå som økten) gikk gjennom spesifikasjonen 2026-11-17, før godkjenning. Fasittallene (kostnad 2960/2960, nivå 4/4 Mette mot 3/4 Jonas, ulempe 180/40, uten tolkning: Jonas 79,40/plass 1, Mette 72,40/plass 2), valget av `plass` fremfor `totalscore`, og utelatelsen av preferansepoeng (5.2 ikke koblet inn) ble alle kontrollert og funnet i orden. Ingen funn i den låste delen.
+
+| # | Funn | Dom | Rute |
+|---|---|---|---|
+| 1 | Code Map viste til `grunnlag.ansatte_ved_id`, som ikke finnes; det reelle behovet dekkes av et lokalt `{k.id: k for k in vurdering.gyldige}`, som `kandidater()` allerede bygger | høy | rettet i Code Map |
+| 2 | En foreslått `None`-gren for `valgt` var dødkode: `ansatt_id` er allerede bekreftet i `vurdering.gyldige` via den eksisterende `kandidat`-variabelen, så `ranger()` finner den garantert | middels | fjernet fra Code Map |
+| 3 | Testfiksturene `JONAS`/`GODKJENNING_JONAS` i `hjelpere.ts`, brukt av alle 12 eksisterende tester, manglet rangeringsfelt og `topprangert`; uendret ville `npm.cmd run build` brutt | høy | lagt til som egen oppgave |
+| 4 | Komponenttestoppgaven var ikke presis nok til å hindre en svakere test (bare «notat vises» uten å sjekke fravær for Jonas eller de eksakte tallene for Mette) | middels | presisert i Code Map og oppgavelisten |
 
 ## Design Notes
 
