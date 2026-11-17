@@ -96,3 +96,5 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Løs konfliktene mellom 4.2 og 4.3 med begge funksjonene bevart, og verifiser det sammenslåtte resultatet.
 - [ ] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Koble overtidsvisningen i 4.3 til Varselmerke ved integrering; test høy belastning alene, overtid alene og begge samtidig.
 - [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Tilbakefør lokalt testscenario etter skjermlesertesten: Ingrids vakt #4102 slutt 21.09.2026 kl. 15:00, ikke 15:24. (løst 2026-11-15; sluttid tilbakeført til 15:00)
+
+- [ ] 2026-11-17 [uv i Windows-sandboxen](970-2026-11-17-21-38-46-uv-windows-sandbox.md) — Avklar en avgrenset løsning for uv-tilgang og verifiser i sandboxen før bmad-build gjenopptas.
