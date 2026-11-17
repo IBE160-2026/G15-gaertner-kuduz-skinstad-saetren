@@ -42,3 +42,4 @@
 - [ ] 2026-11-16 [story-5-1-preferansetolkning](982-2026-11-16-19-05-00-story-5-1-preferansetolkning.md) — PR #30 (story 5.1): gjennomgang fra et annet gruppemedlem, etter at #29 (4.4) er sett over
 - [ ] 2026-11-16 [story-5-1-preferansetolkning](982-2026-11-16-19-05-00-story-5-1-preferansetolkning.md) — Valgfri live-kontroll mot Luna (19 betalte kall) av at taggene for #4127 blir kategorier
 - [ ] 2026-11-16 [story-5-1-preferansetolkning](982-2026-11-16-19-05-00-story-5-1-preferansetolkning.md) — Foreslå for gruppa i PR-en at backend kan lese OPENROUTER_API_KEY fra .env
+- [ ] 2026-11-17 [story-4-5-avviksnotat](981-2026-11-17-20-30-00-story-4-5-avviksnotat.md) — Story 4.5: gjennomgang og godkjenning av spesifikasjonen i PR #31, før implementering starter
