@@ -2,7 +2,8 @@
 title: 'Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten'
 type: 'feature'
 created: '2026-11-17'
-status: 'ready-for-dev'
+status: 'in-progress'
+baseline_commit: 'edd41341c753b6967ee03b67a3404380f34e9dfb'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
