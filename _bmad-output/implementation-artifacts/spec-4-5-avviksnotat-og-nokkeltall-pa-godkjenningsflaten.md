@@ -163,4 +163,4 @@ Kodegjennomgang 2026-11-17 (etter implementering) med blind-hunter (BH), edge-ca
 4. Større skrift: bestått
 5. Ekte backend: bestått. #4127, Jonas Bakke (nr. 1): kandidatkortet viste timebelastningslinjen og ulempeindikatoren, uten avviksnotat. Mette Solberg (nr. 2): avviksnotatet viste kostnad, nivå, timebelastning og ulempe for begge side om side, med anbefalingsteksten, og godkjenningsknappen forble aktiv.
 
-Ikke relevant: ekte backend mot et grunnlag med lagret tolkning — det inngikk ikke i kontrollen og står som eget åpent punkt.
+**Tillegg (2026-11-18):** et grunnlag med lagret tolkning er nå også kontrollert i nettleseren. En tolkning ble lagret direkte for Mette (`onsker_flere`, uten KI-kall, samme teknikk som `test_lagret_tolkning_endrer_topprangert_uten_live_kall`), mot en egen midlertidig database. API-et bekreftet at Mette ble plass 1 og Jonas plass 2 før kontrollen. I nettleseren viste Jonas nå avviksnotatet mot Mette, og Mette viste ingen avviksnotat — bestått.

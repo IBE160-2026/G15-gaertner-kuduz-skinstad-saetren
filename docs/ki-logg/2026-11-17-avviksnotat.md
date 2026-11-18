@@ -98,9 +98,12 @@ lagrede tolkninger, ikke `backend/turnushjelperen.db`. Alle fem punktene i sjekk
 (1080/960/680/1600 px, tastatur og fokus, farger, større skrift, ekte backend mot #4127
 med Jonas og Mette) besto. Et grunnlag med lagret tolkning inngikk ikke i kontrollen.
 
+Et grunnlag med lagret tolkning er kontrollert manuelt 2026-11-18, mot en egen
+midlertidig database: en tolkning ble lagret direkte for Mette (`onsker_flere`, uten
+KI-kall), bekreftet via API-et at hun ble plass 1, og i nettleseren viste Jonas
+avviksnotatet mot Mette mens Mette selv viste ingen avviksnotat. Bestått.
+
 ## Åpne punkter
 
-- Et grunnlag med lagret tolkning er ikke kontrollert manuelt i nettleser, bare i
-  API-testen `test_lagret_tolkning_endrer_topprangert_uten_live_kall`.
 - Koden er gjennomgått av uavhengige agenter, men ikke av et annet gruppemedlem ennå.
   Storyen står som `review` i `sprint-status.yaml` til det er gjort.
