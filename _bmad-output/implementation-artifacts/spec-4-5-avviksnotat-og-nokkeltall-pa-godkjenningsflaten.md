@@ -154,4 +154,13 @@ Kodegjennomgang 2026-11-17 (etter implementering) med blind-hunter (BH), edge-ca
 
 **Manual checks (docs/testing.md):** 1080/960/680/1600 px, tastatur og fokus, farger (tokens, ikke rå verdier), større skrift, ekte backend mot #4127 (Jonas og Mette). For fasiten må testdatabasen være nyfylt uten lagrede tolkninger og bakgrunnstolkning være avslått; bruk separat testdatabase og ikke en database med data som skal beholdes. Kontroller også et grunnlag med lagret tolkning, uten å forutsette Jonas som nr. 1.
 
-**Resultat (2026-11-17):** `backend/.venv\Scripts\python -m pytest` — 675 bestått, inkludert import-linter-kontrakten. `npm.cmd run build` og `npm.cmd run test` (fra `frontend/`) — bygget og 52 `node --test` og 41 Vitest-komponenttester (37 eksisterende + 4 nye) bestod. Manuelle kontroller er ikke utført: ingen nettleser var tilgjengelig i denne økten. Dette er et åpent punkt, ikke et bestått resultat.
+**Resultat (2026-11-17):** `backend/.venv\Scripts\python -m pytest` — 675 bestått, inkludert import-linter-kontrakten. `npm.cmd run build` og `npm.cmd run test` (fra `frontend/`) — bygget og 52 `node --test` og 41 Vitest-komponenttester (37 eksisterende + 4 nye) bestod.
+
+**Manuell kontroll (docs/testing.md): Mithad Kuduz, 2026-11-18, mot en midlertidig testdatabase uten lagrede tolkninger (ikke `backend/turnushjelperen.db`), story 4.5**
+1. 1080, 960, 680 og 1600 px: bestått
+2. Tastatur og fokus: bestått
+3. Farger: bestått
+4. Større skrift: bestått
+5. Ekte backend: bestått. #4127, Jonas Bakke (nr. 1): kandidatkortet viste timebelastningslinjen og ulempeindikatoren, uten avviksnotat. Mette Solberg (nr. 2): avviksnotatet viste kostnad, nivå, timebelastning og ulempe for begge side om side, med anbefalingsteksten, og godkjenningsknappen forble aktiv.
+
+Ikke relevant: ekte backend mot et grunnlag med lagret tolkning — det inngikk ikke i kontrollen og står som eget åpent punkt.

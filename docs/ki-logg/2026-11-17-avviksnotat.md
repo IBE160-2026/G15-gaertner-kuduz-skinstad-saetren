@@ -83,19 +83,24 @@ I/O-matrise var derfor eneste kilde for avgjørelser.
   (37 eksisterende + 4 nye for denne storyen).
 - Ingen test gjør nettverkskall eller bruker en ekte KI-nøkkel.
 
+## Uavhengig kodegjennomgang og nettleserkontroll (2026-11-17–18)
+
+Etter leveransen over gikk tre uavhengige agenter (blind-hunter, edge-case-hunter,
+verification-gap, alle Sonnet) gjennom koden uten å ha sett implementeringen. 10 funn,
+alle ført i spesifikasjonens Review Triage Log: 5 rettet (avviksnotatets overskrift
+manglet et semantisk `<h2>`, to dokumenter manglet testtall og beslutnings-ID-er, en
+testfikstur hadde uensartet innrykk, og «høy belastning»-varselet ble ikke testet inne i
+selve avviksnotatet), 4 avvist med begrunnelse. `pytest` 675, 52 `node --test` og 41
+Vitest-komponenttester (uendret i antall etter rettingene) og build bestod etter dette.
+
+Mithad Kuduz gjorde nettleserkontrollen 2026-11-18 mot en midlertidig testdatabase uten
+lagrede tolkninger, ikke `backend/turnushjelperen.db`. Alle fem punktene i sjekklisten
+(1080/960/680/1600 px, tastatur og fokus, farger, større skrift, ekte backend mot #4127
+med Jonas og Mette) besto. Et grunnlag med lagret tolkning inngikk ikke i kontrollen.
+
 ## Åpne punkter
 
-- Ingen nettleser var tilgjengelig i denne økten. «Manual checks» i
-  spesifikasjonen (1080/960/680/1600 px, tastatur og fokus, farger mot
-  `tokens.css`, større skrift, ekte backend mot #4127 med Jonas og Mette, og
-  et grunnlag med lagret tolkning) er ikke utført og står som åpent punkt i
-  `.logs/<bruker>/issues.md`.
-- Spesifikasjonens egne oppgaver om å oppdatere `docs/testing.md`,
-  `docs/emne/vurderingsmatrise.md` og `epic-4-context.md` er gjort i samme
-  økt som denne loggen.
-- Koden er ikke gått gjennom av et annet gruppemedlem eller en uavhengig
-  underagent (`review_loop_iteration: 0` i spesifikasjonen). Storyen forblir
-  `in-progress` i `sprint-status.yaml` til det er gjort.
-- Ingen commit er gjort fra denne økten; endringene står usporet i
-  arbeidstreet på branchen `story-4.5-avviksnotat` til brukeren ber om det
-  (Policy i AGENTS.md: branch/PR og committing er et aktivt valg).
+- Et grunnlag med lagret tolkning er ikke kontrollert manuelt i nettleser, bare i
+  API-testen `test_lagret_tolkning_endrer_topprangert_uten_live_kall`.
+- Koden er gjennomgått av uavhengige agenter, men ikke av et annet gruppemedlem ennå.
+  Storyen står som `review` i `sprint-status.yaml` til det er gjort.
