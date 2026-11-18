@@ -1,5 +1,7 @@
 # Åpne punkter
 
+- [x] 2026-11-18 [Gjennomgang av PR 31](969-2026-11-17-21-47-00-retting-av-pr-31-spesifikasjon.md) — Følg opp reviewfunn om ulempeetikett, AV-13-token, testdekning og dokumentstatus før godkjenning. (løst lokalt 2026-11-18; se loggen)
+
 - [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Kontroller den nye teksten med faktisk skjermleser, inkludert hele timer og minutter. Kode, radvis komponenttest og foreldet dokumentstatus er rettet; automatisk test kan ikke bekrefte faktisk opplesing.
 
 - [ ] 2026-11-15 [Story 3.2 – godkjenning og bemanning](975-2026-11-15-09-39-23-story-3-2-godkjenning-bemanning.md) — Kontroller tastaturfokus og fargekontrast på godkjenningsflyten i nettleser mot ekte backend (OP-16); funksjonsflyten ved 1000 px er kontrollert, men disse manuelle punktene gjenstår.
