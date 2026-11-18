@@ -29,5 +29,7 @@ Gjennomgått PR-hode `8d1f332f1c3f1b5956ecf58115241daa87178ff6`. 42 målrettede 
 
 Etter brukerens beskjed ble alle funnene rettet lokalt: etikett, token, ulike timetall og kostnader, begge ulempefordelingene, konsistent P-09-fixtur og samordnet status til `review`/`in-review`. En uavhengig kontroll anbefalte ulik kostnad i testen, som ble tatt inn. Frontendbygget og 52 modultester samt 41 komponenttester bestod etter rettingen. Nettleserkontroll ved 1080 og 680 px med falske API-svar viste etiketten alle tre steder. Faktisk skjermleser ble ikke testet. KI-logg og vurderingsmatrise er oppdatert. Reviewpunktet i `issues.md` er lukket.
 
+Kl. 21:06: Hentet `92b5e1561081fda558b6f21c2f5c7ae9aa783ee9` med pull. Den siste endringen var Mithads logg, ikke produktkode: han godtok rettingene og oppga 675 beståtte backendtester, frontendbygg, 52 modultester og 41 komponenttester. Alle CI-sjekker for PR-hodet var grønne. På brukerens anmodning ble PR 31 formelt godkjent av `kimsk81` på dette hodet; PR-en er ikke merget.
+
 ### Åpne punkter
 Ingen.
