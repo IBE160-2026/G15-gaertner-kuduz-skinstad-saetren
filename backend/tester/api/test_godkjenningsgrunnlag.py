@@ -16,15 +16,34 @@ from sqlalchemy import Engine, event, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.modeller import OSLO, AnsattRad, Base, GodkjenningRad, VaktRad
+from adaptere.lagring.preferansetolkning import lagre_resultat
 from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING, fyll_testdata
+from domene.porter.rangering import TolketPreferanse
 from domene.regelmotor.vurdering import REGLER
-from tester.api.test_kandidater import forleng_ingrids_første_vakt_i_uka
+from tester.api.test_kandidater import RANGERT_FELT, forleng_ingrids_første_vakt_i_uka
 from tester.api.test_innlogging import COOKIE_NAVN, engine, feilsvar, klient, logg_inn  # noqa: F401
 
 NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
 KOMPETANSE = {ansatt_id: kompetanse for ansatt_id, _, _, _, _, kompetanse, _ in ANSATTE}
-JONAS, METTE = 6, 5
+JONAS, METTE, THOMAS, INGRID = 6, 5, 3, 4
 SILJE = MANGLER_BEMANNING[4127][0]
+
+# Jonas er nr. 1 for #4127 uten lagrede tolkninger (AV-07, FAKTORER_4127/UTEN_TOLKNING_4127
+# i test_rangering.py). Story 4.5 bruker det samme svaret som `topprangert` for Mette,
+# som er nr. 2 (test_jonas_på_4127_har_nøyaktig_dette_svaret under).
+JONAS_SOM_TOPPRANGERT = {
+    "id": JONAS, "navn": "Jonas Bakke", "kompetansenivå": KOMPETANSE[JONAS]["dag"],
+    "kostnad": {"total": 2960, "ordinære_timer": 8, "overtidstimer": 0, "ordinær_sats": 370, "overtidssats": 555},
+    "minutter_i_uka": 960,  # 16 t i uke 39
+    "timebelastning_prosent": 100 * 16 / 36, "hoy_belastning": False,
+    "ulempebelastning": {
+        "dagtimer": 67, "kveldstimer": 4, "helgetimer": 15, "natttimer": 2,
+        "poeng": 40, "score": 100 * (1 - 40 / 300),
+    },
+    "stilling": "Sykepleier", "ansiennitet": 3, "plass": 1, "totalscore": 3335 / 42,
+    "faktorpoeng": {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 260 / 3},
+    "preferansepoeng": 50, "tolkestatus": "venter_paa_tolkning", "preferansekategori": None,
+}
 
 
 def sti(vaktnummer: int, ansatt_id: int | str) -> str:
@@ -63,15 +82,22 @@ def test_gyldig_kandidat_gir_vakt_og_kandidat(klient: TestClient, ansatt_id: int
 
     assert respons.status_code == 200
     svar = respons.json()
-    assert set(svar) == {"status", "vakt", "kandidat", "grunnlagsmerke"}
+    assert set(svar) == {"status", "vakt", "kandidat", "topprangert", "grunnlagsmerke"}
     assert len(svar["grunnlagsmerke"]) == 64
     assert svar["status"] == "ok"
-    # Vakten er den samme som vaktdetaljene gir, og Kandidaten den samme som i listen.
-    # Listen har i tillegg Rangeringens felt (story 4.4), som godkjenningsgrunnlaget ikke har.
+    # Vakten og Kandidaten er de samme som i listen (story 4.4), som nå har de samme
+    # feltene som godkjenningsgrunnlagets kandidat (story 4.5: begge er RangertKandidatUt).
     assert svar["vakt"] == klient.get("/api/vakter/4127").json()
-    (fra_listen,) = [k for k in klient.get("/api/vakter/4127/kandidater").json()["kandidater"] if k["id"] == ansatt_id]
+    liste = klient.get("/api/vakter/4127/kandidater").json()["kandidater"]
+    (fra_listen,) = [k for k in liste if k["id"] == ansatt_id]
     assert svar["kandidat"] == {felt: fra_listen[felt] for felt in svar["kandidat"]}
     assert svar["kandidat"]["navn"] == NAVN[ansatt_id]
+    # Topprangert er nøyaktig nr. 1 fra samme liste, eller None når valgt selv er nr. 1.
+    if fra_listen["plass"] == 1:
+        assert svar["topprangert"] is None
+    else:
+        (topp,) = [k for k in liste if k["plass"] == 1]
+        assert svar["topprangert"] == topp
 
 
 def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
@@ -88,14 +114,44 @@ def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
             "slutt": "2026-09-27T15:00:00+02:00",
             "minstenivå": 3,
         },
+        "kandidat": JONAS_SOM_TOPPRANGERT,
+        "topprangert": None,
+    }
+
+
+def test_mette_på_4127_har_nøyaktig_dette_svaret_med_jonas_som_topprangert(klient: TestClient) -> None:
+    """Mette er nr. 2 (72,40) bak Jonas (79,40), uten lagrede tolkninger (AV-07, P-05).
+
+    Ulempefordelingen (kveld/helg/natt) er ikke egen fasit i dokumentasjonen; bare
+    poeng og score (begge kjente fasittall) kontrolleres eksplisitt, og resten av
+    fordelingsdelen gjenbrukes uendret fra selve svaret for å låse alle andre felt.
+    """
+    logg_inn(klient)
+    svar = klient.get(sti(4127, METTE)).json()
+    assert len(svar.pop("grunnlagsmerke")) == 64
+    ulempe = svar["kandidat"]["ulempebelastning"]
+    assert (ulempe["poeng"], ulempe["score"]) == (180, 40)
+    assert svar == {
+        "status": "ok",
+        "vakt": {
+            "avdeling": "Kirurgisk sengepost",
+            "vaktnummer": 4127,
+            "vakttype": "dag",
+            "start": "2026-09-27T07:00:00+02:00",
+            "slutt": "2026-09-27T15:00:00+02:00",
+            "minstenivå": 3,
+        },
         "kandidat": {
-            "id": JONAS, "navn": "Jonas Bakke", "kompetansenivå": KOMPETANSE[JONAS]["dag"],
+            "id": METTE, "navn": "Mette Solberg", "kompetansenivå": KOMPETANSE[METTE]["dag"],
             "kostnad": {"total": 2960, "ordinære_timer": 8, "overtidstimer": 0, "ordinær_sats": 370, "overtidssats": 555},
             "minutter_i_uka": 960,  # 16 t i uke 39
             "timebelastning_prosent": 100 * 16 / 36, "hoy_belastning": False,
-            "ulempebelastning": {"dagtimer": 67, "kveldstimer": 4, "helgetimer": 15,
-                                 "natttimer": 2, "poeng": 40, "score": 100 * (1 - 40 / 300)},
+            "ulempebelastning": ulempe,
+            "stilling": "Sykepleier", "ansiennitet": 9, "plass": 2, "totalscore": 3041 / 42,
+            "faktorpoeng": {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 40},
+            "preferansepoeng": 50, "tolkestatus": "venter_paa_tolkning", "preferansekategori": None,
         },
+        "topprangert": JONAS_SOM_TOPPRANGERT,
     }
 
 
@@ -156,10 +212,14 @@ def test_utelukket_ukjent_og_satt_opp_gir_samme_svar(klient: TestClient) -> None
 
 def test_svaret_for_gyldig_nevner_ingen_utelukket(klient: TestClient) -> None:
     logg_inn(klient)
-    tekst = klient.get(sti(4127, METTE)).text
+    respons = klient.get(sti(4127, METTE))
+    # Mette er ikke topprangert (plass 2), så dette svaret inneholder også
+    # Jonas' tall i `topprangert` — teksten under dekker begge.
+    assert respons.json()["topprangert"] is not None
+    tekst = respons.text
 
     for ansatt_id, navn in NAVN.items():
-        if ansatt_id != METTE:
+        if ansatt_id not in (METTE, JONAS):
             assert navn not in tekst
     for ord_ in (*(regel.årsak for regel in REGLER), "utelukket", "satt_opp"):
         assert ord_ not in tekst
@@ -167,10 +227,69 @@ def test_svaret_for_gyldig_nevner_ingen_utelukket(klient: TestClient) -> None:
 
 def test_kandidaten_har_bare_kontraktsfeltene(klient: TestClient) -> None:
     logg_inn(klient)
+    jonas = klient.get(sti(4127, JONAS)).json()
+    assert set(jonas["kandidat"]) == RANGERT_FELT
+    assert jonas["topprangert"] is None
+    assert set(jonas["vakt"]) == {"avdeling", "vaktnummer", "vakttype", "start", "slutt", "minstenivå"}
+
+    mette = klient.get(sti(4127, METTE)).json()
+    assert set(mette["kandidat"]) == RANGERT_FELT
+    assert set(mette["topprangert"]) == RANGERT_FELT
+
+
+def test_topprangert_er_none_bare_for_plass_1(klient: TestClient) -> None:
+    logg_inn(klient)
+    liste = klient.get("/api/vakter/4127/kandidater").json()["kandidater"]
+    (nummer_1,) = [k for k in liste if k["plass"] == 1]
+
+    for kandidat in liste:
+        svar = klient.get(sti(4127, kandidat["id"])).json()
+        if kandidat["plass"] == 1:
+            assert svar["topprangert"] is None
+        else:
+            assert svar["topprangert"] == nummer_1
+            # Ikke en kopi av valgt: Mette og de andre har ikke Jonas' id.
+            assert svar["topprangert"]["id"] != svar["kandidat"]["id"]
+
+
+def test_eneste_gyldige_kandidat_er_alltid_topprangert_selv(klient: TestClient, engine: Engine) -> None:
+    """En Gyldig kandidat for vakten gir plass 1 og ingen topprangert (I/O-matrisen)."""
+    with lag_sessionmaker(engine).begin() as session:
+        for ansatt_id in (METTE, THOMAS, INGRID):
+            session.execute(update(AnsattRad).where(AnsattRad.id == ansatt_id).values(kompetanse={"dag": 1}))
+    logg_inn(klient)
+    liste = klient.get("/api/vakter/4127/kandidater").json()
+    assert liste["status"] == "ok"
+    assert [k["navn"] for k in liste["kandidater"]] == ["Jonas Bakke"]
+
     svar = klient.get(sti(4127, JONAS)).json()
-    assert set(svar["kandidat"]) == {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
-                                  "hoy_belastning", "ulempebelastning", "kostnad"}
-    assert set(svar["vakt"]) == {"avdeling", "vaktnummer", "vakttype", "start", "slutt", "minstenivå"}
+    assert svar["kandidat"]["plass"] == 1
+    assert svar["topprangert"] is None
+
+
+def test_lagret_tolkning_endrer_topprangert_uten_live_kall(klient: TestClient, engine: Engine) -> None:
+    """Syntetisk eksempel (ikke en påstand om seedteksten, AV-07): Mette tolkes til
+    «ønsker flere» (100 preferansepoeng), lagret direkte uten KI-kall. Jonas har
+    ingen lagret tolkning og får fortsatt 50 (P-05). Det er nok til at Mette blir
+    topprangert i stedet for Jonas, selv om de andre faktorene er uendret (AV-12)."""
+    okter = lag_sessionmaker(engine)
+    with okter() as session:
+        tekst = session.get(AnsattRad, METTE).preferanse
+    assert tekst
+    assert lagre_resultat(okter, METTE, tekst, TolketPreferanse("onsker_flere", "Syntetisk testtekst.", "test"))
+    logg_inn(klient)
+
+    svar_jonas = klient.get(sti(4127, JONAS)).json()
+    svar_mette = klient.get(sti(4127, METTE)).json()
+
+    assert svar_mette["kandidat"]["plass"] == 1
+    assert svar_mette["kandidat"]["tolkestatus"] == "tolket"
+    assert svar_mette["kandidat"]["preferansekategori"] == "onsker_flere"
+    assert svar_mette["topprangert"] is None
+
+    assert svar_jonas["kandidat"]["plass"] == 2
+    assert svar_jonas["kandidat"]["tolkestatus"] == "venter_paa_tolkning"
+    assert svar_jonas["topprangert"] == svar_mette["kandidat"]
 
 
 # --- Vakt som ikke mangler bemanning, og tilgang --------------------------------

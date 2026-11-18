@@ -4,7 +4,7 @@
 // står i oppsett.ts.
 import { vi, type Mock } from "vitest";
 import type {
-  Godkjenningssvar, Innlogget, Kandidat, Kandidatsvar,
+  Godkjenningssvar, Innlogget, Kandidatsvar, RangertKandidat,
   UtelukkelsesOppsummering, Vaktdetaljer, Vaktoversikt,
 } from "../../src/api";
 
@@ -143,12 +143,20 @@ export const rangering = (plass: number) => ({
   preferansepoeng: 50, tolkestatus: "venter_paa_tolkning" as const, preferansekategori: null,
 });
 
-/** Jonas slik godkjenningsgrunnlaget sender ham, uten Rangeringens felt. */
-export const JONAS: Kandidat = {
+/**
+ * Jonas slik godkjenningsgrunnlaget sender ham (story 4.5: `RangertKandidat`,
+ * ikke bare `Kandidat`). Tallene er #4127s fasit uten lagrede tolkninger
+ * (AV-07): nr. 1 med 79,40 (backend `test_rangering.py`,
+ * UTEN_TOLKNING_4127/FAKTORER_4127).
+ */
+export const JONAS: RangertKandidat = {
   id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960,
   timebelastning_prosent: 100 * 960 / 2160, hoy_belastning: false,
-  kostnad: { total: 2400, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 300, overtidssats: 450 },
-  ulempebelastning: { dagtimer: 8, kveldstimer: 1.56, helgetimer: 2, natttimer: 3, poeng: 14.56, score: 95.1466666667 },
+  kostnad: { total: 2960, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 370, overtidssats: 555 },
+  ulempebelastning: { dagtimer: 67, kveldstimer: 4, helgetimer: 15, natttimer: 2, poeng: 40, score: 100 * (1 - 40 / 300) },
+  stilling: "Sykepleier", ansiennitet: 3, plass: 1, totalscore: 3335 / 42,
+  faktorpoeng: { kostnad: 1780 / 21, timebelastning: 100, ulempe: 260 / 3 },
+  preferansepoeng: 50, tolkestatus: "venter_paa_tolkning", preferansekategori: null,
 };
 
 /** To Gyldige kandidater i rangert rekkefølge, som fra API-et. */
@@ -196,8 +204,31 @@ export const KANDIDATER_DATAFEIL = {
 } satisfies Kandidatsvar;
 
 export const GODKJENNING_JONAS = {
-  status: "ok", vakt: VAKT_4127, kandidat: JONAS,
+  status: "ok", vakt: VAKT_4127, kandidat: JONAS, topprangert: null,
   grunnlagsmerke: "a".repeat(64),
+} satisfies Godkjenningssvar;
+
+/**
+ * Mette for #4127 (plass 2, 72,40), med Jonas som topprangert (story 4.5,
+ * I/O-matrisen). Samme kostnad som Jonas (begge 16 t ordinær tid til 370 kr/t),
+ * men høyere nivå og ulempe. Ulempefordelingen under er ikke egen fasit i
+ * dokumentasjonen (bare poeng og score er det) — valgt slik at kveld/helg/natt
+ * summerer korrekt til 180 poeng, for å teste fordelingsvisningen.
+ */
+const METTE_ULEMPE = { dagtimer: 0, kveldstimer: 0, helgetimer: 90, natttimer: 0, poeng: 180, score: 40 };
+export const METTE: RangertKandidat = {
+  id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 960,
+  timebelastning_prosent: 100 * 960 / 2160, hoy_belastning: false,
+  kostnad: { total: 2960, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 370, overtidssats: 555 },
+  ulempebelastning: METTE_ULEMPE,
+  stilling: "Sykepleier", ansiennitet: 9, plass: 2, totalscore: 3041 / 42,
+  faktorpoeng: { kostnad: 1780 / 21, timebelastning: 100, ulempe: 40 },
+  preferansepoeng: 50, tolkestatus: "venter_paa_tolkning", preferansekategori: null,
+};
+
+export const GODKJENNING_METTE = {
+  status: "ok", vakt: VAKT_4127, kandidat: METTE, topprangert: JONAS,
+  grunnlagsmerke: "b".repeat(64),
 } satisfies Godkjenningssvar;
 
 export const GODKJENNING_DATAFEIL = {

@@ -4,6 +4,7 @@ import {
   gjeldendeSesjonsgenerasjon,
   hentVaktdetaljer,
   type RangertKandidat,
+  type Ulempebelastning,
   type UtelukkelsesOppsummering,
   type Vaktdetaljer,
 } from "../api";
@@ -225,6 +226,43 @@ function Rangeringstabell({ kandidater, onVelg }: { kandidater: RangertKandidat[
   </>;
 }
 
+// Timebelastningslinjen med synlig timetall og skjermlesertekst (story 4.2), og
+// ulempeindikatoren med poeng og kveld/helg/natt-fordeling (story 4.7). Skilt ut
+// av `Kandidatrad` (story 4.5) for gjenbruk i godkjenningsflatens kandidatkort og
+// avviksnotat. Et `Fragment` holder DOM-en identisk med den tidligere inline-JSX-en.
+export function Belastningslinje(
+  { minutter, prosent, høy }: { minutter: number; prosent: number; høy: boolean },
+) {
+  return <>
+    <span className="timer-i-uka">
+      <span aria-hidden="true">{t.timerIUka(timerOgMinutter(minutter))}</span>
+      <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(minutter))}</span>
+    </span>
+    <span className="belastning">
+      <span className="belastningslinje" aria-hidden="true">
+        <span
+          className={høy ? "belastningsfyll hoy" : "belastningsfyll"}
+          style={{ width: `${Math.min(Math.max(prosent, 0), 100)}%` }}
+        />
+      </span>
+      {høy && <Varselmerke>{t.hoyBelastning}</Varselmerke>}
+    </span>
+  </>;
+}
+
+export function Ulempeindikator({ ulempe }: { ulempe: Ulempebelastning }) {
+  return (
+    <div className="kandidat-ulempe">
+      <span>{t.ulempePoeng(tall.format(ulempe.poeng))}</span>
+      <span className="meta">{t.ulempeFordeling(
+        tall.format(ulempe.kveldstimer),
+        tall.format(ulempe.helgetimer),
+        tall.format(ulempe.natttimer),
+      )}</span>
+    </div>
+  );
+}
+
 type RadProps = {
   kandidat: RangertKandidat;
   alt: boolean;
@@ -246,29 +284,10 @@ function Kandidatrad({ kandidat: r, alt, onVelg, knappRef }: RadProps) {
       <td><span className="tag">{t.nivaaTag(r.kompetansenivå)}</span></td>
       <td><Kostnadsvisning kostnad={r.kostnad} /></td>
       <td>
-        <span className="timer-i-uka">
-          <span aria-hidden="true">{t.timerIUka(timerOgMinutter(r.minutter_i_uka))}</span>
-          <span className="visuelt-skjult">{t.timerIUkaOpplest(timerOgMinutter(r.minutter_i_uka))}</span>
-        </span>
-        <span className="belastning">
-          <span className="belastningslinje" aria-hidden="true">
-            <span
-              className={r.hoy_belastning ? "belastningsfyll hoy" : "belastningsfyll"}
-              style={{ width: `${Math.min(Math.max(r.timebelastning_prosent, 0), 100)}%` }}
-            />
-          </span>
-          {r.hoy_belastning && <Varselmerke>{t.hoyBelastning}</Varselmerke>}
-        </span>
+        <Belastningslinje minutter={r.minutter_i_uka} prosent={r.timebelastning_prosent} høy={r.hoy_belastning} />
       </td>
       <td>
-        <div className="kandidat-ulempe">
-          <span>{t.ulempePoeng(tall.format(r.ulempebelastning.poeng))}</span>
-          <span className="meta">{t.ulempeFordeling(
-            tall.format(r.ulempebelastning.kveldstimer),
-            tall.format(r.ulempebelastning.helgetimer),
-            tall.format(r.ulempebelastning.natttimer),
-          )}</span>
-        </div>
+        <Ulempeindikator ulempe={r.ulempebelastning} />
       </td>
       <td className="preferansecelle">
         <span className="tag">{preferansetekst(r)}</span>

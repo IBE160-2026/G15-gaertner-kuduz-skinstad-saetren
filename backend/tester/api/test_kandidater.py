@@ -338,11 +338,12 @@ def test_svaret_stemmer_med_porten_fra_samme_database(klient: TestClient, engine
 
 
 def test_kandidatfeltene_er_de_samme_som_i_godkjenningsgrunnlaget(klient: TestClient) -> None:
-    # Rangeringen legger bare til felt. `KandidatUt` er uendret (story 4.4).
+    # Godkjenningsgrunnlagets kandidat er en fullt rangert kandidat, som i listen
+    # (story 4.5): samme felt, samme verdier, bygget med samme `rangert_ut`.
     for kandidat in hent(klient, 4127)["kandidater"]:
         enkelt = klient.get(f"/api/vakter/4127/kandidater/{kandidat['id']}").json()["kandidat"]
-        assert set(enkelt) == KANDIDAT_FELT
-        assert {felt: kandidat[felt] for felt in KANDIDAT_FELT} == enkelt
+        assert set(enkelt) == RANGERT_FELT
+        assert enkelt == kandidat
 
 
 def test_samme_svar_hver_gang(klient: TestClient) -> None:

@@ -91,8 +91,10 @@ export type Kandidatsvar =
 
 // GET /api/vakter/{nr}/kandidater/{ansatt_id} (story 3.1). Bare for en Gyldig
 // kandidat. Utelukket eller ukjent Ansatt gir 404 `ikke_funnet` (NFR2).
+// `kandidat` er en fullt rangert kandidat (story 4.5), og `topprangert` er nr. 1
+// i samme rangering, eller `null` nøyaktig når `kandidat.plass` er 1 (UX-DR18).
 export type Godkjenningssvar =
-  | { status: "ok"; vakt: Vaktdetaljer; kandidat: Kandidat; grunnlagsmerke: string }
+  | { status: "ok"; vakt: Vaktdetaljer; kandidat: RangertKandidat; topprangert: RangertKandidat | null; grunnlagsmerke: string }
   | { status: "datafeil"; kode: string; datagrense: string };
 
 /** API-et svarte med feilformen `{ kode, melding }`. */

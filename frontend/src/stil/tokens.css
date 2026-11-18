@@ -89,4 +89,5 @@
   /* Visuelt skjult tekst (h1 «Vaktvalg»). */
   --visually-hidden-size: 1px;
   --detail-column-min: 180px;
+  --avviksnotat-kandidat-min: 220px;
 }

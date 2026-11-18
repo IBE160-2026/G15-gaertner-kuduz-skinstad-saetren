@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import { ApiFeil, gjeldendeSesjonsgenerasjon, godkjennErstatning } from "../api";
+import { ApiFeil, gjeldendeSesjonsgenerasjon, godkjennErstatning, type RangertKandidat } from "../api";
 import { datoOgKlokke, datoOgTidsrom, vaktlinje, vakttypenavn } from "../format";
 import { lastGodkjenning, type Godkjenningstilstand } from "../godkjenning";
 import { kandidatsti } from "../navigasjon";
 import { TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
+import { Belastningslinje, Ulempeindikator } from "./Kandidatflate";
 import Kostnadsvisning from "./Kostnadsvisning";
 
 const t = TEKSTER.godkjenning;
@@ -159,7 +160,12 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
         <p className="meta">{t.kompetanse}</p>
         <span className="tag">{t.nivaaTag(kandidat.kompetansenivå)}</span>
         <Kostnadsvisning kostnad={kandidat.kostnad} />
+        <Belastningslinje minutter={kandidat.minutter_i_uka} prosent={kandidat.timebelastning_prosent} høy={kandidat.hoy_belastning} />
+        <p className="meta">{t.ulempe}</p>
+        <Ulempeindikator ulempe={kandidat.ulempebelastning} />
       </section>
+
+      {tilstand.topprangert && <Avviksnotat valgt={kandidat} topprangert={tilstand.topprangert} />}
 
       <section className="panel bekreftelsesboks" aria-labelledby="bekreft-tittel">
         <h2 id="bekreft-tittel" className="overskrift">{t.bekreftOverskrift}</h2>
@@ -180,4 +186,36 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
       <p className="meta statuslinje">{t.statuslinje}</p>
     </main>
   </>;
+}
+
+// Avviksnotatet (story 4.5, FR12, UX-DR18, UX-DR23): bare vist når valgt kandidat
+// ikke er den topprangerte. Nøytralt — blokkerer aldri godkjenningsknappen og
+// antyder aldri at valget er feil. Valgt kandidat står først, så topprangert.
+function Avviksnotat({ valgt, topprangert }: { valgt: RangertKandidat; topprangert: RangertKandidat }) {
+  return (
+    <section className="avviksnotat" aria-labelledby="avviksnotat-tittel">
+      <h2 id="avviksnotat-tittel" className="avviksnotat-lbl">{t.avviksnotat.overskrift}</h2>
+      <p className="brodtekst">
+        {t.avviksnotat.innledning(topprangert.navn)} {t.avviksnotat.anbefaling}
+      </p>
+      <div className="avviksnotat-sammenligning">
+        <Avvikskandidat kandidat={valgt} />
+        <Avvikskandidat kandidat={topprangert} />
+      </div>
+    </section>
+  );
+}
+
+function Avvikskandidat({ kandidat }: { kandidat: RangertKandidat }) {
+  return (
+    <div className="avviksnotat-kandidat">
+      <p className="avviksnotat-navn">{kandidat.navn}</p>
+      <Kostnadsvisning kostnad={kandidat.kostnad} />
+      <p className="meta">{t.avviksnotat.kompetanse}</p>
+      <span className="tag">{t.nivaaTag(kandidat.kompetansenivå)}</span>
+      <Belastningslinje minutter={kandidat.minutter_i_uka} prosent={kandidat.timebelastning_prosent} høy={kandidat.hoy_belastning} />
+      <p className="meta">{t.ulempe}</p>
+      <Ulempeindikator ulempe={kandidat.ulempebelastning} />
+    </div>
+  );
 }

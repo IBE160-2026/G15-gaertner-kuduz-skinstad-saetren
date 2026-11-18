@@ -86,6 +86,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-14 | Story 2.4 | Meldt 2026-11-11; implementert 2026-11-12; PR #17 godkjent og merget av Mithad 2026-11-13 | Ragnhild Sætren tar Story 2.4, 35-timersregelen (ukentlig fri). Beslutning A (overlapp telles med i unionen, som fasiten) og B (nøytral tekst ved tom liste til 2.6) er avgjort i storyen (§11). | Ragnhild Sætren |
 | OP-15 | Story 2.5 | Meldt 2026-11-13 | Mithad Kuduz tar Story 2.5, Ekskludert-boks med oppsummering av utelukkelser. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 | OP-16 | Komponenttester for frontend | Vedtatt 2026-11-14; implementert på branchen `frontend-komponenttester`, PR-gjennomgang gjenstår | Vitest 5.1.0 med Testing Library og jsdom 28.1.0 ved siden av `node --test`, én kommando (`npm run test`). De fem utsatte punktene fra 1.5, 2.1, 2.4, 2.5 og 3.1 er dekket. Manuell kontroll bare der testene ikke kan kontrollere det aktuelle (alternativ A), etter sjekklisten i `docs/testing.md` (§11). | Johannes W. Gaertner |
+| OP-17 | Story 4.5 | Meldt 2026-11-17 | Mithad Kuduz tar Story 4.5, Avviksnotat og nøkkeltall på godkjenningsflaten. Avhengighetene (4.2, 4.3, 4.4, 4.7) er alle `done`. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -853,6 +854,16 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Beslutning:** Ragnhild beholder utsettelsen av brukerutløst nytt forsøk («Prøv igjen»-knapp og endepunkt). Akseptansekriteriet i story 5.1 er ikke endret og er ikke oppfylt, så story 5.1 settes ikke til `done` ved merge av PR #30. Den står som `in-progress` til funksjonen er levert eller gruppa endrer kriteriet.
 - **Rettet:** `sprint-status.yaml` har 5.1 som `in-progress` (var `review`), og statusen i spesifikasjonen for 5.1 er `in-progress` (var `done`). Innledningen i AGENTS.md sier nå at 5.1 er delvis levert og `in-progress`, i stedet for «implementert og til gjennomgang». Den daterte merknaden «Delvis levert» står under story 5.1 i `epics.md`.
 - **Ikke endret:** Akseptansekriteriene, AV-19, P-05, OP-03 og andre AV-, K-, OP- og KS-punkter. Storyfiguren er uendret, siden den bare skiller `done` fra resten (kontrollert med `--sjekk`).
+
+### 2026-11-17 – Story 4.5 (OP-17)
+
+- **Hvem:** Mithad Kuduz meldte 2026-11-17 at han tar Story 4.5. Det er en melding om ansvar, ikke et gruppevedtak. Gruppa kan si fra hvis noen allerede er i gang.
+- **OP-17 – Story 4.5, Avviksnotat og nøkkeltall på godkjenningsflaten:**
+  - Mithad Kuduz er ansvarlig.
+  - Avhengighetene er alle ferdige: story 4.2 (arbeidsbelastningslinje), 4.3 (kostnad), 4.4 (rangering) og 4.7 (ulempeindikator, UX-DR28).
+  - Bygges med Claude Sonnet 5, etter anbefalingen i `docs/modellvalg-stories.md` (visning av allerede beregnede nøkkeltall).
+- **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 4.5.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
