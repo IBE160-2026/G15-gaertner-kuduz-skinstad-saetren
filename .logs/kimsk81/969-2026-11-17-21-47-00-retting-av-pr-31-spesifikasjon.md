@@ -25,7 +25,9 @@ Gjennomgå implementasjonen i PR 31 etter oppdatering, og oppdatere PR-beskrivel
 - Kjør relevante tester og oppdater PR-beskrivelsen med faktisk status.
 
 ### Resultat
-Gjennomgått PR-hode `8d1f332f1c3f1b5956ecf58115241daa87178ff6`. 42 målrettede backendtester, frontendbygg, 52 frontendmodultester og 41 komponenttester bestod. Fant manglende ulempeetikett, rå bredde uten token, testmangler og motstridende status i plandokumenter; funnene er ført i spesifikasjonens Review Findings. PR-tittel og -beskrivelse ble oppdatert på GitHub. Ingen kodefunn er rettet ennå.
+Gjennomgått PR-hode `8d1f332f1c3f1b5956ecf58115241daa87178ff6`. 42 målrettede backendtester, frontendbygg, 52 frontendmodultester og 41 komponenttester bestod. Fant manglende ulempeetikett, rå bredde uten token, testmangler og motstridende status i plandokumenter; funnene er ført i spesifikasjonens Review Findings. PR-tittel og -beskrivelse ble oppdatert på GitHub.
+
+Etter brukerens beskjed ble alle funnene rettet lokalt: etikett, token, ulike timetall og kostnader, begge ulempefordelingene, konsistent P-09-fixtur og samordnet status til `review`/`in-review`. En uavhengig kontroll anbefalte ulik kostnad i testen, som ble tatt inn. Frontendbygget og 52 modultester samt 41 komponenttester bestod etter rettingen. Nettleserkontroll ved 1080 og 680 px med falske API-svar viste etiketten alle tre steder. Faktisk skjermleser ble ikke testet. KI-logg og vurderingsmatrise er oppdatert. Reviewpunktet i `issues.md` er lukket.
 
 ### Åpne punkter
-- Følg opp de registrerte reviewfunnene og samordne status for story 4.5 før godkjenning.
+Ingen.

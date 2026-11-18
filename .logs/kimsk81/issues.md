@@ -1,6 +1,6 @@
 # Åpne punkter
 
-- [ ] 2026-11-18 [Gjennomgang av PR 31](969-2026-11-17-21-47-00-retting-av-pr-31-spesifikasjon.md) — Følg opp reviewfunn om ulempeetikett, AV-13-token, testdekning og dokumentstatus før godkjenning.
+- [x] 2026-11-18 [Gjennomgang av PR 31](969-2026-11-17-21-47-00-retting-av-pr-31-spesifikasjon.md) — Følg opp reviewfunn om ulempeetikett, AV-13-token, testdekning og dokumentstatus før godkjenning. (løst lokalt 2026-11-18; se loggen)
 
 - [ ] 2026-11-15 [Gjennomgang av PR 25](974-2026-11-15-16-10-34-gjennomgang-pr-25.md) — Kontroller den nye teksten med faktisk skjermleser, inkludert hele timer og minutter. Kode, radvis komponenttest og foreldet dokumentstatus er rettet; automatisk test kan ikke bekrefte faktisk opplesing.
 
