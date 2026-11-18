@@ -181,4 +181,12 @@ En [uavhengig kontroll mot tilbakemeldingen](../../_bmad-output/planning-artifac
 
 ## Story 4.5 – avviksnotat og nøkkeltall på godkjenningsflaten, 2026-11-17
 
+**Oppdatering 2026-11-18:** Mithad har dokumentert nettleserkontroll mot ekte
+backend, også med lagret tolkning, i [spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-4-5-avviksnotat-og-nokkeltall-pa-godkjenningsflaten.md).
+En senere gjennomgang fant og rettet manglende ulempeetikett, en rå bredde og
+svake komponenttestpåstander. [KI-loggen](../ki-logg/2026-11-18-retting-pr-31.md)
+dokumenterer disse rettingene og kontrollene. Storyen står til `review`; formell
+PR-godkjenning er ikke registrert. Avsnittet under beskriver status ved
+implementeringen 2026-11-17.
+
 [Spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-4-5-avviksnotat-og-nokkeltall-pa-godkjenningsflaten.md), [API-testene](../../backend/tester/api/test_godkjenningsgrunnlag.py), [komponenttestene](../../frontend/tester/komponenter/godkjenningsflate.test.tsx) og [KI-loggen](../ki-logg/2026-11-17-avviksnotat.md) knytter FR12, UX-DR18 og UX-DR23 til godkjenningsgrunnlagets nye `topprangert`-felt og avviksnotatet. `godkjenningsgrunnlag()` gjenbruker samme `ranger(...)` og `rangert_ut` som kandidatlisten (story 4.4), uten å endre rangeringsformelen, POST-ruten eller `grunnlagsmerke`. Bevis for kriterium 1–3 og 5: 675 backendtester (inkludert import-linter-kontrakten), frontendbygget, 52 modultester og 41 komponenttester (37 eksisterende + 4 nye) bestod. Jonas er fortsatt nr. 1 (79,40) og Mette nr. 2 (72,40) for #4127 uten lagrede tolkninger (AV-07); en ny API-test viser at en direkte lagret tolkning (uten live KI-kall mot Luna) kan flytte topplasseringen uten å endre selve rangeringsformelen (P-05). Avviksnotatets oppdatering ved et endret grunnlag, før ny bekreftelse kreves, er dekket av en egen komponenttest (P-09). Layout, farger, fokusmarkering og ekte backend er ikke kontrollert i nettleser denne økten (ingen nettleser tilgjengelig), og står som åpne «Manual checks» i spesifikasjonen og i `.logs/<bruker>/issues.md`. Koden er ikke gått gjennom av et gruppemedlem eller en uavhengig underagent. Storyen er `in-progress`, ikke `review` eller `done`.

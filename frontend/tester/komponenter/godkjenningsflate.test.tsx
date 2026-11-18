@@ -43,6 +43,7 @@ test("kandidatkortet viser tilgjengelig timetall og ulempe for topprangert kandi
 
   expect(within(kort).getByText("16:00 t i uka")).toBeTruthy();
   expect(within(kort).getByText("16 timer og 0 minutter i uka")).toBeTruthy();
+  expect(within(kort).getByText(t.ulempe)).toBeTruthy();
   expect(within(kort).getByText("40,0 p")).toBeTruthy();
   expect(within(kort).getByText("Kveld 4,0 t · helg 15,0 t · natt 2,0 t")).toBeTruthy();
   // Jonas er topprangert selv (plass 1): ingen avviksnotat (`topprangert` er null).
@@ -63,7 +64,11 @@ test("avviksnotatet viser kostnad, nivå, timebelastning og ulempe for Mette og 
   // skilt per kandidatgruppe (bare hos Mette, ikke hos Jonas).
   const svar = {
     ...GODKJENNING_METTE,
-    kandidat: { ...GODKJENNING_METTE.kandidat, hoy_belastning: true, timebelastning_prosent: 90 },
+    kandidat: {
+      ...GODKJENNING_METTE.kandidat, minutter_i_uka: 1950, hoy_belastning: true,
+      timebelastning_prosent: 100 * 1950 / 2160,
+      kostnad: { total: 3200, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 400, overtidssats: 600 },
+    },
   };
   falskFetch({ [url]: ok(svar) });
   render(<Godkjenningsflate vaktnummer={4127} ansattId={5} onTilbake={vi.fn()} onGodkjent={vi.fn()} onTilOversikt={vi.fn()} />);
@@ -75,16 +80,20 @@ test("avviksnotatet viser kostnad, nivå, timebelastning og ulempe for Mette og 
   const mette = screen.getByText("Mette Solberg", { selector: ".avviksnotat-navn" }).closest(".avviksnotat-kandidat") as HTMLElement;
   const jonas = screen.getByText("Jonas Bakke", { selector: ".avviksnotat-navn" }).closest(".avviksnotat-kandidat") as HTMLElement;
 
-  expect(within(mette).getByText(/Kostnad: 2\s960,00 kr/)).toBeTruthy();
+  expect(within(mette).getByText(/Kostnad: 3\s200,00 kr/)).toBeTruthy();
   expect(within(mette).getByText(t.nivaaTag(4))).toBeTruthy();
-  expect(within(mette).getByText("16:00 t i uka")).toBeTruthy();
+  expect(within(mette).getByText("32:30 t i uka")).toBeTruthy();
+  expect(within(mette).getByText(t.ulempe)).toBeTruthy();
   expect(within(mette).getByText("180,0 p")).toBeTruthy();
+  expect(within(mette).getByText("Kveld 0,0 t · helg 90,0 t · natt 0,0 t")).toBeTruthy();
   expect(within(mette).getByText(TEKSTER.kandidatflate.hoyBelastning)).toBeTruthy();
 
   expect(within(jonas).getByText(/Kostnad: 2\s960,00 kr/)).toBeTruthy();
   expect(within(jonas).getByText(t.nivaaTag(3))).toBeTruthy();
   expect(within(jonas).getByText("16:00 t i uka")).toBeTruthy();
+  expect(within(jonas).getByText(t.ulempe)).toBeTruthy();
   expect(within(jonas).getByText("40,0 p")).toBeTruthy();
+  expect(within(jonas).getByText("Kveld 4,0 t · helg 15,0 t · natt 2,0 t")).toBeTruthy();
   expect(within(jonas).queryByText(TEKSTER.kandidatflate.hoyBelastning)).toBeNull();
 
   // Avviksnotatet er bare informativt: godkjenningsknappen er fortsatt aktiv.
@@ -93,7 +102,7 @@ test("avviksnotatet viser kostnad, nivå, timebelastning og ulempe for Mette og 
 
 test("endret grunnlag oppdaterer avviksnotatet (ny topprangert) og krever nytt trykk (P-09)", async () => {
   const url = "/api/vakter/4127/kandidater/5";
-  const oppdatert = { ...GODKJENNING_METTE, grunnlagsmerke: "c".repeat(64), topprangert: null };
+  const oppdatert = { ...GODKJENNING_METTE, kandidat: { ...GODKJENNING_METTE.kandidat, plass: 1 }, grunnlagsmerke: "c".repeat(64), topprangert: null };
   const fetch = falskFetch({
     [url]: [ok(GODKJENNING_METTE), ok(oppdatert)],
     [`POST ${url}`]: [feil(409, "endret_grunnlag"), ok({ status: "godkjent" })],

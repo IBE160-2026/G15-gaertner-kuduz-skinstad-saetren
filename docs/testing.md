@@ -284,9 +284,10 @@ en ny `METTE`/`GODKJENNING_METTE`-fixture (72,40, topprangert Jonas) kom
 til; en eksisterende story 4.7-test som hardkodet Jonas' gamle, syntetiske
 ulempetall ble oppdatert til de nye, se [KI-loggen](ki-logg/2026-11-17-avviksnotat.md).
 
-Etter endringene: 675 backendtester, frontendbygget, 52 `node --test` og 41
-komponenttester (37 eksisterende + 4 nye) bestod. Layout, farger,
-fokusmarkering og ekte backend (Jonas og Mette på #4127, samt et grunnlag
-med lagret tolkning) er ikke kontrollert i nettleser denne økten og står
-som «Manual checks» i spesifikasjonen. Menneskelig gjennomgang av koden
-gjenstår; storyen er `in-progress`, ikke `review` eller `done`.
+Etter implementeringen bestod 675 backendtester, frontendbygget, 52 `node --test`
+og 41 komponenttester. Mithad kontrollerte 2026-11-18 layout, farger, fokus og
+ekte backend, også med lagret tolkning; se resultatene i spesifikasjonen.
+Etter kodegjennomgangen samme dag ble ulempeetikett og tester presisert. Den
+endrede etiketten ble kontrollert ved 1080 og 680 px med falske API-svar
+2026-11-18; faktisk skjermleser ble ikke brukt. Storyen står til `review` i
+sprintstatus; formell menneskelig PR-godkjenning er ikke registrert.

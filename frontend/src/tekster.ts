@@ -167,6 +167,7 @@ export const TEKSTER = {
     minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
     valgtKandidat: "Valgt kandidat",
     kompetanse: "Kompetanse",
+    ulempe: "Ulempebelastning",
     nivaaTag: (nivaa: number) => `Nivå ${nivaa}/4`,
     bekreftOverskrift: "Bekreft erstatning",
     // «Du er i ferd med å sette <navn> inn i <Vakt #nr> (Dagvakt, 27.09.2026,

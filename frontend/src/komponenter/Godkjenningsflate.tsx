@@ -161,6 +161,7 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
         <span className="tag">{t.nivaaTag(kandidat.kompetansenivå)}</span>
         <Kostnadsvisning kostnad={kandidat.kostnad} />
         <Belastningslinje minutter={kandidat.minutter_i_uka} prosent={kandidat.timebelastning_prosent} høy={kandidat.hoy_belastning} />
+        <p className="meta">{t.ulempe}</p>
         <Ulempeindikator ulempe={kandidat.ulempebelastning} />
       </section>
 
@@ -213,6 +214,7 @@ function Avvikskandidat({ kandidat }: { kandidat: RangertKandidat }) {
       <p className="meta">{t.avviksnotat.kompetanse}</p>
       <span className="tag">{t.nivaaTag(kandidat.kompetansenivå)}</span>
       <Belastningslinje minutter={kandidat.minutter_i_uka} prosent={kandidat.timebelastning_prosent} høy={kandidat.hoy_belastning} />
+      <p className="meta">{t.ulempe}</p>
       <Ulempeindikator ulempe={kandidat.ulempebelastning} />
     </div>
   );

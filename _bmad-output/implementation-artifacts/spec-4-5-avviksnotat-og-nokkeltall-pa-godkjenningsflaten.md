@@ -2,7 +2,7 @@
 title: 'Story 4.5: Avviksnotat og nøkkeltall på godkjenningsflaten'
 type: 'feature'
 created: '2026-11-17'
-status: 'done'
+status: 'in-review'
 baseline_commit: 'edd41341c753b6967ee03b67a3404380f34e9dfb'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -99,6 +99,14 @@ context:
 
 ## Implementation Notes
 
+### Review Findings — 2026-11-18
+
+- [x] [Review][Patch] Merk ulempeindikatoren på godkjenningsflaten. [frontend/src/komponenter/Godkjenningsflate.tsx:163]
+- [x] [Review][Patch] Flytt den faste kandidatbredden til et designtoken etter AV-13. [frontend/src/stil/app.css:605]
+- [x] [Review][Patch] Test ulike timetall og korrekt kveld-/helg-/nattfordeling i hver kandidatgruppe. [frontend/tester/komponenter/godkjenningsflate.test.tsx:63]
+- [x] [Review][Patch] Gjør P-09-testens oppdaterte svar konsistent med `plass: 1`. [frontend/tester/komponenter/godkjenningsflate.test.tsx:99]
+- [x] [Review][Patch] Samordne status til gjennomgang; formell menneskelig PR-godkjenning er ikke registrert. [sprint-status.yaml:66]
+
 - Implementert 2026-11-17 av Claude (Sonnet 5), direkte mot spesifikasjonen i én økt
   (ikke `bmad-build`s underagent-oppsett). Se
   [KI-loggen](../../docs/ki-logg/2026-11-17-avviksnotat.md) for prompt, leveranse og
@@ -107,8 +115,9 @@ context:
   ulempetall) måtte oppdateres som følge av denne storyen.
 - `kompetansenivå`-importen i `main.py` ble fjernet: `godkjenningsgrunnlag()` henter nå
   kompetansenivå fra `rangert_ut` i stedet for å kalle `kompetansenivå()` direkte.
-- Menneskelig gjennomgang er ikke gjort. Storyen forblir `in-progress` i
-  `sprint-status.yaml` til det er gjort.
+- Implementasjonen ble gjennomgått 2026-11-18; rettingene etter gjennomgangen
+  krever ny vurdering. Storyen står som `review` i `sprint-status.yaml`;
+  formell menneskelig PR-godkjenning er ikke registrert.
 
 ## Spec Change Log
 

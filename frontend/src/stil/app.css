@@ -602,7 +602,7 @@ button {
 }
 
 .avviksnotat-kandidat {
-  flex: 1 1 220px;
+  flex: 1 1 var(--avviksnotat-kandidat-min);
   min-width: 0;
 }
 
