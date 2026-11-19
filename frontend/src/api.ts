@@ -219,3 +219,7 @@ export function godkjennErstatning(vaktnummer: number, ansattId: number, grunnla
     body: JSON.stringify({ grunnlagsmerke }),
   }, true);
 }
+
+export function provPreferanse(vaktnummer: number, ansattId: number): Promise<{ status: "tolket" | "feilet" | "endret" }> {
+  return kall(`/api/vakter/${vaktnummer}/kandidater/${ansattId}/preferanse`, { method: "POST" }, true);
+}

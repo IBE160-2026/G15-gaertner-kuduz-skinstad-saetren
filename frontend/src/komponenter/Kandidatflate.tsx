@@ -3,6 +3,8 @@ import {
   ApiFeil,
   gjeldendeSesjonsgenerasjon,
   hentVaktdetaljer,
+  hentKandidater,
+  provPreferanse,
   type RangertKandidat,
   type Ulempebelastning,
   type UtelukkelsesOppsummering,
@@ -11,6 +13,7 @@ import {
 import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn } from "../format";
 import {
   SYNLIGE_KANDIDATER, ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, preferansetekst, synligeKandidater,
+  tilstandFraSvar, tilstandFraFeil,
   type Kandidattilstand,
 } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
@@ -106,15 +109,55 @@ export default function Kandidatflate({ vaktnummer, onVelg }: Props) {
 }
 
 // Hentes automatisk når vakten er lastet (story 2.1). Bare Gyldige kandidater.
-function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (ansattId: number) => void }) {
+export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (ansattId: number) => void }) {
   const [tilstand, setTilstand] = useState<Kandidattilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
   const retryknapp = useRef<HTMLButtonElement>(null);
 
+  const [paagar, setPaagar] = useState(false);
+  const [melding, setMelding] = useState("");
+  const visningsversjon = useRef(0);
+  const opptatt = useRef(false);
+  const statusRef = useRef<HTMLParagraphElement>(null);
+  const fokuserFeil = useRef(true);
+  useEffect(() => {
+    visningsversjon.current += 1;
+    opptatt.current = false;
+    setPaagar(false);
+    setMelding("");
+    fokuserFeil.current = true;
+    return () => { visningsversjon.current += 1; };
+  }, [vaktnummer]);
+
   useEffect(() => lastKandidater(vaktnummer, setTilstand), [vaktnummer, forsok]);
 
+  async function provPreferanseHandling(id: number) {
+    if (opptatt.current) return;
+    opptatt.current = true;
+    const generasjon = gjeldendeSesjonsgenerasjon();
+    const versjon = visningsversjon.current;
+    const gyldig = () => versjon === visningsversjon.current && generasjon === gjeldendeSesjonsgenerasjon();
+    setPaagar(true);
+    setMelding(t.tolker);
+    statusRef.current?.focus();
+    try {
+      const svar = await provPreferanse(vaktnummer, id);
+      if (!gyldig()) return;
+      const kandidater = await hentKandidater(vaktnummer);
+      if (!gyldig()) return;
+      setTilstand(tilstandFraSvar(kandidater));
+      setMelding(svar.status === "tolket" ? t.tolket : svar.status === "feilet" ? t.tolkefeil : t.tolkEndret);
+    } catch (feil) {
+      if (!gyldig()) return;
+      fokuserFeil.current = document.activeElement === statusRef.current;
+      setTilstand(tilstandFraFeil(feil));
+    } finally {
+      if (gyldig()) { opptatt.current = false; setPaagar(false); }
+    }
+  }
+
   useEffect(() => {
-    if (tilstand.type === "feil") retryknapp.current?.focus();
+    if (tilstand.type === "feil" && fokuserFeil.current) retryknapp.current?.focus();
   }, [tilstand]);
 
   if (tilstand.type === "avvist") return null;
@@ -165,7 +208,8 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
     <section className="panel kandidater kandidater-klar" aria-labelledby="kandidater-tittel">
       {overskrift}
       <p className="meta">{t.ulempePeriode}</p>
-      <Rangeringstabell kandidater={tilstand.kandidater} onVelg={onVelg} />
+      <p role="status" tabIndex={-1} ref={statusRef}>{melding}</p>
+      <Rangeringstabell kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling} />
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
   );
@@ -178,7 +222,7 @@ function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (an
 // lasting, så valget nullstilles for en ny vakt.
 const k = t.kolonner;
 
-function Rangeringstabell({ kandidater, onVelg }: { kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void }) {
+function Rangeringstabell({ kandidater, onVelg, paagar, onProv }: { kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void; paagar: boolean; onProv: (id: number) => void }) {
   const [visAlle, setVisAlle] = useState(false);
   const førsteNye = useRef<HTMLButtonElement>(null);
   const synlige = synligeKandidater(kandidater, visAlle);
@@ -205,7 +249,7 @@ function Rangeringstabell({ kandidater, onVelg }: { kandidater: RangertKandidat[
         <tbody>
           {synlige.map((kandidat, i) => (
             <Kandidatrad
-              key={kandidat.id} kandidat={kandidat} alt={i % 2 === 1} onVelg={onVelg}
+              key={kandidat.id} kandidat={kandidat} alt={i % 2 === 1} onVelg={onVelg} paagar={paagar} onProv={onProv}
               knappRef={i === SYNLIGE_KANDIDATER ? førsteNye : undefined}
             />
           ))}
@@ -268,9 +312,11 @@ type RadProps = {
   alt: boolean;
   onVelg: (ansattId: number) => void;
   knappRef?: RefObject<HTMLButtonElement | null>;
+  paagar: boolean;
+  onProv: (id: number) => void;
 };
 
-function Kandidatrad({ kandidat: r, alt, onVelg, knappRef }: RadProps) {
+function Kandidatrad({ kandidat: r, alt, onVelg, knappRef, paagar, onProv }: RadProps) {
   return (
     <tr className={alt ? "row-alt" : undefined}>
       <td>
@@ -292,10 +338,11 @@ function Kandidatrad({ kandidat: r, alt, onVelg, knappRef }: RadProps) {
       <td className="preferansecelle">
         <span className="tag">{preferansetekst(r)}</span>
         <div className="undertekst">{t.preferansePoeng(tall.format(r.preferansepoeng))}</div>
+        {r.tolkestatus === "kunne_ikke_tolkes" && <button type="button" className="button-secondary button-kompakt" disabled={paagar} aria-label={t.provPreferanse(r.navn)} onClick={() => onProv(r.id)}>{TEKSTER.provIgjen}</button>}
       </td>
       <td>
         <button
-          ref={knappRef} type="button" className="button-secondary button-kompakt"
+          ref={knappRef} type="button" disabled={paagar} className="button-secondary button-kompakt"
           aria-label={TEKSTER.godkjenning.velgEtikett(r.navn)} onClick={() => onVelg(r.id)}
         >
           {TEKSTER.godkjenning.velg}

@@ -93,8 +93,14 @@ def ventende_tekster(session: Session) -> list[tuple[int, str]]:
     ]
 
 
+def tilstandsmerke(rad: AnsattRad) -> tuple[object, ...]:
+    return (rad.tolket_teksthash, rad.tolkeformat, rad.tolket_kategori,
+            rad.tolket_begrunnelse, rad.tolket_modell, rad.tolkefeil)
+
+
 def lagre_resultat(
     okter: sessionmaker[Session], ansatt_id: int, tekst: str, resultat: TolketPreferanse | str,
+    forventet: tuple[object, ...] | None = None,
 ) -> bool:
     """Lagrer sluttresultatet for `tekst`. `resultat` er tolkningen eller feiltypen.
 
@@ -112,9 +118,11 @@ def lagre_resultat(
         verdier = {"tolket_kategori": None, "tolket_begrunnelse": None, "tolket_modell": None,
                    "tolkefeil": resultat}
     with okter.begin() as session:
-        utfall = session.execute(
-            update(AnsattRad)
-            .where(AnsattRad.id == ansatt_id, AnsattRad.preferanse == tekst)
-            .values(**verdier, tolket_teksthash=teksthash(tekst), tolkeformat=TOLKEFORMAT)
-        )
+        sporring = update(AnsattRad).where(AnsattRad.id == ansatt_id, AnsattRad.preferanse == tekst)
+        if forventet is not None:
+            kolonner = (AnsattRad.tolket_teksthash, AnsattRad.tolkeformat, AnsattRad.tolket_kategori,
+                        AnsattRad.tolket_begrunnelse, AnsattRad.tolket_modell, AnsattRad.tolkefeil)
+            for kolonne, verdi in zip(kolonner, forventet, strict=True):
+                sporring = sporring.where(kolonne == verdi)
+        utfall = session.execute(sporring.values(**verdier, tolket_teksthash=teksthash(tekst), tolkeformat=TOLKEFORMAT))
         return utfall.rowcount == 1

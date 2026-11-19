@@ -10,6 +10,9 @@ export const FEILTEKSTER: Readonly<Record<string, string>> = {
   intern_feil: "Feil på serveren. Er testdataene lastet? Se README.",
   endret_grunnlag: "Grunnlaget er endret. Se de oppdaterte opplysningene før du godkjenner på nytt.",
   ugyldig_kandidat: "Kandidaten kan ikke godkjennes for denne vakten.",
+  ki_utilgjengelig: "Preferansetolkning er ikke tilgjengelig nå.",
+  tolkning_paagar: "Preferansen tolkes allerede. Prøv igjen om litt.",
+  ikke_feilet: "Preferansen er endret. Last kandidatene på nytt.",
   allerede_bemannet: "Vakten er allerede bemannet.",
 };
 
@@ -146,6 +149,11 @@ export const TEKSTER = {
       kunne_ikke_tolkes: "Preferanse kunne ikke tolkes",
       ingen_registrert: "Ingen registrert",
     },
+    tolker: "Tolker preferansen og oppdaterer rangeringen …",
+    tolket: "Preferansen er tolket. Rangeringen er oppdatert.",
+    tolkefeil: "Preferansen kunne ikke tolkes. Du kan prøve igjen.",
+    tolkEndret: "Preferansen er endret. Rangeringen er oppdatert.",
+    provPreferanse: (navn: string) => `Prøv preferansen til ${navn} igjen`,
     visAlle: "Vis alle gyldige kandidater",
     viserAv: (vist: number, totalt: number) => `Viser ${vist} av ${totalt} gyldige kandidater.`,
     visFærre: (antall: number) => `Vis bare de ${antall} øverste`,

@@ -20,8 +20,8 @@ from adaptere.api.sesjon import STANDARD_MINUTTER
 from adaptere.ki.openrouter import HttpSvar, OpenRouterKiAdapter, Tolkefeil
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke
-from adaptere.lagring.modeller import AnsattRad, BrukerRad
-from adaptere.lagring.testdata import FASIT, PREFERANSER
+from adaptere.lagring.modeller import AnsattRad, BrukerRad, TurnusRad, VaktRad
+from adaptere.lagring.testdata import FASIT, PREFERANSER, PERIODE_START, PERIODE_SLUTT
 from domene.porter.rangering import TolketPreferanse
 from domene.regelmotor.rangering import PREFERANSEPOENG
 from tester.api.test_innlogging import NOKKEL, engine, feilsvar, klient, logg_inn  # noqa: F401
@@ -361,3 +361,179 @@ def test_gammel_database_stopper_tolkningen_med_én_feilmelding(
         "Preferansetolkning stoppet: kunne ikke lese ansatt-tabellen. Er databasen fra før "
         "story 5.1? Slett den og last testdata på nytt."
     )
+
+
+def test_retry_success_and_stale_approval(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    ki = FasitKi()
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=ki))
+    logg_inn(klient)
+    kandidat = kandidater(klient)[0]
+    sti = f"/api/vakter/4127/kandidater/{kandidat['id']}"
+    grunnlag = klient.get(sti).json()
+    svar = klient.post(sti + "/preferanse")
+    assert svar.status_code == 200 and svar.json()["status"] == "tolket"
+    assert len(ki.tekster) == 1
+    assert next(k for k in kandidater(klient) if k["id"] == kandidat["id"])["tolkestatus"] == "tolket"
+    assert klient.post(sti, json={"grunnlagsmerke": grunnlag["grunnlagsmerke"]}).status_code == 409
+    assert klient.post(sti + "/preferanse").status_code == 409
+
+
+def test_retry_unavailable_and_invalid_access(engine: Engine) -> None:
+    tolk_ventende(lag_sessionmaker(engine), FeilKi())
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine))
+    sti = "/api/vakter/4127/kandidater/6/preferanse"
+    assert klient.post(sti).status_code == 401
+    logg_inn(klient)
+    assert klient.post(sti).status_code == 503
+    assert klient.post("/api/vakter/4127/kandidater/999999/preferanse").status_code == 404
+
+
+def test_retry_for_excluded_candidate_never_calls_ki(engine: Engine) -> None:
+    tolk_ventende(lag_sessionmaker(engine), FeilKi())
+    ki = FasitKi()
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=ki))
+    logg_inn(klient)
+    utelukket = hent(klient, 4127)["utelukkelser"]["utelukkede"][0]["id"]
+    svar = klient.post(f"/api/vakter/4127/kandidater/{utelukket}/preferanse")
+    assert svar.status_code == 404
+    assert feilsvar("ikke_funnet")(svar.json())
+    assert ki.tekster == []
+
+
+def test_retry_for_another_users_shift_never_calls_ki(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    with okter.begin() as session:
+        annen = TurnusRad(avdeling="Annen avdeling", periode_start=PERIODE_START,
+                          periode_slutt=PERIODE_SLUTT, sist_oppdatert=PERIODE_START)
+        session.add(annen)
+        session.flush()
+        opprinnelig = session.scalars(select(BrukerRad)).one()
+        session.add(BrukerRad(brukernavn="annen", navn="Annen bruker", passord_hash=opprinnelig.passord_hash,
+                              passord_kilde=opprinnelig.passord_kilde, turnus_id=annen.id))
+        session.execute(update(VaktRad).where(VaktRad.vaktnummer == 4127).values(turnus_id=annen.id))
+    ki = FasitKi()
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=ki))
+    logg_inn(klient)
+    svar = klient.post("/api/vakter/4127/kandidater/6/preferanse")
+    assert svar.status_code == 404
+    assert feilsvar("ikke_funnet")(svar.json())
+    assert ki.tekster == []
+
+
+def test_retry_discards_changed_text(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    def endre(_tekst: str) -> None:
+        with okter.begin() as session:
+            session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(preferanse="Ny tekst"))
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=FasitKi(endre)))
+    logg_inn(klient)
+    svar = klient.post("/api/vakter/4127/kandidater/6/preferanse")
+    assert svar.status_code == 200 and svar.json()["status"] == "endret"
+    assert next(k for k in kandidater(klient) if k["id"] == JONAS)["tolkestatus"] == "venter_paa_tolkning"
+
+
+def test_retry_concurrent_requests_only_call_once(engine: Engine) -> None:
+    tolk_ventende(lag_sessionmaker(engine), FeilKi())
+    startet = threading.Event()
+    fortsett = threading.Event()
+    def vent(_tekst: str) -> None:
+        startet.set()
+        assert fortsett.wait(10)
+    ki = FasitKi(vent)
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=ki))
+    logg_inn(klient)
+    sti = "/api/vakter/4127/kandidater/6/preferanse"
+    svar = []
+    traad = threading.Thread(target=lambda: svar.append(klient.post(sti)))
+    traad.start()
+    try:
+        assert startet.wait(10)
+        assert klient.post(sti).status_code == 409
+    finally:
+        fortsett.set()
+        traad.join(10)
+    assert not traad.is_alive()
+    assert svar[0].status_code == 200
+    assert len(ki.tekster) == 1
+
+
+def test_retry_does_not_overwrite_newer_result_for_same_text(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    def nyere(_tekst: str) -> None:
+        with okter.begin() as session:
+            session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(
+                tolket_kategori="noytral", tolket_begrunnelse="nyere", tolket_modell="falsk/nyere", tolkefeil=None))
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=FasitKi(nyere)))
+    logg_inn(klient)
+    svar = klient.post("/api/vakter/4127/kandidater/6/preferanse")
+    assert svar.status_code == 200 and svar.json()["status"] == "endret"
+    with okter() as session:
+        assert session.get(AnsattRad, JONAS).tolket_modell == "falsk/nyere"
+
+
+def test_retry_failure_remains_retryable(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    ki = FeilKi()
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=ki))
+    logg_inn(klient)
+    sti = "/api/vakter/4127/kandidater/6/preferanse"
+    assert klient.post(sti).json()["status"] == "feilet"
+    assert klient.post(sti).json()["status"] == "feilet"
+    assert ki.antall == 2
+    assert next(k for k in kandidater(klient) if k["id"] == JONAS)["preferansepoeng"] == 50
+
+
+def test_startup_snapshot_skips_result_changed_while_waiting(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    startet, fortsett = threading.Event(), threading.Event()
+
+    def vent(tekst: str) -> None:
+        if threading.current_thread().name == TOLKETRÅD and not startet.is_set():
+            startet.set()
+            assert fortsett.wait(10)
+
+    ki = FasitKi(vent)
+    app = lag_app(nokkel=NOKKEL, engine=engine, ki=ki)
+    with TestClient(app) as klient:
+        try:
+            assert startet.wait(10)
+            logg_inn(klient)
+            svar = klient.post("/api/vakter/4127/kandidater/6/preferanse")
+            assert svar.status_code == 200 and svar.json()["status"] == "tolket"
+            assert ki.tekster.count(PREFERANSER[4][0]) == 1
+        finally:
+            fortsett.set()
+            app.state.tolketråd.join(10)
+    assert not app.state.tolketråd.is_alive()
+    assert ki.tekster.count(PREFERANSER[4][0]) == 1
+    with okter() as session:
+        assert session.get(AnsattRad, JONAS).tolket_modell == MODELL
+
+
+def test_lifespan_and_retry_share_lock(engine: Engine) -> None:
+    okter = lag_sessionmaker(engine)
+    tolk_ventende(okter, FeilKi())
+    startet, fortsett = threading.Event(), threading.Event()
+    def vent(tekst: str) -> None:
+        if tekst == PREFERANSER[4][0]:
+            startet.set()
+            assert fortsett.wait(10)
+    ki = FasitKi(vent)
+    app = lag_app(nokkel=NOKKEL, engine=engine, ki=ki)
+    with TestClient(app) as klient:
+        try:
+            assert startet.wait(10)
+            logg_inn(klient)
+            assert klient.post("/api/vakter/4127/kandidater/6/preferanse").status_code == 409
+            assert ki.tekster.count(PREFERANSER[4][0]) == 1
+        finally:
+            fortsett.set()
+            app.state.tolketråd.join(10)
+    assert not app.state.tolketråd.is_alive()
