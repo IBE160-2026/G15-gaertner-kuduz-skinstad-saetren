@@ -6,6 +6,7 @@ utløpstid fra miljøet, databasen fra `lag_engine()` og KI-adapteren fra
 `ki_fra_miljo()`. Bare `app` leser KI-konfigurasjonen fra miljøet.
 """
 
+from _thread import LockType
 import logging
 import os
 import secrets
@@ -29,8 +30,8 @@ from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifis
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke, hent_kandidatgrunnlag
 from adaptere.lagring.godkjenninger import lagre_godkjenning
-from adaptere.lagring.modeller import OSLO
-from adaptere.lagring.preferansetolkning import lagre_resultat, ventende_tekster
+from adaptere.lagring.modeller import OSLO, AnsattRad
+from adaptere.lagring.preferansetolkning import lagre_resultat, ventende_tekster, les_tolkning, tilstandsmerke
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.rangering import RangertKandidat, TolketPreferanse
@@ -54,6 +55,9 @@ MELDINGER: dict[str, str] = {
     "ukjent_feil": "Forespørselen kunne ikke behandles.",
     "endret_grunnlag": "Beslutningsgrunnlaget er endret.",
     "ugyldig_kandidat": "Kandidaten kan ikke godkjennes for denne vakten.",
+    "ki_utilgjengelig": "Preferansetolkning er ikke tilgjengelig.",
+    "tolkning_paagar": "Preferansen tolkes allerede.",
+    "ikke_feilet": "Preferansen har ikke en gyldig feilstatus.",
     "allerede_bemannet": "Vakten er allerede bemannet.",
 }
 RUTEKODER = {404: "ikke_funnet", 405: "metode_ikke_tillatt"}
@@ -331,7 +335,7 @@ def ki_fra_miljo() -> Tolker | None:
     return None
 
 
-def tolk_ventende(okter: sessionmaker[Session], ki: Tolker) -> None:
+def tolk_ventende(okter: sessionmaker[Session], ki: Tolker, laaser: dict[int, LockType] | None = None, vakt: LockType | None = None) -> None:
     """Tolker alle ventende tekster én gang og lagrer sluttresultatet per tekst (story 5.1).
 
     Synkron. Leser listen i én kort økt og holder ingen transaksjon åpen under
@@ -340,7 +344,8 @@ def tolk_ventende(okter: sessionmaker[Session], ki: Tolker) -> None:
     """
     try:
         with okter() as okt:
-            ventende = ventende_tekster(okt)
+            ventende = [(ansatt_id, tekst, tilstandsmerke(okt.get(AnsattRad, ansatt_id)))
+                        for ansatt_id, tekst in ventende_tekster(okt)]
     except Exception:
         logger.exception(
             "Preferansetolkning stoppet: kunne ikke lese ansatt-tabellen. Er databasen fra før "
@@ -349,11 +354,21 @@ def tolk_ventende(okter: sessionmaker[Session], ki: Tolker) -> None:
         return
     if ventende:
         logger.info("Preferansetolkning: %d tekster venter.", len(ventende))
-    for ansatt_id, tekst in ventende:
+    laaser = laaser if laaser is not None else {}
+    vakt = vakt if vakt is not None else threading.Lock()
+    for ansatt_id, tekst, forventet in ventende:
+        with vakt:
+            laas = laaser.setdefault(ansatt_id, threading.Lock())
+        if not laas.acquire(blocking=False):
+            continue
         try:
+            with okter() as okt:
+                rad = okt.get(AnsattRad, ansatt_id)
+                if rad is None or rad.preferanse != tekst or tilstandsmerke(rad) != forventet or isinstance(les_tolkning(rad), TolketPreferanse):
+                    continue
             resultat = ki.tolk(tekst)
             verdi = resultat if isinstance(resultat, TolketPreferanse) else resultat.feiltype
-            if not lagre_resultat(okter, ansatt_id, tekst, verdi):
+            if not lagre_resultat(okter, ansatt_id, tekst, verdi, forventet):
                 logger.info("Preferansetolkning for ansatt %s forkastet: teksten er endret.", ansatt_id)
             elif isinstance(verdi, TolketPreferanse):
                 logger.info("Preferansetolkning for ansatt %s: tolket.", ansatt_id)
@@ -361,6 +376,8 @@ def tolk_ventende(okter: sessionmaker[Session], ki: Tolker) -> None:
                 logger.warning("Preferansetolkning for ansatt %s: kunne ikke tolkes (%s).", ansatt_id, verdi)
         except Exception:
             logger.exception("Preferansetolkning for ansatt %s feilet uventet.", ansatt_id)
+        finally:
+            laas.release()
 
 
 def lag_app(
@@ -375,11 +392,13 @@ def lag_app(
     minutter = sesjon.les_minutter(None if minutter is None else str(minutter))
     engine = engine or lag_engine()
     okter = lag_sessionmaker(engine)
+    tolkelaaser: dict[int, LockType] = {}
+    laasevakt = threading.Lock()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         if ki is not None:
-            tråd = threading.Thread(target=tolk_ventende, args=(okter, ki), name=TOLKETRÅD, daemon=True)
+            tråd = threading.Thread(target=tolk_ventende, args=(okter, ki, tolkelaaser, laasevakt), name=TOLKETRÅD, daemon=True)
             app.state.tolketråd = tråd
             tråd.start()
         yield
@@ -495,6 +514,42 @@ def lag_app(
             ],
             utelukkelser=utelukkelser,
         )
+
+    @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/preferanse", response_model=None)
+    def prov_preferanse(vaktnummer: int, ansatt_id: int, request: Request) -> dict[str, str] | JSONResponse:
+        # Do not disclose whether another request is running before checking access.
+        with okter() as okt:
+            grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
+            if grunnlag is None:
+                return feil(404, "ikke_funnet")
+            vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+            if isinstance(vurdering, Datafeil) or not any(k.id == ansatt_id for k in vurdering.gyldige):
+                return feil(404, "ikke_funnet")
+        with laasevakt:
+            laas = tolkelaaser.setdefault(ansatt_id, threading.Lock())
+        if not laas.acquire(blocking=False):
+            return feil(409, "tolkning_paagar")
+        try:
+            with okter() as okt:
+                grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
+                if grunnlag is None:
+                    return feil(404, "ikke_funnet")
+                vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+                if isinstance(vurdering, Datafeil) or not any(k.id == ansatt_id for k in vurdering.gyldige):
+                    return feil(404, "ikke_funnet")
+                rad = okt.get(AnsattRad, ansatt_id)
+                if rad is None or les_tolkning(rad) != "feilet" or rad.preferanse is None:
+                    return feil(409, "ikke_feilet")
+                tekst = rad.preferanse
+                forventet = tilstandsmerke(rad)
+            if ki is None:
+                return feil(503, "ki_utilgjengelig")
+            resultat = ki.tolk(tekst)
+            verdi = resultat if isinstance(resultat, TolketPreferanse) else resultat.feiltype
+            lagret = lagre_resultat(okter, ansatt_id, tekst, verdi, forventet)
+            return {"status": "endret" if not lagret else "tolket" if isinstance(verdi, TolketPreferanse) else "feilet"}
+        finally:
+            laas.release()
 
     @app.get(
         "/api/vakter/{vaktnummer}/kandidater/{ansatt_id}",

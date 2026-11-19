@@ -291,3 +291,17 @@ Etter kodegjennomgangen samme dag ble ulempeetikett og tester presisert. Den
 endrede etiketten ble kontrollert ved 1080 og 680 px med falske API-svar
 2026-11-18; faktisk skjermleser ble ikke brukt. Storyen står til `review` i
 sprintstatus; formell menneskelig PR-godkjenning er ikke registrert.
+
+## Story 5.1 – brukerutløst nytt forsøk (2026-11-19)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-5-1-prov-igjen.md)
+følger P-05, P-09 og AV-19. Backendtestene i
+[`test_preferansetolkning.py`](../backend/tester/api/test_preferansetolkning.py)
+bruker falsk KI og kontrollerer blant annet tilgang, feilet og vellykket forsøk,
+endret tekst, samtidige forespørsler, oppstartens lås og endret grunnlag.
+Komponenttestene i [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx)
+kontrollerer oppfriskning, feil, vaktbytte, sene svar og fokus. Visuell kontroll
+av den nye knappen, farger, fokus og ekte backend er ennå ikke dokumentert (OP-16).
+Etter gjennomgangsrettinger bestod 685 backendtester, frontendbygget, 52 modultester
+og 46 komponenttester. Backend ble kjørt med Python 3.12.14 og pakkene i `.venv`;
+`python.exe` i den lokale virtuelle mappen manglet, så installert Python ble brukt direkte.
