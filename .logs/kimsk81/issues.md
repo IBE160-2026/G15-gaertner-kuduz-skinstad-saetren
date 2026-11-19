@@ -1,6 +1,6 @@
 ﻿# Åpne punkter
 
-- [ ] 2026-11-19 [Story 5.1 – prøv igjen](967-2026-11-19-20-19-29-story-5-1-prov-igjen.md) — Samordne AD-7 med AV-19 og fullfør spesifikasjon, implementasjon, tester og gjennomgang av brukerutløst nytt forsøk.
+- [ ] 2026-11-19 [Story 5.1 – prøv igjen](967-2026-11-19-20-19-29-story-5-1-prov-igjen.md) — Fullfør spesifikasjon, implementasjon, tester og gjennomgang av brukerutløst nytt forsøk; AD-7 er samordnet med AV-19.
 
 - [ ] 2026-11-17 [Gjennomgang av PR 31](971-2026-11-17-21-30-59-gjennomgang-pr-31.md) — Følg opp tilgjengelig timevisning, preferansetolkninger og testfasit, sammenligningsvisning og test av endret rangering på godkjenningsflaten.
 
