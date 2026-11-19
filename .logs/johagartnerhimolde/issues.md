@@ -76,7 +76,7 @@
 - [x] 2026-11-15 [story-4-4-rangering](976-2026-11-15-22-22-05-story-4-4-rangering.md) — Rett statuslinjen i AGENTS.md («4.4 … til gjennomgang») når 4.4 er `done` (utsatt i `deferred-work.md`). (løst 2026-11-19: AGENTS.md sier at 4.4 er ferdig)
 
 - [ ] 2026-11-19 [status-og-lukking-av-punkter](975-2026-11-19-19-40-30-status-og-lukking-av-punkter.md) — Etikettene i `frontend/src/tekster.ts` (`preferansekategorier`) er ikke bundet til `PREFERANSEPOENG` i backend av noen test. Endres en nøkkel i backend, viser `preferansetekst` den rå nøkkelen, og ingen test feiler.
-- [ ] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Manuell sjekkliste for 4.6 (docs/testing.md) mot endelig CSS, med «Stor» skrift og tastatur på alle fire flatene, før PR.
-- [ ] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — PR for `story/4-6-rangeringstabell-smale-skjermer` med gjennomgang av et annet gruppemedlem.
+- [x] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Manuell sjekkliste for 4.6 (docs/testing.md) mot endelig CSS, med «Stor» skrift og tastatur på alle fire flatene, før PR. (løst 2026-11-19: bestått, Johannes og Claude)
+- [ ] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — PR-gjennomgang av et annet gruppemedlem for `story/4-6-rangeringstabell-smale-skjermer`.
 - [ ] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Ved 680 px er det bare 3 px til overs for ulempekolonnen. Et lengre navn eller Epic 5s utvidelseskolonne kan skyve den delvis under de faste kolonnene. Vurder dette når Epic 5 legger til kolonnen.
 - [ ] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Avgjør om det er greit at totalscoren («79,4 poeng») brytes over to linjer også ved brede vinduer.
