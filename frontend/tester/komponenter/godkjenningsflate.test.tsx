@@ -7,7 +7,7 @@ import Godkjenningsflate from "../../src/komponenter/Godkjenningsflate";
 import { datoOgKlokke } from "../../src/format";
 import { kandidatsti } from "../../src/navigasjon";
 import { FEILTEKSTER, TEKSTER } from "../../src/tekster";
-import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, GODKJENNING_METTE, falskFetch, feil, json, ok, type Svar } from "./hjelpere";
+import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, GODKJENNING_METTE, falskFetch, feil, json, kallTil, ok, type Svar } from "./hjelpere";
 
 const t = TEKSTER.godkjenning;
 const URL = "/api/vakter/4127/kandidater/6";
@@ -98,6 +98,37 @@ test("avviksnotatet viser kostnad, nivå, timebelastning og ulempe for Mette og 
 
   // Avviksnotatet er bare informativt: godkjenningsknappen er fortsatt aktiv.
   expect((screen.getByRole("button", { name: t.godkjenn }) as HTMLButtonElement).disabled).toBe(false);
+});
+
+// --- Smale nettleservinduer (story 4.6, AV-17) -----------------------------------
+
+test("valgt kandidat og avviksnotatet står etter endret vindusbredde, uten ny henting", async () => {
+  // Layouten kontrolleres i nettleseren (docs/testing.md). Her: ingen tilstand
+  // monteres på nytt og ingenting hentes når bredden endres.
+  const url = "/api/vakter/4127/kandidater/5";
+  const opprinnelig = window.innerWidth;
+  const settBredde = (bredde: number) => act(() => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: bredde });
+    window.dispatchEvent(new Event("resize"));
+  });
+  try {
+    settBredde(1600);
+    const fetch = falskFetch({ [url]: ok(GODKJENNING_METTE) });
+    render(<Godkjenningsflate vaktnummer={4127} ansattId={5} onTilbake={vi.fn()} onGodkjent={vi.fn()} onTilOversikt={vi.fn()} />);
+    await screen.findByRole("heading", { name: "Mette Solberg" });
+
+    for (const bredde of [680, 1600]) {
+      settBredde(bredde);
+      const kort = screen.getByRole("region", { name: "Mette Solberg" });
+      expect(within(kort).getByText("180,0 p")).toBeTruthy();
+      expect(screen.getByRole("region", { name: t.avviksnotat.overskrift })).toBeTruthy();
+      expect(screen.getByText("Jonas Bakke", { selector: ".avviksnotat-navn" })).toBeTruthy();
+      expect((screen.getByRole("button", { name: t.godkjenn }) as HTMLButtonElement).disabled).toBe(false);
+    }
+    expect(kallTil(fetch, url)).toBe(1);
+  } finally {
+    Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: opprinnelig });
+  }
 });
 
 test("endret grunnlag oppdaterer avviksnotatet (ny topprangert) og krever nytt trykk (P-09)", async () => {

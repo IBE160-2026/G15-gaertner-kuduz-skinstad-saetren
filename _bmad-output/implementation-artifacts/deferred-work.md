@@ -100,3 +100,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: AGENTS.md sier at story 5.1 er «implementert og til gjennomgang», og setningen om `scripts/modelltest_*.py` er slått sammen med en svært lang linje.
   evidence: Kodegjennomgang 2026-11-16 (blind). Status i AGENTS.md blir foreldet ved merge, som tidligere funn om storystatus i agentkontekst. Rettes med registrering etter AV-08.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-6-rangeringstabell-pa-smale-skjermer.md`
+  summary: De faste kolonnene i rangeringstabellen (story 4.6) har ingen gjentakbar layouttest; bare et engangsskript i headless Chrome og manuell kontroll fanger at bakgrunn, `border-collapse: separate` eller `--rank-column-width` endres.
+  evidence: jsdom gjør ingen layout og CI kjører bare `npm run build`/`npm run test`; en nettlesertestløper (f.eks. Playwright) er et valg for hele gruppa (OP-16). Verification-gap-gjennomgangen 2026-11-19.

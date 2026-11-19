@@ -1,7 +1,7 @@
 // Kandidatflate med Kandidatliste, Rangeringstabell og EkskludertBoks (story 2.1, 2.4,
-// 2.5, 3.1 og 4.4). De er interne og testes gjennom Kandidatflate.
+// 2.5, 3.1, 4.4 og 4.6). De er interne og testes gjennom Kandidatflate.
 import { describe, expect, test, vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Kandidatflate from "../../src/komponenter/Kandidatflate";
 import { datoOgKlokke } from "../../src/format";
@@ -492,6 +492,42 @@ describe("Rangeringstabellen (story 4.4)", () => {
       expect(within(del).queryByRole("table")).toBeNull();
       expect(within(del).queryByRole("region", { name: t.rangeringstabell })).toBeNull();
       cleanup();
+    }
+  });
+});
+
+describe("Smale nettleservinduer (story 4.6)", () => {
+  // jsdom gjør ingen layout, så de faste kolonnene kontrolleres i nettleseren
+  // (docs/testing.md). Her vokter testen mot breddestyrt rendering: en endret
+  // vindusbredde skal ikke montere tabellen på nytt eller hente noe (AV-17).
+  const datarader = (del: HTMLElement) => within(within(del).getByRole("table")).getAllByRole("row").slice(1);
+  const sju = Array.from({ length: 7 }, (_, i) => ({ ...kandidat(100 + i, `Kandidat ${i + 1}`, 600), plass: i + 1 }));
+
+  test("«Vis alle» og «Vis full liste» er fortsatt åpne etter endret vindusbredde, uten ny henting", async () => {
+    const opprinnelig = window.innerWidth;
+    const settBredde = (bredde: number) => act(() => {
+      Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: bredde });
+      window.dispatchEvent(new Event("resize"));
+    });
+    try {
+      settBredde(1600);
+      const svar: Kandidatsvar = { ...TO_GYLDIGE, kandidater: sju, utelukkelser: TO_UTELUKKET };
+      const { bruker, del, fetch } = await rendreMed(ok(svar));
+      await bruker.click(within(del).getByRole("button", { name: t.visAlle }));
+      await bruker.click(within(del).getByRole("button", { name: begynnerMed(ek.visFullListe) }));
+
+      for (const bredde of [680, 1600]) {
+        settBredde(bredde);
+        expect(within(del).getByRole("button", { name: t.visFærre(5) }).getAttribute("aria-expanded")).toBe("true");
+        expect(datarader(del).map((r) => r.querySelector(".ansattnavn")?.textContent)).toEqual(sju.map((k) => k.navn));
+        expect(within(del).getByRole("button", { name: begynnerMed(ek.skjulFullListe) }).getAttribute("aria-expanded")).toBe("true");
+        for (const rad of TO_UTELUKKET.utelukkede.map(ekskludertRadTekst)) expect(within(del).getByText(rad)).toBeTruthy();
+      }
+      // Kandidatene og vakten er hentet én gang, før bredden ble endret.
+      expect(kallTil(fetch, KANDIDATER_URL)).toBe(1);
+      expect(kallTil(fetch, VAKT_URL)).toBe(1);
+    } finally {
+      Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: opprinnelig });
     }
   });
 });

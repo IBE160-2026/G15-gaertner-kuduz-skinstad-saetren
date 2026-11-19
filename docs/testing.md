@@ -123,9 +123,11 @@ har satt opp, feiler testen.
 | | Ingen Ekskludert-boks ved 0 utelukkede. «Vis full liste» lukket, åpen og lukket med `aria-expanded` | 2.5 |
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
 | | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. «Vis bare de 5 øverste» lukker listen igjen, med `aria-expanded` og fokus på knappen. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
+| | «Vis alle» og «Vis full liste» er fortsatt åpne med samme rader når vindusbredden endres (1600 → 680 → 1600), og kandidatene hentes ikke på nytt | 4.6 |
 | [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
 | | Kandidatkortets timetall, timebelastningslinje og ulempeindikator for den topprangerte kandidaten, uten avviksnotat, og tekstvarsel ved høy belastning | 4.5 |
 | | Avviksnotatet viser kostnad, nivå, timebelastning og ulempe for valgt og topprangert kandidat side om side uten å blokkere godkjenning, og oppdateres (her: forsvinner) ved endret grunnlag før ny bekreftelse kreves | 4.5 |
+| | Valgt kandidat (Mette), kandidatkort og avviksnotat står når vindusbredden endres, uten ny GET | 4.6 |
 
 Hver test er vist å kunne feile: en bevisst feil i komponenten gjorde den rød. Mutasjonene
 og de røde meldingene står i [KI-loggen](ki-logg/2026-11-14-komponenttester.md).
@@ -152,8 +154,8 @@ kan komponenttestene ikke kontrollere:
 
 - **Layout og bredde:** at v1 fungerer i smale nettleservinduer på en datamaskin
   (AV-17), at siden ikke ruller vannrett og at brede tabeller ruller i sin egen
-  beholder (AV-14), samt at flaten tåler større skrift. Story 4.6 foreslår 1080,
-  960 og 680 px som kontrollbredder; de kan justeres når storien spesifiseres.
+  beholder (AV-14), samt at flaten tåler større skrift. Story 4.6 bruker 1080,
+  960 og 680 px som kontrollbredder, og 1600 px for bred skjerm.
 - **Farger og fokusmarkering:** at nye elementer bruker designtokens (AV-13), at
   varselfarger og kontrast er riktige, og at fokusrammen synes når man går med tab
   (UX-DR24).
@@ -291,3 +293,33 @@ Etter kodegjennomgangen samme dag ble ulempeetikett og tester presisert. Den
 endrede etiketten ble kontrollert ved 1080 og 680 px med falske API-svar
 2026-11-18; faktisk skjermleser ble ikke brukt. Storyen står til `review` i
 sprintstatus; formell menneskelig PR-godkjenning er ikke registrert.
+
+## Story 4.6 – smale nettleservinduer (2026-11-19)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-4-6-rangeringstabell-pa-smale-skjermer.md)
+løser UX-DR25, UX-DR28 og AV-17 bare med CSS: «Nr.» og «Kandidat» i rangeringstabellen
+står fast mot venstre kant (`position: sticky`) når tabellen ruller i beholderen. Ingen
+komponent leser vindusbredden, så ingen tilstand monteres på nytt når bredden endres.
+
+- **Automatisk:** to komponenttester (tabellen over) sender `resize` med endret
+  `window.innerWidth` og kontrollerer at åpne lister og valgt kandidat står, uten ny henting.
+  De vokter mot en `resize`-lytter som monterer på nytt, nullstiller tilstand eller henter
+  på nytt. De fanger ikke `matchMedia`, `ResizeObserver` eller forsinket (debounced)
+  rendering, fordi jsdom ikke utløser dem. To bevisste feil (en `resize`-lytter som lukker
+  «Vis alle», og en som henter godkjenningsgrunnlaget på nytt) gjorde dem røde, se
+  [KI-loggen](ki-logg/2026-11-19-smale-skjermer.md).
+- **Nettleser:** jsdom gjør ingen layout. Skriptet
+  [`nettleserkontroll.mjs`](ki-logg/2026-11-19-smale-skjermer/nettleserkontroll.mjs) kjører
+  headless Chrome mot ekte backend med en midlertidig testdatabase og måler alle fire flatene
+  ved 1600, 1080, 960 og 680 px, og ved 680 px med skriftstørrelse 20 px («Stor»): ingen
+  siderulling, ingen klippet tekst, handlinger innenfor vinduet, de faste cellenes posisjon,
+  bakgrunn og skillelinje, fokus på Velg og tilstand ved endret bredde. Med 20 px skrift
+  ved 680 px står ulempekolonnen ikke helt ved siden av Preferanse når tabellen er rullet
+  helt til høyre (logget som INFO), men den kan rulles helt fram. Tab-gjennomgangen ble bare
+  kjørt på kandidatflaten ved 680 px og 16 px; tastatur på de tre andre flatene hører til
+  den manuelle sjekklisten. Kontrollen ble kjørt før rettingene etter kodegjennomgangen
+  (egne klasser for de faste kolonnene, `overflow-wrap: anywhere` i «Nr.»).
+  [Resultatet](ki-logg/2026-11-19-smale-skjermer/resultat.txt) og skjermbildene ligger i
+  samme mappe.
+- **Gjenstår før PR:** den manuelle sjekklisten over, gjort av et menneske i en vanlig
+  Chrome med «Stor» skrift i innstillingene, ikke bare emulert, mot den endelige CSS-en. P-13 er ikke en del av 4.6.

@@ -90,4 +90,11 @@
   --visually-hidden-size: 1px;
   --detail-column-min: 180px;
   --avviksnotat-kandidat-min: 220px;
+  /* Bredden på den faste «Nr.»-kolonnen i rangeringstabellen (story 4.6). Bevisst i rem,
+     ikke px: kolonnen har tekst (plass og totalscore) som skal vokse med skriftstørrelsen,
+     og «Kandidat»-kolonnen står fast med denne avstanden fra venstre kant (AV-13).
+     68px ved 16px: totalscoren brytes da over to linjer, men ulempe, preferanse og Velg
+     får plass ved siden av de faste kolonnene ved 680 px med #4127 (5.5rem ga 17 px for
+     lite, målt i nettleserkontrollen 2026-11-19). */
+  --rank-column-width: 4.25rem;
 }
