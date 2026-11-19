@@ -95,4 +95,4 @@ Gjennomgang 2026-11-19: blind gjennomgang (B), grensetilfeller (G) og testhull (
 - `cd backend && .venv\Scripts\python -m pytest` — alle tester består.
 - `cd frontend && npm.cmd run build` og `npm.cmd run test` — bygg og tester består, sekvensielt.
 
-**Manual checks:** Kontroller udekkede visuelle forhold i representative smale vinduer, farger, fokus og ekte backend etter OP-16/AV-17; dokumenter faktisk resultat eller åpne punkter.
+**Nettleserkontroll 19.11.2026 (OP-16, AV-17).** På #4127 ved 1600 px fikk hele tabellen plass. Ved 1080, 960 og 680 px rullet tabellen vannrett i egen beholder. Ingen vannrett siderulling. «Prøv igjen» var lesbar over to linjer med mørk tekst og synlig 2 px fokusramme ved Tab. Ved 680 px med 20 px rotskrift fikk hele teksten fortsatt plass. Enter viste ventemelding og deretter oppdatert rangering. Jonas gikk fra 50 til 100 preferansepoeng. Kontrollen brukte ekte FastAPI og midlertidig SQLite med en lokal KI-testadapter. Gjennom Vite-proxyen fungerte nytt forsøk på #4127, og #4189 viste null gyldige og 24 utelukkede. [Skjermbilder ved de tre smale breddene](../../docs/ki-logg/2026-11-19-prov-igjen-layout/).

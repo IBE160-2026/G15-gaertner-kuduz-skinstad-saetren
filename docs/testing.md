@@ -300,8 +300,7 @@ følger P-05, P-09 og AV-19. Backendtestene i
 bruker falsk KI og kontrollerer blant annet tilgang, feilet og vellykket forsøk,
 endret tekst, samtidige forespørsler, oppstartens lås og endret grunnlag.
 Komponenttestene i [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx)
-kontrollerer oppfriskning, feil, vaktbytte, sene svar og fokus. Visuell kontroll
-av den nye knappen, farger, fokus og ekte backend er ennå ikke dokumentert (OP-16).
+kontrollerer oppfriskning, feil, vaktbytte, sene svar og fokus. Nettleserkontrollen med ekte backend er dokumentert i spesifikasjonens Verification og med [skjermbilder](ki-logg/2026-11-19-prov-igjen-layout/).
 Etter gjennomgangsrettinger bestod 685 backendtester, frontendbygget, 52 modultester
 og 46 komponenttester. Backend ble kjørt med Python 3.12.14 og pakkene i `.venv`;
 `python.exe` i den lokale virtuelle mappen manglet, så installert Python ble brukt direkte.

@@ -10,4 +10,4 @@ En implementeringsagent fikk den godkjente [spesifikasjonen](../../_bmad-output/
 
 ## Kvalitetssikring
 
-Testene bruker falsk KI uten nettverkskall. Etter gjennomgangen bestod 685 backendtester, frontendbygget, 52 modultester og 46 komponenttester. Tre uavhengige gjennomganger fant blant annet fokusflytting, manglende test for rekkefølge og oppstartssnapshot samt tapte detaljer i epic-konteksten; funn og tiltak står i spesifikasjonen. Visuell kontroll med ekte backend gjenstår (OP-16). En lokal prosess deler låser mellom oppstart og brukerforsøk; låsene deles ikke mellom flere serverprosesser.
+Testene bruker falsk KI uten nettverkskall. Etter gjennomgangen bestod 685 backendtester, frontendbygget, 52 modultester og 46 komponenttester. Tre uavhengige gjennomganger fant blant annet fokusflytting, manglende test for rekkefølge og oppstartssnapshot samt tapte detaljer i epic-konteksten; funn og tiltak står i spesifikasjonen. Nettleserkontrollen med ekte backend ved 680–1600 px er gjennomført. [Skjermbilder](2026-11-19-prov-igjen-layout/). En lokal prosess deler låser mellom oppstart og brukerforsøk; låsene deles ikke mellom flere serverprosesser.
