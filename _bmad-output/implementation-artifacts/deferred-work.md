@@ -92,8 +92,14 @@
   summary: "[LØST 2026-11-16, rettet i AGENTS.md] Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på."
   evidence: Blind Hunter B11 (2026-11-15). Endringen gjelder en agentkontekstfil og er derfor utsatt. Rett linjen når 4.4 settes til `done`, eller vurder å fjerne storystatus fra AGENTS.md. Løst 2026-11-16: PR #29 er merget, 4.4 er `done`, og innledningen i AGENTS.md sier at 4.1–4.4 og 4.7 er ferdige (faktarettelse ført i §11, AV-08). Storystatus står fortsatt i AGENTS.md; å fjerne den er ikke vurdert.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
-  summary: Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (API-endepunkt og knapp i preferansecellen) er ikke bygget (FR-10, P-05, AC i story 5.1).
-  evidence: Utsatt av Mithad 2026-11-16 for å holde PR-en for 5.1 til backend (adapter, lagring og bakgrunnstolkning). Story 5.1 kan ikke settes `done` før dette er levert, eller gruppa godtar utsettelsen. Ragnhild Sætren beholdt utsettelsen 2026-11-16 ved gjennomgangen av PR #30: story 5.1 står som `in-progress` etter merge, og akseptansekriteriet er ikke endret.
+  summary: Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (FR-10, P-05) er implementert på arbeidsbranchen og avventer ferdig kvalitetssikring.
+  evidence: Utsatt av Mithad 2026-11-16 og beholdt av Ragnhild ved PR #30. API-endepunkt, knapp og automatiske tester er laget 2026-11-19; se `spec-5-1-prov-igjen.md`. Ikke marker punktet løst før gjennomgang og resterende kontroller er dokumentert.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-prov-igjen.md`
+  summary: Flerprosessdrift krever delt lås eller vedvarende versjon for preferanseforsøk.
+  evidence: Gjennomgangen 2026-11-19 fant at låser er per app-prosess og at identiske verdier kan skjule et mellomliggende forsøk. V1 dokumenterer én worker; verifiser atomisk samordning før støtte for flere workers.
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-1-prov-igjen.md`
+  summary: Test og håndter tekstendring A–B–A under KI-kall når preferanseredigering innføres i story 5.9.
+  evidence: Betinget lagring sammenligner tekstens verdi og kan ikke oppdage en mellomliggende endring tilbake til samme verdi. Den nåværende appen har ikke preferanseredigering.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: "[LØST 2026-11-16, AV-19] Gruppa har ikke vedtatt feilreglene for preferansetolkning (3 nye forsøk etter 2/4/8 s, 90 s budsjett, minst 1 s og 60 s ved 429, sluttstatus `kunne_ikke_tolkes` med feiltype). Konstantene i `backend/adaptere/ki/openrouter.py` er Mithads forslag 2026-11-16."
   evidence: P-05/OP-03 og PRD §8 krever avklaring før story 5.1 og 5.2 kan bli `done`. Funnet i kodegjennomgangen 2026-11-16 (blind). Vedtaket føres i `docs/beslutninger/avklaringspunkter.md`. Løst 2026-11-16: Ragnhild Sætren vedtok verdiene på vegne av gruppa (AV-19, `avklaringspunkter.md` §11). «Prøv igjen» er ikke en del av vedtaket og står som eget funn.

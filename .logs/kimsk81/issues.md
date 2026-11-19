@@ -1,5 +1,8 @@
 ﻿# Åpne punkter
 
+- [x] 2026-11-19 [Story 5.1 – prøv igjen](967-2026-11-19-20-19-29-story-5-1-prov-igjen.md) — Layout, farger, fokus og ekte backend for brukerutløst nytt forsøk (OP-16), kontrollert 2026-11-19.
+- [ ] 2026-11-19 [Story 5.1 – videre oppfølging](967-2026-11-19-20-19-29-story-5-1-prov-igjen.md) — Flerprosessdrift og A–B–A ved fremtidig preferanseredigering følges i deferred-work.md. Lokal backend-venv mangler Scripts/python.exe og må gjenopprettes for normal bruk.
+
 - [ ] 2026-11-17 [Gjennomgang av PR 31](971-2026-11-17-21-30-59-gjennomgang-pr-31.md) — Følg opp tilgjengelig timevisning, preferansetolkninger og testfasit, sammenligningsvisning og test av endret rangering på godkjenningsflaten.
 
 - [x] 2026-11-18 [Gjennomgang av PR 31](969-2026-11-17-21-47-00-retting-av-pr-31-spesifikasjon.md) — Følg opp reviewfunn om ulempeetikett, AV-13-token, testdekning og dokumentstatus før godkjenning. (løst lokalt 2026-11-18; se loggen)

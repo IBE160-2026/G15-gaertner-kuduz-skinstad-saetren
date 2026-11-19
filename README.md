@@ -169,6 +169,9 @@ tolkes» og prøves igjen neste gang backend starter. Det finnes ennå ingen kna
 nytt forsøk.
 
 Fremdriften vises ikke i terminalen. Backend logger hver tekst på nivå INFO, og
+Kjør backend med én worker. Låsene som samordner preferansetolkning ved oppstart og
+brukerutløste forsøk deles ikke mellom flere serverprosesser.
+
 uvicorn viser ikke INFO fra appens egne meldinger i oppsettet over. I terminalen ser du
 bare advarsler, for eksempel `kunne ikke tolkes (nettverk)`, og feil. Hent
 kandidatlisten på nytt for å følge med: tolkingen er ferdig når ingen rad lenger sier
