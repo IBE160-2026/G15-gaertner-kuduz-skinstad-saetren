@@ -130,10 +130,10 @@ Skjermbildene er gjennomgått visuelt. Alle navn er fiktive testdata fra story 1
 
 ## Åpne punkter
 
-- Den manuelle sjekklisten i `docs/testing.md` skal gjøres av et menneske før PR, mot den
-  endelige CSS-en og med «Stor» skrift i Chrome-innstillingene. Skriptet emulerer den med
-  `Page.setFontSizes`, og det ble kjørt før rettingene etter kodegjennomgangen. Tastatur på
-  Logg inn, Vaktvalg og Godkjenning er bare dekket av den manuelle sjekklisten.
+- ~~Den manuelle sjekklisten mot den endelige CSS-en~~: bestått 2026-11-19. Johannes brukte
+  vanlig Chrome med «Stor» skrift og tastatur på alle fire flatene. Agenten målte i forkant
+  med Chrome-utvidelsen i en iframe med nøyaktig bredde. Se «Verification» i
+  spesifikasjonen.
 - Plassen til ulempekolonnen ved 680 px avhenger av dataene: med 3 px til gode for #4127
   kan et lengre navn eller en lengre stilling i «Kandidat» skyve ulempekolonnen delvis inn
   under de faste kolonnene når tabellen er rullet helt til høyre. Den kan fortsatt rulles

@@ -127,3 +127,13 @@ Kodegjennomgang 2026-11-19 med blind-hunter (BH), edge-case-hunter (ECH) og veri
 - `frontend/`: `npm.cmd run test` -- `node --test` og Vitest består, med de nye 4.6-testene.
 
 **Manual checks (docs/testing.md):** 1080/960/680/1600 px på alle fire flatene, med rangeringstabellen rullet helt til høyre. Tastatur og fokus: tab gjennom tabellbeholderen og «Velg», og fokusrammen skal ikke skjules av de faste kolonnene. Farger: bakgrunnen i de faste cellene på `row-alt`-rader og i overskriften. Større skrift («Stor») ved 680 px. Ekte backend mot #4127 (Jonas og Mette) og #4189. Endre vindusbredden med «Vis alle» og «Vis full liste» åpne. Resultatet føres med malen i `docs/testing.md`.
+
+**Manuell kontroll (docs/testing.md):** Johannes W. Gaertner med Claude (Chrome-utvidelsen), 2026-11-19, Chrome 157 på Windows 11, story 4.6, mot den endelige CSS-en (etter rettingene fra kodegjennomgangen) og en midlertidig testdatabase med `KI_MODUS=demo`.
+Først målte agenten med Chrome-utvidelsen. Vinduet var maksimert på en skjerm som er 1280 px bred, så appen ble lagt i en iframe med nøyaktig bredde, og stor skrift ble emulert med 20 px rotskrift. Deretter kontrollerte Johannes selv i vanlig Chrome, med «Stor» skrift i innstillingene og tastatur.
+1. 1080, 960 og 680 px: bestått. Vaktvalg, kandidatflaten og Godkjenning (Mette) ble kontrollert med 16 og 20 px skrift. Siden ruller ikke vannrett, ingen tekst klippes, og ingen handling ligger utenfor vinduet. Med tabellen rullet helt til høyre står «Nr.» ved venstre kant og «Kandidat» rett etter på alle rader. Ulempekolonnen får plass ved siden av de faste kolonnene, med minst 65 px til overs. 1600 px er dekket av nettleserkontrollen med skriptet; skjermen er for smal.
+2. Tastatur og fokus: bestått. Agenten kontrollerte rekkefølgen på kandidatflaten og Godkjenning og så fokusrammen på Godkjenning. Johannes kontrollerte alle fire flatene.
+3. Farger: bestått (bakgrunnen i de faste cellene følger raden og overskriften).
+4. Større skrift: bestått («Stor» i Chrome-innstillingene).
+5. Ekte backend: bestått (#4127, Jonas og Mette).
+Målrettet kontroll av flyt uten komponenttest: vindusbredde 1080 → 960 → 680 → 1080 med «Vis full liste» åpen. Listen forble åpen med alle 20 utelukkede, og det kom ingen nye API-kall.
+Ikke relevant: 1600 px manuelt (skjermen er 1280 px; dekket av skriptet).

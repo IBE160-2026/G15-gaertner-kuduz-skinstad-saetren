@@ -321,5 +321,7 @@ komponent leser vindusbredden, så ingen tilstand monteres på nytt når bredden
   (egne klasser for de faste kolonnene, `overflow-wrap: anywhere` i «Nr.»).
   [Resultatet](ki-logg/2026-11-19-smale-skjermer/resultat.txt) og skjermbildene ligger i
   samme mappe.
-- **Gjenstår før PR:** den manuelle sjekklisten over, gjort av et menneske i en vanlig
-  Chrome med «Stor» skrift i innstillingene, ikke bare emulert, mot den endelige CSS-en. P-13 er ikke en del av 4.6.
+- **Manuell kontroll:** bestått 2026-11-19 mot den endelige CSS-en. Johannes kontrollerte
+  i vanlig Chrome med «Stor» skrift og tastatur på alle fire flatene. Agenten målte i
+  forkant med Chrome-utvidelsen. Resultatet står i «Verification» i spesifikasjonen.
+  P-13 er ikke en del av 4.6.

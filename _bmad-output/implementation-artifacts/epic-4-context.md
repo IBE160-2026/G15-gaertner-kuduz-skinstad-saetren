@@ -138,7 +138,7 @@ story-/sprint-nøkler.
     rettingene etter kodegjennomgangen. Med 20 px skrift ved 680 px står ulempekolonnen ikke
     helt synlig når tabellen er rullet helt til høyre, men kan rulles fram. Se
     [KI-loggen](../../docs/ki-logg/2026-11-19-smale-skjermer.md). Den manuelle
-    sjekklisten og PR-gjennomgang gjenstår, så storyen er `review`.
+    sjekklisten er bestått (2026-11-19), og PR-gjennomgang gjenstår, så storyen er `review`.
 
 ## Cross-Story Dependencies
 
