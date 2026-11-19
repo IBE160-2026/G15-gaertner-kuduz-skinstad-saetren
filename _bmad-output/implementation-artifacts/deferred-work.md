@@ -92,8 +92,8 @@
   summary: "[LØST 2026-11-16, rettet i AGENTS.md] Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på."
   evidence: Blind Hunter B11 (2026-11-15). Endringen gjelder en agentkontekstfil og er derfor utsatt. Rett linjen når 4.4 settes til `done`, eller vurder å fjerne storystatus fra AGENTS.md. Løst 2026-11-16: PR #29 er merget, 4.4 er `done`, og innledningen i AGENTS.md sier at 4.1–4.4 og 4.7 er ferdige (faktarettelse ført i §11, AV-08). Storystatus står fortsatt i AGENTS.md; å fjerne den er ikke vurdert.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
-  summary: Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (FR-10, P-05) er implementert på arbeidsbranchen og avventer ferdig kvalitetssikring.
-  evidence: Utsatt av Mithad 2026-11-16 og beholdt av Ragnhild ved PR #30. API-endepunkt, knapp og automatiske tester er laget 2026-11-19; se `spec-5-1-prov-igjen.md`. Ikke marker punktet løst før gjennomgang og resterende kontroller er dokumentert.
+  summary: "[LØST 2026-11-19, PR #33] Brukerutløst «Prøv igjen» for preferansetolkning etter endelig feil (FR-10, P-05) er implementert og levert."
+  evidence: Utsatt av Mithad 2026-11-16 og beholdt av Ragnhild ved PR #30. API-endepunkt, knapp og automatiske tester laget 2026-11-19 (`spec-5-1-prov-igjen.md`). Løst 2026-11-19: godkjent av Mithad etter uavhengig gjennomgang, inkludert en egen live-test av samtidighet mot en kjørende backend (se `.logs/mithad-kuduz/979-2026-11-19-22-00-00-gjennomgang-pr-33.md`), og merget til `main` (PR #33). Story 5.1 er `done` i `sprint-status.yaml`.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-prov-igjen.md`
   summary: Flerprosessdrift krever delt lås eller vedvarende versjon for preferanseforsøk.
   evidence: Gjennomgangen 2026-11-19 fant at låser er per app-prosess og at identiske verdier kan skjule et mellomliggende forsøk. V1 dokumenterer én worker; verifiser atomisk samordning før støtte for flere workers.
