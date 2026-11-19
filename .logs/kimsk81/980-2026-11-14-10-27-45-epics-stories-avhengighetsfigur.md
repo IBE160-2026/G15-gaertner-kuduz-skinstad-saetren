@@ -68,3 +68,17 @@ Automatisere synkronisering av figurens status med sprintstatus og legge til CI-
 
 ### Åpne punkter
 Ingen.
+
+## 2026-11-19 kl. 19:38 — Kimsk81
+
+### Oppgave
+Oppdatere avhengighetsfiguren etter ferdigstilte stories.
+
+### Plan
+- Sammenligne figuren med sprintstatusen, oppdatere statusfarger og kontrollere samsvaret.
+
+### Resultat
+Story 4.5 er endret fra gul til grønn i figuren etter at storyen ble satt til `done`. Story 5.1 er fortsatt under arbeid og beholder fargen for gjenstående arbeid. Prosjektets kontroll `python scripts/synkroniser_storyfigur.py --sjekk` og `git diff --check` bestod. Et første forsøk på en egen sammenligningskommando feilet på grunn av feil i søkemønsteret; prosjektets eksisterende kontroll ble brukt i stedet.
+
+### Åpne punkter
+Ingen.
