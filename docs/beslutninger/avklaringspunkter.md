@@ -87,6 +87,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-15 | Story 2.5 | Meldt 2026-11-13 | Mithad Kuduz tar Story 2.5, Ekskludert-boks med oppsummering av utelukkelser. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 | OP-16 | Komponenttester for frontend | Vedtatt 2026-11-14; implementert på branchen `frontend-komponenttester`, PR-gjennomgang gjenstår | Vitest 5.1.0 med Testing Library og jsdom 28.1.0 ved siden av `node --test`, én kommando (`npm run test`). De fem utsatte punktene fra 1.5, 2.1, 2.4, 2.5 og 3.1 er dekket. Manuell kontroll bare der testene ikke kan kontrollere det aktuelle (alternativ A), etter sjekklisten i `docs/testing.md` (§11). | Johannes W. Gaertner |
 | OP-17 | Story 4.5 | Meldt 2026-11-17 | Mithad Kuduz tar Story 4.5, Avviksnotat og nøkkeltall på godkjenningsflaten. Avhengighetene (4.2, 4.3, 4.4, 4.7) er alle `done`. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
+| OP-18 | Story 5.2 | Meldt 2026-11-20 | Mithad Kuduz tar Story 5.2, Rangeringen bruker tolkede preferanser. Avhengighetene (4.4, 5.1) er begge `done`. Bygget med Sonnet 5, gjennomgang med Opus, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -875,6 +876,23 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Kjent begrensning (uendret, ikke løst her):** Låsene som samordner forsøk deles ikke mellom flere serverprosesser (v1 kjøres med én worker). Dokumentert i README og `deferred-work.md`.
 - **Rettet:** `sprint-status.yaml` har 5.1 som `done`. Innledningen i AGENTS.md sier nå at 5.1 er ferdig, ikke delvis levert. Den daterte merknaden i `epics.md` under story 5.1 er oppdatert. `deferred-work.md` har punktet markert løst.
 - **Ikke endret:** Akseptansekriteriene selv, AV-19, P-05 og andre AV-, K-, OP- og KS-punkter.
+
+### 2026-11-20 – PR #32 godkjent og merget (story 4.6)
+
+- **Hvem:** Johannes W. Gaertner bygget story 4.6 og rettet funnet Mithad Kuduz postet 2026-11-19 (`a8fbc0a`: ulempekolonnen kunne havne delvis under de faste kolonnene ved 680 px/16 px når siden trenger loddrett scroll). Mithad reverifiserte uavhengig og godkjente/merget PR #32.
+- **Kvalitetssikring:** Mithad kjørte den oppdaterte nettleserkontrollen selv i en egen headless Chrome-instans mot en ny scratch-database; alle kontroller bestod, med loddrett rullefelt bekreftet til stede. Build, 52 modultester og 48 komponenttester bestod. Se `.logs/mithad-kuduz/980-2026-11-19-21-50-00-gjennomgang-pr-32.md`.
+- **Status:** Story 4.6 er **ikke** satt til `done`. Johannes har to egne åpne punkter i sin `issues.md` (en kort manuell kontroll i et vanlig, ikke-headless Chrome-vindu, og en designavklaring om totalscore over to linjer). `sprint-status.yaml` står fortsatt som `review`.
+- **Ikke endret:** Andre AV-, K-, OP- og KS-punkter.
+
+### 2026-11-20 – Story 5.2 (OP-18)
+
+- **Hvem:** Mithad Kuduz meldte 2026-11-20 at han tar Story 5.2. Det er en melding om ansvar, ikke et gruppevedtak.
+- **OP-18 – Story 5.2, Rangeringen bruker tolkede preferanser:**
+  - Mithad Kuduz er ansvarlig.
+  - Avhengighetene er begge ferdige: story 4.4 (rangering) og 5.1 (preferansetolkning, inkludert «Prøv igjen»).
+  - Bygges med Claude Sonnet 5, gjennomgang med Opus, etter anbefalingen i `docs/modellvalg-stories.md`.
+- **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 5.2.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
