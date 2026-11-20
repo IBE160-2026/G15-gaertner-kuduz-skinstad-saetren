@@ -16,3 +16,6 @@ Kim valgte B. Spesifikasjonen måler egne faktorpoeng mot kandidatens eksakte to
 
 ### Åpne punkter
 Ingen.
+
+### Gjennomgang av spesifikasjonen
+En uavhengig underagent leste spesifikasjonen mot epic, arkitektur og kode. Vi kontrollerte at eksisterende godkjenningsmerke inkluderer kandidat-ID, at faktorpoeng og råbeløp har ulik betydning, og at rangeringsparametrene tillater nullvekt. Utkastet angir nå merke per kandidatrad fra samme lesetransaksjon, regresjonstester for forsinkede svar på begge flater, kildelinje styrt av faktisk kilde og avvisning av retningspåstander om faktorer uten vekt. Disse funnene er kontrollert ved dokument- og kodelesing. Implementering, testkjøring og uavhengig kodegjennomgang hører til neste fase etter godkjenning av spesifikasjonen.
