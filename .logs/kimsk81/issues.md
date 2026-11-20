@@ -103,3 +103,5 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [x] 2026-11-15 [Gjennomgang av PR 27](973-2026-11-15-20-14-13-gjennomgang-pr-27.md) — Tilbakefør lokalt testscenario etter skjermlesertesten: Ingrids vakt #4102 slutt 21.09.2026 kl. 15:00, ikke 15:24. (løst 2026-11-15; sluttid tilbakeført til 15:00)
 
 - [x] 2026-11-17 [uv i Windows-sandboxen](970-2026-11-17-21-38-46-uv-windows-sandbox.md) — Avklar en avgrenset løsning for uv-tilgang og verifiser i sandboxen før bmad-build gjenopptas. (løst 2026-11-17: RX gitt til uv.exe og versjonstest lyktes i sandboxen)
+
+- [ ] 2026-11-20 [Status PR 32](966-2026-11-20-19-49-50-status-pr-32.md) — Følg opp manuell kontroll ved 680 px med rullefelt og designavklaring for story 4.6, deretter vurder storystatus; se Johannes' issues.md. Story 5.3 og eventuell layouttest i CI er ført i deferred-work.md.
