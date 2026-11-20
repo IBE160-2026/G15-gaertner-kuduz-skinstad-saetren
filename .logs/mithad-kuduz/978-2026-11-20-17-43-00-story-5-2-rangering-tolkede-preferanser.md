@@ -54,3 +54,49 @@ kandidater; brukeren valgte 5.2 (Rangeringen bruker tolkede preferanser) framfor
 
 - PR for `story/5-2-rangeringen-bruker-tolkede-preferanser` er ikke opprettet ennå —
   gjenstår å pushe og åpne PR for gjennomgang fra et gruppemedlem.
+
+## 2026-11-20 kl. 19:28 — Mithad Kuduz
+
+### Oppgave
+
+Pushet branchen og opprettet PR #34. Johannes gjennomgikk den samme dag (`bmad-review`
+med Opus) og pushet tre rettekommiter direkte til branchen. Gikk gjennom alle tre og
+verifiserte uavhengig før jeg fortsatte.
+
+### Plan
+
+- Leste alle tre commit-meldingene i sin helhet, ikke bare diff-stat.
+- Sammenlignet den nye AC2-testen og de to nye API-testene mot koden selv.
+- Kjørte `pytest` og `npm.cmd run build`/`test` på nytt selv, for å bekrefte
+  Johannes' tall uavhengig av hans egen kjøring.
+
+### Resultat
+
+- **Funnene er reelle og rettingene er riktige.** Den viktigste: med bare to kandidater
+  ga min–maks flat 50/50, så testen min kunne ikke skille en vektet preferanse fra et
+  rent tiebreak — en mutasjon som gjorde preferansen til bare et tiebreak, besto hele
+  `tester/regelmotor`. Rettet med en tredje kandidat (ikke-flat min–maks) og en egen test
+  som viser at preferansen veier tyngre enn en liten kostnadsforskjell. En annen
+  mutasjon viste at testen ikke skilte en reell nøytral tolkning fra reserveveien
+  (venter/feilet, som også gir 50 poeng) — rettet med eksplisitt sjekk av tolkestatus.
+  To nye API-tester lukker reelle hull: at rutelaget (ikke bare domenekjernen) aldri
+  kaller KI (fant et konkret scenario som ikke var dekket før), og at «Prøv igjen» etter
+  endelig feil beregner rangeringen på nytt i backend, ikke bare i en frontendtest med
+  stubbet fetch.
+- **`epic-5-context.md`:** Johannes fant at planverket knapt var endret siden filen sist
+  ble kompilert (bare én statuslinje), så regenereringen min var unødvendig og hadde i
+  tillegg fortsatt mistet rundt 15 bindende detaljer selv etter min egen rettingsrunde.
+  Løsningen hans var enklere og tryggere enn min: tilbakestill til versjonen på `main`,
+  og legg bare til sju kildebelagte setninger. Jeg sammenlignet den nye fila linje for
+  linje mot både forrige versjon og min egen — alt stemmer, ingenting mangler.
+  **Lærdom:** når en eksisterende, committet kontekstfil bare trenger småoppdateringer,
+  er et avgrenset tillegg tryggere enn en full regenerering, selv med en etterfølgende
+  gjennomgang.
+- Verifiserte selv: 690 backendtester, frontendbygget, 52 modultester og 48
+  komponenttester bestod — samme tall som Johannes oppga.
+- Ingen uenighet med noen av rettingene. Ingenting tilbakeført eller omgjort.
+
+### Åpne punkter
+
+- Formell godkjenning og merge av PR #34 gjenstår, fra Johannes eller et annet
+  gruppemedlem (ikke meg selv, siden jeg er forfatteren).
