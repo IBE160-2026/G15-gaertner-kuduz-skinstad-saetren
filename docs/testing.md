@@ -76,7 +76,11 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   fasiten for #4127 med og uten tolkede preferanser (KS-02), AV-12, min–maks og like
   verdier (AV-05), eksakt likhet med `Fraction` og ID-rekkefølge (K-03, §11), de fire
   tolkestatusene (P-05), at utelukkede aldri rangeres (NFR2), determinisme med stokket
-  inndata, og vekter og tak som parametere (AV-11).
+  inndata, og vekter og tak som parametere (AV-11). Story 5.2: en isolasjonstest viser at
+  to kandidater like på kostnad, timebelastning og ulempe, men ulike bare i tolket
+  preferanse, rangeres etter preferansen alene. Den kjøres med begge id-rekkefølger og en
+  tredje kandidat, så verken id-tiebreaket eller flat min–maks gir riktig svar ved et
+  uhell. En egen test viser at preferansen veier tyngre enn en liten kostnadsforskjell.
 - **API** ([`tester/api/`](../backend/tester/api/)): innlogging og sesjon, vaktoversikt,
   vaktdetaljer, kandidater og godkjenning, med 401, 404, datafeil og fasiten
   for #4127 og #4189 (AV-07). Story 3.2 tester også endret grunnlag (P-09),
@@ -90,6 +94,8 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   `tester/lagring/` lagring og validering ved lesing, og
   [`test_preferansetolkning.py`](../backend/tester/api/test_preferansetolkning.py) i
   `tester/api/` bakgrunnstolkningen, Rangeringen med lagrede tolkninger og oppstarten.
+  Story 5.2 la til at kandidatlisten og godkjenningsgrunnlaget ikke kaller KI i noen
+  tolkestatus, og at «Prøv igjen» etter endelig feil beregner rangeringen på nytt.
   [`tester/conftest.py`](../backend/tester/conftest.py) fjerner KI-variablene fra
   miljøet i hver test.
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
