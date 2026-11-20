@@ -100,3 +100,38 @@ verifiserte uavhengig før jeg fortsatte.
 
 - Formell godkjenning og merge av PR #34 gjenstår, fra Johannes eller et annet
   gruppemedlem (ikke meg selv, siden jeg er forfatteren).
+
+## 2026-11-20 kl. 20:26 — Mithad Kuduz
+
+### Oppgave
+
+Johannes meldte (gjennom et nummerert funn, «punkt 4», fra sin egen PR-gjennomgang)
+tre feil i min egen del av KI-loggen for story 5.2. Jeg verifiserte alle tre mot
+kildene før jeg rettet.
+
+### Plan
+
+- Sjekket `docs/ki-logg/README.md` for kravet om ordrett prompt.
+- Sjekket min egen OP-18-oppføring i `avklaringspunkter.md` og AGENTS.md Policy for
+  branch/PR, for å bekrefte at «gruppen hadde godkjent» var feil.
+- Leste min egen logg linje for linje for å bekrefte miskategoriseringen.
+
+### Resultat
+
+- Alle tre funn var reelle og konkret kildebelagt:
+  1. Prompten min var bare gjenfortalt, ikke ordrett — README.md krever ordrett.
+  2. Loggen påsto et gruppevedtak om branch+PR som ikke finnes. OP-18 er en
+     ansvarsmelding (min egen tekst i avklaringspunktene sier det selv), og
+     branch/PR er et valg den enkelte gjør (Policy). Jeg valgte selv.
+  3. Et avvist funn (DemoKiAdapter/«ett KI-kall per vakt») sto feilaktig under
+     «Disse ble rettet».
+- Rettet alle tre i `docs/ki-logg/2026-11-20-rangering-tolkede-preferanser.md`,
+  committet `3396279`.
+- **Lærdom:** jeg skrev selv denne KI-loggen uten å lese den kritisk mot
+  README-kravet og mine egne tidligere notater før commit. Loggens formål er
+  nettopp å fange denne typen glipp — jeg burde ha gjort det selv, ikke bare
+  stolt på at innholdet var riktig fordi jeg skrev det.
+
+### Åpne punkter
+
+- Formell godkjenning og merge av PR #34 gjenstår.
