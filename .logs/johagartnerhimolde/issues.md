@@ -82,3 +82,4 @@
 - [ ] 2026-11-19 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Avgjør om det er greit at totalscoren («79,4 poeng») brytes over to linjer også ved brede vinduer.
 - [ ] 2026-11-20 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Kort manuell kontroll av 4.6 i vanlig Chrome, 680 px bredt og så lavt at siden får rullefelt, mot CSS-en med fast bredde på «Kandidat» (`a8fbc0a`).
 - [ ] 2026-11-20 [story-4-6-smale-skjermer](974-2026-11-19-20-20-01-story-4-6-smale-skjermer.md) — Story 5.3: ekspanderlenken «Vis/Skjul begrunnelse» må få plass ved 680 px med rullefelt (simulert −89 px). Kjør nettleserkontrollen fra 4.6 på nytt.
+- [ ] 2026-11-20 [sprintstatus-epicer](973-2026-11-20-16-56-31-sprintstatus-epicer.md) — Nøkkelen for 5.9 i sprint-status.yaml stemmer ikke med overskriften i epics.md («(P-10B)»). Neste generate døper den om. Godta det eller juster overskriften.
