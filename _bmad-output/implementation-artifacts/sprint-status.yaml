@@ -29,13 +29,13 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 19-11-2026 22:05
+last_updated: 11-20-2026 13:15
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
 story_location: _bmad-output/implementation-artifacts
 development_status:
-  epic-1: in-progress
+  epic-1: done
   1-1-prosjektoppsett-som-kjører-fra-en-ren-klone: done
   1-2-fiktiv-turnus-med-ansatte-og-vakter: done
   1-3-innlogging-for-turnusansvarlig: done
@@ -44,7 +44,7 @@ development_status:
   1-6-velge-vakten-som-skal-bemannes: done
   epic-1-retrospective: optional
 
-  epic-2: in-progress
+  epic-2: done
   2-1-gyldige-kandidater-filtrert-på-kompetanse-minstekrav: done
   2-2-filtrere-bort-kandidater-med-kolliderende-vakt: done
   2-3-filtrere-på-11-timersregelen-daglig-hvile: done
@@ -53,7 +53,7 @@ development_status:
   2-6-tydelig-melding-når-ingen-kandidater-er-gyldige: done
   epic-2-retrospective: optional
 
-  epic-3: in-progress
+  epic-3: done
   3-1-velge-kandidat-og-se-godkjenningsflaten: done
   3-2-gjennomføre-godkjenning-og-bemanne-vakten: done
   epic-3-retrospective: optional
