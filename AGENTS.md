@@ -26,7 +26,7 @@ backend tolker ventende tekster i en daemon-tråd ved oppstart. Et beskyttet end
 «Prøv igjen»-knapp lar turnusansvarlig be om et nytt forsøk etter endelig feil (låsene deles
 ikke mellom flere serverprosesser; v1 kjøres med én worker). Rangeringen leser bare lagrede
 tolkninger. Uten gyldig lagret tolkning får en preferanse midlertidig 50 poeng (P-05).
-Story 5.2 (til gjennomgang i PR #34) er bare testdekning, siden koden allerede sendte
+Story 5.2 (ferdig, PR #34) er bare testdekning, siden koden allerede sendte
 lagrede tolkninger inn i Rangeringen som vanlig input. Regelmotortester viser at
 preferansen alene avgjør mellom ellers like kandidater, og en API-test viser at rutene
 ikke kaller KI mens Rangeringen beregnes. `scripts/modelltest_*.py` er isolerte modellforsøk før
