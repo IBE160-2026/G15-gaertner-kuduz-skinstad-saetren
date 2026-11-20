@@ -87,7 +87,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-15 | Story 2.5 | Meldt 2026-11-13 | Mithad Kuduz tar Story 2.5, Ekskludert-boks med oppsummering av utelukkelser. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 | OP-16 | Komponenttester for frontend | Vedtatt 2026-11-14; implementert på branchen `frontend-komponenttester`, PR-gjennomgang gjenstår | Vitest 5.1.0 med Testing Library og jsdom 28.1.0 ved siden av `node --test`, én kommando (`npm run test`). De fem utsatte punktene fra 1.5, 2.1, 2.4, 2.5 og 3.1 er dekket. Manuell kontroll bare der testene ikke kan kontrollere det aktuelle (alternativ A), etter sjekklisten i `docs/testing.md` (§11). | Johannes W. Gaertner |
 | OP-17 | Story 4.5 | Meldt 2026-11-17 | Mithad Kuduz tar Story 4.5, Avviksnotat og nøkkeltall på godkjenningsflaten. Avhengighetene (4.2, 4.3, 4.4, 4.7) er alle `done`. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
-| OP-18 | Story 5.2 | Meldt 2026-11-20 | Mithad Kuduz tar Story 5.2, Rangeringen bruker tolkede preferanser. Avhengighetene (4.4, 5.1) er begge `done`. Bygget med Sonnet 5, gjennomgang med Opus, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
+| OP-18 | Story 5.2 | Meldt 2026-11-20; implementert, gjennomgått (PR #34) og merget av Kim O. Skinstad 2026-11-20 | Mithad Kuduz tar Story 5.2, Rangeringen bruker tolkede preferanser. Avhengighetene (4.4, 5.1) er begge `done`. Bygget med Sonnet 5, gjennomgang med Opus, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -893,6 +893,30 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Bygges med Claude Sonnet 5, gjennomgang med Opus, etter anbefalingen i `docs/modellvalg-stories.md`.
 - **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 5.2.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-20 – Story 5.2 implementert, gjennomgått og merget (OP-18, PR #34)
+
+- **Hvem:** Mithad Kuduz bygget story 5.2 (én dedikert isolasjonstest for AC2; AC1/AC3/AC4
+  var allerede oppfylt av kode og tester fra story 4.4, 4.5 og 5.1). Johannes W. Gärtner
+  gjennomgikk PR #34 (`bmad-review` med Opus) og pushet tre rettekommiter direkte til
+  branchen. Kim O. Skinstad godkjente og merget til `main` (`358b20e`).
+- **Hva Johannes rettet:** den opprinnelige AC2-testen beviste mindre enn den så ut til —
+  med bare to kandidater ga min–maks flat 50/50, så en mutasjon der preferansen bare
+  virket som tiebreak, besto hele `tester/regelmotor`. Rettet med en tredje kandidat og en
+  ny test som viser at preferansen veier tyngre enn en liten kostnadsforskjell. La også til
+  to API-tester (at rutelaget aldri kaller KI; at «Prøv igjen» etter feil beregner
+  rangeringen på nytt i backend) og tilbakestilte en unødvendig regenerert
+  `epic-5-context.md` til hovedversjonen med sju kildebelagte tillegg.
+- **Etterpå fant Mithad** at sin egen del av KI-loggen (`docs/ki-logg/2026-11-20-rangering-tolkede-preferanser.md`)
+  hadde tre feil: prompten var gjenfortalt, ikke ordrett (README-krav); et oppdiktet
+  gruppevedtak om branch+PR («gruppen hadde godkjent») som motsier både OP-18s egen
+  ordlyd og Policy om at branch/PR er et individuelt valg; og et avvist funn ført under
+  «rettet». Rettet direkte på `main` etter at PR-en allerede var merget (`4c2846d`), siden
+  PR-veien var stengt.
+- **Kvalitetssikring:** 690 backendtester, frontendbygget, 52 modultester og 48
+  komponenttester bestod, bekreftet uavhengig av både Johannes og Mithad.
+- **Status:** Story 5.2 er `done` i `sprint-status.yaml`.
+- **Ikke endret:** Akseptansekriteriene selv og andre AV-, K-, OP- og KS-punkter.
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
