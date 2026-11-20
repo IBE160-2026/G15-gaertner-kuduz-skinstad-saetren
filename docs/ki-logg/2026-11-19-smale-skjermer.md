@@ -128,13 +128,65 @@ den endelige CSS-en.
 Skjermbildene er gjennomgått visuelt. Alle navn er fiktive testdata fra story 1.2.
 «Konstruert kandidat 1–3» finnes bare i bildet med «Vis alle».
 
+## Retting etter PR-gjennomgangen (2026-11-20)
+
+**Oppgave og prompt.** Mithad Kuduz kjørte `nettleserkontroll.mjs` på nytt i PR #32 og
+fikk `[FEIL] Kandidatflate 680 px/16, rullet helt til høyre: ulempe og preferanse står ved
+siden av de faste`. Johannes ba Claude Code (Opus 5.5, samme økt som gjennomgangen av
+PR-en) om å gå gjennom funnet: «Ta meg igjennom tilbakemeldingene på PR'en». Claude anbefalte
+fast bredde på «Kandidat», og Johannes valgte det: «Ja, vi prøver med fast bredde på
+Kandidat».
+
+**Hva som var galt i den genererte koden og kontrollen.**
+- Den første kontrollen kjørte med 900 px vindushøyde. Kandidatflaten fikk da plass uten
+  loddrett rullefelt, og tallet «3 px til overs» gjaldt bare uten rullefelt. Med et
+  vanlig rullefelt på 15 px (vinduet 680 × 700 px) ble beholderen 573 px i stedet for
+  588 px, og ulempekolonnen gled 11 px inn under «Kandidat». Det er reprodusert med et
+  eget måleskript.
+- Siderullingen ble målt mot `innerWidth`. Det skjuler inntil 15 px vannrett overløp når
+  siden har rullefelt.
+- Vurderingen i Review Triage Log om at rettingen «ikke er direkte, fordi Chrome
+  ignorerer `max-width` på celler», stemte ikke: `width` og `min-width` virker, slik
+  «Nr.» allerede viste.
+
+**Hva Claude leverte.**
+- Et nytt token, `--candidate-column-width: 7.5rem`, og fast bredde på `.fast-kandidat` med
+  `white-space: normal` og `overflow-wrap: anywhere` (`tokens.css`, `app.css`).
+  Bredden er valgt etter målinger: navnene er høyst 93 px og stilling og ansiennitet 132 px.
+  Med 96 px tekstbredde står navnet på én linje, og undertekstene brytes over to.
+- `nettleserkontroll.mjs`: 700 px vindushøyde, en kontroll av at kandidatflaten har
+  rullefelt ved 680 px, siderulling målt mot `clientWidth`, bredden på «Kandidat» kontrollert
+  mot tokenet, og tabellen rullet inn i synsfeltet før målingen. Ved 1080 px kontrolleres
+  tabellen som ved 1600 px når den får plass uten rulling.
+- En INFO-linje som simulerer Epic 5s lenke «Skjul begrunnelse ▴» i siste kolonne.
+
+**Rettet underveis.** Den første kjøringen med 700 px høyde ga ni feil som ikke var
+layoutfeil. Den nederste raden lå under synsfeltet, så `elementFromPoint` fant ingen celle,
+og ved 1080 px rullet ikke tabellen lenger. Begge er rettet i skriptet, ikke i CSS-en.
+
+**Kvalitetssikring.**
+- Marginen ved 680 px og 16 px skrift er nå +26 px med rullefelt og +41 px uten.
+  Ved 20 px skrift er den −85 px (før −125 px), som før logget som INFO.
+- Nettleserkontrollen mot den rettede CSS-en: 125 kontroller besto, og ingen feilet
+  ([resultat](2026-11-19-smale-skjermer/resultat.txt)). Skjermbildene i mappen er tatt på
+  nytt, og `kandidatflate-680-rullet.png` er gått gjennom visuelt.
+- Bevisst feil: med den faste bredden fjernet feilet kontrollen med Mithads melding og på
+  tokenkontrollen ved 680, 960 og 1080 px. Deretter ble CSS-en lagt tilbake.
+- Etter at `main` (PR #33) ble merget inn: `npm.cmd run build` og `npm.cmd run test`
+  består.
+- Den manuelle kontrollen fra 2026-11-19 ble gjort før denne rettingen. Den har ikke blitt
+  gjentatt.
+- Simuleringen av Epic 5 viser at det mangler 89 px ved 680 px med rullefelt. Ført i
+  `deferred-work.md` for story 5.3.
+
 ## Åpne punkter
 
 - ~~Den manuelle sjekklisten mot den endelige CSS-en~~: bestått 2026-11-19. Johannes brukte
   vanlig Chrome med «Stor» skrift og tastatur på alle fire flatene. Agenten målte i forkant
   med Chrome-utvidelsen i en iframe med nøyaktig bredde. Se «Verification» i
   spesifikasjonen.
-- Plassen til ulempekolonnen ved 680 px avhenger av dataene: med 3 px til gode for #4127
+- ~~Plassen til ulempekolonnen ved 680 px~~: rettet 2026-11-20 med fast bredde på «Kandidat»
+  (se over). Opprinnelig tekst: plassen til ulempekolonnen ved 680 px avhenger av dataene: med 3 px til gode for #4127
   kan et lengre navn eller en lengre stilling i «Kandidat» skyve ulempekolonnen delvis inn
   under de faste kolonnene når tabellen er rullet helt til høyre. Den kan fortsatt rulles
   fram.

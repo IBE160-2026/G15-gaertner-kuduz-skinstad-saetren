@@ -486,8 +486,16 @@ button {
   overflow-wrap: anywhere;
 }
 
+/* Også «Kandidat» har fast bredde, så de faste kolonnene ikke vokser med lengden på
+   stilling og ansiennitet. Teksten brytes i stedet. `anywhere` av samme grunn som i «Nr.»:
+   et svært langt ord skal brytes, ikke gjøre kolonnen bredere enn tokenet. */
 .rangeringstabell .fast-kandidat {
   left: var(--rank-column-width);
+  width: var(--candidate-column-width);
+  min-width: var(--candidate-column-width);
+  max-width: var(--candidate-column-width);
+  white-space: normal;
+  overflow-wrap: anywhere;
   border-right: var(--border-width) solid var(--color-border);
 }
 

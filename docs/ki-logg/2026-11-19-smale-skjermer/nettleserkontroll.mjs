@@ -43,21 +43,26 @@ async function tast(key, code, keyCode, modifiers = 0) {
   await cdp("Input.dispatchKeyEvent", { type: "keyDown", key, code, windowsVirtualKeyCode: keyCode, modifiers });
   await cdp("Input.dispatchKeyEvent", { type: "keyUp", key, code, windowsVirtualKeyCode: keyCode, modifiers });
 }
+// Vindushøyden er 700 px, så Vaktvalg og kandidatflaten får et loddrett rullefelt som tar
+// bredde fra siden, slik et vanlig vindu side om side gjør. Med 900 px kunne kandidatflaten
+// få plass uten rullefelt, og da så ikke kontrollen at ulempekolonnen gled under de faste
+// kolonnene (Mithads funn i PR #32, 2026-11-19).
+const HØYDE = 700;
 // Hele siden: vinduet gjøres midlertidig like høyt som innholdet. `captureBeyondViewport`
 // ble ikke brukt, fordi skjermbildet da ble tatt med standard skriftstørrelse.
 let nå = { px: 1600, skrift: 16 };
 async function bilde(navn, bareSynsfelt = false) {
-  const høyde = bareSynsfelt ? 900 : Math.ceil(await ev("document.documentElement.scrollHeight"));
-  await cdp("Emulation.setDeviceMetricsOverride", { width: nå.px, height: Math.max(høyde, 900), deviceScaleFactor: 1, mobile: false });
+  const høyde = bareSynsfelt ? HØYDE : Math.ceil(await ev("document.documentElement.scrollHeight"));
+  await cdp("Emulation.setDeviceMetricsOverride", { width: nå.px, height: Math.max(høyde, HØYDE), deviceScaleFactor: 1, mobile: false });
   await vent(200);
   const s = await cdp("Page.captureScreenshot", { format: "png" });
   writeFileSync(path.join(UT, `${navn}.png`), Buffer.from(s.result.data, "base64"));
-  await cdp("Emulation.setDeviceMetricsOverride", { width: nå.px, height: 900, deviceScaleFactor: 1, mobile: false });
+  await cdp("Emulation.setDeviceMetricsOverride", { width: nå.px, height: HØYDE, deviceScaleFactor: 1, mobile: false });
   await vent(200);
 }
 async function bredde(px, skrift = 16) {
   nå = { px, skrift };
-  await cdp("Emulation.setDeviceMetricsOverride", { width: px, height: 900, deviceScaleFactor: 1, mobile: false });
+  await cdp("Emulation.setDeviceMetricsOverride", { width: px, height: HØYDE, deviceScaleFactor: 1, mobile: false });
   await cdp("Page.setFontSizes", { fontSizes: { standard: skrift } });
   await vent(300);
 }
@@ -108,14 +113,17 @@ const MÅL_FLATE = `(() => {
   const overløp = [...document.querySelectorAll(".panel, .login-card, .alert-box, .avviksnotat, .ekskludert-boks, .bekreftelsesboks, .brodsmulesti, .appbar")]
     .filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.className);
   return {
-    sideBredde: document.documentElement.scrollWidth, vindu: window.innerWidth,
-    sideRuller: document.documentElement.scrollWidth > window.innerWidth,
+    // clientWidth er bredden uten loddrett rullefelt. Med innerWidth ville inntil 15 px
+    // vannrett overløp ikke synes når siden har rullefelt.
+    sideBredde: document.documentElement.scrollWidth, vindu: document.documentElement.clientWidth,
+    rullefelt: window.innerWidth - document.documentElement.clientWidth,
+    sideRuller: document.documentElement.scrollWidth > document.documentElement.clientWidth,
     klippet, utenfor, overløp,
   };
 })()`;
 
 function sjekkFlate(navn, m) {
-  sjekk(`${navn}: siden ruller ikke vannrett`, !m.sideRuller, `${m.sideBredde} av ${m.vindu} px`);
+  sjekk(`${navn}: siden ruller ikke vannrett`, !m.sideRuller, `${m.sideBredde} av ${m.vindu} px${m.rullefelt ? `, loddrett rullefelt ${m.rullefelt} px` : ""}`);
   sjekk(`${navn}: ingenting klippet`, m.klippet.length === 0 && m.overløp.length === 0, { klippet: m.klippet, overløp: m.overløp });
   sjekk(`${navn}: alle handlinger innenfor vinduet`, m.utenfor.length === 0, m.utenfor);
 }
@@ -126,11 +134,16 @@ function sjekkFlate(navn, m) {
 // delen av hver annen celle skal det være den cellen, ikke en fast celle.
 const MÅL_TABELL = `(() => {
   const b = document.querySelector(".rangeringstabell");
+  // Hele tabellen i synsfeltet: med 700 px vindushøyde ligger de nederste radene ellers
+  // under kanten, og der gir elementFromPoint ingen celle.
+  b.scrollIntoView({ block: "start" });
   const før = { scrollWidth: b.scrollWidth, clientWidth: b.clientWidth };
   const rader = [...b.querySelectorAll("tr")];
   const rot = getComputedStyle(document.documentElement);
   const tokenPx = parseFloat(rot.getPropertyValue("--rank-column-width")) * parseFloat(rot.fontSize);
   const førsteBredde = rader[0].children[0].getBoundingClientRect().width;
+  const kandidatTokenPx = parseFloat(rot.getPropertyValue("--candidate-column-width")) * parseFloat(rot.fontSize);
+  const andreBredde = rader[0].children[1].getBoundingClientRect().width;
   const br = b.getBoundingClientRect();
   const innenfor = (celle, x, y) => { const el = document.elementFromPoint(x, y); return !!el && celle.contains(el); };
   const midt = (r) => (r.top + r.bottom) / 2;
@@ -168,7 +181,7 @@ const MÅL_TABELL = `(() => {
   b.scrollLeft = b.scrollWidth;
   const farge = (v) => { const d = document.createElement("span"); d.style.color = "var(" + v + ")"; document.body.append(d); const c = getComputedStyle(d).color; d.remove(); return c; };
   return {
-    før, tokenPx, førsteBredde, helt, ulempe,
+    før, tokenPx, førsteBredde, kandidatTokenPx, andreBredde, helt, ulempe,
     farger: { panel: farge("--color-bg-panel"), alt: farge("--color-row-alt"), header: farge("--color-column-header-bg"), border: farge("--color-border") },
   };
 })()`;
@@ -176,6 +189,7 @@ const MÅL_TABELL = `(() => {
 function sjekkTabell(navn, t, ulempeHeltVedHøyre) {
   sjekk(`${navn}: tabellen ruller i beholderen`, t.før.scrollWidth > t.før.clientWidth && t.helt.scrollLeft > 0, t.før);
   sjekk(`${navn}: «Nr.» er like bred som tokenet`, Math.abs(t.førsteBredde - t.tokenPx) <= 0.5, `${t.førsteBredde} mot ${t.tokenPx} px`);
+  sjekk(`${navn}: «Kandidat» er like bred som tokenet`, Math.abs(t.andreBredde - t.kandidatTokenPx) <= 0.5, `${t.andreBredde} mot ${t.kandidatTokenPx} px`);
   for (const [hvor, m] of [["rullet helt til høyre", t.helt], ["rullet til ulempekolonnen", t.ulempe]]) {
     const rader = m.rader;
     sjekk(`${navn}, ${hvor}: «Nr.» står ytterst til venstre i hver rad`, rader.every((r) => r.nrVenstre === 0), rader.map((r) => r.nrVenstre));
@@ -214,14 +228,32 @@ try {
     sjekkFlate(`Kandidatflate ${n}`, await ev(MÅL_FLATE));
     const navn = await ev(`[...document.querySelectorAll(".rangeringstabell tbody .ansattnavn")].map((e) => e.innerText)`);
     sjekk(`Kandidatflate ${n}: #4127 Jonas, Mette, Thomas, Ingrid`, navn.join(",") === "Jonas Bakke,Mette Solberg,Thomas Nygård,Ingrid Dahl", navn.join(", "));
-    if (px === 1600) {
+    // Med fast bredde på «Kandidat» får tabellen plass uten rulling også ved 1080 px.
+    const tabellRuller = await ev(`(() => { const b = document.querySelector(".rangeringstabell"); return b.scrollWidth > b.clientWidth; })()`);
+    if (px === 1600 || (px === 1080 && !tabellRuller)) {
       const b = await ev(`(() => { const b = document.querySelector(".rangeringstabell"); return { scrollWidth: b.scrollWidth, clientWidth: b.clientWidth, kolonner: b.querySelectorAll("thead th").length }; })()`);
       sjekk(`Kandidatflate ${n}: alle ${b.kolonner} kolonner synlige uten rulling i tabellen`, b.scrollWidth <= b.clientWidth && b.kolonner === 8, b);
-      if (skrift === 16) await bilde("kandidatflate-1600");
+      if (skrift === 16) await bilde(`kandidatflate-${px}`);
     } else {
       if (skrift === 16) await bilde(`kandidatflate-${px}`);
       const tabell = await ev(MÅL_TABELL);
       sjekkTabell(`Kandidatflate ${n}`, tabell, skrift === 16);
+      if (px === 680 && skrift === 16) {
+        // Det verste tilfellet AC3 skal tåle: smalt vindu med loddrett rullefelt på siden.
+        const felt = await ev(`window.innerWidth - document.documentElement.clientWidth`);
+        sjekk(`Kandidatflate ${n}: siden har loddrett rullefelt, så kontrollen over gjelder det trangeste tilfellet`, felt > 0, `${felt} px`);
+        // Tidlig varsel for Epic 5 (ikke et krav i 4.6): legg «Skjul begrunnelse ▴» inn i
+        // siste kolonne og regn ut hvor mye plass som er igjen ved siden av de faste.
+        const e5 = await ev(`(() => {
+          const b = document.querySelector(".rangeringstabell");
+          const lagt = [...b.querySelectorAll("tbody tr")].map((tr) => { const s = document.createElement("span"); s.className = "link"; s.textContent = " Skjul begrunnelse ▴"; tr.lastElementChild.append(s); return s; });
+          const th = [...b.querySelectorAll("thead th")].map((c) => c.getBoundingClientRect().width);
+          const igjen = b.clientWidth - th[0] - th[1] - th.slice(5).reduce((a, x) => a + x, 0);
+          lagt.forEach((s) => s.remove());
+          return Math.round(igjen);
+        })()`);
+        console.log(`[INFO] ${n}: med en simulert Epic 5-lenke i siste kolonne er det ${e5} px til overs ved siden av de faste kolonnene, rullet helt til høyre`);
+      }
       await bilde(skrift === 16 ? `kandidatflate-${px}-rullet` : `kandidatflate-${px}-stor-skrift-rullet`);
       if (skrift === 20) {
         // Med større skrift går ulempekolonnen delvis under de faste når tabellen er rullet

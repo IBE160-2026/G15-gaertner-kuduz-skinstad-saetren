@@ -311,20 +311,24 @@ komponent leser vindusbredden, så ingen tilstand monteres på nytt når bredden
 - **Nettleser:** jsdom gjør ingen layout. Skriptet
   [`nettleserkontroll.mjs`](ki-logg/2026-11-19-smale-skjermer/nettleserkontroll.mjs) kjører
   headless Chrome mot ekte backend med en midlertidig testdatabase og måler alle fire flatene
-  ved 1600, 1080, 960 og 680 px, og ved 680 px med skriftstørrelse 20 px («Stor»): ingen
+  ved 1600, 1080, 960 og 680 px, og ved 680 px med skriftstørrelse 20 px («Stor»). Vinduet er
+  700 px høyt, slik at Vaktvalg og kandidatflaten får loddrett rullefelt (15 px), og
+  skriptet kontrollerer at rullefeltet finnes ved 680 px. Det kontrollerer: ingen
   siderulling, ingen klippet tekst, handlinger innenfor vinduet, de faste cellenes posisjon,
   bakgrunn og skillelinje, fokus på Velg og tilstand ved endret bredde. Med 20 px skrift
   ved 680 px står ulempekolonnen ikke helt ved siden av Preferanse når tabellen er rullet
   helt til høyre (logget som INFO), men den kan rulles helt fram. Tab-gjennomgangen ble bare
   kjørt på kandidatflaten ved 680 px og 16 px; tastatur på de tre andre flatene hører til
-  den manuelle sjekklisten. Kontrollen ble kjørt før rettingene etter kodegjennomgangen
-  (egne klasser for de faste kolonnene, `overflow-wrap: anywhere` i «Nr.»).
+  den manuelle sjekklisten. Kontrollen ble sist kjørt 2026-11-20 mot den endelige CSS-en,
+  med fast bredde på «Kandidat» etter Mithads funn i PR-gjennomgangen. Den første kjøringen
+  (900 px høyde, uten rullefelt) så ikke at ulempekolonnen gled under de faste kolonnene.
   [Resultatet](ki-logg/2026-11-19-smale-skjermer/resultat.txt) og skjermbildene ligger i
   samme mappe.
-- **Manuell kontroll:** bestått 2026-11-19 mot den endelige CSS-en. Johannes kontrollerte
+- **Manuell kontroll:** bestått 2026-11-19, før «Kandidat» fikk fast bredde. Johannes kontrollerte
   i vanlig Chrome med «Stor» skrift og tastatur på alle fire flatene. Agenten målte i
   forkant med Chrome-utvidelsen. Resultatet står i «Verification» i spesifikasjonen.
-  P-13 er ikke en del av 4.6.
+  P-13 er ikke en del av 4.6. Etter rettingen 2026-11-20 gjenstår en kort manuell kontroll
+  i et vanlig Chrome-vindu som er 680 px bredt og så lavt at siden får rullefelt.
 
 ## Story 5.1 – brukerutløst nytt forsøk (2026-11-19)
 

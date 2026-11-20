@@ -97,4 +97,10 @@
      får plass ved siden av de faste kolonnene ved 680 px med #4127 (5.5rem ga 17 px for
      lite, målt i nettleserkontrollen 2026-11-19). */
   --rank-column-width: 4.25rem;
+  /* Bredden på den faste «Kandidat»-kolonnen (story 4.6), i rem av samme grunn. 120px ved
+     16px gir 96px tekstbredde: navnene i testdataene (høyst 93px) står på én linje, og
+     stilling og ansiennitet (132px) brytes over to. Uten fast bredde ble kolonnen 157px, og
+     med et loddrett rullefelt på siden (15px) gled ulempekolonnen 11px inn under «Kandidat»
+     ved 680 px med #4127 (funnet av Mithad i PR #32, målt 2026-11-20). */
+  --candidate-column-width: 7.5rem;
 }

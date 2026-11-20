@@ -110,3 +110,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-6-rangeringstabell-pa-smale-skjermer.md`
   summary: De faste kolonnene i rangeringstabellen (story 4.6) har ingen gjentakbar layouttest; bare et engangsskript i headless Chrome og manuell kontroll fanger at bakgrunn, `border-collapse: separate` eller `--rank-column-width` endres.
   evidence: jsdom gjør ingen layout og CI kjører bare `npm run build`/`npm run test`; en nettlesertestløper (f.eks. Playwright) er et valg for hele gruppa (OP-16). Verification-gap-gjennomgangen 2026-11-19.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-4-6-rangeringstabell-pa-smale-skjermer.md`
+  summary: Story 5.3 (ekspanderlenken «Vis begrunnelse ▾» / «Skjul begrunnelse ▴», UX-DR7, UX-DR12) må holde AC3 i 4.6 ved like. Når lenken legges i siste kolonne ved siden av Velg, mangler det 89 px ved 680 px med loddrett rullefelt, og ulempekolonnen glir inn under de faste kolonnene når tabellen er rullet helt til høyre.
+  evidence: Simulert i `docs/ki-logg/2026-11-19-smale-skjermer/nettleserkontroll.mjs` (INFO-linjen) 2026-11-20, etter at «Kandidat» fikk fast bredde. Mulige grep er å la lenken stå under Velg eller å bryte teksten. Kjør nettleserkontrollen på nytt i 5.3.
