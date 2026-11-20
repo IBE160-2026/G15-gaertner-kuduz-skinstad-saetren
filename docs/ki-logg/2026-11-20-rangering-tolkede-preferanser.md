@@ -6,10 +6,23 @@ uten intent-gap).
 
 ## Oppgave og prompt
 
-Mithad Kuduz ba om story 5.2 (OP-18) etter at story 4.4, 4.5 og 5.1 var ferdige og
-gruppen hadde godkjent branch + PR for endringen. Spesifikasjonens frosne Intent:
-undersøke om Rangeringen faktisk bruker lagrede preferansetolkninger som vanlig input
-(epics.md, story 5.2, AC1–AC4), og tette gapet med en test der det mangler.
+Mithad Kuduz' prompt, ordrett:
+
+> ny story vi kan ta?
+
+Deretter valgte han blant alternativer jeg presenterte, ordrett som vist i dialogen:
+
+> «5.2 — Rangeringen bruker tolkede preferanser»
+
+og, på spørsmål om branch eller rett på `main`:
+
+> «Branch + PR (Anbefalt)»
+
+Dette er en melding om ansvar (OP-18), ikke et gruppevedtak — det sier referatet selv
+(`avklaringspunkter.md`). Branch og PR er et valg den enkelte gjør (AGENTS.md Policy);
+Mithad valgte selv, etter min anbefaling. Spesifikasjonens frosne Intent: undersøke om
+Rangeringen faktisk bruker lagrede preferansetolkninger som vanlig input (epics.md,
+story 5.2, AC1–AC4), og tette gapet med en test der det mangler.
 
 ## Leveranse
 
@@ -49,17 +62,19 @@ En uavhengig blind-gjennomgang (Claude Opus 5.5, per anbefalingen i
   KI-logg-kravene for 5.5–5.7, og deler av avhengighetene mellom stories. Alt dette er
   ført tilbake inn i den nye, omstrukturerte filen. Den nye filen påsto også at story
   5.2–5.9 «står i backlog», noe som motsa `sprint-status.yaml` i samme diff — fjernet.
-- Et funn om at `DemoKiAdapter` bruker forhåndsgenererte tolkninger «fra testdataene»,
-  og at vanlig bruk gir «ett KI-kall per vakt», ble avvist: begge er sporet direkte til
-  arkitekturdokumentet (AD-6) og epics.md (story 5.3s akseptansekriterium), ikke diktet
-  opp — bare omskrevet til å beskrive formålet i stedet for å sitere kilden, slik
-  kompileringsreglene krever.
 
-Avvist uten retting: at AC2 burde testes mot flere statuser enn «nøytral» (venter på
-tolkning, ingen registrert, kunne ikke tolkes) i tillegg til den som allerede er lagt
-til. Alle disse gir 50 poeng gjennom en annen kodevei, og den likheten er allerede
-dekket av `test_alle_fire_tolkestatuser` (story 4.4); å utvide isolasjonstesten videre
-ville bare gjentatt det beviset.
+Avvist uten retting:
+
+- At AC2 burde testes mot flere statuser enn «nøytral» (venter på tolkning, ingen
+  registrert, kunne ikke tolkes) i tillegg til den som allerede er lagt til. Alle disse
+  gir 50 poeng gjennom en annen kodevei, og den likheten er allerede dekket av
+  `test_alle_fire_tolkestatuser` (story 4.4); å utvide isolasjonstesten videre ville bare
+  gjentatt det beviset.
+- At `DemoKiAdapter` bruker forhåndsgenererte tolkninger «fra testdataene», og at vanlig
+  bruk gir «ett KI-kall per vakt», var usitert i `epic-5-context.md`: begge er sporet
+  direkte til arkitekturdokumentet (AD-6) og epics.md (story 5.3s akseptansekriterium),
+  ikke diktet opp — bare omskrevet til å beskrive formålet i stedet for å sitere kilden,
+  slik kompileringsreglene krever.
 
 ## Kvalitetssikring
 
