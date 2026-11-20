@@ -331,6 +331,29 @@ def test_lagret_tolkning_går_foran_feil_men_ikke_manglende_tekst() -> None:
     assert (uten_tekst.tolkestatus, uten_tekst.preferansepoeng) == (Tolkestatus.INGEN_REGISTRERT, 50)
 
 
+def test_preferanse_alene_avgjør_rangeringen_når_alt_annet_er_likt() -> None:
+    # Story 5.2, AC2: to kandidater like på alle andre myke faktorer, der bare den ene
+    # ønsker flere vakter, rangeres høyere. Lik lønn og like timer gir 50/50 for kostnad
+    # og timebelastning (minmaks, alle like), og begge har bare dagtimer, så ulempescore
+    # er 100/100 for begge. Bare preferansen skiller dem.
+    #
+    # Id-ene er valgt slik at stigende-id-tiebreaket (AV-05) alene ville satt «nøytral»
+    # (id 1) først: lik total uten preferansevekten ville gitt feil rekkefølge her, så
+    # rekkefølgen beviser at preferansen avgjør, ikke at den tilfeldigvis stemmer med
+    # tiebreaket.
+    nøytral_kandidat = kandidat(1, lønn=300, timer=10, preferanse="Det går fint uansett.")
+    onsker_flere_kandidat = kandidat(2, lønn=300, timer=10, preferanse="Jeg vil gjerne ha flere vakter.")
+    rangert = {r.id: r for r in ranger(
+        vurder(nøytral_kandidat, onsker_flere_kandidat), VAKT, {1: tolket("noytral"), 2: tolket("onsker_flere")},
+    )}
+    nøytral, onsker_flere = rangert[1], rangert[2]
+    assert (onsker_flere.kostnadspoeng, onsker_flere.timebelastningspoeng, onsker_flere.ulempescore) == (
+        nøytral.kostnadspoeng, nøytral.timebelastningspoeng, nøytral.ulempescore)
+    assert (onsker_flere.preferansepoeng, nøytral.preferansepoeng) == (100, 50)
+    assert onsker_flere.totalscore > nøytral.totalscore
+    assert onsker_flere.plass < nøytral.plass
+
+
 # --- Bare Gyldige rangeres (NFR2, AD-1) ------------------------------------------
 
 

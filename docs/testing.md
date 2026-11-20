@@ -76,7 +76,10 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   fasiten for #4127 med og uten tolkede preferanser (KS-02), AV-12, min–maks og like
   verdier (AV-05), eksakt likhet med `Fraction` og ID-rekkefølge (K-03, §11), de fire
   tolkestatusene (P-05), at utelukkede aldri rangeres (NFR2), determinisme med stokket
-  inndata, og vekter og tak som parametere (AV-11).
+  inndata, og vekter og tak som parametere (AV-11). Story 5.2: en isolasjonstest viser at
+  to kandidater like på kostnad, timebelastning og ulempe, men ulike bare i tolket
+  preferanse, rangeres etter preferansen alene — med id-ene valgt slik at
+  stigende-id-tiebreaket ikke kan gi samme svar ved et uhell.
 - **API** ([`tester/api/`](../backend/tester/api/)): innlogging og sesjon, vaktoversikt,
   vaktdetaljer, kandidater og godkjenning, med 401, 404, datafeil og fasiten
   for #4127 og #4189 (AV-07). Story 3.2 tester også endret grunnlag (P-09),

@@ -2,13 +2,28 @@
 
 <!-- Compiled from planning artifacts. Edit freely. Regenerate with compile-epic-context if planning docs change. -->
 
-## Goal
+## Mål
 
-Epicet legger KI-laget rundt den deterministiske regelmotoren. Preferansetekstene til de ansatte tolkes én gang til en fast kategori, lagres og brukes som input til Rangeringen. Hver rangert Kandidat får en Avveining i klartekst. Avveiningen er bygd av strukturerte, faktakontrollerte påstander og får tydelig merket reservetekst når modellen feiler. Epicet leverer også en kjøretidstest som beviser at utelukkede kandidater aldri når forklaringslaget, demo-modus uten API-nøkkel og oppsettet som lar sensor kjøre live KI. Målet er at turnusansvarlig forstår og kan stå inne for rangeringen uten at KI noen gang beregner eller overstyrer den.
+Når en Vakt har gyldige, rangerte kandidater (Epic 4), skal KI gjøre to ting og bare det:
+tolke den ansattes frie preferansetekst til en kategori Rangeringen kan bruke, og forklare
+i klartekst hvorfor hver kandidat er rangert der den er — hva som trekker opp, hva som
+trekker ned, kostnadsvurderingen og relevante preferanser. KI beregner aldri Harde regler,
+arbeidstid, kostnad eller selve Rangeringen; den tolker tekst og forklarer tall som
+domenekjernen allerede har regnet ut. Grensen mellom det deterministiske laget og KI-laget
+er en hard systemgrense: en kandidat utelukket av en Hard regel skal aldri nås eller
+nevnes av forklaringsporten. Epicet leverer også en demo-modus uten API-nøkkel, slik at
+appen kan kjøres og vurderes uten gruppens KI-tilgang, og oppsettet som lar sensor kjøre
+mot ekte KI.
+
+Story 5.1 (preferansetolkning, inkludert brukerutløst «Prøv igjen» etter endelig feil) er
+`done` — alle akseptansekriteriene er oppfylt og uavhengig gjennomgått. De øvrige storiene
+er ikke blokkert: `RangertKandidat`-porten fra Epic 4 er ferdig, så arbeidet kan starte
+(se `sprint-status.yaml` for faktisk status per story — den endrer seg oftere enn denne
+filen bør regenereres).
 
 ## Stories
 
-- Story 5.1: Tolke tekstbaserte ansattpreferanser med KI
+- Story 5.1: Tolke tekstbaserte ansattpreferanser med KI (ferdig/`done`)
 - Story 5.2: Rangeringen bruker tolkede preferanser
 - Story 5.3: Avveining per kandidat
 - Story 5.4: Reservetekst når KI-forklaringen feiler
@@ -16,58 +31,145 @@ Epicet legger KI-laget rundt den deterministiske regelmotoren. Preferanseteksten
 - Story 5.6: Test av at utelukkede kandidater aldri når KI-laget
 - Story 5.7: Demo-modus uten API-nøkkel
 - Story 5.8: Sensor kan kjøre live KI
-- Story 5.9: Redigere preferansetekst etter fungerende kjerneflyt (P-10B)
+- Story 5.9: Redigere preferansetekst etter fungerende kjerneflyt (P-10B, planlagt v1-tillegg;
+  blokkerer ikke kjerneflyten og kan utsettes hvis tiden ikke rekker)
 
-## Requirements & Constraints
+## Krav og avgrensninger
 
-- **KI tolker og forklarer, men beregner aldri.** KI beregner aldri Harde regler, arbeidstid, kostnad, Timebelastning, Ulempebelastning eller Rangering, og kan ikke overstyre dem. Koden tildeler kategoripoengene.
-- **Preferansekategorier og poeng:** 100 = ønsker aktivt flere vakter, 75 = positiv ved behov, 50 = nøytral, 25 = foretrekker å slippe, men er åpen, 0 = vil unngå ekstravakter. Alle de 15 definerte fasittekstene skal tolkes til forventet kategori (SM-7). Tekst uten holdning til flere vakter, for eksempel bare ønsker om tidspunkt, er nøytral.
-- **Preferansestatusene holdes atskilt (P-05/OP-03):** manglende tekst gir 50 poeng og «Ingen registrert». Tekst som venter på tolkning gir midlertidig 50 poeng og «Preferanse venter på tolkning». Feilet eller ugyldig tolkning gir midlertidig 50 poeng og «Preferanse kunne ikke tolkes». En reell nøytral tolkning er en egen status. Råteksten beholdes, ingen nøytral tolkning diktes opp, og en KI-feil utelukker aldri Kandidaten. Forbigående feil gir avgrensede automatiske forsøk. Etter endelig feil kan brukeren be om nytt forsøk. En ny vellykket tolkning oppdaterer rangeringen før bekreftelse.
-- **Feilregler for preferansetolkning (AV-19):** Ved 5xx/nettverksfeil gis tre nye forsøk etter 2, 4 og 8 sekunder innen et budsjett på 90 sekunder fra første forsøk på plass i begrenseren. Ved 429 ventes minst ett sekund til reset, eller 60 sekunder uten lesbar reset. 402, andre 4xx og ubrukelige svar prøves ikke automatisk på nytt. Sluttstatus er `kunne_ikke_tolkes` med lagret feiltype. Brukerutløst nytt forsøk er et separat krav (P-05/OP-03).
-- **Avveiningens innhold (FR-11):** hvorfor Kandidaten kan ta Vakten, hva som trekker opp og ned, kostnadsvurdering og relevante preferanser. KI leverer bare påstandstype og referanse, aldri egne tall eller navn. Tillatte påstander: oppfyller de fire prototypereglene, en navngitt faktor trekker opp eller ned, eller en faktor eller totalscore er høyere, lavere eller lik referansens. «Lik» krever lik uavrundet verdi.
-- **Faktakontroll (P-06):** koden validerer kandidat- og faktareferanser og sammenligningsretning mot uavrundede verdier, og setter inn navn og tall. Én ugyldig påstand forkaster hele forklaringen og gir merket reservetekst. En gyldig forklaring har minst én relevant, faktakontrollert påstand om en Myk faktor (SM-4/AV-15). «Faktoren som bidrar mest» er ikke et krav.
-- **Referanse (P-07):** nr. 1 sammenlignes med nr. 2, og de andre sammenlignes med nr. 1. Ved én gyldig Kandidat er det ingen referanse. KI kan ikke velge referansen selv. Fri sammenligning av to merkede kandidater er et strekkmål etter v1.
-- **Feil er ikke krasj (NFR4):** 429, 402, tidsavbrudd, tomme eller ubrukelige svar og forkastet faktakontroll gir 200 med `status: "avveining_feilet"` for Kandidaten. Rangering og Godkjenning virker videre. Vaktkostnad, Timebelastning, Ulempebelastning og preferansekategori eller -status med poeng vises også ved reservetekst.
-- **SM-C2/AV-15:** en live-forklaring vises bare etter bestått faktakontroll. Innen 90 s fra første live-kall for Avveiningen vises en godkjent forklaring eller merket reservetekst. Fristen regnes ikke fra vaktvalget og gjelder ikke demo-modus. Korrekthet går foran hastighet (NFR10).
-- **Lekkasjeinvariant (NFR2/SM-2):** ingen utelukket kandidat-ID når forklaringsporten, og ingen utelukket Kandidat nevnes i output, i Rangeringen eller i API-svaret. Et svar som nevner en utelukket Ansatt, forkastes.
-- **Determinisme (NFR1):** samme lagrede preferanser og samme input gir samme rekkefølge. Rangeringen gjør aldri et live KI-kall.
-- Avveininger lagres ikke historisk ved Godkjenning (P-12).
-- Ingen nøkler i repoet, i git-historikken eller i en committet `.env` (NFR7).
+- KI har to atskilte, ensrettede roller: **tolke** rå preferansetekst til en
+  `TolketPreferanse`-kategori før filtrering (uten kandidatstatus for en bestemt Vakt), og
+  **forklare** en allerede ferdig rangert kandidat ut fra fakta regelmotoren har beregnet.
+  Ingen av rollene kaller inn i domenekjernen, og domenekjernen kaller aldri KI. Bare
+  `adaptere/ki` fastsetter en ny `TolketPreferanse`; `adaptere/lagring` kan bare
+  deserialisere og validere en tidligere lagret, vellykket verdi for samme Ansatt og
+  preferansetekst — aldri tolke på nytt selv. Lagringsadapteren eier skjemaet (AD-5).
+- Preferansekategorier og poeng (fast skala, koden setter poenget, ikke modellen): 100
+  ønsker aktivt flere vakter, 75 positiv ved behov, 50 nøytral, 25 foretrekker å slippe men
+  åpen ved behov, 0 tydelig ønske om å unngå ekstravakter. 15 definerte preferansetekster
+  med fasit skal tolkes til forventet kategori (eksakt KI-ordlyd er ikke fasit). Manglende
+  registrert preferanse gir 50 poeng merket «Ingen registrert», aldri fremstilt som et
+  uttrykkelig nøytralt ønske; venter-på-tolkning og feilet tolkning gir midlertidig 50 poeng
+  med egne statuser, «Preferanse venter på tolkning» og «Preferanse kunne ikke tolkes».
+- Rangeringen gjør aldri et live KI-kall — den leser bare lagrede `TolketPreferanse`-verdier.
+  Tolkning og tolkestatus inngår i grunnlagsmerket (P-09): kolonner på `ansatt` dekkes
+  automatisk, men en egen tabell for formålet må føres i `GRUNNLAGSTABELLER`. En ny gyldig
+  tolkning som lagres mens godkjenningsflaten er åpen, skal beregne rangeringen på nytt og
+  kreve ny bekreftelse før godkjenning (P-05/P-09); gammel tolkning av endret tekst brukes
+  aldri.
+- Forklaringsporten får bare forhåndsberegnede fakta for gyldige kandidater: nr. 1 blir
+  sammenlignet med nr. 2, øvrige med nr. 1, og én kandidat uten referanse. KI kan ikke velge
+  referansen selv; fri sammenligning av to merkede kandidater er et strekkmål etter v1.
+  Tillatte påstandstyper er avgrenset til: oppfyller de fire prototypereglene, en navngitt
+  faktor trekker opp/ned, eller en faktor/totalscore er høyere/lavere/lik referansens («lik»
+  krever lik uavrundet verdi). Koden, ikke KI, setter inn navn og tall, og validerer hver
+  påstand mot uavrundet grunnlag. Ett ugyldig påstandsfelt forkaster hele forklaringen til
+  fordel for Reservetekst. Hver gyldig forklaring må ha minst én relevant, faktakontrollert
+  påstand om en Myk faktor; «faktoren som bidrar mest» er ikke et krav (SM-4/AV-15).
+- Ved feil, tomt eller ubrukelig svar skal systemet aldri vise en oppdiktet tolkning eller
+  anbefaling, og aldri krasje: Reservetekst/feilstatus vises i stedet, mens Rangering og
+  Godkjenning forblir tilgjengelig, og Vaktkostnad, Timebelastning, Ulempebelastning og
+  preferansekategori/-status med poeng vises fortsatt ved siden av Reservetekst (NFR4). En
+  Avveining som nevner en kandidat utelukket av en Hard regel, forkastes som ubrukelig.
+- Testbare invarianter som binder epicet: ingen utelukket kandidat-ID sendes til
+  forklaringsporten eller nevnes i output (SM-2); samme input gir samme rangeringsrekkefølge
+  hver gang (SM-5/NFR1); innen 90 sekunder fra første live-forklaringskall vises enten en
+  faktakontrollert forklaring eller tydelig merket Reservetekst (SM-C2); appen kan bygges og
+  kjøres fra et rent klonet repo uten gruppens API-nøkkel (SM-9).
+- Avveiningen lagres ikke historisk ved Godkjenning — en ny visning genererer en ny
+  forklaring fra gjeldende grunnlag (P-12). Hver Avveining er bundet til grunnlagsmerket den
+  ble laget fra; et svar for et eldre merke forkastes og vises aldri som gjeldende.
 
-## Technical Decisions
+## Tekniske avgjørelser
 
-- **Hard grense (AD-1/AD-2):** `domene/regelmotor` og `domene/porter` importerer aldri `adaptere/*`. Dette håndheves av import-linter-kontrakten og en kjøretidstest. Bare `adaptere/api` kaller `adaptere/ki`, i to retninger: (1) råtekst blir `TolketPreferanse` før Rangeringen, og (2) `RangertKandidat` med referansefakta blir Avveining etter Rangeringen. Portene er frosne dataklasser i `domene/porter` (AV-18), ikke Pydantic. Validering skjer i `adaptere/ki` og `adaptere/lagring`. Tolkingsporten kan behandle tekst før filtrering uten kandidatstatus. Forklaringsporten får bare gyldige, ferdig beregnede fakta.
-- **Eierskap:** bare `adaptere/ki` fastsetter en ny `TolketPreferanse`. `adaptere/lagring` kan bare deserialisere og validere en tidligere lagret, vellykket verdi for samme Ansatt og preferansetekst. Lagringsfelt og eventuell formatversjon fastsettes og testes i 5.1. Lagringsadapteren eier skjemaet (AD-5).
-- **Grunnlagsmerket (P-09):** tolkning og tolkestatus påvirker Rangeringen og skal inngå i grunnlagsmerket. Kolonner på `ansatt` dekkes automatisk. En egen tabell må føres i `GRUNNLAGSTABELLER`. En tolkning som blir ferdig mellom visning og godkjenning, gir `endret_grunnlag` og krever ny bekreftelse. Avveiningen er ikke deterministisk og skal **ikke** inn i merket. I stedet bærer hver Avveining merket for rangeringen den ble laget fra, og frontend forkaster Avveininger med et annet merke enn gjeldende visning.
-- **OpenRouter (AD-7):** modellen er `openai/gpt-6-luna`, bundet til leverandøren `openai` uten leverandørfallback. Bindingen testes med en falsk HTTP-klient. Svaret er strukturert JSON etter et JSON-skjema, og resonnering er av. Én felles begrenser for begge KI-funksjonene tillater høyst 18 kall per 60 s og 5 samtidige. Ved 429 venter adapteren til `X-RateLimit-Reset`. For Avveining venter den 2, 4 og 8 s ved 5xx og nettverksfeil, innen 90 s. 402, andre 4xx og ubrukelige svar prøves ikke på nytt. Konstantene ligger i adapteren. Valget mellom OpenAI-SDK og ren HTTP-klient er ikke tatt.
-- **KI-modus (AD-6):** `KI_MODUS` er `openrouter` eller `demo`. Mangler nøkkelen, starter appen i demo, logger det og krasjer ikke. Modus velges bare i oppstartslaget til `adaptere/api`. `OpenRouterKiAdapter` og `DemoKiAdapter` har identiske porttyper, og invarianttesten kjøres mot begge. I demo-modus gjelder dette:
-  - Ukjent preferansetekst får feilet tolkestatus og 50 poeng.
-  - En forhåndsgenerert Avveining brukes bare ved full identitetsmatch: Vakt, Kandidat, `RangertKandidat`, referanse-ID, sammenligningsfakta og kontraktsversjon. Den må også bestå samme faktakontroll som live-svar. Ellers brukes maltekst eller reservetekst.
-  - Live-modus faller aldri stille tilbake til demo.
-- Gyldige Avveininger bærer `ki_kilde: "live" | "forhandsgenerert" | "mal"`.
-- **Konfigurasjon:** `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` og `KI_MODUS` leses fra miljøet og dokumenteres uten verdi i `.env.example`. Testene bruker en falsk KI-adapter eller HTTP-klient og trenger verken nettverk eller nøkkel.
-- **Felles 200-svar med `status`-diskriminator (AD-4):** frontend henter brukerteksten fra sin egen tekstliste ut fra `status` eller `kode`, aldri fra `melding`.
-- **KI-logg:** transportvalget for progressiv lasting (5.5), invarianttesten (5.6) og generering av demosvar med modell, dato og kommando (5.7) dokumenteres i `docs/ki-logg/`.
+- **Rate limiting og nye forsøk (AD-7):** OpenRouter-kontoen med `openai/gpt-6-luna` har en
+  fast grense på 20 kall per kalenderminutt. Adapteren binder rutingen til leverandøren
+  `openai` uten fallback, og en felles begrenser i `adaptere/ki` slipper gjennom høyst 18
+  kall per 60 sekunder og 5 samtidige, delt mellom tolkning og forklaring. Ved 429 ventes til
+  `X-RateLimit-Reset` (minst 1 s, 60 s hvis ikke lesbar). For Avveining ventes 2/4/8 sekunder
+  ved 5xx/nettverksfeil, innen et tidsbudsjett på 90 sekunder fra første live-kall; 402 og
+  andre 4xx prøves ikke på nytt. For preferansetolkning (vedtatt i AV-19) gjelder samme
+  2/4/8-sekunders venting, tre nye forsøk, 90 sekunder per tekst fra første forsøk på plass i
+  begrenseren, og sluttstatus `kunne_ikke_tolkes` med feiltype — `avveining_feilet` brukes
+  aldri som tolkestatus. Begrenseren deles ikke mellom flere serverprosesser (v1 kjøres med
+  én worker).
+- **Porttyper:** `domene/porter` har frosne, logikkfrie dataklasser (`@dataclass(frozen=True)`,
+  ikke Pydantic) — `TolketPreferanse` inn til Rangeringen og `RangertKandidat` ut. Validering
+  av KI-svar skjer i `adaptere/ki` ved mottak og i `adaptere/lagring` ved lesing av lagrede
+  verdier, ikke i porten selv (AV-18).
+- **Strukturell grense (AD-1/AD-2):** `domene/regelmotor` og `domene/porter` har null
+  importer av noen `adaptere/*`-pakke, håndhevet av en import-linter-kontrakt og dekket av en
+  kjøretidstest som verifiserer at ingen utelukket kandidat når forklaringsporten (statisk
+  sjekk alene fanger ikke kjøretidslekkasje).
+- **Demo-modus (AD-6):** `KI_MODUS` er `openrouter` eller `demo`; mangler
+  `OPENROUTER_API_KEY`, starter appen automatisk i demo uten å krasje. Valget skjer bare i
+  oppstartslaget til `adaptere/api`. `DemoKiAdapter` bruker forhåndsgenererte
+  `TolketPreferanse`- og Avveiningsverdier fra testdataene, slått opp mot en identitet som
+  dekker hele faktagrunnlaget (Vakt, Kandidat, `RangertKandidat`, referanse,
+  forklaringskontraktens versjon); mangler oppslaget eller svarer det ikke
+  faktakontrollen, brukes maltekst fra gjeldende beregnede fakta (`ki_kilde: "mal"`) eller
+  Reservetekst. Forhåndsgenererte svar er laget med `OpenRouterKiAdapter` og samme prompt
+  som live, og loggført i `docs/ki-logg/`. Live-feil gir aldri stille fallback til demo.
+  Hver gyldige Avveining bærer `ki_kilde: "live" | "forhandsgenerert" | "mal"`.
+- **Config:** `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` (standard `openai/gpt-6-luna`) og
+  `KI_MODUS` leses fra miljøvariabler, aldri hardkodet, og dokumenteres uten verdier i
+  `.env.example`. Tester bruker falske KI-adaptere/HTTP-klienter og krever aldri nettverk
+  eller nøkkel; CI får aldri `OPENROUTER_API_KEY`.
+- **Feilform (AD-4):** «Avveining feilet/tom» er ikke en HTTP-feil — API-et svarer 200 med
+  `status: "avveining_feilet"` for den kandidaten; resten av raden, Rangeringen og
+  Godkjenningen fungerer som normalt. Samme prinsipp som ellers i API-et: ingen rå
+  backend-tekst vises i frontend, bare statusstyrt tekst fra frontendens egen tekstliste.
+- **Transport for progressiv lasting** (story 5.5) er en åpen beslutning: valget mellom
+  streaming, polling og separate kall per kandidat tas i selve storien og må dokumenteres i
+  KI-loggen.
+- **Klientbibliotek mot OpenRouter** (OpenAI-SDK vs. ren HTTP-klient) er ikke besluttet.
+- **KI-logg:** transportvalget for progressiv lasting (5.5), invarianttesten mot
+  utelukkede kandidater (5.6) og genereringen av demosvar med modell, dato og kommando
+  (5.7) skal alle dokumenteres i `docs/ki-logg/`.
 
-## UX & Interaction Patterns
+## UX og interaksjonsmønstre
 
-- Preferansetaggen (UX-DR11) viser den tolkede kategorien, for eksempel «Ønsker flere vakter», «Fleksibel» eller «Ingen registrert», eller vente- eller feilstatusen.
-- Forklaringspanelet (UX-DR12) har bakgrunn `#f2f6f9`, «▲ Trekker opp» i `ok` og «▼ Trekker ned» i `danger`. Nr. 1 er utvidet ved lasting. De andre er kollapset bak «Vis begrunnelse ▾» / «Skjul begrunnelse ▴», og radene åpnes uavhengig av hverandre. Lenkene kan brukes med tab og enter. Det samme panelet vises på Godkjenning-flaten.
-- Kildelinjen i `meta` (UX-DR27) vises i alle moduser:
-  - «KI-generert · <modell>» for en godkjent live-forklaring
-  - «Forhåndsgenerert KI-forklaring · <modell>, <dato>» for et forhåndsgenerert svar
-  - «Satt sammen fra beregnede tall, ikke KI-generert» for maltekst
-  - «Reservetekst · KI-forklaring utilgjengelig» ved `avveining_feilet`
+- Rangeringstabellens topprangerte kandidat har Avveiningen utvidet som standard når siden
+  lastes; øvrige rader er kollapset bak «Vis begrunnelse ▾», som blir «Skjul begrunnelse ▴»
+  når åpnet. Å åpne én rad lukker ingen andre, og lenkene nås og aktiveres med tastatur.
+  «▲ Trekker opp» vises i `ok`-farge og «▼ Trekker ned» i `danger`, på bakgrunn `#f2f6f9`.
+- Lukkede Avveininger hentes først når raden åpnes, slik at vanlig bruk gir ett KI-kall per
+  vakt (holder forbruket under takten i AD-7).
+- Kildelinjen i `meta` (UX-DR27) vises i alle moduser, med fire faste tekster: «KI-generert
+  · <modell>» for en godkjent live-forklaring, «Forhåndsgenerert KI-forklaring · <modell>,
+  <dato>» for et forhåndsgenerert svar, «Satt sammen fra beregnede tall, ikke KI-generert»
+  for maltekst, og «Reservetekst · KI-forklaring utilgjengelig» ved `avveining_feilet`. Et
+  forkastet svar merkes aldri som godkjent KI. Demo-modus er en normaltilstand uten
+  varsel-/feilfarge, og appbaren viser taggen «Demo-modus».
+  Godkjenningsflatens kandidatkort viser Avveiningen for valgt kandidat i et eget
+  forklaringspanel.
+- Kandidatlistens preferanse-tag viser tolket preferanse («Ønsker flere vakter»,
+  «Fleksibel», osv.) eller «Ingen registrert».
+- Alle rader med nøkkeltall vises umiddelbart når kandidatberegningen er ferdig, uten å
+  vente på noen Avveining; hver Avveining får en egen lastetilstand forskjellig fra både
+  Reservetekst og tomtilstand, og én feilende Avveining påvirker ikke de andre radene.
+- Gjennomgående tone (UX-DR23): systemet beskriver tilstand og begrunner tall, formaner og
+  feirer aldri, og teksten har ingen utropstegn. Forhåndsgenerert eller malbasert innhold
+  sier rett ut at det ikke er live KI.
 
-  Et forkastet svar merkes aldri som godkjent KI.
-- I demo-modus viser appbaren en nøytral «Demo-modus»-tag. Den bruker ingen `warn`- eller `danger`-farge, fordi demo-modus er en normaltilstand.
-- Radene med nøkkeltall vises med en gang. Hver Avveining lastes inn i raden sin med en egen lastetilstand som er ulik både reserveteksten og tomtilstanden (UX-DR13). Lukkede Avveininger hentes først når raden åpnes. Én feil påvirker ikke de andre radene.
-- Teksten skal være kort, presis og tallbasert, uten utropstegn og uten å antyde at systemet har valgt noe (UX-DR23).
+## Avhengigheter mellom stories
 
-## Cross-Story Dependencies
-
-- 5.1 kan gå parallelt med Epic 4. 5.2–5.6 bygger på `RangertKandidat` og Rangeringen fra story 4.4. Demosvarene i 5.7 må genereres etter story 4.7, fordi ulempefeltene inngår i hashen.
-- 5.2 bygger på 5.1. 5.4, 5.5 og 5.6 bygger på 5.3. 5.7 bygger på 5.1 og 5.3. 5.8 bygger på 5.7. Delen om sensornøkkel avhenger av ÅB-8, som hele gruppa avgjør før innlevering.
-- Grunnlagsmerket og avvisningen av sene svar fra story 3.2 brukes i 5.1, 5.2, 5.3, 5.5 og 5.9.
-- 5.6 bruker import-linter-kontrakten fra story 2.1 og utelukkelser fra alle fire Harde regler (Epic 2).
-- 5.9 krever innlogging (FR-13) og en fungerende kjerneflyt. Den er et v1-tillegg som kan dokumenteres som utsatt. Manuell overstyring av kategori er utenfor scope.
+- Story 5.2–5.6 bygger alle på `RangertKandidat`-porten fra Epic 4 (story 4.4), som er
+  ferdig — epicet er derfor ikke blokkert.
+- Story 5.2 (Rangeringen bruker tolkede preferanser) avhenger av lagrede
+  `TolketPreferanse`-verdier fra story 5.1 (ferdig) og mater videre inn i story 5.3.
+- Story 5.3 (Avveining per kandidat) er grunnlaget for 5.4 (reservetekst ved feil), 5.5
+  (progressiv lasting) og 5.6 (kjøretidstest mot utelukkede kandidater) — alle tre bygger
+  direkte på 5.3.
+- Story 5.7 (demo-modus) bygger på både 5.1 og 5.3, og krever at forhåndsgenererte svar
+  lages *etter* at Epic 4 (story 4.7, Ulempebelastning) er ferdig, fordi de feltene inngår i
+  hashen/identiteten til `RangertKandidat`; svar generert før det ville gitt maltekst i
+  stedet for forhåndsgenerert innhold.
+- Story 5.8 (sensor kan kjøre live KI) bygger på 5.7; delen om å levere en nøkkel til sensor
+  avhenger av en ekstern avklaring (ÅB-8).
+- Story 5.9 (redigere preferansetekst) er et planlagt v1-tillegg etter at kjerneflyten
+  (vaktvalg → Godkjenning) virker, og blokkerer ikke resten av epicet. Krever innlogging
+  (FR-13); manuell overstyring av kategori er utenfor scope.
+- Grunnlagsmerket og avvisningen av sene svar fra story 3.2 gjenbrukes i 5.1, 5.2, 5.3, 5.5
+  og 5.9.
+- Story 5.6 bruker import-linter-kontrakten fra story 2.1 og utelukkelsene fra alle fire
+  Harde regler (Epic 2).
