@@ -105,3 +105,4 @@ Oppfølging 2026-11-07 kl. 23:07: Kostnadsavklaringen er gjenopptatt i PRD-logge
 - [x] 2026-11-17 [uv i Windows-sandboxen](970-2026-11-17-21-38-46-uv-windows-sandbox.md) — Avklar en avgrenset løsning for uv-tilgang og verifiser i sandboxen før bmad-build gjenopptas. (løst 2026-11-17: RX gitt til uv.exe og versjonstest lyktes i sandboxen)
 
 - [ ] 2026-11-20 [Status PR 32](966-2026-11-20-19-49-50-status-pr-32.md) — Følg opp manuell kontroll ved 680 px med rullefelt og designavklaring for story 4.6, deretter vurder storystatus; se Johannes' issues.md. Story 5.3 og eventuell layouttest i CI er ført i deferred-work.md.
+- [ ] 2026-11-20 [Gjennomgang av PR 34](965-2026-11-20-19-56-31-gjennomgang-pr-34.md) — Oppdater story 5.2 til ferdig i sprintstatus og AGENTS.md etter flettingen, og samordne øvrige statusomtaler.
