@@ -12,18 +12,21 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Stacken er React/TypeScript med Vite, Python/FastAPI og SQLite via SQLAlchemy.
 KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.4 og 4.7 er ferdige: skjelett, lagring med fiktive
+Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.5, 4.7 og 5.1 er ferdige: skjelett, lagring med fiktive
 testdata, innlogging med designtokens og appskall, beskyttede flater, vaktoversikt og
-valg av vakt, godkjenning og bemanning av vakten, Ekskludert-boksen og rangeringen med
-rangeringstabell. Domenekjernen i
+valg av vakt, godkjenning og bemanning av vakten, Ekskludert-boksen, rangeringen med
+rangeringstabell, avviksnotatet på godkjenningsflaten og tolkning av preferansetekster.
+Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
 kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,
 timebelastning, kostnad, ulempebelastning og rangeringen med porten `RangertKandidat`.
-Den er ren Python uten KI. Story 5.1 (preferansetolkning) er delvis levert og står som
-`in-progress` fordi brukerutløst nytt forsøk («Prøv igjen») gjenstår: `backend/adaptere/ki/` har `OpenRouterKiAdapter` og begrenseren (AD-7),
-tolkningene lagres som kolonner på `ansatt`, og backend tolker ventende tekster i en
-daemon-tråd ved oppstart. Rangeringen leser bare lagrede tolkninger. Uten gyldig
-lagret tolkning får en preferanse midlertidig 50 poeng (P-05). `scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
+Den er ren Python uten KI. Story 5.1 (preferansetolkning) er ferdig: `backend/adaptere/ki/` har
+`OpenRouterKiAdapter` og begrenseren (AD-7), tolkningene lagres som kolonner på `ansatt`, og
+backend tolker ventende tekster i en daemon-tråd ved oppstart. Et beskyttet endepunkt og en
+«Prøv igjen»-knapp lar turnusansvarlig be om et nytt forsøk etter endelig feil (låsene deles
+ikke mellom flere serverprosesser; v1 kjøres med én worker). Rangeringen leser bare lagrede
+tolkninger. Uten gyldig lagret tolkning får en preferanse midlertidig 50 poeng (P-05).
+`scripts/modelltest_*.py` er isolerte modellforsøk før story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 
 ## Policy

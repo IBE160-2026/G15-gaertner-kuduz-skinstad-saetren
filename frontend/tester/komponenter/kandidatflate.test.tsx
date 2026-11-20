@@ -3,10 +3,10 @@
 import { describe, expect, test, vi } from "vitest";
 import { act, cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Kandidatflate from "../../src/komponenter/Kandidatflate";
+import Kandidatflate, { Kandidatliste } from "../../src/komponenter/Kandidatflate";
 import { datoOgKlokke } from "../../src/format";
 import { ekskludertBoksTekst, ekskludertRadTekst } from "../../src/kandidater";
-import { RESERVETEKST, TEKSTER, feiltekst } from "../../src/tekster";
+import { INGEN_KONTAKT, RESERVETEKST, TEKSTER, feiltekst } from "../../src/tekster";
 import type { Kandidatsvar, RangertKandidat } from "../../src/api";
 import {
   INGEN_GYLDIGE, KANDIDATER_DATAFEIL, OK_MED_TOM_LISTE, TO_GYLDIGE, TO_UTELUKKET, VAKT_4127,
@@ -56,6 +56,59 @@ const radFor = (del: HTMLElement, navn: string) =>
   within(del).getByText(navn, { selector: ".ansattnavn" }).closest("tr")!;
 
 const velgknapper = () => screen.queryAllByRole("button", { name: VELG });
+
+test("vaktbytte nullstiller pågående forsøk", async () => {
+  const first = TO_GYLDIGE.kandidater[0];
+  const failed = { ...first, tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const gammelPost = `${KANDIDATER_URL}/${first.id}/preferanse`;
+  const nyListe = "/api/vakter/4189/kandidater";
+  const nyPost = `${nyListe}/${first.id}/preferanse`;
+  const fetch = falskFetch({
+    [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [failed] }),
+    [nyListe]: ok({ ...TO_GYLDIGE, kandidater: [failed] }),
+    [`POST ${nyPost}`]: ok({ status: "feilet" }),
+  });
+  let svar!: (response: Response) => void;
+  const ventende = new Promise<Response>((resolve) => { svar = resolve; });
+  vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) =>
+    String(input) === gammelPost ? ventende : fetch(input, init));
+  const bruker = userEvent.setup();
+  const visning = render(<Kandidatliste vaktnummer={4127} onVelg={vi.fn()} />);
+  await bruker.click(await screen.findByRole("button", { name: t.provPreferanse(first.navn) }));
+  expect(screen.getByRole("button", { name: g.velgEtikett(first.navn) })).toHaveProperty("disabled", true);
+  visning.rerender(<Kandidatliste vaktnummer={4189} onVelg={vi.fn()} />);
+  await vi.waitFor(() => expect(kallTil(fetch, nyListe)).toBe(1));
+  const knapp = await screen.findByRole("button", { name: t.provPreferanse(first.navn) });
+  expect(knapp).toHaveProperty("disabled", false);
+  expect(screen.getByRole("button", { name: g.velgEtikett(first.navn) })).toHaveProperty("disabled", false);
+  await bruker.click(knapp);
+  expect(await screen.findByText(t.tolkefeil)).toBeTruthy();
+  await act(async () => { svar(new Response(JSON.stringify({ status: "tolket" }), { status: 200 })); });
+  expect(screen.getByText(t.tolkefeil)).toBeTruthy();
+  expect(kallTil(fetch, `POST ${nyPost}`)).toBe(1);
+});
+
+test("nettverksfeil etter forsøk krever oppdatert rangering før valg", async () => {
+  const first = TO_GYLDIGE.kandidater[0];
+  const failed = { ...first, tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const interpreted = { ...first, tolkestatus: "tolket" as const, preferansekategori: "onsker_flere", preferansepoeng: 100 };
+  const sti = `${KANDIDATER_URL}/${first.id}/preferanse`;
+  const fetch = falskFetch({ [KANDIDATER_URL]: [
+    ok({ ...TO_GYLDIGE, kandidater: [failed] }),
+    ok({ ...TO_GYLDIGE, kandidater: [interpreted] }),
+  ] });
+  vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) =>
+    String(input) === sti ? Promise.reject(new Error("network")) : fetch(input, init));
+  const bruker = userEvent.setup();
+  render(<Kandidatliste vaktnummer={4127} onVelg={vi.fn()} />);
+  await bruker.click(await screen.findByRole("button", { name: t.provPreferanse(first.navn) }));
+  expect(await screen.findByText(INGEN_KONTAKT)).toBeTruthy();
+  expect(screen.queryByRole("button", { name: g.velgEtikett(first.navn) })).toBeNull();
+  await bruker.click(screen.getByRole("button", { name: TEKSTER.provIgjen }));
+  expect(await screen.findByText(t.preferansekategorier.onsker_flere)).toBeTruthy();
+  expect(screen.getByRole("button", { name: g.velgEtikett(first.navn) })).toHaveProperty("disabled", false);
+  expect(kallTil(fetch, KANDIDATER_URL)).toBe(2);
+});
 
 describe("Kandidatliste (story 2.1)", () => {
   test("kostnad og satsfordeling vises på riktig kandidat", async () => {
@@ -530,4 +583,81 @@ describe("Smale nettleservinduer (story 4.6)", () => {
       Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: opprinnelig });
     }
   });
+});
+
+test("retry updates the whole ranking after interpretation", async () => {
+  const first = TO_GYLDIGE.kandidater[0];
+  const second = TO_GYLDIGE.kandidater[1];
+  const failed = { ...first, plass: 2, tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const interpreted = { ...first, plass: 1, tolkestatus: "tolket" as const, preferansekategori: "onsker_flere", preferansepoeng: 100 };
+  const sti = `${KANDIDATER_URL}/${first.id}/preferanse`;
+  const fetch = falskFetch({
+    [VAKT_URL]: ok(VAKT_4127),
+    [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [{ ...second, plass: 1 }, failed] }),
+      ok({ ...TO_GYLDIGE, kandidater: [interpreted, { ...second, plass: 2 }] })],
+  });
+  let svar!: (response: Response) => void;
+  const ventende = new Promise<Response>((resolve) => { svar = resolve; });
+  vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) =>
+    String(input) === sti ? ventende : fetch(input, init));
+  const bruker = userEvent.setup();
+  render(<><button type="button">Annet sted</button><Kandidatflate vaktnummer={4127} onVelg={vi.fn()} /></>);
+  await screen.findByRole("button", { name: t.provPreferanse(first.navn) });
+  const navn = () => [...document.querySelectorAll(".rangeringstabell tbody .ansattnavn")].map((rad) => rad.textContent);
+  expect(navn()).toEqual([second.navn, first.navn]);
+  await bruker.click(await screen.findByRole("button", { name: t.provPreferanse(first.navn) }));
+  const annet = screen.getByRole("button", { name: "Annet sted" });
+  annet.focus();
+  await act(async () => { svar(new Response(JSON.stringify({ status: "tolket" }), { status: 200 })); });
+  expect(await screen.findByText(t.tolket)).toBeTruthy();
+  expect(screen.getByText(t.preferansekategorier.onsker_flere)).toBeTruthy();
+  expect(navn()).toEqual([first.navn, second.navn]);
+  expect(document.activeElement).toBe(annet);
+  expect(kallTil(fetch, KANDIDATER_URL)).toBe(2);
+});
+
+
+test("retry failure leaves the candidate available for another attempt", async () => {
+  const first = TO_GYLDIGE.kandidater[0];
+  const failed = { ...first, tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const sti = `${KANDIDATER_URL}/${first.id}/preferanse`;
+  falskFetch({
+    [VAKT_URL]: ok(VAKT_4127),
+    [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [failed] }),
+    [`POST ${sti}`]: ok({ status: "feilet" }),
+  });
+  const bruker = userEvent.setup();
+  render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+  await bruker.click(await screen.findByRole("button", { name: t.provPreferanse(first.navn) }));
+  expect(await screen.findByText(t.tolkefeil)).toBeTruthy();
+  expect(screen.getByRole("button", { name: t.provPreferanse(first.navn) })).toBeTruthy();
+});
+
+
+test("retry focus and late response after changing shifts", async () => {
+  const first = TO_GYLDIGE.kandidater[0];
+  const failed = { ...first, tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const sti = `${KANDIDATER_URL}/${first.id}/preferanse`;
+  const nyVakt = "/api/vakter/4189";
+  const fetch = falskFetch({
+    [VAKT_URL]: ok(VAKT_4127),
+    [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [failed] }),
+    [nyVakt]: ok({ ...VAKT_4127, vaktnummer: 4189 }),
+    [`${nyVakt}/kandidater`]: ok(TO_GYLDIGE),
+  });
+  let svar!: (response: Response) => void;
+  const ventende = new Promise<Response>((resolve) => { svar = resolve; });
+  vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) =>
+    String(input) === sti ? ventende : fetch(input, init));
+  const bruker = userEvent.setup();
+  const visning = render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+  await bruker.click(await screen.findByRole("button", { name: t.provPreferanse(first.navn) }));
+  const status = screen.getByText(t.tolker);
+  expect(document.activeElement).toBe(status);
+  expect(screen.getByRole("button", { name: g.velgEtikett(first.navn) })).toHaveProperty("disabled", true);
+  visning.rerender(<Kandidatflate vaktnummer={4189} onVelg={vi.fn()} />);
+  await screen.findByRole("heading", { name: t.overskrift(4189) });
+  await act(async () => { svar(new Response(JSON.stringify({ status: "tolket" }), { status: 200 })); });
+  expect(screen.queryByText(t.tolket)).toBeNull();
+  expect(kallTil(fetch, KANDIDATER_URL)).toBe(1);
 });

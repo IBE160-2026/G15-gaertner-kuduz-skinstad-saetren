@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -56,7 +56,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | K-06 | Dokumentkvalitet | Samordning pågår 2026-11-10 | P-vedtakene føres i planleggingsdokumentene; endelig dokumentkontroll gjenstår. | Gruppen |
 | OP-01 | Avgrensninger i v1 | Vedtatt | Ingen omfattende tariff-, fraværs-, stillingsprosent-, helligdags- eller juridisk modell. | Ikke bestemt |
 | OP-02 | UX og mobil | Vedtatt; ansvar presisert 2026-11-13 (AV-16) | Samordne mockuper nå; detaljert UX, mobil og brukerprøving etter fungerende kandidatvisning. Mobil-/nettbrettvalg før story 4.6 ferdigstilles (§13). | Hele gruppa |
-| OP-03 | KI-feil ved preferansetolkning | Løsning vedtatt 2026-11-09 (P-05); feilreglene vedtatt 2026-11-16 (AV-19); «Prøv igjen» gjenstår | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. Ventetrinn, antall forsøk, tidsbudsjett og sluttstatus er fastsatt i AV-19. Brukerutløst nytt forsøk er ikke bygget (utsatt i `deferred-work.md`). | Gruppen |
+| OP-03 | KI-feil ved preferansetolkning | Løst 2026-11-19 (P-05 2026-11-09, AV-19 2026-11-16, «Prøv igjen» PR #33) | Midlertidig 50 poeng med egen vente-/feilstatus, avgrensede nye forsøk og brukerutløst nytt forsøk. Ventetrinn, antall forsøk, tidsbudsjett og sluttstatus er fastsatt i AV-19. Brukerutløst nytt forsøk er levert og godkjent (§11). | Gruppen |
 | OP-04 | Agentoppsett/underagenter | Vedtatt 2026-11-04 | Gjennomgått og godkjent: `bmad-build` kjøres med underagenter, som i AGENTS.md fra PR #5 (§11). | Johannes W. Gaertner (godkjent på vegne av gruppa) |
 | OP-05 | Ren klone/plattformtesting | Delvis vedtatt 2026-11-07; macOS og ren klone testet 2026-11-11 og 2026-11-12 | Koden skrives for å virke på tvers av operativsystem og testes fysisk først og fremst på Windows. Begrunnelsen 07.11 om at ingen i gruppa har Mac, var feil: Ragnhild har Mac. Appen er testet på macOS (275 av 275 backendtester 11.11) og fra ren klone på macOS (337 av 337 backendtester og 26 av 26 frontendtester 12.11). Linux kjøres bare i CI (§11). | Johannes W. Gaertner |
 | OP-06 | Arbeidsrekkefølge | Forslag, ikke vedtatt | Codex-rekkefølgen beholdes kun som forslag. | Ikke bestemt |
@@ -333,6 +333,7 @@ Disse punktene kommer fra teknisk opprydding på side 5 av PDF-en. At de er **re
 - **Konsekvens:** Ingen bestemt fallback eller feilrespons vedtas nå; manglende svar, feil format og feil tolking er aktuelle forhold å avklare senere.
 - **Ansvarlig:** Ikke bestemt. **Frist:** Før `done` for Story 5.1/5.2; ingen kalenderdato.
 - **Oppdatering 2026-11-16 (AV-19):** Ventetrinn, antall forsøk, tidsbudsjett og sluttstatus for preferansetolkning er fastsatt (§11). Det som gjenstår av OP-03 for story 5.1/5.2, er brukerutløst nytt forsøk («Prøv igjen»), som er utsatt og ikke levert.
+- **Oppdatering 2026-11-19 — Løst:** Brukerutløst «Prøv igjen» er levert og godkjent (PR #33, §11). OP-03 er dermed oppfylt for story 5.1, som er `done`.
 
 ### OP-04 – Agentoppsett og underagenter
 
@@ -454,7 +455,7 @@ Prioritetskategoriene nedenfor skiller **allerede vedtatte krav** fra **forslag 
 | Kontroller tidskategorier for fire vakttyper. | KS-03 | **Før implementasjon av Story 4.7** og ferdigstilling av tilhørende fasit. | Ikke bestemt |
 | Verifiser rangeringsformelen mot PRD/Story 4.7. | KS-02 | **Før godkjenning av relevant testfasit.** Utført for fasiten i Story 1.2 2026-11-04 (§11); ny fasit kontrolleres på nytt. | Ikke bestemt |
 | Implementer/test ulempmodell etter vedtakene uten å endre dem. | AV-01, AV-09, AV-11/12 | Som del av Story 4.7 i v1, etter gjeldende story-kriterier. | Ikke bestemt |
-| Avklar relevant KI-feilhåndtering ved preferansetolkning. | OP-03 | **Før Story 5.1 og 5.2 er `done`.** Feilreglene er avklart 2026-11-16 (AV-19); brukerutløst nytt forsøk gjenstår. | Ikke bestemt |
+| Avklar relevant KI-feilhåndtering ved preferansetolkning. | OP-03 | **Før Story 5.1 og 5.2 er `done`.** Løst for 5.1 2026-11-19: feilreglene (AV-19) og brukerutløst nytt forsøk (PR #33) er begge levert; 5.1 er `done`. Gjelder på nytt for 5.2 ved ferdigstilling. | Ikke bestemt |
 
 ### 8.4 Kan vente / ikke tidfestet
 
@@ -854,6 +855,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Beslutning:** Ragnhild beholder utsettelsen av brukerutløst nytt forsøk («Prøv igjen»-knapp og endepunkt). Akseptansekriteriet i story 5.1 er ikke endret og er ikke oppfylt, så story 5.1 settes ikke til `done` ved merge av PR #30. Den står som `in-progress` til funksjonen er levert eller gruppa endrer kriteriet.
 - **Rettet:** `sprint-status.yaml` har 5.1 som `in-progress` (var `review`), og statusen i spesifikasjonen for 5.1 er `in-progress` (var `done`). Innledningen i AGENTS.md sier nå at 5.1 er delvis levert og `in-progress`, i stedet for «implementert og til gjennomgang». Den daterte merknaden «Delvis levert» står under story 5.1 i `epics.md`.
 - **Ikke endret:** Akseptansekriteriene, AV-19, P-05, OP-03 og andre AV-, K-, OP- og KS-punkter. Storyfiguren er uendret, siden den bare skiller `done` fra resten (kontrollert med `--sjekk`).
+- **Løst 2026-11-19:** Se §11 under («Story 5.1 ferdigstilt, PR #33»).
 
 ### 2026-11-17 – Story 4.5 (OP-17)
 
@@ -864,6 +866,15 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
   - Bygges med Claude Sonnet 5, etter anbefalingen i `docs/modellvalg-stories.md` (visning av allerede beregnede nøkkeltall).
 - **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 4.5.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-19 – Story 5.1 ferdigstilt (OP-03, PR #33)
+
+- **Hvem:** Kim O. Skinstad bygget brukerutløst «Prøv igjen» (PR #33). Mithad Kuduz godkjente og merget til `main` etter uavhengig gjennomgang.
+- **Beslutning:** Det siste gjenstående akseptansekriteriet i story 5.1 (brukerutløst nytt forsøk etter endelig feil) er levert. Story 5.1 er `done`.
+- **Kvalitetssikring:** 685 backendtester, frontendbygg, 52 modultester og 46 komponenttester bestod. Mithads egen gjennomgang kjørte i tillegg ekte, samtidige HTTP-forespørsler mot en kjørende backend (ikke bare mockede tester): to ulike kandidater prøvd samtidig fullførte uavhengig, og to samtidige forsøk på samme kandidat ga riktig 200/409 uten korrupt tilstand. Se `.logs/mithad-kuduz/979-2026-11-19-22-00-00-gjennomgang-pr-33.md`.
+- **Kjent begrensning (uendret, ikke løst her):** Låsene som samordner forsøk deles ikke mellom flere serverprosesser (v1 kjøres med én worker). Dokumentert i README og `deferred-work.md`.
+- **Rettet:** `sprint-status.yaml` har 5.1 som `done`. Innledningen i AGENTS.md sier nå at 5.1 er ferdig, ikke delvis levert. Den daterte merknaden i `epics.md` under story 5.1 er oppdatert. `deferred-work.md` har punktet markert løst.
+- **Ikke endret:** Akseptansekriteriene selv, AV-19, P-05 og andre AV-, K-, OP- og KS-punkter.
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
