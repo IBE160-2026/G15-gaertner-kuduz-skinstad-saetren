@@ -537,3 +537,50 @@ def test_lifespan_and_retry_share_lock(engine: Engine) -> None:
             fortsett.set()
             app.state.tolketråd.join(10)
     assert not app.state.tolketråd.is_alive()
+
+
+# --- Story 5.2: Rangeringen kaller aldri KI, og «Prøv igjen» beregner på nytt ------
+
+
+def test_rangeringen_kaller_aldri_ki_i_noen_tolkestatus(engine: Engine) -> None:
+    """Story 5.2, AC1 (NFR1): med en KI-adapter koblet til kaller verken kandidatlisten
+    eller godkjenningsgrunnlaget KI, uansett om tekstene venter, har feilet eller er
+    tolket. Import-linter-kontrakten dekker bare `domene`, ikke rutelaget i
+    `adaptere/api`, som har tilgang til adapteren. Uten `with` startes ikke lifespan,
+    så bakgrunnstråden tolker ingenting her."""
+    okter = lag_sessionmaker(engine)
+    ki = FasitKi()
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=ki))
+    logg_inn(klient)
+
+    def hent_alle(forventet: str) -> None:
+        liste = kandidater(klient)
+        assert {k["tolkestatus"] for k in liste} == {forventet}
+        for k in liste:
+            assert klient.get(f"/api/vakter/4127/kandidater/{k['id']}").status_code == 200
+
+    hent_alle("venter_paa_tolkning")
+    tolk_ventende(okter, FeilKi())
+    hent_alle("kunne_ikke_tolkes")
+    tolk_ventende(okter, FasitKi())
+    hent_alle("tolket")
+    assert ki.tekster == []
+
+
+def test_prov_igjen_etter_feil_beregner_rangeringen_paa_nytt(engine: Engine) -> None:
+    """Story 5.2, AC4 «etter feil», i backend: etter endelig feil og et vellykket
+    «Prøv igjen» får godkjenningsgrunnlaget ny preferanse og ny totalscore. Det gamle
+    merket avvises, og det nye godtas (P-05, P-09)."""
+    tolk_ventende(lag_sessionmaker(engine), FeilKi())
+    klient = TestClient(lag_app(nokkel=NOKKEL, engine=engine, ki=FasitKi()))
+    logg_inn(klient)
+    sti = f"/api/vakter/4127/kandidater/{JONAS}"
+    før = klient.get(sti).json()
+    assert (før["kandidat"]["tolkestatus"], før["kandidat"]["preferansepoeng"]) == ("kunne_ikke_tolkes", 50)
+    assert klient.post(sti + "/preferanse").json()["status"] == "tolket"
+    etter = klient.get(sti).json()
+    assert (etter["kandidat"]["tolkestatus"], etter["kandidat"]["preferansepoeng"]) == ("tolket", 75)
+    assert etter["kandidat"]["totalscore"] != før["kandidat"]["totalscore"]
+    assert etter["grunnlagsmerke"] != før["grunnlagsmerke"]
+    assert klient.post(sti, json={"grunnlagsmerke": før["grunnlagsmerke"]}).status_code == 409
+    assert klient.post(sti, json={"grunnlagsmerke": etter["grunnlagsmerke"]}).status_code == 200

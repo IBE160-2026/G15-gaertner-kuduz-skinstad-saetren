@@ -331,27 +331,53 @@ def test_lagret_tolkning_går_foran_feil_men_ikke_manglende_tekst() -> None:
     assert (uten_tekst.tolkestatus, uten_tekst.preferansepoeng) == (Tolkestatus.INGEN_REGISTRERT, 50)
 
 
-def test_preferanse_alene_avgjør_rangeringen_når_alt_annet_er_likt() -> None:
-    # Story 5.2, AC2: to kandidater like på alle andre myke faktorer, der bare den ene
-    # ønsker flere vakter, rangeres høyere. Lik lønn og like timer gir 50/50 for kostnad
-    # og timebelastning (minmaks, alle like), og begge har bare dagtimer, så ulempescore
-    # er 100/100 for begge. Bare preferansen skiller dem.
+NØYTRAL_TEKST = "Jeg har ingen ønsker om flere eller færre vakter."  # PRD §4.5 nr. 7
+ØNSKER_FLERE_TEKST = "Jeg vil gjerne ha flere vakter."
+
+
+@pytest.mark.parametrize(("nøytral_id", "ønsker_id"), [(1, 2), (2, 1)])
+def test_preferanse_alene_avgjør_rangeringen_når_alt_annet_er_likt(nøytral_id: int, ønsker_id: int) -> None:
+    # Story 5.2, AC2: to kandidater som er like på kostnad, timebelastning og ulempe,
+    # og som skilles bare av tolket preferanse, rangeres etter preferansen.
     #
-    # Id-ene er valgt slik at stigende-id-tiebreaket (AV-05) alene ville satt «nøytral»
-    # (id 1) først: lik total uten preferansevekten ville gitt feil rekkefølge her, så
-    # rekkefølgen beviser at preferansen avgjør, ikke at den tilfeldigvis stemmer med
-    # tiebreaket.
-    nøytral_kandidat = kandidat(1, lønn=300, timer=10, preferanse="Det går fint uansett.")
-    onsker_flere_kandidat = kandidat(2, lønn=300, timer=10, preferanse="Jeg vil gjerne ha flere vakter.")
-    rangert = {r.id: r for r in ranger(
-        vurder(nøytral_kandidat, onsker_flere_kandidat), VAKT, {1: tolket("noytral"), 2: tolket("onsker_flere")},
-    )}
-    nøytral, onsker_flere = rangert[1], rangert[2]
-    assert (onsker_flere.kostnadspoeng, onsker_flere.timebelastningspoeng, onsker_flere.ulempescore) == (
-        nøytral.kostnadspoeng, nøytral.timebelastningspoeng, nøytral.ulempescore)
-    assert (onsker_flere.preferansepoeng, nøytral.preferansepoeng) == (100, 50)
-    assert onsker_flere.totalscore > nøytral.totalscore
-    assert onsker_flere.plass < nøytral.plass
+    # En tredje kandidat (lønn 310, 20 t) gjør at min–maks ikke er flat: de to like får
+    # 100, ikke 50, for kostnad og timebelastning. Med to like kandidater alene ville
+    # preferansen også vært det eneste som skilte totalscoren om den bare ble brukt som
+    # tiebreak. Begge id-rekkefølgene testes, så stigende-id-tiebreaket (AV-05) aldri kan
+    # gi riktig rekkefølge ved et uhell. Tekstene påvirker ikke poengene, bare `tolkede`
+    # gjør det. Den nøytrale er fasitteksten for nøytral (PRD §4.5 nr. 7).
+    #
+    # Nøytral: 0,40 × 100 + 0,20 × 100 + 0,15 × 100 + 0,25 × 50 = 87,5.
+    # Ønsker flere: 40 + 20 + 15 + 0,25 × 100 = 100. Nr. 3: 0 + 0 + 15 + 12,5 = 27,5.
+    nøytral_tolkning, ønsker_tolkning = tolket("noytral"), tolket("onsker_flere")
+    rangert = {r.id: r for r in ranger(vurder(
+        kandidat(nøytral_id, lønn=300, timer=10, preferanse=NØYTRAL_TEKST),
+        kandidat(ønsker_id, lønn=300, timer=10, preferanse=ØNSKER_FLERE_TEKST),
+        kandidat(3, lønn=310, timer=20, preferanse=None),
+    ), VAKT, {nøytral_id: nøytral_tolkning, ønsker_id: ønsker_tolkning})}
+    nøytral, ønsker = rangert[nøytral_id], rangert[ønsker_id]
+    for r in (nøytral, ønsker):
+        assert (r.kostnadspoeng, r.timebelastningspoeng, r.ulempescore) == (100, 100, 100)
+    # Status sjekkes, slik at nøytralens 50 poeng kommer fra tolkningen og ikke fra en
+    # reservevei (venter, ingen registrert og kunne ikke tolkes gir også 50).
+    assert (nøytral.tolkestatus, nøytral.tolket_preferanse, nøytral.preferansepoeng) == (
+        Tolkestatus.TOLKET, nøytral_tolkning, 50)
+    assert (ønsker.tolkestatus, ønsker.tolket_preferanse, ønsker.preferansepoeng) == (
+        Tolkestatus.TOLKET, ønsker_tolkning, 100)
+    assert (ønsker.totalscore, nøytral.totalscore, rangert[3].totalscore) == (100, 87.5, 27.5)
+    assert [ønsker.plass, nøytral.plass, rangert[3].plass] == [1, 2, 3]
+
+
+def test_preferansen_veier_tyngre_enn_en_liten_kostnadsforskjell() -> None:
+    # Story 5.2, FR10 og PRD §4.4: preferansen er en vektet faktor i totalscoren, ikke
+    # bare et tiebreak når alt annet er likt. Kostnad 2400/2408/2480 kr gir 100/90/0.
+    # Nr. 1: 0,40 × 100 + 20 + 15 + 0,25 × 50 = 87,5. Nr. 2: 0,40 × 90 + 20 + 15 + 0,25 × 100 = 96.
+    rangert = ranger(vurder(
+        kandidat(1, lønn=300, timer=10, preferanse=NØYTRAL_TEKST),
+        kandidat(2, lønn=301, timer=10, preferanse=ØNSKER_FLERE_TEKST),
+        kandidat(3, lønn=310, timer=20, preferanse=None),
+    ), VAKT, {1: tolket("noytral"), 2: tolket("onsker_flere")})
+    assert [(r.id, r.kostnadspoeng, r.totalscore) for r in rangert] == [(2, 90, 96), (1, 100, 87.5), (3, 0, 27.5)]
 
 
 # --- Bare Gyldige rangeres (NFR2, AD-1) ------------------------------------------
