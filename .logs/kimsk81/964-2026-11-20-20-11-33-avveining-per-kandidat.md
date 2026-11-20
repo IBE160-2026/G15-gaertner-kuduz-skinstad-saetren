@@ -19,3 +19,7 @@ Ingen.
 
 ### Gjennomgang av spesifikasjonen
 En uavhengig underagent leste spesifikasjonen mot epic, arkitektur og kode. Vi kontrollerte at eksisterende godkjenningsmerke inkluderer kandidat-ID, at faktorpoeng og råbeløp har ulik betydning, og at rangeringsparametrene tillater nullvekt. Utkastet angir nå merke per kandidatrad fra samme lesetransaksjon, regresjonstester for forsinkede svar på begge flater, kildelinje styrt av faktisk kilde og avvisning av retningspåstander om faktorer uten vekt. Disse funnene er kontrollert ved dokument- og kodelesing. Implementering, testkjøring og uavhengig kodegjennomgang hører til neste fase etter godkjenning av spesifikasjonen.
+
+### Statuskontroll etter avbruddet kl. 22:56
+
+Kontrollerte utkastet, sprintstatus, arbeidskopi, commit-historikk, stash og registrerte arbeidstrær. Ved kontrollstart var de tre commitene siden forgreningen fra main loggendringer. Spesifikasjonen lå usporet i arbeidsmappen med status `draft` og seks åpne oppgaver. Sprintstatus viste `backlog`. Det var ingen lagrede kode- eller testendringer for 5.3 i branchen eller en egen stash. Siste dokumenterte steg var gjennomgangen av utkastet. Arbeidet kan gjenopptas ved godkjenningen av spesifikasjonen.
