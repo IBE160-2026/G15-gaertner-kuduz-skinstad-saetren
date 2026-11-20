@@ -130,6 +130,15 @@ story-/sprint-nøkler.
   tekst ved de tre kontrollbreddene, vannrett rulling bare i tabellens egen beholder med
   rangering+navn alltid synlig under rullingen, og tilstand (valgt vakt, åpne begrunnelser,
   valgt kandidat) bevart ved vindusendring.
+  - Story 4.6 er implementert 2026-11-19 bare med CSS: «Nr.» og «Kandidat» står fast
+    (`position: sticky`, klassene `fast-nr` og `fast-kandidat`) med det nye tokenet
+    `--rank-column-width` (4.25rem). To nye komponenttester vokter mot en `resize`-lytter
+    som monterer eller henter på nytt (ikke `matchMedia` eller `ResizeObserver`), og en
+    nettleserkontroll med headless Chrome bestod ved 1600, 1080, 960 og 680 px, kjørt før
+    rettingene etter kodegjennomgangen. Med 20 px skrift ved 680 px står ulempekolonnen ikke
+    helt synlig når tabellen er rullet helt til høyre, men kan rulles fram. Se
+    [KI-loggen](../../docs/ki-logg/2026-11-19-smale-skjermer.md). Den manuelle
+    sjekklisten er bestått (2026-11-19), og PR-gjennomgang gjenstår, så storyen er `review`.
 
 ## Cross-Story Dependencies
 

@@ -1,0 +1,129 @@
+[OK] Logg inn 1600 px/16: siden ruller ikke vannrett — 1600 av 1600 px
+[OK] Logg inn 1600 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Logg inn 1600 px/16: alle handlinger innenfor vinduet — []
+[OK] Vaktvalg 1600 px/16: siden ruller ikke vannrett — 1585 av 1585 px, loddrett rullefelt 15 px
+[OK] Vaktvalg 1600 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Vaktvalg 1600 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 1600 px/16: siden ruller ikke vannrett — 1585 av 1585 px, loddrett rullefelt 15 px
+[OK] Kandidatflate 1600 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Kandidatflate 1600 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 1600 px/16: #4127 Jonas, Mette, Thomas, Ingrid — Jonas Bakke, Mette Solberg, Thomas Nygård, Ingrid Dahl
+[OK] Kandidatflate 1600 px/16: alle 8 kolonner synlige uten rulling i tabellen — {"scrollWidth":1088,"clientWidth":1088,"kolonner":8}
+[OK] Godkjenning (Mette) 1600 px/16: siden ruller ikke vannrett — 1585 av 1585 px, loddrett rullefelt 15 px
+[OK] Godkjenning (Mette) 1600 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Godkjenning (Mette) 1600 px/16: alle handlinger innenfor vinduet — []
+[OK] Godkjenning (Mette) 1600 px/16: kort, avviksnotat og bekreftelse innenfor vinduet — {"kort":[225,1361],"avvik":[225,1361],"bekreft":[225,1361],"vindu":1600}
+[OK] Logg inn 1080 px/16: siden ruller ikke vannrett — 1080 av 1080 px
+[OK] Logg inn 1080 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Logg inn 1080 px/16: alle handlinger innenfor vinduet — []
+[OK] Vaktvalg 1080 px/16: siden ruller ikke vannrett — 1065 av 1065 px, loddrett rullefelt 15 px
+[OK] Vaktvalg 1080 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Vaktvalg 1080 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 1080 px/16: siden ruller ikke vannrett — 1065 av 1065 px, loddrett rullefelt 15 px
+[OK] Kandidatflate 1080 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Kandidatflate 1080 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 1080 px/16: #4127 Jonas, Mette, Thomas, Ingrid — Jonas Bakke, Mette Solberg, Thomas Nygård, Ingrid Dahl
+[OK] Kandidatflate 1080 px/16: alle 8 kolonner synlige uten rulling i tabellen — {"scrollWidth":973,"clientWidth":973,"kolonner":8}
+[OK] Godkjenning (Mette) 1080 px/16: siden ruller ikke vannrett — 1065 av 1065 px, loddrett rullefelt 15 px
+[OK] Godkjenning (Mette) 1080 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Godkjenning (Mette) 1080 px/16: alle handlinger innenfor vinduet — []
+[OK] Godkjenning (Mette) 1080 px/16: kort, avviksnotat og bekreftelse innenfor vinduet — {"kort":[22,1043],"avvik":[22,1043],"bekreft":[22,1043],"vindu":1080}
+[OK] Logg inn 960 px/16: siden ruller ikke vannrett — 960 av 960 px
+[OK] Logg inn 960 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Logg inn 960 px/16: alle handlinger innenfor vinduet — []
+[OK] Vaktvalg 960 px/16: siden ruller ikke vannrett — 945 av 945 px, loddrett rullefelt 15 px
+[OK] Vaktvalg 960 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Vaktvalg 960 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 960 px/16: siden ruller ikke vannrett — 945 av 945 px, loddrett rullefelt 15 px
+[OK] Kandidatflate 960 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Kandidatflate 960 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 960 px/16: #4127 Jonas, Mette, Thomas, Ingrid — Jonas Bakke, Mette Solberg, Thomas Nygård, Ingrid Dahl
+[OK] Kandidatflate 960 px/16: tabellen ruller i beholderen — {"scrollWidth":971,"clientWidth":853}
+[OK] Kandidatflate 960 px/16: «Nr.» er like bred som tokenet — 68 mot 68 px
+[OK] Kandidatflate 960 px/16: «Kandidat» er like bred som tokenet — 120 mot 120 px
+[OK] Kandidatflate 960 px/16, rullet helt til høyre: «Nr.» står ytterst til venstre i hver rad — [0,0,0,0,0]
+[OK] Kandidatflate 960 px/16, rullet helt til høyre: «Kandidat» følger rett etter «Nr.» — [0,0,0,0,0]
+[OK] Kandidatflate 960 px/16, rullet helt til høyre: de faste cellene ligger øverst
+[OK] Kandidatflate 960 px/16, rullet helt til høyre: ingen synlig celle dekkes av de faste — [[],[],[],[],[]]
+[OK] Kandidatflate 960 px/16, rullet til ulempekolonnen: «Nr.» står ytterst til venstre i hver rad — [0,0,0,0,0]
+[OK] Kandidatflate 960 px/16, rullet til ulempekolonnen: «Kandidat» følger rett etter «Nr.» — [0,0,0,0,0]
+[OK] Kandidatflate 960 px/16, rullet til ulempekolonnen: de faste cellene ligger øverst
+[OK] Kandidatflate 960 px/16, rullet til ulempekolonnen: ingen synlig celle dekkes av de faste — [[],[],[],[],[]]
+[OK] Kandidatflate 960 px/16: ulempekolonnen helt synlig ved siden av «Kandidat» — scrollLeft 118
+[OK] Kandidatflate 960 px/16, rullet helt til høyre: ulempe og preferanse står ved siden av de faste
+[OK] Kandidatflate 960 px/16: ugjennomsiktig bakgrunn som følger raden — th rgb(240, 243, 246) | - rgb(255, 255, 255) | alt rgb(245, 247, 249) | - rgb(255, 255, 255) | alt rgb(245, 247, 249)
+[OK] Kandidatflate 960 px/16: skillelinje til høyre for «Kandidat» — solid 1px rgb(199, 208, 217)
+[OK] Kandidatflate 960 px/16: totalscoren i «Nr.» klippes ikke
+[OK] Godkjenning (Mette) 960 px/16: siden ruller ikke vannrett — 945 av 945 px, loddrett rullefelt 15 px
+[OK] Godkjenning (Mette) 960 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Godkjenning (Mette) 960 px/16: alle handlinger innenfor vinduet — []
+[OK] Godkjenning (Mette) 960 px/16: kort, avviksnotat og bekreftelse innenfor vinduet — {"kort":[22,923],"avvik":[22,923],"bekreft":[22,923],"vindu":960}
+[OK] Logg inn 680 px/16: siden ruller ikke vannrett — 680 av 680 px
+[OK] Logg inn 680 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Logg inn 680 px/16: alle handlinger innenfor vinduet — []
+[OK] Vaktvalg 680 px/16: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Vaktvalg 680 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Vaktvalg 680 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 680 px/16: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Kandidatflate 680 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Kandidatflate 680 px/16: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 680 px/16: #4127 Jonas, Mette, Thomas, Ingrid — Jonas Bakke, Mette Solberg, Thomas Nygård, Ingrid Dahl
+[OK] Kandidatflate 680 px/16: tabellen ruller i beholderen — {"scrollWidth":971,"clientWidth":573}
+[OK] Kandidatflate 680 px/16: «Nr.» er like bred som tokenet — 68 mot 68 px
+[OK] Kandidatflate 680 px/16: «Kandidat» er like bred som tokenet — 120 mot 120 px
+[OK] Kandidatflate 680 px/16, rullet helt til høyre: «Nr.» står ytterst til venstre i hver rad — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/16, rullet helt til høyre: «Kandidat» følger rett etter «Nr.» — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/16, rullet helt til høyre: de faste cellene ligger øverst
+[OK] Kandidatflate 680 px/16, rullet helt til høyre: ingen synlig celle dekkes av de faste — [[],[],[],[],[]]
+[OK] Kandidatflate 680 px/16, rullet til ulempekolonnen: «Nr.» står ytterst til venstre i hver rad — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/16, rullet til ulempekolonnen: «Kandidat» følger rett etter «Nr.» — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/16, rullet til ulempekolonnen: de faste cellene ligger øverst
+[OK] Kandidatflate 680 px/16, rullet til ulempekolonnen: ingen synlig celle dekkes av de faste — [[],[],[],[],[]]
+[OK] Kandidatflate 680 px/16: ulempekolonnen helt synlig ved siden av «Kandidat» — scrollLeft 398
+[OK] Kandidatflate 680 px/16, rullet helt til høyre: ulempe og preferanse står ved siden av de faste
+[OK] Kandidatflate 680 px/16: ugjennomsiktig bakgrunn som følger raden — th rgb(240, 243, 246) | - rgb(255, 255, 255) | alt rgb(245, 247, 249) | - rgb(255, 255, 255) | alt rgb(245, 247, 249)
+[OK] Kandidatflate 680 px/16: skillelinje til høyre for «Kandidat» — solid 1px rgb(199, 208, 217)
+[OK] Kandidatflate 680 px/16: totalscoren i «Nr.» klippes ikke
+[OK] Kandidatflate 680 px/16: siden har loddrett rullefelt, så kontrollen over gjelder det trangeste tilfellet — 15 px
+[INFO] 680 px/16: med en simulert Epic 5-lenke i siste kolonne er det -89 px til overs ved siden av de faste kolonnene, rullet helt til høyre
+[OK] Godkjenning (Mette) 680 px/16: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Godkjenning (Mette) 680 px/16: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Godkjenning (Mette) 680 px/16: alle handlinger innenfor vinduet — []
+[OK] Godkjenning (Mette) 680 px/16: kort, avviksnotat og bekreftelse innenfor vinduet — {"kort":[22,643],"avvik":[22,643],"bekreft":[22,643],"vindu":680}
+[OK] Logg inn 680 px/20: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Logg inn 680 px/20: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Logg inn 680 px/20: alle handlinger innenfor vinduet — []
+[OK] Vaktvalg 680 px/20: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Vaktvalg 680 px/20: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Vaktvalg 680 px/20: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 680 px/20: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Kandidatflate 680 px/20: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Kandidatflate 680 px/20: alle handlinger innenfor vinduet — []
+[OK] Kandidatflate 680 px/20: #4127 Jonas, Mette, Thomas, Ingrid — Jonas Bakke, Mette Solberg, Thomas Nygård, Ingrid Dahl
+[OK] Kandidatflate 680 px/20: tabellen ruller i beholderen — {"scrollWidth":1150,"clientWidth":573}
+[OK] Kandidatflate 680 px/20: «Nr.» er like bred som tokenet — 85 mot 85 px
+[OK] Kandidatflate 680 px/20: «Kandidat» er like bred som tokenet — 150 mot 150 px
+[OK] Kandidatflate 680 px/20, rullet helt til høyre: «Nr.» står ytterst til venstre i hver rad — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/20, rullet helt til høyre: «Kandidat» følger rett etter «Nr.» — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/20, rullet helt til høyre: de faste cellene ligger øverst
+[OK] Kandidatflate 680 px/20, rullet helt til høyre: ingen synlig celle dekkes av de faste — [[],[],[],[],[]]
+[OK] Kandidatflate 680 px/20, rullet til ulempekolonnen: «Nr.» står ytterst til venstre i hver rad — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/20, rullet til ulempekolonnen: «Kandidat» følger rett etter «Nr.» — [0,0,0,0,0]
+[OK] Kandidatflate 680 px/20, rullet til ulempekolonnen: de faste cellene ligger øverst
+[OK] Kandidatflate 680 px/20, rullet til ulempekolonnen: ingen synlig celle dekkes av de faste — [[],[],[],[],[]]
+[OK] Kandidatflate 680 px/20: ulempekolonnen helt synlig ved siden av «Kandidat» — scrollLeft 492
+[INFO] Kandidatflate 680 px/20, rullet helt til høyre: ulempekolonnen delvis under de faste kolonnene
+[OK] Kandidatflate 680 px/20: ugjennomsiktig bakgrunn som følger raden — th rgb(240, 243, 246) | - rgb(255, 255, 255) | alt rgb(245, 247, 249) | - rgb(255, 255, 255) | alt rgb(245, 247, 249)
+[OK] Kandidatflate 680 px/20: skillelinje til høyre for «Kandidat» — solid 1px rgb(199, 208, 217)
+[OK] Kandidatflate 680 px/20: totalscoren i «Nr.» klippes ikke
+[OK] Godkjenning (Mette) 680 px/20: siden ruller ikke vannrett — 665 av 665 px, loddrett rullefelt 15 px
+[OK] Godkjenning (Mette) 680 px/20: ingenting klippet — {"klippet":[],"overløp":[]}
+[OK] Godkjenning (Mette) 680 px/20: alle handlinger innenfor vinduet — []
+[OK] Godkjenning (Mette) 680 px/20: kort, avviksnotat og bekreftelse innenfor vinduet — {"kort":[22,643],"avvik":[22,643],"bekreft":[22,643],"vindu":680}
+[OK] Tastatur 680 px: fokus synlig på beholderen og hver Velg — Rangering av gyldige kandidater | Velg Jonas Bakke | Velg Mette Solberg | Velg Thomas Nygård | Velg Ingrid Dahl | Velg Thomas Nygård | Velg Mette Solberg | Velg Jonas Bakke
+[OK] Tastatur 680 px: fokusrammen skjules ikke av de faste kolonnene — [false,true,true,true,true,true,true,true]
+[OK] Vindusendring: «Vis alle» og «Vis full liste» åpne og samme rader, uten ny henting — {"start":{"sti":"/vakt/4127/kandidater","rader":7,"visAlle":"true","fullListe":"true","utelukkede":20,"kall":6},"underveis":[{"px":1080,"sti":"/vakt/4127/kandidater","rader":7,"visAlle":"true","fullListe":"true","utelukkede":20,"kall":6},{"px":960,"sti":"/vakt/4127/kandidater","rader":7,"visAlle":"true","fullListe":"true","utelukkede":20,"kall":6},{"px":680,"sti":"/vakt/4127/kandidater","rader":7,"visAlle":"true","fullListe":"true","utelukkede":20,"kall":6},{"px":1600,"sti":"/vakt/4127/kandidater","rader":7,"visAlle":"true","fullListe":"true","utelukkede":20,"kall":6}]}
+[OK] Vindusendring: valgt kandidat og avviksnotat på Godkjenning står, uten ny henting — {"gStart":{"sti":"/vakt/4127/godkjenning/5","navn":"Mette Solberg","kall":4},"gUnderveis":[{"sti":"/vakt/4127/godkjenning/5","navn":"Mette Solberg","avvik":true,"kall":4},{"sti":"/vakt/4127/godkjenning/5","navn":"Mette Solberg","avvik":true,"kall":4}]}
+[OK] Ingen konsollfeil — []
+
+Alle kontroller besto.

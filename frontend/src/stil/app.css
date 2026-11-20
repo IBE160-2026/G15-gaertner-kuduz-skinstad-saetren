@@ -440,6 +440,65 @@ button {
   white-space: normal;
 }
 
+/* Smale vinduer (story 4.6, UX-DR25, UX-DR28, AV-17): «Nr.» og «Kandidat» står fast mot
+   venstre kant når tabellen ruller vannrett, så det alltid synes hvem tallene gjelder.
+   Bare CSS, ingen layout etter bredde i JavaScript.
+   - `separate`: med `collapse` blir kantene i Chrome liggende igjen når cellen er sticky.
+     Med `border-spacing: 0` ser tabellen lik ut.
+   - `isolation`: de faste cellenes `z-index` gjelder bare inne i tabellen.
+   - Ugjennomsiktig bakgrunn som følger raden, og en skillelinje til høyre for «Kandidat».
+     Ingen skygger (DESIGN.md). */
+.rangeringstabell {
+  isolation: isolate;
+}
+
+.rangeringstabell .tabell {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.rangeringstabell .fast-nr,
+.rangeringstabell .fast-kandidat {
+  position: sticky;
+  z-index: 1;
+}
+
+.rangeringstabell td.fast-nr,
+.rangeringstabell td.fast-kandidat {
+  background: var(--color-bg-panel);
+}
+
+.rangeringstabell .row-alt td.fast-nr,
+.rangeringstabell .row-alt td.fast-kandidat {
+  background: var(--color-row-alt);
+}
+
+/* Fast bredde, så «Kandidat» kan stå fast nøyaktig der «Nr.» slutter. Totalscoren kan
+   brytes over to linjer i stedet for å klippes. Chrome ser bort fra `max-width` på
+   tabellceller; `anywhere` hindrer at min-content (for eksempel med minste skriftstørrelse
+   i Chrome) gjør kolonnen bredere enn tokenet, slik at «Kandidat» dekker totalscoren. */
+.rangeringstabell .fast-nr {
+  left: 0;
+  width: var(--rank-column-width);
+  min-width: var(--rank-column-width);
+  max-width: var(--rank-column-width);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Også «Kandidat» har fast bredde, så de faste kolonnene ikke vokser med lengden på
+   stilling og ansiennitet. Teksten brytes i stedet. `anywhere` av samme grunn som i «Nr.»:
+   et svært langt ord skal brytes, ikke gjøre kolonnen bredere enn tokenet. */
+.rangeringstabell .fast-kandidat {
+  left: var(--rank-column-width);
+  width: var(--candidate-column-width);
+  min-width: var(--candidate-column-width);
+  max-width: var(--candidate-column-width);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border-right: var(--border-width) solid var(--color-border);
+}
+
 /* Rangeringsnummeret: det første tallet blikket skal lande på (UX-DR8). */
 .rank-badge {
   color: var(--color-accent);

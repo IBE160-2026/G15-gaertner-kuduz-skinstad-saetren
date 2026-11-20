@@ -236,8 +236,8 @@ function Rangeringstabell({ kandidater, onVelg, paagar, onProv }: { kandidater: 
       <table className="tabell">
         <thead>
           <tr>
-            <th scope="col">{k.plass}</th>
-            <th scope="col">{k.kandidat}</th>
+            <th scope="col" className="fast-nr">{k.plass}</th>
+            <th scope="col" className="fast-kandidat">{k.kandidat}</th>
             <th scope="col">{k.kompetanse}</th>
             <th scope="col">{k.kostnad}</th>
             <th scope="col">{k.timebelastning}</th>
@@ -319,11 +319,11 @@ type RadProps = {
 function Kandidatrad({ kandidat: r, alt, onVelg, knappRef, paagar, onProv }: RadProps) {
   return (
     <tr className={alt ? "row-alt" : undefined}>
-      <td>
+      <td className="fast-nr">
         <span className="rank-badge">{r.plass}</span>
         <div className="undertekst">{t.totalscore(tall.format(r.totalscore))}</div>
       </td>
-      <td>
+      <td className="fast-kandidat">
         <span className="ansattnavn">{r.navn}</span>
         <div className="undertekst">{t.kandidatMeta(r.stilling, r.ansiennitet)}</div>
       </td>
