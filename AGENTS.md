@@ -12,7 +12,7 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Stacken er React/TypeScript med Vite, Python/FastAPI og SQLite via SQLAlchemy.
 KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.5, 4.7, 5.1 og 5.2 er ferdige: skjelett, lagring med fiktive
+Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.5, 4.7 og 5.1 er ferdige: skjelett, lagring med fiktive
 testdata, innlogging med designtokens og appskall, beskyttede flater, vaktoversikt og
 valg av vakt, godkjenning og bemanning av vakten, Ekskludert-boksen, rangeringen med
 rangeringstabell, avviksnotatet på godkjenningsflaten og tolkning av preferansetekster.
@@ -26,9 +26,10 @@ backend tolker ventende tekster i en daemon-tråd ved oppstart. Et beskyttet end
 «Prøv igjen»-knapp lar turnusansvarlig be om et nytt forsøk etter endelig feil (låsene deles
 ikke mellom flere serverprosesser; v1 kjøres med én worker). Rangeringen leser bare lagrede
 tolkninger. Uten gyldig lagret tolkning får en preferanse midlertidig 50 poeng (P-05).
-Story 5.2 er bare testdekning: en isolasjonstest beviser at to ellers like kandidater
-rangeres etter preferansen alene, siden koden allerede sendte lagrede tolkninger inn i
-Rangeringen som vanlig input. `scripts/modelltest_*.py` er isolerte modellforsøk før
+Story 5.2 (til gjennomgang i PR #34) er bare testdekning, siden koden allerede sendte
+lagrede tolkninger inn i Rangeringen som vanlig input. Regelmotortester viser at
+preferansen alene avgjør mellom ellers like kandidater, og en API-test viser at rutene
+ikke kaller KI mens Rangeringen beregnes. `scripts/modelltest_*.py` er isolerte modellforsøk før
 story 5.1. Planleggingsgrunnlaget er `product-brief.md`
 i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 

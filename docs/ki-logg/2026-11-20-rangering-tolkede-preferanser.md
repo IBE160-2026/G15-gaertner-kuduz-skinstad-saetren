@@ -69,3 +69,88 @@ Testen vist å kunne feile: `preferansevekt`-leddet i `totalscore()` ble midlert
 fjernet, både totalscore- og rekkefølge-påstandene ga rødt, og koden ble tilbakestilt
 (`git diff` tomt etterpå). Frontend er urørt i denne storyen (build, 52 modultester og
 48 komponenttester, uendret fra forrige måling på `main`).
+
+## PR-gjennomgang og rettelser, 2026-11-20
+
+Utført av Claude (Opus 5.5) for Johannes Gärtner, som gjennomgang av PR #34.
+
+### Prompt
+
+Første prompt, ordrett:
+
+> hent siste endringer fra repoet. Start gjennomgang av PR 34. Gi meg et overblikk over
+> PR'en, kjør review, gå igjennom arbeidet som er gjort og start kjøringen av underagenter
+> som utforsker og utfordrer problemene du finner.
+
+Andre prompt, etter gjennomgangen, ordrett. Tallene viser til funnlisten i gjennomgangen
+(1 AC2-testen, 2 KI-kall i godkjenningsruten, 3 `epic-5-context.md`, 4 KI-loggen, 5 småting):
+
+> 1: implementer foreslåtte endringer i testing på branchen. Dokumenter hvorfor. 2. Fiks
+> problemet og forklar hvorfor. 3. Er dette noe du kan fikse eller må du ha konteksten fra
+> arbeidet til Mithad? Hvis du kan - fiks det. 4. mottatt. Dette er sikkert en glipp med en
+> prompt som ikke er relevant for branchen, jeg har informert mithad. 5. Fiks småtingene,
+> forklar hvorfor.
+>
+> Kommenter endringene som er gjort på PR'en. kjør tester for å se at det fungerer, gjør
+> klar til å push endringene til branchen
+
+### Gjennomgangen
+
+- `bmad-review` med tre uavhengige linser (adversarial, edge-case og verification-gap) på
+  diffen mot `origin/main`.
+- Deretter fire utfordringsagenter, som først skulle forsøke å avkrefte funnene. De så på
+  epic-konteksten mot planverket, AC2-testen med mutasjoner, AC1/AC4-bevisene med utkast
+  til tester og prosessen mot tidligere praksis.
+- Agentene endret ingen sporede filer. Mutasjonene ble tilbakestilt med `git checkout`.
+
+### Hva modellen leverte
+
+- **AC2-testen** er erstattet av en parametrisert versjon med en tredje kandidat, og en ny
+  test viser at preferansen veier tyngre enn en liten kostnadsforskjell.
+  - Testkoden er foreslått av en underagent og tatt inn uendret.
+  - Tallene i kommentarene er kontrollert for hånd mot vektene 0,40/0,20/0,15/0,25.
+  - Nøytralteksten er kontrollert mot PRD §4.5 nr. 7.
+- **To API-tester** er lagt til i `backend/tester/api/test_preferansetolkning.py`:
+  - `test_rangeringen_kaller_aldri_ki_i_noen_tolkestatus` (AC1)
+  - `test_prov_igjen_etter_feil_beregner_rangeringen_paa_nytt` (AC4 etter feil)
+- **`epic-5-context.md`** er tilbakestilt til versjonen på `main`, med sju setninger fra den
+  regenererte filen som har kilde i planverket (spine linje 103, epics linje 1041, 1133 og
+  1198–1201, arkitekturens utsatte beslutninger, PRD SM-9).
+- **Ordlyden** i spesifikasjonen, vurderingsmatrisen, `docs/testing.md` og `AGENTS.md` er
+  rettet.
+
+### Hva som ble rettet og hvorfor
+
+- **Den gamle AC2-testen** fanget ikke to mutasjoner i `domene/regelmotor/rangering.py`:
+  - Mutasjon 1: en `noytral`-tolkning ble ignorert, slik at kandidaten falt tilbake til
+    «venter» med de samme 50 poengene.
+  - Mutasjon 2: preferansen ble brukt bare som tiebreak. Den besto hele `tester/regelmotor`.
+  - Årsaken var at testen ikke sjekket tolkestatus, og at to like kandidater gir flat
+    min–maks (50/50).
+- **Godkjenningsruten** hadde ingen test for at den ikke kaller KI mens tekstene venter.
+  Et KI-kall for ventende tekster lagt inn i `godkjenningsgrunnlag()` ga 686/686 grønn
+  suite. Med den nye testen feilet 1 av 690.
+- **`epic-5-context.md`** var regenerert med begrunnelsen at `epics.md` og
+  `ARCHITECTURE-SPINE.md` var endret. Siden `1e66378` er bare en statuslinje i `epics.md`
+  endret (`59fb5c9`).
+  - Omtrent 15 bindende detaljer manglet fortsatt, blant annet at Avveiningen ikke skal inn
+    i grunnlagsmerket, JSON-skjema og resonnering av (AD-7) og demo-regelen for ukjent tekst.
+  - Overskriftene var på norsk, mens epic 1–4 bruker engelsk.
+  - Konteksten krever ingen kunnskap fra Mithads økt, fordi den bygges fra planverket.
+    Derfor ble den rettet her.
+- **AGENTS.md** førte 5.2 som ferdig før merge. For 4.4 og 5.1 ble det gjort etter merge.
+
+### Kvalitetssikring
+
+Mutasjoner mot de nye AC2-testene, alle tilbakestilt:
+
+| Mutasjon | Resultat |
+|---|---|
+| Preferansevekten fjernet | rødt |
+| Nøytral tolkning ignorert | rødt |
+| Min–maks på preferansen | rødt |
+| Preferansen bare som tiebreak | rødt i vekttesten |
+| Synkende id-tiebreak | grønt, riktig fordi totalene er ulike |
+
+Mutasjonen i godkjenningsruten er beskrevet over. `git status` var ren for produksjonskode
+etter hver mutasjon. Testkjøringer etter endringene står i spesifikasjonen og i commiten.
