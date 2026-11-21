@@ -27,3 +27,21 @@ Kontrollerte utkastet, sprintstatus, arbeidskopi, commit-historikk, stash og reg
 ### Godkjent for implementering
 
 Kim godkjente spesifikasjonen og ba om å fortsette med underagenter. Vi registrerte utgangspunktet for kodegjennomgangen, satte storyen i arbeid og ga implementeringen til en egen agent. En separat agent kontrollerte epic-konteksten og akseptansekriteriene mot PRD, vedtak og arkitektur.
+
+## 2026-11-21 kl. 07:39 — Kimsk81
+
+### Oppgave
+Finn hvor story 5.3 stoppet, og fortsett arbeidet med underagenter.
+
+### Plan
+En underagent kontrollerte epic-kontekst og vedtak mot den godkjente spesifikasjonen. Vi gjenopptok arbeidet fra de lagrede kodeendringene og nettleserresultatene i KI-loggen.
+
+### Resultat
+Frontendbygget og de 52 modultestene bestod. To eldre komponenttester feilet etter at avveiningspanelet kom inn. Navigasjonstesten må vente på første forklaring før den teller API-kall, og testen av kandidatkortet må finne ulempeetiketten i kortets egne nøkkeltall. Begge kontrollene er justert.
+
+Tre uavhengige underagenter fant feil ved kø og tidsfrist, avrunding, duplikatnøkler og tilgang til panelknappene fra skjermleserens knappeliste. Vi rettet funnene og styrket testene for modellskjema, eksakte brøker og retningsvisning per faktor. Backendmiljøet for Windows er gjenopprettet med prosjektets låste pakker. Dette løser miljødelen av oppfølgingspunktet fra 5.1.
+
+Sluttkjøringen ga 717 beståtte backendtester, bestått frontendbygg og 52 + 57 beståtte frontendtester. En underagent gjentok nettlesertesten ved 680 × 700 px med ekte backend, reservetekst og lokal testtransport. Arbeidet er lagret i `7baa427`, med sprintstatus `review`. [KI-loggen](../../docs/ki-logg/2026-11-20-avveining-per-kandidat.md) inneholder testresultatene og lenker til gjennomgangen.
+
+### Åpne punkter
+Ingen.
