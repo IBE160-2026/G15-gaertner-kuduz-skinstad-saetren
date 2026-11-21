@@ -82,3 +82,24 @@ Story 4.5 er endret fra gul til grønn i figuren etter at storyen ble satt til `
 
 ### Åpne punkter
 Ingen.
+
+## 2026-11-21 kl. 13:25 — Kimsk81
+
+### Oppgave
+
+Oppdatere avhengighetsfiguren etter flettingen av story 5.3.
+
+### Plan
+
+- Kontrollere sprintstatus og spesifikasjon mot gruppas gjennomgang av PR #35.
+- Synkronisere figuren og kontrollere status for alle 30 stories.
+
+### Resultat
+
+Sprintstatusen viste fortsatt `review` for 5.3. Ragnhild godkjente endringene etter test på macOS, og PR-en ble flettet. Oppdaterte 5.3 til `done` i sprintstatusen og kjørte `scripts/synkroniser_storyfigur.py`. Bare ruten for 5.3 skiftet farge. [Gjennomgang og fletting av PR #35](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/35)
+
+Skriptets `--sjekk` og `git diff --check` bestod. Opptelling i SVG-en ga 23 ferdige stories og 7 gjenstående.
+
+### Åpne punkter
+
+Ingen.
