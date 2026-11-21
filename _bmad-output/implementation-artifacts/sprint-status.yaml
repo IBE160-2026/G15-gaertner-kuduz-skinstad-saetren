@@ -74,7 +74,7 @@ development_status:
   5-3-avveining-per-kandidat: done
   5-4-reservetekst-når-ki-forklaringen-feiler: backlog
   5-5-rader-vises-før-forklaringene-er-ferdige: backlog
-  5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: backlog
+  5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: in-progress
   5-7-demo-modus-uten-api-nøkkel: backlog
   5-8-sensor-kan-kjøre-live-ki: backlog
   5-9-redigere-preferansetekst-etter-kjerneflyt: backlog
