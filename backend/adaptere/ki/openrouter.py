@@ -260,6 +260,9 @@ class OpenRouterKiAdapter:
                     if gjenstår <= 0:
                         raise TidsbudsjettOpbrukt
                     svar = self._transport(URL, kropp, headere, min(MAKS_TIDSAVBRUDD_S, gjenstår))
+            except OSError as feil:
+                # Brutt forbindelse og tidsavbrudd i transporten kan prøves på nytt innen sluttfristen.
+                resultat.set_exception(Nettverksfeil(type(feil).__name__))
             except BaseException as feil:
                 resultat.set_exception(feil)
             else:
@@ -318,13 +321,14 @@ class OpenRouterKiAdapter:
             else:
                 # 402, andre 4xx og andre uventede statuser prøves ikke på nytt (AD-7).
                 return Tolkefeil("4xx")
-            if self._klokke() + vent > frist:
+            if self._klokke() + vent >= frist:
                 return Tolkefeil("tidsbudsjett")
             self._sov(vent)
 
     def _venting_429(self, headere: Mapping[str, str]) -> float:
         """Tid til `X-RateLimit-Reset` (epoke-ms), minst `MIN_VENTING_429_S`."""
         verdi = headere.get("x-ratelimit-reset", "").strip()
-        if not (verdi.isascii() and verdi.isdigit()):
+        # 19 sifre rommer et tidsstempel i millisekunder fra et 64-bits heltall.
+        if len(verdi) > 19 or not (verdi.isascii() and verdi.isdigit()):
             return VENTING_429_UTEN_RESET_S
         return max(MIN_VENTING_429_S, int(verdi) / 1000 - self._veggklokke())

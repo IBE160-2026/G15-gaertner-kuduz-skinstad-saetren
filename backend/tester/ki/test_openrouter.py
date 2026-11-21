@@ -350,7 +350,8 @@ def test_429_med_reset_i_sekunder_venter_minst_ett_sekund() -> None:
     assert klokke.søvn == [1]
 
 
-@pytest.mark.parametrize("verdi", ["²", "١٢٣", "12a", "-5", ""])
+@pytest.mark.parametrize("verdi", ["²", "١٢٣", "12a", "-5", "", pytest.param("9" * 400, id="over-flyttallsgrensen"),
+                                   pytest.param("9" * 5000, id="over-heltallsgrensen")])
 def test_429_med_uleselig_reset_venter_ett_vindu(verdi: str) -> None:
     klokke = FalskKlokke()
     transport = FalskTransport([status(429, {"x-ratelimit-reset": verdi}), ok()])
