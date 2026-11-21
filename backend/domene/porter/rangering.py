@@ -12,6 +12,7 @@ verdien (story 5.1). Ren Python, ingen import fra `adaptere`.
 
 from dataclasses import dataclass
 from enum import StrEnum
+from fractions import Fraction
 
 
 class Tolkestatus(StrEnum):
@@ -46,11 +47,9 @@ class TolketPreferanse:
 class RangertKandidat:
     """Én Gyldig kandidat med beregnede fakta, faktorpoeng og plass.
 
-    Alle tall er `float`. Sorteringen bruker de eksakte `Fraction`-verdiene, og de
-    gjøres om til `float` først her. To totaler som er like som `float` i porten,
-    kan derfor være ulike `Fraction`-er. Det motsatte kan ikke skje: like
-    `Fraction`-er gir like `float`. Rekkefølgen står i `plass` (1 er øverst). Bruk
-    `plass`, ikke en sammenligning av `totalscore`, for å finne rekkefølgen.
+    Sorteringen og faktakontrollen bruker de eksakte brøkene i `eksakte_poeng`.
+    De numeriske visningsfeltene er fortsatt `float`. To totaler som er like
+    som `float`, kan være ulike brøker. Rekkefølgen står i `plass` (1 er øverst).
 
     Porten har ikke Kandidatens vakter eller rå minutter, bare ferdige tall.
     """
@@ -83,3 +82,15 @@ class RangertKandidat:
     totalscore: float
     tolkestatus: Tolkestatus
     tolket_preferanse: TolketPreferanse | None
+    # P-06: sammenlign alltid brøkene fra selve beregningen, også ved lik float.
+    eksakte_poeng: "EksaktePoeng"
+    aktive_faktorer: frozenset[str]
+
+
+@dataclass(frozen=True)
+class EksaktePoeng:
+    kostnad: Fraction
+    timebelastning: Fraction
+    ulempe: Fraction
+    preferanse: Fraction
+    total: Fraction

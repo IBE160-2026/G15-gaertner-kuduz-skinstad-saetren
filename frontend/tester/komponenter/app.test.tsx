@@ -7,7 +7,7 @@ import userEvent from "@testing-library/user-event";
 import App from "../../src/App";
 import { INNLOGGING_STI, OVERSIKT_STI, godkjenningssti } from "../../src/navigasjon";
 import { TEKSTER } from "../../src/tekster";
-import { GODKJENNING_JONAS, MEG, TO_GYLDIGE, VAKT_4127, VAKTOVERSIKT, falskFetch, feil, kallTil, ok } from "./hjelpere";
+import { GODKJENNING_JONAS, MEG, TO_GYLDIGE, VAKT_4127, VAKTOVERSIKT, falskFetchMedReserve as falskFetch, feil, kallTil, ok } from "./hjelpere";
 
 function settSti(sti: string) {
   window.history.replaceState(null, "", sti);

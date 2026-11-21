@@ -10,15 +10,19 @@ bytter ut, slik at ingen test bruker nettverk, nøkkel eller faktisk venting.
 import http.client
 import json
 import logging
+import threading
 import time
 from collections.abc import Callable, Mapping
+from concurrent.futures import Future
+from contextlib import ExitStack
 from dataclasses import dataclass
-from typing import Literal, Protocol
+from typing import Literal, Protocol, runtime_checkable
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from adaptere.ki.begrenser import Begrenser, TidsbudsjettOpbrukt
-from domene.porter.rangering import TolketPreferanse
+from adaptere.ki import avveining
+from domene.porter.rangering import RangertKandidat, TolketPreferanse
 from domene.regelmotor.rangering import PREFERANSEPOENG
 
 logger = logging.getLogger(__name__)
@@ -82,6 +86,13 @@ class Tolker(Protocol):
     def tolk(self, tekst: str) -> TolketPreferanse | Tolkefeil: ...
 
 
+@runtime_checkable
+class Forklarer(Protocol):
+    modell: str
+
+    def forklar(self, kandidat: RangertKandidat, referanse: RangertKandidat | None) -> list[str] | None: ...
+
+
 @dataclass(frozen=True)
 class HttpSvar:
     status: int
@@ -137,19 +148,31 @@ def leverandør(modell: str) -> str:
     return prefiks
 
 
-def les_svar(kropp: bytes, modell: str) -> TolketPreferanse | None:
-    """Tolkningen hvis svaret følger kontrakten, ellers None. Ingenting diktes opp."""
+def _unike_felt(par: list[tuple[str, object]]) -> dict[str, object]:
+    objekt = dict(par)
+    if len(objekt) != len(par):
+        raise ValueError("Gjentatt JSON-felt")
+    return objekt
+
+
+def les_jsoninnhold(kropp: bytes, *, krev_unike_felt: bool = False) -> object:
+    feltkontroll = _unike_felt if krev_unike_felt else None
     try:
-        data = json.loads(kropp)
+        data = json.loads(kropp, object_pairs_hook=feltkontroll)
         valg = data["choices"]
         if not isinstance(valg, list) or not valg:
             return None
         første = valg[0]
         if første.get("finish_reason") != "stop":
             return None
-        svar = json.loads(første["message"]["content"])
-    except (TypeError, ValueError, KeyError, AttributeError):
+        return json.loads(første["message"]["content"], object_pairs_hook=feltkontroll)
+    except (TypeError, ValueError, KeyError, AttributeError, RecursionError):
         return None
+
+
+def les_svar(kropp: bytes, modell: str) -> TolketPreferanse | None:
+    """Tolkningen hvis svaret følger kontrakten, ellers None. Ingenting diktes opp."""
+    svar = les_jsoninnhold(kropp)
     if not isinstance(svar, dict) or set(svar) != {"kategori", "begrunnelse"}:
         return None
     kategori, begrunnelse = svar["kategori"], svar["begrunnelse"]
@@ -186,43 +209,104 @@ class OpenRouterKiAdapter:
         return f"OpenRouterKiAdapter(modell={self.modell!r})"
 
     def forespørsel(self, tekst: str) -> dict:
+        return self._forespørsel("preferanse", PROMPT, {"tekst": tekst}, skjema())
+
+    def _forespørsel(self, navn: str, prompt: str, data: dict, svarskjema: dict) -> dict:
         return {
             "model": self.modell,
             "max_tokens": MAKS_TOKENS,
             "reasoning": {"enabled": False},
             "provider": {"only": [self._leverandør], "allow_fallbacks": False, "require_parameters": True},
             "messages": [
-                {"role": "system", "content": PROMPT},
-                {"role": "user", "content": json.dumps({"tekst": tekst}, ensure_ascii=False)},
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": json.dumps(data, ensure_ascii=False)},
             ],
             "response_format": {"type": "json_schema", "json_schema": {
-                "name": "preferanse", "strict": True, "schema": skjema(),
+                "name": navn, "strict": True, "schema": svarskjema,
             }},
         }
 
     def tolk(self, tekst: str) -> TolketPreferanse | Tolkefeil:
-        kropp = json.dumps(self.forespørsel(tekst), ensure_ascii=False).encode("utf-8")
+        svar = self._send(self.forespørsel(tekst), self._klokke() + TIDSBUDSJETT_S)
+        if isinstance(svar, Tolkefeil):
+            return svar
+        return les_svar(svar, self.modell) or Tolkefeil("ubrukelig")
+
+    def forklar(self, kandidat: RangertKandidat, referanse: RangertKandidat | None) -> list[str] | None:
+        tillatte = avveining.tillatte_påstander(kandidat, referanse)
+        if not any(p.myk_faktor for p in tillatte):
+            return None
+        def poeng(rad: RangertKandidat) -> dict:
+            return {"kandidat_id": rad.id, "plass": rad.plass,
+                    "poeng": {f: float(getattr(rad.eksakte_poeng, f)) for f in avveining.SCORENAVN}}
+
+        data = {"kandidat": poeng(kandidat), "referanse": poeng(referanse) if referanse else None,
+                "tillatte": [p.felt for p in tillatte]}
+        forespørsel = self._forespørsel("avveining", avveining.PROMPT, data, avveining.skjema())
+        svar = self._send(forespørsel, None)
+        if isinstance(svar, Tolkefeil):
+            return None
+        return avveining.valider(les_jsoninnhold(svar, krev_unike_felt=True), tillatte)
+
+    def _transport_med_frist(self, kropp: bytes, headere: dict[str, str], frist: float, plass: ExitStack) -> HttpSvar:
+        """urllib begrenser venting på hver lesing, så avveiningen trenger en egen sluttfrist."""
+        resultat: Future[HttpSvar] = Future()
+        transportplass = plass.pop_all()
+
+        def send() -> None:
+            try:
+                with transportplass:
+                    gjenstår = frist - self._klokke()
+                    if gjenstår <= 0:
+                        raise TidsbudsjettOpbrukt
+                    svar = self._transport(URL, kropp, headere, min(MAKS_TIDSAVBRUDD_S, gjenstår))
+            except BaseException as feil:
+                resultat.set_exception(feil)
+            else:
+                resultat.set_result(svar)
+
+        # Bare transporten kan frigjøre plassen når den først har startet, også
+        # dersom den fortsatt leser etter at ruten har returnert reservetekst.
+        try:
+            threading.Thread(target=send, name="avveining-transport", daemon=True).start()
+        except BaseException:
+            transportplass.close()
+            raise
+        try:
+            return resultat.result(timeout=max(0.0, frist - self._klokke()))
+        except TimeoutError as feil:
+            raise TidsbudsjettOpbrukt from feil
+
+    def _send(self, forespørsel: dict, frist: float | None) -> bytes | Tolkefeil:
+        """Avveiningens frist begynner ved første live-kall, etter første plass i køen."""
+        kropp = json.dumps(forespørsel, ensure_ascii=False).encode("utf-8")
         headere = {"Content-Type": "application/json", "Authorization": "Bearer " + self._nøkkel}
-        frist = self._klokke() + TIDSBUDSJETT_S
         nye_forsøk = 0
+        avveiningskall = frist is None
         while True:
             try:
-                with self.begrenser.plass(frist):
+                with ExitStack() as plass:
+                    plass.enter_context(self.begrenser.plass(frist))
+                    if frist is None:
+                        frist = self._klokke() + TIDSBUDSJETT_S
                     gjenstår = frist - self._klokke()
                     if gjenstår <= 0:
                         return Tolkefeil("tidsbudsjett")
                     try:
-                        svar: HttpSvar | None = self._transport(
-                            URL, kropp, headere, min(MAKS_TIDSAVBRUDD_S, gjenstår),
-                        )
+                        svar: HttpSvar | None
+                        if avveiningskall:
+                            svar = self._transport_med_frist(kropp, headere, frist, plass)
+                        else:
+                            svar = self._transport(URL, kropp, headere, min(MAKS_TIDSAVBRUDD_S, gjenstår))
                     except Nettverksfeil:
                         svar = None
             except TidsbudsjettOpbrukt:
                 return Tolkefeil("tidsbudsjett")
 
+            if self._klokke() > frist:
+                return Tolkefeil("tidsbudsjett")
             if svar is not None and svar.status == 200:
-                tolkning = les_svar(svar.kropp, self.modell)
-                return tolkning if tolkning is not None else Tolkefeil("ubrukelig")
+                return svar.kropp
             if svar is not None and svar.status == 429:
                 vent = self._venting_429(svar.headere)
             elif svar is None or 500 <= svar.status <= 599:

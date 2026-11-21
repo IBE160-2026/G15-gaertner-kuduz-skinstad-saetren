@@ -10,7 +10,7 @@ import { INGEN_KONTAKT, RESERVETEKST, TEKSTER, feiltekst } from "../../src/tekst
 import type { Kandidatsvar, RangertKandidat } from "../../src/api";
 import {
   INGEN_GYLDIGE, KANDIDATER_DATAFEIL, OK_MED_TOM_LISTE, TO_GYLDIGE, TO_UTELUKKET, VAKT_4127,
-  falskFetch, feil, kallTil, malRegex, ok, rangering, regexTekst, type Svar,
+  falskFetchMedReserve as falskFetch, feil, kallTil, malRegex, ok, rangering, regexTekst, type Svar,
 } from "./hjelpere";
 
 const t = TEKSTER.kandidatflate;
@@ -396,6 +396,7 @@ describe("Ekskludert-boksen (story 2.5)", () => {
 
 test("«Velg» sender vaktnummer og id for riktig kandidat (story 3.1)", async () => {
   const { bruker, fetch, onVelg } = await rendreMed(ok(TO_GYLDIGE));
+  await screen.findByText(t.avveining.reserve);
   const kallFoer = fetch.mock.calls.length;
 
   await bruker.click(screen.getByRole("button", { name: g.velgEtikett("Jonas Bakke") }));
@@ -410,7 +411,7 @@ describe("Rangeringstabellen (story 4.4)", () => {
   const k = t.kolonner;
   const tabell = (del: HTMLElement) => within(del).getByRole("table");
   /** Datarader i tabellen, uten overskriftsraden. */
-  const datarader = (del: HTMLElement) => within(tabell(del)).getAllByRole("row").slice(1);
+  const datarader = (del: HTMLElement) => within(tabell(del)).getAllByRole("row").filter((r) => r.querySelector(".rank-badge"));
   const navnIRad = (rad: HTMLElement) => rad.querySelector(".ansattnavn")?.textContent;
 
   /** Kandidater i rangert rekkefølge med plass 1, 2, … og synkende totalscore. */
@@ -553,7 +554,7 @@ describe("Smale nettleservinduer (story 4.6)", () => {
   // jsdom gjør ingen layout, så de faste kolonnene kontrolleres i nettleseren
   // (docs/testing.md). Her vokter testen mot breddestyrt rendering: en endret
   // vindusbredde skal ikke montere tabellen på nytt eller hente noe (AV-17).
-  const datarader = (del: HTMLElement) => within(within(del).getByRole("table")).getAllByRole("row").slice(1);
+  const datarader = (del: HTMLElement) => within(within(del).getByRole("table")).getAllByRole("row").filter((r) => r.querySelector(".rank-badge"));
   const sju = Array.from({ length: 7 }, (_, i) => ({ ...kandidat(100 + i, `Kandidat ${i + 1}`, 600), plass: i + 1 }));
 
   test("«Vis alle» og «Vis full liste» er fortsatt åpne etter endret vindusbredde, uten ny henting", async () => {

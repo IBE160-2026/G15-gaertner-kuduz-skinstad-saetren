@@ -92,6 +92,27 @@ export function kallTil(fetch: FalskFetch, rute: string): number {
   return fetch.mock.calls.filter(([input, init]) => kallnokkel(input, init) === mal).length;
 }
 
+/** De eldre flyttestene kjører som uten modell. Tillat forklaring bare for kandidaten
+ * som åpnes automatisk i hvert oppsatt GET-svar. Andre kall krever egen rute. */
+export function falskFetchMedReserve(ruter: Record<string, Svar | Svar[]>): FalskFetch {
+  const reserver: Record<string, Svar> = {};
+  for (const [sti, kø] of Object.entries(ruter)) {
+    const treff = /^\/api\/vakter\/(\d+)\/kandidater(?:\/(\d+))?$/.exec(sti);
+    if (!treff) continue;
+    for (const { kropp } of Array.isArray(kø) ? kø : [kø]) {
+      const svar = kropp as Godkjenningssvar | Kandidatsvar | null;
+      if (svar?.status !== "ok") continue;
+      const åpne = "kandidater" in svar ? svar.kandidater.filter((r) => r.plass === 1) : [svar.kandidat];
+      for (const r of åpne) {
+        reserver[`/api/vakter/${treff[1]}/kandidater/${r.id}/avveining`] = ok({
+          status: "avveining_feilet", vaktnummer: Number(treff[1]), kandidat_id: r.id, grunnlagsmerke: r.grunnlagsmerke,
+        });
+      }
+    }
+  }
+  return falskFetch({ ...reserver, ...ruter });
+}
+
 // --- Testdata (samme vakt og ansatte som i fiktive testdata) -------------------
 
 export const MEG: Innlogget = { navn: "Kari Vestby", avdeling: "Kirurgisk sengepost" };
@@ -138,6 +159,8 @@ export const TO_UTELUKKET: UtelukkelsesOppsummering = {
  * 50 for kostnad og timer (alle like), 100 i Ulempescore og 50 i preferanse.
  */
 export const rangering = (plass: number) => ({
+  grunnlagsmerke: String(plass).padStart(64, "0"),
+  faktorretninger: { kostnad: "ned", timebelastning: "ned", ulempe: "opp", preferanse: "ned" } as const,
   stilling: "Sykepleier", ansiennitet: 3, plass, totalscore: 57.5,
   faktorpoeng: { kostnad: 50, timebelastning: 50, ulempe: 100 },
   preferansepoeng: 50, tolkestatus: "venter_paa_tolkning" as const, preferansekategori: null,
@@ -150,6 +173,8 @@ export const rangering = (plass: number) => ({
  * UTEN_TOLKNING_4127/FAKTORER_4127).
  */
 export const JONAS: RangertKandidat = {
+  grunnlagsmerke: "a".repeat(64),
+  faktorretninger: { kostnad: "opp", timebelastning: "opp", ulempe: "opp", preferanse: "ned" },
   id: 6, navn: "Jonas Bakke", kompetansenivå: 3, minutter_i_uka: 960,
   timebelastning_prosent: 100 * 960 / 2160, hoy_belastning: false,
   kostnad: { total: 2960, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 370, overtidssats: 555 },
@@ -217,6 +242,8 @@ export const GODKJENNING_JONAS = {
  */
 const METTE_ULEMPE = { dagtimer: 0, kveldstimer: 0, helgetimer: 90, natttimer: 0, poeng: 180, score: 40 };
 export const METTE: RangertKandidat = {
+  grunnlagsmerke: "b".repeat(64),
+  faktorretninger: { kostnad: "opp", timebelastning: "opp", ulempe: "ned", preferanse: "ned" },
   id: 5, navn: "Mette Solberg", kompetansenivå: 4, minutter_i_uka: 960,
   timebelastning_prosent: 100 * 960 / 2160, hoy_belastning: false,
   kostnad: { total: 2960, ordinære_timer: 8, overtidstimer: 0, ordinær_sats: 370, overtidssats: 555 },

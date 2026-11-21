@@ -5,6 +5,7 @@ import { lastGodkjenning, type Godkjenningstilstand } from "../godkjenning";
 import { kandidatsti } from "../navigasjon";
 import { TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
+import Avveiningspanel from "./Avveiningspanel";
 import { Belastningslinje, Ulempeindikator } from "./Kandidatflate";
 import Kostnadsvisning from "./Kostnadsvisning";
 
@@ -163,6 +164,9 @@ export default function Godkjenningsflate({ vaktnummer, ansattId, onTilbake, onG
         <Belastningslinje minutter={kandidat.minutter_i_uka} prosent={kandidat.timebelastning_prosent} høy={kandidat.hoy_belastning} />
         <p className="meta">{t.ulempe}</p>
         <Ulempeindikator ulempe={kandidat.ulempebelastning} />
+
+        <Avveiningspanel key={`${vakt.vaktnummer}/${kandidat.id}/${tilstand.grunnlagsmerke}/${gjeldendeSesjonsgenerasjon()}`}
+          vaktnummer={vakt.vaktnummer} kandidat={kandidat} merke={tilstand.grunnlagsmerke} />
       </section>
 
       {tilstand.topprangert && <Avviksnotat valgt={kandidat} topprangert={tilstand.topprangert} />}

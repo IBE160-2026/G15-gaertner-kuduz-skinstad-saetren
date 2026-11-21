@@ -19,24 +19,26 @@ class Vaktdetaljer:
     minstenivå: int
 
 
+def synlig_vakt(bruker_id: int, vaktnummer: int):
+    return (
+        select(VaktRad, TurnusRad).select_from(BrukerRad)
+        .join(TurnusRad, BrukerRad.turnus_id == TurnusRad.id)
+        .join(VaktRad, VaktRad.turnus_id == TurnusRad.id)
+        .where(
+            BrukerRad.id == bruker_id, VaktRad.vaktnummer == vaktnummer,
+            VaktRad.mangler_bemanning.is_(True),
+            VaktRad.start >= TurnusRad.periode_start, VaktRad.start < TurnusRad.periode_slutt,
+        )
+    )
+
+
 def finn_ubemannet_vakt(session: Session, bruker_id: int, vaktnummer: int) -> tuple[VaktRad, TurnusRad] | None:
     """Vakten og Turnusen, eller None ved annen turnus, bemanning og utenfor perioden.
 
     Felles filter for vaktdetaljene (story 1.6) og kandidatgrunnlaget (story 2.1),
     slik at begge endepunktene gir 404 for nøyaktig de samme vaktene.
     """
-    rad = session.execute(
-        select(VaktRad, TurnusRad)
-        .join(TurnusRad, VaktRad.turnus_id == TurnusRad.id)
-        .join(BrukerRad, BrukerRad.turnus_id == TurnusRad.id)
-        .where(
-            BrukerRad.id == bruker_id,
-            VaktRad.vaktnummer == vaktnummer,
-            VaktRad.mangler_bemanning.is_(True),
-            VaktRad.start >= TurnusRad.periode_start,
-            VaktRad.start < TurnusRad.periode_slutt,
-        )
-    ).one_or_none()
+    rad = session.execute(synlig_vakt(bruker_id, vaktnummer)).one_or_none()
     if rad is None:
         return None
     vakt, turnus = rad

@@ -279,6 +279,7 @@ def test_lik_total_med_ulike_faktorer_sorteres_etter_id() -> None:
     assert (én.kostnadspoeng, én.timebelastningspoeng) == (0, float(Fraction(300, 7)))
     assert (to.kostnadspoeng, to.timebelastningspoeng) == (float(Fraction(100, 7)), float(Fraction(100, 7)))
     assert én.totalscore == to.totalscore == float(Fraction(60, 7) + 15)
+    assert én.eksakte_poeng.total == to.eksakte_poeng.total == Fraction(60, 7) + 15
     assert to.plass == én.plass + 1
     # Kontroll av testen: flyttall i samme rekkefølge ville satt nr. 2 foran nr. 1.
     flyt = [0.4 * kp + 0.2 * tp + 0.15 * 100 + 0.25 * 0

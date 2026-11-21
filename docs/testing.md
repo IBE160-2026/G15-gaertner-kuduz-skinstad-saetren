@@ -130,6 +130,8 @@ har satt opp, feiler testen.
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
 | | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. «Vis bare de 5 øverste» lukker listen igjen, med `aria-expanded` og fokus på knappen. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
 | | «Vis alle» og «Vis full liste» er fortsatt åpne med samme rader når vindusbredden endres (1600 → 680 → 1600), og kandidatene hentes ikke på nytt | 4.6 |
+| [`avveining.test.tsx`](../frontend/tester/komponenter/avveining.test.tsx) | Toppraden henter én forklaring. Andre rader åpnes uavhengig med tastaturet. Feil kandidat gir reservetekst med nøkkeltall. Etter ny preferansetolkning vises forklaringen for den nye topprangerte. | 5.3 |
+| | Godkjenningsflaten avviser svar med feil identitet eller kilde. Et forsinket svar etter sesjonsbytte eller endret grunnlag blir forkastet. Etter HTTP 409 bruker neste godkjenning merket fra det nye grunnlaget. | 5.3 |
 | [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
 | | Kandidatkortets timetall, timebelastningslinje og ulempeindikator for den topprangerte kandidaten, uten avviksnotat, og tekstvarsel ved høy belastning | 4.5 |
 | | Avviksnotatet viser kostnad, nivå, timebelastning og ulempe for valgt og topprangert kandidat side om side uten å blokkere godkjenning, og oppdateres (her: forsvinner) ved endret grunnlag før ny bekreftelse kreves | 4.5 |
@@ -348,3 +350,9 @@ kontrollerer oppfriskning, feil, vaktbytte, sene svar og fokus. Nettleserkontrol
 Etter gjennomgangsrettinger bestod 685 backendtester, frontendbygget, 52 modultester
 og 46 komponenttester. Backend ble kjørt med Python 3.12.14 og pakkene i `.venv`;
 `python.exe` i den lokale virtuelle mappen manglet, så installert Python ble brukt direkte.
+
+## Story 5.3 – avveining per kandidat
+
+Med `pytest tester/ki/test_avveining.py tester/api/test_avveining.py` fra `backend/` kan du kjøre faktakontrollen og forklaringsruten separat. KI-testene bruker falsk klokke og transport. API-testene bruker ekte rangering og midlertidig database. De sjekker blant annet at rute, kandidatrad og godkjenningsgrunnlag har samme kandidatbundne merke, og at ukjente og utelukkede kandidater gir samme 404 før et modellkall.
+
+For å kontrollere den smale tabellen, åpne vakt #4127 i et vindu på 680 × 700 px med loddrett rullefelt. Rull tabellen helt til høyre, og kontroller at hele ulempekolonnen vises. Bruk Enter på «Vis begrunnelse» for neste kandidat. Begge panelene skal stå åpne. Velg kandidaten og kontroller nøkkeltall og kildelinje i kandidatkortet. [Resultater med både reservetekst og lokal testtransport](ki-logg/2026-11-20-avveining-per-kandidat.md#nettleserkontroll).

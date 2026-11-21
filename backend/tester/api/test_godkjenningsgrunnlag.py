@@ -42,6 +42,7 @@ JONAS_SOM_TOPPRANGERT = {
     },
     "stilling": "Sykepleier", "ansiennitet": 3, "plass": 1, "totalscore": 3335 / 42,
     "faktorpoeng": {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 260 / 3},
+    "faktorretninger": {"kostnad": "opp", "timebelastning": "opp", "ulempe": "opp", "preferanse": "ned"},
     "preferansepoeng": 50, "tolkestatus": "venter_paa_tolkning", "preferansekategori": None,
 }
 
@@ -103,7 +104,7 @@ def test_gyldig_kandidat_gir_vakt_og_kandidat(klient: TestClient, ansatt_id: int
 def test_jonas_på_4127_har_nøyaktig_dette_svaret(klient: TestClient) -> None:
     logg_inn(klient)
     svar = klient.get(sti(4127, JONAS)).json()
-    assert len(svar.pop("grunnlagsmerke")) == 64
+    assert svar["kandidat"].pop("grunnlagsmerke") == svar.pop("grunnlagsmerke")
     assert svar == {
         "status": "ok",
         "vakt": {
@@ -128,7 +129,8 @@ def test_mette_på_4127_har_nøyaktig_dette_svaret_med_jonas_som_topprangert(kli
     """
     logg_inn(klient)
     svar = klient.get(sti(4127, METTE)).json()
-    assert len(svar.pop("grunnlagsmerke")) == 64
+    assert svar["kandidat"].pop("grunnlagsmerke") == svar.pop("grunnlagsmerke")
+    assert svar["topprangert"].pop("grunnlagsmerke") == klient.get(sti(4127, JONAS)).json()["grunnlagsmerke"]
     ulempe = svar["kandidat"]["ulempebelastning"]
     assert (ulempe["poeng"], ulempe["score"]) == (180, 40)
     assert svar == {
@@ -149,6 +151,7 @@ def test_mette_på_4127_har_nøyaktig_dette_svaret_med_jonas_som_topprangert(kli
             "ulempebelastning": ulempe,
             "stilling": "Sykepleier", "ansiennitet": 9, "plass": 2, "totalscore": 3041 / 42,
             "faktorpoeng": {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 40},
+            "faktorretninger": {"kostnad": "opp", "timebelastning": "opp", "ulempe": "ned", "preferanse": "ned"},
             "preferansepoeng": 50, "tolkestatus": "venter_paa_tolkning", "preferansekategori": None,
         },
         "topprangert": JONAS_SOM_TOPPRANGERT,
@@ -488,26 +491,27 @@ def test_merket_er_knyttet_til_valgt_kandidat(klient: TestClient, engine: Engine
 
 
 def test_get_visning_og_merke_kommer_fra_samme_snapshot(
-    klient: TestClient, engine: Engine, monkeypatch: pytest.MonkeyPatch,
+    klient: TestClient, engine: Engine,
 ) -> None:
     # WAL lar den andre forbindelsen committe mens GET holder et lesesnapshot.
     with engine.connect() as forbindelse:
         forbindelse.exec_driver_sql("PRAGMA journal_mode=WAL")
     logg_inn(klient)
     gammelt = klient.get(sti(4127, JONAS)).json()
-    api = import_module("adaptere.api.main")
-    opprinnelig = api.hent_vaktdetaljer
+    def endre_etter_turnus(_conn, _cursor, sql, *_):
+        if "FROM turnus ORDER BY" in sql:
+            with lag_sessionmaker(engine).begin() as session:
+                session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(navn="Jonas Nytt Navn"))
 
-    def endre_etter_grunnlag(*args):  # type: ignore[no-untyped-def]
-        with lag_sessionmaker(engine).begin() as session:
-            session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(navn="Jonas Nytt Navn"))
-        return opprinnelig(*args)
-
-    monkeypatch.setattr(api, "hent_vaktdetaljer", endre_etter_grunnlag)
-    svar = klient.get(sti(4127, JONAS))
+    event.listen(engine, "after_cursor_execute", endre_etter_turnus)
+    try:
+        svar = klient.get(sti(4127, JONAS))
+    finally:
+        event.remove(engine, "after_cursor_execute", endre_etter_turnus)
     assert svar.status_code == 200
     assert svar.json()["kandidat"] == gammelt["kandidat"]
     assert svar.json()["grunnlagsmerke"] == gammelt["grunnlagsmerke"]
+    assert klient.get(sti(4127, JONAS)).json()["kandidat"]["navn"] == "Jonas Nytt Navn"
 
 
 def test_feil_etter_vaktoppdatering_ruller_tilbake_begge_endringer(
