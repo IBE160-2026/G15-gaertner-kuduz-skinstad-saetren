@@ -5,7 +5,7 @@ from typing import Literal
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session, sessionmaker
 
-from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke, hent_kandidatgrunnlag
+from adaptere.lagring.kandidatgrunnlag import kandidatmerke, hent_kandidatgrunnlag
 from adaptere.lagring.modeller import BrukerRad, GodkjenningRad, TurnusRad, VaktRad
 from domene.regelmotor.vurdering import vurder_kandidater
 from domene.typer import Datafeil, Godkjenning
@@ -40,8 +40,8 @@ def lagre_godkjenning(
             return vurdering
         if not any(k.id == godkjenning.ansatt_id for k in vurdering.gyldige):
             return "ugyldig_kandidat"
-        if grunnlagsmerke(
-            session, godkjenning.bruker_id, godkjenning.vaktnummer, godkjenning.ansatt_id,
+        if kandidatmerke(
+            grunnlag.avtrykk, godkjenning.bruker_id, godkjenning.vaktnummer, godkjenning.ansatt_id,
         ) != vist_merke:
             return "endret_grunnlag"
 

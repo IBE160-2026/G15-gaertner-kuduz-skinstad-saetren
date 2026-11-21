@@ -34,13 +34,14 @@ class Begrenser:
         self._lås = threading.Lock()
 
     @contextmanager
-    def plass(self, frist: float) -> Iterator[None]:
+    def plass(self, frist: float | None) -> Iterator[None]:
         """Holder én plass mens blokken kjører. `frist` er på samme monotone klokke.
 
         Gir `TidsbudsjettOpbrukt` uten å vente når ventingen ville gått forbi fristen.
         Ventingen på en samtidig plass bruker semaforens egen tidsgrense.
         """
-        if not self._samtidige.acquire(timeout=max(0.0, frist - self._klokke())):
+        køtid = None if frist is None else max(0.0, frist - self._klokke())
+        if not self._samtidige.acquire(timeout=køtid):
             raise TidsbudsjettOpbrukt
         try:
             self._ta_start(frist)
@@ -48,7 +49,7 @@ class Begrenser:
         finally:
             self._samtidige.release()
 
-    def _ta_start(self, frist: float) -> None:
+    def _ta_start(self, frist: float | None) -> None:
         while True:
             with self._lås:
                 nå = self._klokke()
@@ -57,6 +58,6 @@ class Begrenser:
                     self._starter.append(nå)
                     return
                 vent = VINDU_S - (nå - self._starter[0])
-            if nå + vent > frist:
+            if frist is not None and nå + vent > frist:
                 raise TidsbudsjettOpbrukt
             self._sov(vent)

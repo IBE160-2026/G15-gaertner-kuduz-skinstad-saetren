@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 
 from adaptere.lagring.modeller import AnsattRad, TurnusRad, VaktRad
 from adaptere.lagring.preferansetolkning import tolkninger
-from adaptere.lagring.vaktdetaljer import finn_ubemannet_vakt
+from adaptere.lagring.vaktdetaljer import synlig_vakt
 from domene.porter.rangering import TolketPreferanse
 from domene.typer import Kandidat, Tidsrom, Vakt
 
@@ -24,6 +24,8 @@ from domene.typer import Kandidat, Tidsrom, Vakt
 @dataclass(frozen=True)
 class Kandidatgrunnlag:
     vakt: Vakt
+    avdeling: str
+    avtrykk: str
     ansatte: tuple[Kandidat, ...]
     # Der turnusgrunnlaget slutter: `turnus.periode_slutt` (P-08).
     datagrense: datetime
@@ -55,7 +57,12 @@ UTENFOR_GRUNNLAG: dict[str, str] = {
 }
 
 
-def grunnlagsmerke(session: Session, bruker_id: int, vaktnummer: int, ansatt_id: int) -> str:
+def _les_rader(session: Session) -> dict:
+    return {modell: session.scalars(select(modell).order_by(modell.id)).all()
+            for modell in GRUNNLAGSTABELLER}
+
+
+def _grunnlagsavtrykk(grunnlagsrader: dict) -> str:
     """Opakt merke over alle lagrede felt som kan påvirke visning eller regler.
 
     Merket dekker bare databasen. Konstanter i `domene/` (terskler, satser, vekter)
@@ -70,13 +77,18 @@ def grunnlagsmerke(session: Session, bruker_id: int, vaktnummer: int, ansatt_id:
         kolonner = tuple(modell.__table__.columns)
         rader.append([
             tuple(getattr(rad, kolonne.key) for kolonne in kolonner)
-            for rad in session.scalars(select(modell).order_by(modell.id))
+            for rad in grunnlagsrader[modell]
         ])
-    data = json.dumps(
-        [bruker_id, vaktnummer, ansatt_id, rader],
-        sort_keys=True, default=str, ensure_ascii=False,
-    ).encode("utf-8")
+    data = json.dumps(rader, sort_keys=True, default=str, ensure_ascii=False).encode("utf-8")
     return sha256(data).hexdigest()
+
+
+def kandidatmerke(avtrykk: str, bruker_id: int, vaktnummer: int, ansatt_id: int) -> str:
+    return sha256(f"{avtrykk}:{bruker_id}:{vaktnummer}:{ansatt_id}".encode("ascii")).hexdigest()
+
+
+def grunnlagsmerke(session: Session, bruker_id: int, vaktnummer: int, ansatt_id: int) -> str:
+    return kandidatmerke(_grunnlagsavtrykk(_les_rader(session)), bruker_id, vaktnummer, ansatt_id)
 
 
 def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> Kandidatgrunnlag | None:
@@ -89,20 +101,23 @@ def hent_kandidatgrunnlag(session: Session, bruker_id: int, vaktnummer: int) -> 
     Alle rader i `ansatt` er med. Tabellen har ingen `turnus_id`, og v1 har én
     turnus (AV-06). Regelmotoren tar selv bort den som var satt opp.
     """
-    funnet = finn_ubemannet_vakt(session, bruker_id, vaktnummer)
-    if funnet is None:
+    identitet = session.execute(
+        synlig_vakt(bruker_id, vaktnummer).with_only_columns(VaktRad.id, TurnusRad.id)
+    ).one_or_none()
+    if identitet is None:
         return None
-    vaktrad, turnus = funnet
-    ansatte = session.scalars(select(AnsattRad).order_by(AnsattRad.id)).all()
+    vakt_id, turnus_id = identitet
+    rader = _les_rader(session)
+    turnus = next(t for t in rader[TurnusRad] if t.id == turnus_id)
+    vaktrad = next(v for v in rader[VaktRad] if v.id == vakt_id)
+    ansatte = rader[AnsattRad]
     lagret = tolkninger(ansatte)
     egne: defaultdict[int, list[Tidsrom]] = defaultdict(list)
-    for tildelt_id, start, slutt in session.execute(
-        select(VaktRad.tildelt_ansatt_id, VaktRad.start, VaktRad.slutt)
-        .where(VaktRad.tildelt_ansatt_id.is_not(None))
-        .order_by(VaktRad.start, VaktRad.id)
-    ):
-        egne[tildelt_id].append(Tidsrom(start=start, slutt=slutt))
+    for v in sorted(rader[VaktRad], key=lambda v: v.start.astimezone(UTC)):
+        if v.tildelt_ansatt_id is not None:
+            egne[v.tildelt_ansatt_id].append(Tidsrom(start=v.start, slutt=v.slutt))
     return Kandidatgrunnlag(
+        avdeling=turnus.avdeling, avtrykk=_grunnlagsavtrykk(rader),
         vakt=Vakt(
             vaktnummer=vaktrad.vaktnummer,
             vakttype=vaktrad.vakttype,

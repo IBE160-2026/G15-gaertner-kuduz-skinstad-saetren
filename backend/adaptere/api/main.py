@@ -13,6 +13,7 @@ import secrets
 import threading
 from collections.abc import AsyncIterator, Iterator
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Annotated, Literal
 
@@ -25,10 +26,11 @@ from sqlalchemy.orm import Session, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from adaptere.api import sesjon
-from adaptere.ki.openrouter import STANDARD_MODELL, OpenRouterKiAdapter, Tolker, leverandør
+from adaptere.ki.avveining import Retning, faktorretninger
+from adaptere.ki.openrouter import STANDARD_MODELL, Forklarer, OpenRouterKiAdapter, Tolker, leverandør
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
-from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke, hent_kandidatgrunnlag
+from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag, kandidatmerke
 from adaptere.lagring.godkjenninger import lagre_godkjenning
 from adaptere.lagring.modeller import OSLO, AnsattRad
 from adaptere.lagring.preferansetolkning import lagre_resultat, ventende_tekster, les_tolkning, tilstandsmerke
@@ -41,7 +43,7 @@ from domene.regelmotor.rangering import ranger
 from domene.regelmotor.timebelastning import timebelastning
 from domene.regelmotor.timer_i_uka import minutter_i_uka, timer_i_startuka
 from domene.regelmotor.vurdering import lag_utelukkelsesoppsummering, vurder_kandidater
-from domene.typer import Datafeil, Godkjenning, Kandidat, Ulempebelastning, Vakt
+from domene.typer import Datafeil, Godkjenning, Kandidat, Kandidatvurdering, Ulempebelastning, Vakt
 
 # Feilform etter AD-4. `melding` er fast per kode og gjentar aldri det som ble
 # sendt inn. Frontend viser egen tekst etter `kode`.
@@ -196,6 +198,8 @@ class RangertKandidatUt(KandidatUt):
     preferansepoeng: float
     tolkestatus: Tolkestatus
     preferansekategori: str | None
+    grunnlagsmerke: str
+    faktorretninger: dict[str, Retning]
 
 
 def belastning(kandidat: Kandidat, vakt: Vakt) -> dict[str, float | bool]:
@@ -204,9 +208,11 @@ def belastning(kandidat: Kandidat, vakt: Vakt) -> dict[str, float | bool]:
     return {"timebelastning_prosent": b.prosent, "hoy_belastning": b.høy}
 
 
-def rangert_ut(rangert: RangertKandidat, kandidat: Kandidat, vakt: Vakt, ulempe: Ulempebelastning) -> RangertKandidatUt:
+def rangert_ut(rangert: RangertKandidat, kandidat: Kandidat, vakt: Vakt, ulempe: Ulempebelastning,
+               merke: str) -> RangertKandidatUt:
     """`KandidatUt`-feltene, regnet som før, pluss Rangeringens plass og poeng."""
     return RangertKandidatUt(
+        grunnlagsmerke=merke, faktorretninger=faktorretninger(rangert),
         id=rangert.id, navn=rangert.navn, kompetansenivå=rangert.kompetansenivå,
         minutter_i_uka=minutter_i_uka(kandidat, vakt),
         **belastning(kandidat, vakt),
@@ -297,6 +303,55 @@ class DatafeilUt(BaseModel):
     status: Literal["datafeil"]
     kode: Literal["mangler_turnusgrunnlag"]
     datagrense: datetime
+
+
+class AvveiningFeiletUt(BaseModel):
+    status: Literal["avveining_feilet"] = "avveining_feilet"
+    vaktnummer: int
+    kandidat_id: int
+    grunnlagsmerke: str
+
+
+class AvveiningUt(BaseModel):
+    status: Literal["ok"] = "ok"
+    vaktnummer: int
+    kandidat_id: int
+    grunnlagsmerke: str
+    ki_kilde: Literal["live"] = "live"
+    modell: str
+    paastander: list[str]
+
+
+@dataclass
+class RangertGrunnlag:
+    vakt: Vakt
+    avdeling: str
+    vurdering: Kandidatvurdering
+    rangert: tuple[RangertKandidat, ...]
+    gyldige: dict[int, Kandidat]
+    avtrykk: str
+    bruker_id: int
+
+    def merke(self, id: int) -> str:
+        return kandidatmerke(self.avtrykk, self.bruker_id, self.vakt.vaktnummer, id)
+
+    def rad(self, r: RangertKandidat) -> RangertKandidatUt:
+        return rangert_ut(r, self.gyldige[r.id], self.vakt, self.vurdering.ulempe_per_kandidat[r.id], self.merke(r.id))
+
+
+def les_rangering(okt: Session, bruker_id: int, vaktnummer: int) -> RangertGrunnlag | DatafeilUt | JSONResponse:
+    okt.connection().exec_driver_sql("BEGIN")
+    grunnlag = hent_kandidatgrunnlag(okt, bruker_id, vaktnummer)
+    if grunnlag is None:
+        return feil(404, "ikke_funnet")
+    vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+    if isinstance(vurdering, Datafeil):
+        logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
+        return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
+    return RangertGrunnlag(
+        grunnlag.vakt, grunnlag.avdeling, vurdering, ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede),
+        {k.id: k for k in vurdering.gyldige}, grunnlag.avtrykk, bruker_id,
+    )
 
 
 KI_MODUSER = ("openrouter", "demo")
@@ -489,36 +544,41 @@ def lag_app(
     def kandidater(
         vaktnummer: int, request: Request, okt: Okt,
     ) -> KandidaterUt | IngenGyldigeUt | DatafeilUt | JSONResponse:
-        # Samme filter som vaktdetaljer: ukjent, bemannet, annen turnus og
-        # utenfor perioden gir samme 404.
-        grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
-        if grunnlag is None:
-            return feil(404, "ikke_funnet")
-        vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
-        if isinstance(vurdering, Datafeil):
-            # Grunnene sendes ikke til frontend, men må kunne ses ved feilsøking.
-            logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
-            return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
-        oppsummering: UtelukkelsesOppsummering = lag_utelukkelsesoppsummering(vurdering)
+        grunnlag = les_rangering(okt, request.state.bruker.id, vaktnummer)
+        if not isinstance(grunnlag, RangertGrunnlag):
+            return grunnlag
+        oppsummering: UtelukkelsesOppsummering = lag_utelukkelsesoppsummering(grunnlag.vurdering)
         utelukkelser = UtelukkelsesOppsummeringUt.model_validate(oppsummering, from_attributes=True)
-        if not vurdering.gyldige:
+        if not grunnlag.rangert:
             return IngenGyldigeUt(status="ingen_gyldige_kandidater", kandidater=[], utelukkelser=utelukkelser)
-        # Lagrede tolkninger og feil fra samme lesing som tekstene (P-05, story 5.1).
-        # Rangeringen gjør aldri et KI-kall.
-        gyldige = {k.id: k for k in vurdering.gyldige}
-        return KandidaterUt(
-            status="ok",
-            kandidater=[
-                rangert_ut(r, gyldige[r.id], grunnlag.vakt, vurdering.ulempe_per_kandidat[r.id])
-                for r in ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede)
-            ],
-            utelukkelser=utelukkelser,
-        )
+        return KandidaterUt(status="ok", kandidater=[grunnlag.rad(r) for r in grunnlag.rangert],
+                            utelukkelser=utelukkelser)
+
+    @app.get("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/avveining",
+             response_model=AvveiningUt | AvveiningFeiletUt | DatafeilUt)
+    def avveining(vaktnummer: int, ansatt_id: int, request: Request):
+        with okter() as okt:
+            grunnlag = les_rangering(okt, request.state.bruker.id, vaktnummer)
+            if not isinstance(grunnlag, RangertGrunnlag):
+                return grunnlag
+            valgt = next((r for r in grunnlag.rangert if r.id == ansatt_id), None)
+            if valgt is None:
+                return feil(404, "ikke_funnet")
+            andre = (r for r in grunnlag.rangert if r.id != ansatt_id)
+            referanse = next(andre, None)
+            identitet = dict(vaktnummer=vaktnummer, kandidat_id=ansatt_id, grunnlagsmerke=grunnlag.merke(ansatt_id))
+        # Slipp lesetransaksjonen før venting og nettverkskall.
+        if isinstance(ki, Forklarer):
+            paastander = ki.forklar(valgt, referanse)
+            if paastander:
+                return AvveiningUt(**identitet, modell=ki.modell, paastander=paastander)
+        return AvveiningFeiletUt(**identitet)
 
     @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/preferanse", response_model=None)
     def prov_preferanse(vaktnummer: int, ansatt_id: int, request: Request) -> dict[str, str] | JSONResponse:
         # Do not disclose whether another request is running before checking access.
         with okter() as okt:
+            okt.connection().exec_driver_sql("BEGIN")
             grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
             if grunnlag is None:
                 return feil(404, "ikke_funnet")
@@ -531,6 +591,7 @@ def lag_app(
             return feil(409, "tolkning_paagar")
         try:
             with okter() as okt:
+                okt.connection().exec_driver_sql("BEGIN")
                 grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
                 if grunnlag is None:
                     return feil(404, "ikke_funnet")
@@ -558,44 +619,20 @@ def lag_app(
     def godkjenningsgrunnlag(
         vaktnummer: int, ansatt_id: int, request: Request, okt: Okt,
     ) -> GodkjenningsgrunnlagUt | DatafeilUt | JSONResponse:
-        # Hele grunnlaget vurderes, som i kandidatruten. Filtreres det ned til én
-        # Ansatt, endres datafeilsjekken, og svaret kan avvike fra listen.
-        # En eksplisitt lesetransaksjon holder visning og merke i samme SQLite-snapshot.
-        okt.connection().exec_driver_sql("BEGIN")
-        grunnlag = hent_kandidatgrunnlag(okt, request.state.bruker.id, vaktnummer)
-        detaljer = hent_vaktdetaljer(okt, request.state.bruker.id, vaktnummer)
-        if grunnlag is None or detaljer is None:
+        grunnlag = les_rangering(okt, request.state.bruker.id, vaktnummer)
+        if not isinstance(grunnlag, RangertGrunnlag):
+            return grunnlag
+        valgt = next((r for r in grunnlag.rangert if r.id == ansatt_id), None)
+        if valgt is None:
             return feil(404, "ikke_funnet")
-        vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
-        if isinstance(vurdering, Datafeil):
-            # Før oppslaget: uten vurdering er det ukjent om id-en er en Gyldig kandidat.
-            logger.warning("Datafeil for vakt %s: %s", vaktnummer, "; ".join(vurdering.grunner))
-            return DatafeilUt(status="datafeil", kode="mangler_turnusgrunnlag", datagrense=vurdering.datagrense)
-        kandidat = next((k for k in vurdering.gyldige if k.id == ansatt_id), None)
-        if kandidat is None:
-            # Utelukket, satt opp og ukjent gir samme svar (NFR2).
-            return feil(404, "ikke_funnet")
-        # Fullt rangert kandidat og topprangert ved siden av (story 4.5, FR12, UX-DR18).
-        # `ranger()` rangerer bare `vurdering.gyldige`, og `ansatt_id` er allerede
-        # bekreftet der over, så `valgt` finnes garantert.
-        rangert = ranger(vurdering, grunnlag.vakt, grunnlag.tolkede, grunnlag.feilede)
-        gyldige = {k.id: k for k in vurdering.gyldige}
-        valgt = next(r for r in rangert if r.id == ansatt_id)
-        topprangert_r = None if valgt.plass == 1 else next(r for r in rangert if r.plass == 1)
+        kandidat = grunnlag.rad(valgt)
+        vakt = grunnlag.vakt
         return GodkjenningsgrunnlagUt(
-            status="ok",
-            vakt=VaktdetaljerUt.model_validate(detaljer, from_attributes=True),
-            kandidat=rangert_ut(
-                valgt, gyldige[ansatt_id], grunnlag.vakt, vurdering.ulempe_per_kandidat[ansatt_id],
-            ),
-            topprangert=(
-                None if topprangert_r is None
-                else rangert_ut(
-                    topprangert_r, gyldige[topprangert_r.id], grunnlag.vakt,
-                    vurdering.ulempe_per_kandidat[topprangert_r.id],
-                )
-            ),
-            grunnlagsmerke=grunnlagsmerke(okt, request.state.bruker.id, vaktnummer, ansatt_id),
+            status="ok", vakt=VaktdetaljerUt(avdeling=grunnlag.avdeling, vaktnummer=vakt.vaktnummer,
+                                            vakttype=vakt.vakttype, start=vakt.start, slutt=vakt.slutt,
+                                            minstenivå=vakt.minstenivå),
+            kandidat=kandidat, topprangert=None if valgt.plass == 1 else grunnlag.rad(grunnlag.rangert[0]),
+            grunnlagsmerke=kandidat.grunnlagsmerke,
         )
 
     @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}", response_model=GodkjenningUt | DatafeilUt)

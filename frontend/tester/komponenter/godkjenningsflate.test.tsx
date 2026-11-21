@@ -7,7 +7,7 @@ import Godkjenningsflate from "../../src/komponenter/Godkjenningsflate";
 import { datoOgKlokke } from "../../src/format";
 import { kandidatsti } from "../../src/navigasjon";
 import { FEILTEKSTER, TEKSTER } from "../../src/tekster";
-import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, GODKJENNING_METTE, falskFetch, feil, json, kallTil, ok, type Svar } from "./hjelpere";
+import { GODKJENNING_DATAFEIL, GODKJENNING_JONAS, GODKJENNING_METTE, falskFetchMedReserve as falskFetch, feil, json, kallTil, ok, type Svar } from "./hjelpere";
 
 const t = TEKSTER.godkjenning;
 const URL = "/api/vakter/4127/kandidater/6";
@@ -25,14 +25,14 @@ test("«Godkjenn erstatning» sender merket og navigerer bare etter suksess", as
   const { fetch, onTilbake, onGodkjent, bruker } = rendreMed(ok(GODKJENNING_JONAS), ok({ status: "godkjent" }));
 
   expect(await screen.findByRole("heading", { name: "Jonas Bakke" })).toBeTruthy();
-  expect(fetch).toHaveBeenCalledTimes(1);
+  expect(kallTil(fetch, URL)).toBe(1);
   expect(String(fetch.mock.calls[0][0])).toBe(URL);
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
   expect(onGodkjent).toHaveBeenCalledTimes(1);
   expect(onTilbake).not.toHaveBeenCalled();
-  expect(fetch).toHaveBeenCalledTimes(2);
-  expect(fetch.mock.calls[1][1]?.method).toBe("POST");
-  expect(JSON.parse(String(fetch.mock.calls[1][1]?.body))).toEqual({ grunnlagsmerke: GODKJENNING_JONAS.grunnlagsmerke });
+  expect(kallTil(fetch, `POST ${URL}`)).toBe(1);
+  expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")[0][1]?.method).toBe("POST");
+  expect(JSON.parse(String(fetch.mock.calls.filter(([, init]) => init?.method === "POST")[0][1]?.body))).toEqual({ grunnlagsmerke: GODKJENNING_JONAS.grunnlagsmerke });
 });
 
 // --- Nøkkeltall og avviksnotat (story 4.5, FR12, UX-DR18, UX-DR23) ---------------
@@ -43,7 +43,7 @@ test("kandidatkortet viser tilgjengelig timetall og ulempe for topprangert kandi
 
   expect(within(kort).getByText("16:00 t i uka")).toBeTruthy();
   expect(within(kort).getByText("16 timer og 0 minutter i uka")).toBeTruthy();
-  expect(within(kort).getByText(t.ulempe)).toBeTruthy();
+  expect(within(kort).getByText(t.ulempe, { selector: "p" })).toBeTruthy();
   expect(within(kort).getByText("40,0 p")).toBeTruthy();
   expect(within(kort).getByText("Kveld 4,0 t · helg 15,0 t · natt 2,0 t")).toBeTruthy();
   // Jonas er topprangert selv (plass 1): ingen avviksnotat (`topprangert` er null).
@@ -152,7 +152,7 @@ test("endret grunnlag oppdaterer avviksnotatet (ny topprangert) og krever nytt t
 
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
   expect(onGodkjent).toHaveBeenCalledTimes(1);
-  expect(JSON.parse(String(fetch.mock.calls[3][1]?.body))).toEqual({ grunnlagsmerke: oppdatert.grunnlagsmerke });
+  expect(JSON.parse(String(fetch.mock.calls.filter(([, init]) => init?.method === "POST")[1][1]?.body))).toEqual({ grunnlagsmerke: oppdatert.grunnlagsmerke });
 });
 
 test("datafeil viser ingen knapper for godkjenning", async () => {
@@ -198,7 +198,7 @@ test("endret grunnlag hentes på nytt og krever nytt trykk", async () => {
   expect(onGodkjent).not.toHaveBeenCalled();
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
   expect(onGodkjent).toHaveBeenCalledTimes(1);
-  expect(JSON.parse(String(fetch.mock.calls[3][1]?.body))).toEqual({ grunnlagsmerke: oppdatert.grunnlagsmerke });
+  expect(JSON.parse(String(fetch.mock.calls.filter(([, init]) => init?.method === "POST")[1][1]?.body))).toEqual({ grunnlagsmerke: oppdatert.grunnlagsmerke });
 });
 
 test("ugyldig kandidat etter POST gir nøytral melding uten ny bekreftelse", async () => {
@@ -225,7 +225,7 @@ test("allerede bemannet etter POST gir bare vei til Vaktvalg, uten nytt forsøk"
   await bruker.click(tilVaktvalg);
   expect(onTilOversikt).toHaveBeenCalledTimes(1);
   expect(onGodkjent).not.toHaveBeenCalled();
-  expect(fetch).toHaveBeenCalledTimes(2);
+  expect(kallTil(fetch, `POST ${URL}`)).toBe(1);
 });
 
 test("datafeil etter POST stopper godkjenning og viser datagrensen", async () => {
@@ -280,7 +280,7 @@ test("usikkert POST-svar krever kontroll i Vaktvalg før nytt forsøk", async ()
   await userEvent.setup().click(screen.getByRole("button", { name: t.godkjenn }));
   expect(await screen.findByText(t.usikkert)).toBeTruthy();
   expect((screen.getByRole("button", { name: t.godkjenn }) as HTMLButtonElement).disabled).toBe(true);
-  expect(fetch).toHaveBeenCalledTimes(2);
+  expect(kallTil(fetch, `POST ${URL}`)).toBe(1);
   await userEvent.setup().click(screen.getByRole("button", { name: t.tilVaktvalg }));
   expect(onTilOversikt).toHaveBeenCalledTimes(1);
 });

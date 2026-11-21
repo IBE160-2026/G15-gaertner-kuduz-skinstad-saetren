@@ -27,7 +27,7 @@ from datetime import timedelta
 from fractions import Fraction
 from types import MappingProxyType
 
-from domene.porter.rangering import RangertKandidat, TolketPreferanse, Tolkestatus
+from domene.porter.rangering import EksaktePoeng, RangertKandidat, TolketPreferanse, Tolkestatus
 from domene.regelmotor import ulempebelastning
 from domene.regelmotor.kompetanse import kompetansenivå
 from domene.regelmotor.kostnad import beregn_kostnad
@@ -168,6 +168,10 @@ def ranger(
     beregnet.sort(key=lambda rad: (-rad[1], rad[0].id))
 
     resultat = []
+    aktive_faktorer = frozenset(navn for navn, vekt in (
+        ("kostnad", parametere.kostnadsvekt), ("timebelastning", parametere.timebelastningsvekt),
+        ("ulempe", parametere.ulempevekt), ("preferanse", parametere.preferansevekt),
+    ) if vekt > 0)
     for plass, (k, total, score, pref, status, tolkning) in enumerate(beregnet, start=1):
         kostnad = kostnader[k.id]
         ulempe = vurdering.ulempe_per_kandidat[k.id]
@@ -188,5 +192,7 @@ def ranger(
             kostnadspoeng=float(kostnadspoeng[k.id]), timebelastningspoeng=float(timepoeng[k.id]),
             ulempescore=float(score), preferansepoeng=float(pref), totalscore=float(total),
             tolkestatus=status, tolket_preferanse=tolkning,
+            eksakte_poeng=EksaktePoeng(kostnadspoeng[k.id], timepoeng[k.id], score, pref, total),
+            aktive_faktorer=aktive_faktorer,
         ))
     return tuple(resultat)

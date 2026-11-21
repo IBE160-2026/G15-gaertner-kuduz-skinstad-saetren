@@ -7,6 +7,7 @@ import type { Vakttype, VaktSomManglerBemanning } from "./api";
 import { TEKSTER } from "./tekster";
 
 export const TIDSSONE = "Europe/Oslo";
+export const énDesimal = new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 type OsloDeler = { aar: number; maaned: number; dag: number; time: number; minutt: number };
 

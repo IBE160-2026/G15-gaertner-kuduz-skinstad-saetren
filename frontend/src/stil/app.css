@@ -450,7 +450,55 @@ button {
      Ingen skygger (DESIGN.md). */
 .rangeringstabell {
   isolation: isolate;
+  container-type: inline-size;
 }
+
+.avveining-knapp {
+  display: block;
+  width: min-content;
+  white-space: normal;
+  overflow-wrap: normal;
+  color: var(--color-accent);
+  font: inherit;
+  font-size: var(--font-size-meta);
+  text-decoration: underline;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: var(--space-1) 0;
+  cursor: pointer;
+}
+
+.tabell td.avveining-celle {
+  padding: 0;
+  white-space: normal;
+  background: var(--color-bg-avveining);
+}
+
+.avveining-celle .avveiningspanel {
+  position: sticky;
+  left: 0;
+  width: min(100%, 100cqi);
+}
+
+.avveiningspanel {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-avveining);
+  overflow-wrap: anywhere;
+}
+
+.avveiningspanel dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--detail-column-min)), 1fr));
+  gap: var(--space-3);
+  margin: var(--space-2) 0;
+}
+
+.avveiningspanel dt { font-weight: var(--font-weight-bold); }
+.avveiningspanel dd { margin: 0; }
+.avveiningspanel .retning-opp, .avveiningspanel .retning-ned { display: block; }
+.retning-opp { color: var(--color-ok); }
+.retning-ned { color: var(--color-danger); }
 
 .rangeringstabell .tabell {
   border-collapse: separate;

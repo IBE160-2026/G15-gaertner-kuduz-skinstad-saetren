@@ -68,11 +68,24 @@ export type Kandidat = {
 // Rangeringen (story 4.4, FR9). Poengene er uavrundet og avrundes ved visning (K-03).
 // `preferansekategori` er satt bare når `tolkestatus` er "tolket" (P-05).
 export type Tolkestatus = "tolket" | "venter_paa_tolkning" | "kunne_ikke_tolkes" | "ingen_registrert";
+export type Faktor = "kostnad" | "timebelastning" | "ulempe" | "preferanse";
 export type RangertKandidat = Kandidat & {
+  grunnlagsmerke: string;
+  faktorretninger: Partial<Record<Faktor, "opp" | "ned">>;
   stilling: string; ansiennitet: number; plass: number; totalscore: number;
   faktorpoeng: { kostnad: number; timebelastning: number; ulempe: number };
   preferansepoeng: number; tolkestatus: Tolkestatus; preferansekategori: string | null;
 };
+
+type Avveiningsgrunnlag = { vaktnummer: number; kandidat_id: number; grunnlagsmerke: string };
+export type Avveiningssvar = Avveiningsgrunnlag & (
+  | { status: "ok"; ki_kilde: "live"; modell: string; paastander: string[] }
+  | { status: "avveining_feilet" }
+);
+
+export function hentAvveining(vaktnummer: number, id: number): Promise<Avveiningssvar | { status: "datafeil" }> {
+  return kall(`/api/vakter/${vaktnummer}/kandidater/${id}/avveining`, {}, true);
+}
 
 // Ekskludert-boksen (story 2.5, UX-DR15). `per_regel` følger regelmotorens
 // rekkefølge, og summen der kan være større enn `totalt`.

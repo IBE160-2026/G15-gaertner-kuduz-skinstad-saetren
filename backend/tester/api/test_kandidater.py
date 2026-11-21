@@ -71,7 +71,8 @@ REKKEFØLGE_PER_REGEL = ["kompetanse-minstekrav", "kolliderende vakt", "11-timer
 KANDIDAT_FELT = {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastning_prosent",
                  "hoy_belastning", "ulempebelastning", "kostnad"}
 RANGERT_FELT = KANDIDAT_FELT | {"stilling", "ansiennitet", "plass", "totalscore", "faktorpoeng",
-                                "preferansepoeng", "tolkestatus", "preferansekategori"}
+                                "preferansepoeng", "tolkestatus", "preferansekategori", "grunnlagsmerke",
+                                "faktorretninger"}
 
 
 def hent(klient: TestClient, nummer: int) -> dict:

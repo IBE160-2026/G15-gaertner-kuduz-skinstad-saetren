@@ -10,7 +10,7 @@ import {
   type UtelukkelsesOppsummering,
   type Vaktdetaljer,
 } from "../api";
-import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn } from "../format";
+import { datoOgKlokke, timerOgMinutter, vaktBrodsmule, vakttypenavn, énDesimal } from "../format";
 import {
   SYNLIGE_KANDIDATER, ekskludertBoksTekst, ekskludertRadTekst, lastKandidater, preferansetekst, synligeKandidater,
   tilstandFraSvar, tilstandFraFeil,
@@ -18,6 +18,7 @@ import {
 } from "../kandidater";
 import { INGEN_KONTAKT, TEKSTER, feiltekst } from "../tekster";
 import Brodsmulesti from "./Brodsmulesti";
+import Avveiningspanel from "./Avveiningspanel";
 import Kostnadsvisning from "./Kostnadsvisning";
 import Varselmerke from "./Varselmerke";
 
@@ -29,7 +30,6 @@ type Tilstand =
   | { type: "klar"; data: Vaktdetaljer };
 
 const t = TEKSTER.kandidatflate;
-const tall = new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 type Props = {
   vaktnummer: number;
@@ -209,7 +209,7 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
       {overskrift}
       <p className="meta">{t.ulempePeriode}</p>
       <p role="status" tabIndex={-1} ref={statusRef}>{melding}</p>
-      <Rangeringstabell kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling} />
+      <Rangeringstabell vaktnummer={vaktnummer} kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling} />
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
   );
@@ -222,7 +222,7 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
 // lasting, så valget nullstilles for en ny vakt.
 const k = t.kolonner;
 
-function Rangeringstabell({ kandidater, onVelg, paagar, onProv }: { kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void; paagar: boolean; onProv: (id: number) => void }) {
+function Rangeringstabell({ vaktnummer, kandidater, onVelg, paagar, onProv }: { vaktnummer: number; kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void; paagar: boolean; onProv: (id: number) => void }) {
   const [visAlle, setVisAlle] = useState(false);
   const førsteNye = useRef<HTMLButtonElement>(null);
   const synlige = synligeKandidater(kandidater, visAlle);
@@ -249,7 +249,8 @@ function Rangeringstabell({ kandidater, onVelg, paagar, onProv }: { kandidater: 
         <tbody>
           {synlige.map((kandidat, i) => (
             <Kandidatrad
-              key={kandidat.id} kandidat={kandidat} alt={i % 2 === 1} onVelg={onVelg} paagar={paagar} onProv={onProv}
+              key={`${vaktnummer}/${kandidat.id}/${kandidat.grunnlagsmerke}/${gjeldendeSesjonsgenerasjon()}`}
+              vaktnummer={vaktnummer} kandidat={kandidat} alt={i % 2 === 1} onVelg={onVelg} paagar={paagar} onProv={onProv}
               knappRef={i === SYNLIGE_KANDIDATER ? førsteNye : undefined}
             />
           ))}
@@ -297,17 +298,18 @@ export function Belastningslinje(
 export function Ulempeindikator({ ulempe }: { ulempe: Ulempebelastning }) {
   return (
     <div className="kandidat-ulempe">
-      <span>{t.ulempePoeng(tall.format(ulempe.poeng))}</span>
+      <span>{t.ulempePoeng(énDesimal.format(ulempe.poeng))}</span>
       <span className="meta">{t.ulempeFordeling(
-        tall.format(ulempe.kveldstimer),
-        tall.format(ulempe.helgetimer),
-        tall.format(ulempe.natttimer),
+        énDesimal.format(ulempe.kveldstimer),
+        énDesimal.format(ulempe.helgetimer),
+        énDesimal.format(ulempe.natttimer),
       )}</span>
     </div>
   );
 }
 
 type RadProps = {
+  vaktnummer: number;
   kandidat: RangertKandidat;
   alt: boolean;
   onVelg: (ansattId: number) => void;
@@ -316,12 +318,15 @@ type RadProps = {
   onProv: (id: number) => void;
 };
 
-function Kandidatrad({ kandidat: r, alt, onVelg, knappRef, paagar, onProv }: RadProps) {
-  return (
+function Kandidatrad({ vaktnummer, kandidat: r, alt, onVelg, knappRef, paagar, onProv }: RadProps) {
+  const [panel, settPanel] = useState<"åpent" | "skjult" | "uåpnet">(r.plass === 1 ? "åpent" : "uåpnet");
+  const åpent = panel === "åpent";
+  const panelId = `avveining-${r.id}`;
+  return <>
     <tr className={alt ? "row-alt" : undefined}>
       <td className="fast-nr">
         <span className="rank-badge">{r.plass}</span>
-        <div className="undertekst">{t.totalscore(tall.format(r.totalscore))}</div>
+        <div className="undertekst">{t.totalscore(énDesimal.format(r.totalscore))}</div>
       </td>
       <td className="fast-kandidat">
         <span className="ansattnavn">{r.navn}</span>
@@ -337,7 +342,7 @@ function Kandidatrad({ kandidat: r, alt, onVelg, knappRef, paagar, onProv }: Rad
       </td>
       <td className="preferansecelle">
         <span className="tag">{preferansetekst(r)}</span>
-        <div className="undertekst">{t.preferansePoeng(tall.format(r.preferansepoeng))}</div>
+        <div className="undertekst">{t.preferansePoeng(énDesimal.format(r.preferansepoeng))}</div>
         {r.tolkestatus === "kunne_ikke_tolkes" && <button type="button" className="button-secondary button-kompakt" disabled={paagar} aria-label={t.provPreferanse(r.navn)} onClick={() => onProv(r.id)}>{TEKSTER.provIgjen}</button>}
       </td>
       <td>
@@ -347,9 +352,19 @@ function Kandidatrad({ kandidat: r, alt, onVelg, knappRef, paagar, onProv }: Rad
         >
           {TEKSTER.godkjenning.velg}
         </button>
+        <button type="button" className="avveining-knapp" aria-expanded={åpent} aria-controls={panelId}
+          aria-label={åpent ? t.avveining.skjulEtikett(r.navn) : t.avveining.visEtikett(r.navn)}
+          onClick={() => settPanel(åpent ? "skjult" : "åpent")}>
+          {åpent ? t.avveining.skjul : t.avveining.vis}
+        </button>
       </td>
     </tr>
-  );
+    <tr hidden={!åpent} id={panelId}>
+      <td colSpan={8} className="avveining-celle">
+        {panel !== "uåpnet" && <Avveiningspanel vaktnummer={vaktnummer} kandidat={r} merke={r.grunnlagsmerke} />}
+      </td>
+    </tr>
+  </>;
 }
 
 // Ekskludert-boksen (story 2.5, UX-DR15). Vist bare når noen er utelukket, enten

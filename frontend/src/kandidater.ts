@@ -8,6 +8,7 @@ import {
   gjeldendeSesjonsgenerasjon,
   hentKandidater,
   type EkskludertKandidat,
+  type Avveiningssvar,
   type Kandidatsvar,
   type RangertKandidat,
   type UtelukkelsesOppsummering,
@@ -24,6 +25,15 @@ export type Kandidattilstand =
 
 /** Så mange av de høyest rangerte vises før «Vis alle gyldige kandidater» (SM-3, AV-15). */
 export const SYNLIGE_KANDIDATER = 5;
+
+export function gyldigAvveining(svar: Avveiningssvar | {status: "datafeil"}, vakt: number, id: number, merke: string):
+  svar is Extract<Avveiningssvar, {status: "ok"}> {
+  return svar?.status === "ok" && svar.ki_kilde === "live" && svar.vaktnummer === vakt
+    && svar.kandidat_id === id && !!merke && svar.grunnlagsmerke === merke
+    && typeof svar.modell === "string" && !!svar.modell.trim()
+    && Array.isArray(svar.paastander) && svar.paastander.length > 0
+    && svar.paastander.every((tekst) => typeof tekst === "string" && !!tekst.trim());
+}
 
 /**
  * De fem første i rangert rekkefølge, eller alle når `visAlle` er satt (FR9).
