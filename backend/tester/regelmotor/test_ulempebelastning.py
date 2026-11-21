@@ -31,6 +31,15 @@ def beregn(start, slutt, *, tak=300):
     (lokal(2026, 11, 14, 10), lokal(2026, 11, 14, 18), (0, 0, 8, 0), 16),
     (lokal(2026, 11, 14, 15), lokal(2026, 11, 14, 23), (0, 0, 7, 1), 17),
     (lokal(2026, 11, 15, 23), lokal(2026, 11, 16, 7), (1, 0, 0, 7), 21),
+    # Resten av KS-03-tabellen: mandag–torsdag (16.–19.11), lørdag natt og søndag.
+    (lokal(2026, 11, 16, 7), lokal(2026, 11, 16, 15), (8, 0, 0, 0), 0),
+    (lokal(2026, 11, 17, 10), lokal(2026, 11, 17, 18), (8, 0, 0, 0), 0),
+    (lokal(2026, 11, 18, 15), lokal(2026, 11, 18, 23), (3, 4, 0, 1), 7),
+    (lokal(2026, 11, 19, 23), lokal(2026, 11, 20, 7), (1, 0, 0, 7), 21),
+    (lokal(2026, 11, 14, 23), lokal(2026, 11, 15, 7), (0, 0, 1, 7), 23),
+    (lokal(2026, 11, 15, 7), lokal(2026, 11, 15, 15), (0, 0, 8, 0), 16),
+    (lokal(2026, 11, 15, 10), lokal(2026, 11, 15, 18), (0, 0, 8, 0), 16),
+    (lokal(2026, 11, 15, 15), lokal(2026, 11, 15, 23), (0, 0, 7, 1), 17),
     (lokal(2026, 3, 28, 23), lokal(2026, 3, 29, 7), (0, 0, 1, 6), 20),
     (lokal(2026, 10, 24, 23), lokal(2026, 10, 25, 7), (0, 0, 1, 8), 26),
     (lokal(2026, 11, 13, 17, 30), lokal(2026, 11, 13, 22, 30), (0.5, 4, 0, 0.5), 5.5),
@@ -143,9 +152,9 @@ def test_beregner_kun_for_gyldige(monkeypatch):
     kall = []
     original = ulempebelastning.beregn_ulempebelastning
 
-    def observer(kandidat, vakt):
+    def observer(kandidat, vakt, **kw):
         kall.append(kandidat.id)
-        return original(kandidat, vakt)
+        return original(kandidat, vakt, **kw)
 
     monkeypatch.setattr(ulempebelastning, "beregn_ulempebelastning", observer)
     resultat = vurder_kandidater(vakt, (gyldig, utelukket), lokal(2026, 12, 1, 0), lokal(2026, 10, 1, 0))

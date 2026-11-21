@@ -223,6 +223,10 @@ def vurder_kandidater(
             grunner.append(f"ansatt {kandidat.id}: ugyldig timelønn")
     if not vaktgrunner:
         # 2–4. Det samlede vinduet, datadekningen og Kandidatens vakter i vinduet.
+        # Ulempevinduet (672 t før vaktstart) går lenger tilbake enn alle regelvinduene,
+        # så det er alltid dette som bestemmer startsiden. Regelvinduenes start avgjør
+        # aldri noe her og testes ikke gjennom denne veien. Endres ulempevinduet, får
+        # de betydning igjen.
         vindu = samlet_vindu(vakt, regler)
         ulempevindu = ulempebelastning.vindu(vakt)
         kostnadsvindu = trettifem_timer.vindu(vakt)
