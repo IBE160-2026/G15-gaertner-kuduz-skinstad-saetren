@@ -88,6 +88,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-16 | Komponenttester for frontend | Vedtatt 2026-11-14; implementert på branchen `frontend-komponenttester`, PR-gjennomgang gjenstår | Vitest 5.1.0 med Testing Library og jsdom 28.1.0 ved siden av `node --test`, én kommando (`npm run test`). De fem utsatte punktene fra 1.5, 2.1, 2.4, 2.5 og 3.1 er dekket. Manuell kontroll bare der testene ikke kan kontrollere det aktuelle (alternativ A), etter sjekklisten i `docs/testing.md` (§11). | Johannes W. Gaertner |
 | OP-17 | Story 4.5 | Meldt 2026-11-17 | Mithad Kuduz tar Story 4.5, Avviksnotat og nøkkeltall på godkjenningsflaten. Avhengighetene (4.2, 4.3, 4.4, 4.7) er alle `done`. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 | OP-18 | Story 5.2 | Meldt 2026-11-20; implementert, gjennomgått (PR #34) og merget av Kim O. Skinstad 2026-11-20 | Mithad Kuduz tar Story 5.2, Rangeringen bruker tolkede preferanser. Avhengighetene (4.4, 5.1) er begge `done`. Bygget med Sonnet 5, gjennomgang med Opus, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
+| OP-19 | Story 5.7 | Meldt 2026-11-22 | Mithad Kuduz tar Story 5.7, Demo-modus uten API-nøkkel. Avhengighetene (5.1, 5.3, 4.7) er alle `done`. Bygges med Sonnet 5, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 
 ## 3. Detaljerte hovedbeslutninger
 
@@ -927,6 +928,19 @@ utsettes til én samlet UX-endring på alle relevante flater i v2. Det lukker
 oppfølgingsspørsmålet fra PR #16 for v1. AV-02s klokkeslett og KS-03s faktiske
 varigheter endres ikke. Dette er Kims eksplisitte valg i runden, ikke en påstand
 om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt åpne.
+
+### 2026-11-22 – Story 5.7 (OP-19)
+
+- **Hvem:** Mithad Kuduz meldte 2026-11-22 at han tar Story 5.7. Det er en melding om
+  ansvar, ikke et gruppevedtak.
+- **OP-19 – Story 5.7, Demo-modus uten API-nøkkel:**
+  - Mithad Kuduz er ansvarlig.
+  - Avhengighetene er alle ferdige: story 5.1 (preferansetolkning), 5.3 (Avveining) og
+    4.7 (Ulempebelastning, hvis felter inngår i identiteten forhåndsgenererte svar slås
+    opp mot).
+  - Bygges med Claude Sonnet 5, etter anbefalingen i `docs/modellvalg-stories.md`.
+- **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 5.7.
+- **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
