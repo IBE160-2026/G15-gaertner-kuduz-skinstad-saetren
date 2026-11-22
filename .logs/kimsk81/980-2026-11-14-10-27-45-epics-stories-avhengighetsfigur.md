@@ -103,3 +103,22 @@ Skriptets `--sjekk` og `git diff --check` bestod. Opptelling i SVG-en ga 23 ferd
 ### Åpne punkter
 
 Ingen.
+
+## 2026-11-22 kl. 11:39 — Kimsk81
+
+### Oppgave
+
+Undersøke og deretter fjerne ordningen for synkronisering av storyfiguren etter brukerens valg.
+
+### Plan
+
+- Undersøke commit `6d2f142` og senere bruk, og vise brukeren hva en tilbakeføring innebærer.
+- Fjerne skript, tester og CI-kontroll, men beholde den gjeldende figuren og historisk dokumentasjon.
+
+### Resultat
+
+Fjernet `scripts/synkroniser_storyfigur.py`, tilhørende test og `.github/workflows/storyfigur.yml`. README viser fortsatt til figuren og beskriver manuelt vedlikehold. Figuren er uendret; spesifikasjonen og KI-loggen er beholdt som historikk. `git diff --check` bestod, og søk i aktive filer fant ingen resterende henvisninger til skriptet eller workflowen. Ingen applikasjonstester er kjørt for denne fjerningen.
+
+### Åpne punkter
+
+Ingen.
