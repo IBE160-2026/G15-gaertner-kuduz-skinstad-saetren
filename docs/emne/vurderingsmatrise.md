@@ -4,7 +4,10 @@ Arbeidsdokument for gruppen, opprettet 2026-10-12. Tiltakene er vår anvendelse 
 
 Oppdatert 2026-11-22 med [praktiske kontrollbevis](../testing/2026-11-22/kontroll.md).
 Regelmotor, rangering, godkjenning og avveining per kandidat er implementert;
-5.4 er i eksisterende PR #37, og 5.5/5.7/5.8/5.9 gjenstår. Eldre milepælsavsnitt
+5.4 er i eksisterende PR #37, 5.7 er implementert på branchen
+`story/5-7-demo-modus-uten-api-nokkel` (branch allerede valgt) og venter på at PR
+åpnes og på uavhengig gjennomgang (se eget avsnitt nedenfor), og 5.5/5.8/5.9
+gjenstår. Eldre milepælsavsnitt
 bevarer status på de angitte datoene og er ikke dagens sprintstatus.
 Lenke til faktiske bevis kreves før tiltak merkes ferdig. Godkjent proposal er
 `ee6d798`; [E-02-sammenligningen](e-02-proposal-sammenligning.md) er forberedt,
@@ -258,3 +261,20 @@ For kriterium 1 og 5 dokumenterer KI-loggen hvordan en rød test avdekket at et 
 Oppfølging 22. november for kriterium 1 og 3. Tre feil som passerte den første kjøretidstesten ble gjenskapt i PR-gjennomgangen. De nye kontrollene dekker ekstra modellmeldinger, endret råtekst ved preferansetolkning og nestede kandidat-ID-er i begge detaljsvarene. 38 nye testtilfeller bestod etter retting. [KI-logg med testresultater før og etter](../ki-logg/2026-11-22-oppfolging-pr-36.md).
 
 [Spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-5-6-utelukkede-kandidater-naar-aldri-ki-laget.md) knytter NFR2, SM-2, AD-1 og AD-2 til en kjøretidstest gjennom hele API-flyten for #4127, som har utelukkelser etter alle fire harde regler. [Testen](../../backend/tester/api/test_lekkasjeinvariant.py) bruker ekte `OpenRouterKiAdapter` med en falsk transport som registrerer hver forespørsel. Den viser at ingen utelukket ID eller navn når forklaringsporten, at listen og godkjenningsgrunnlaget beregnes uten forklaringskall, at direkte oppslag på utelukkede gir samme 404 som en ukjent ID, og at et modellsvar som peker på en utelukket forkastes. En negativ kontroll lar én utelukket per regel slippe gjennom regelmotoren, og alle fire kontrollene ble røde i alle 16 kjøringer. Bevis for kriterium 1, 3 og 5: 738 backendtester bestod, også import-linter-kontrakten i `test_arkitektur.py`. Ingen produksjonskode er endret. Demodelen av AC3 venter på story 5.7 og er ført i `deferred-work.md`. [KI-loggen](../ki-logg/2026-11-21-lekkasjeinvariant.md) beskriver hva testen beviser og ikke beviser. Tre uavhengige underagenter gjennomgikk koden. Seks funn ble rettet, og de andre ble avvist med begrunnelse (se spesifikasjonens Review Triage Log). Storyen er ferdig etter gjennomgang og merge av [PR #36](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/36) i `1e1a57b` (godkjent av Kim O. Skinstad).
+
+## Story 5.7 – demo-modus uten API-nøkkel, 2026-11-22 (implementert, ikke gjennomgått)
+
+[Spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-5-7-demo-modus-uten-api-nokkel.md)
+knytter AD-6 og SM-9 til `DemoKiAdapter` (`backend/adaptere/ki/demo.py`), en rettet
+`ki_fra_miljo()` som gir demo-modus i stedet for `None` uten nøkkel, og
+`scripts/generer_demoinnhold.py` for forhåndsgenerert innhold. Bevis for kriterium 1, 3
+og 5: 15 nye tester i [`test_demo.py`](../../backend/tester/ki/test_demo.py),
+`DemoKiAdapter` lagt til i lekkasjeinvariantens `ADAPTERFABRIKKER` (inkludert negativ
+kontroll) og som tredje kilde i `test_avveining.py`s faktakontrolltest. 873 av 873
+backendtester og 52 + 58 frontendtester bestod. `backend/adaptere/ki/demoinnhold.json`
+er generert med 19 ekte, betalte OpenRouter-kall (Mithad Kuduz, 2026-11-22, etter at
+agentsesjonens eget godkjenningssystem avviste kallet): alle 15 fasittolkningene fra
+PRD §4.5 og alle fire Avveininger for vakt #4127. [KI-loggen](../ki-logg/2026-11-22-demo-modus-uten-api-nokkel.md)
+dokumenterer arbeidet. **Gjenstår:** at PR åpnes (branch er allerede valgt) og
+uavhengig kodegjennomgang, og en oppfølgende UI-story for at frontend skal vise
+kildelinjen for `ki_kilde: "forhandsgenerert"`/`"mal"` (`deferred-work.md`).

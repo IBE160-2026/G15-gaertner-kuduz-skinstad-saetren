@@ -3,15 +3,21 @@
 import json
 import logging
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import event, update
+from sqlalchemy import event, select, update
 
 from adaptere.api.main import lag_app
+from adaptere.ki import avveining
+from adaptere.ki.demo import KONTRAKTSVERSJON, DemoKiAdapter
 from adaptere.ki.openrouter import HttpSvar, Nettverksfeil, OpenRouterKiAdapter
 from adaptere.lagring.database import lag_sessionmaker
-from adaptere.lagring.modeller import AnsattRad
+from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
+from adaptere.lagring.modeller import AnsattRad, BrukerRad
+from domene.regelmotor.rangering import ranger
+from domene.regelmotor.vurdering import vurder_kandidater
 from tester.api.test_innlogging import engine, logg_inn  # noqa: F401
 from tester.ki.test_openrouter import FalskKlokke, FalskTransport, adapter, innhold, sertifikatfeil, status
 from tester.regelmotor.test_rangering import DATAGRENSE, HISTORIKKSTART, VAKT, kandidat
@@ -215,3 +221,57 @@ def test_utelukket_navn_forkaster_hele_forklaringen_og_valgt_kandidat_kan_godkje
     assert (annen_forklaring["kandidat_id"], annen_forklaring["ki_kilde"]) == (annen["id"], "live")
     assert annen_forklaring["paastander"]
     assert klient.post(sti, json={"grunnlagsmerke": valgt["grunnlagsmerke"]}).json() == {"status": "godkjent"}
+
+
+# --- story 5.7: `ki_kilde` fra en ekte `DemoKiAdapter`, gjennom den ekte ruten -----
+
+
+def _rangert_uten_tolkning(engine):
+    """Samme fire Gyldige kandidater og rekkefølge som ruten ser, uten å gå via HTTP."""
+    with lag_sessionmaker(engine)() as session:
+        bruker_id = session.scalars(select(BrukerRad.id)).one()
+        grunnlag = hent_kandidatgrunnlag(session, bruker_id, 4127)
+    vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+    return ranger(vurdering, grunnlag.vakt)
+
+
+def test_demo_adapter_rapporterer_forhandsgenerert_kilde_i_http_svaret(engine, tmp_path: Path) -> None:
+    """Et oppslagstreff som består faktakontrollen, gir `ki_kilde: "forhandsgenerert"`
+    i selve HTTP-svaret fra den ekte ruten -- ikke bare lest av `ki.siste_kilde` direkte
+    på adapteren, som i `tester/ki/test_demo.py` og `tester/ki/test_avveining.py`."""
+    rangert = _rangert_uten_tolkning(engine)
+    jonas, mette = rangert[0], rangert[1]  # rangert[0] er referansen for de andre (P-07)
+    tillatte = avveining.tillatte_påstander(jonas, mette)
+    myk = next(p for p in tillatte if p.myk_faktor)
+    datafil = tmp_path / "demoinnhold.json"
+    datafil.write_text(json.dumps({
+        "kontraktsversjon": KONTRAKTSVERSJON, "modell": "openai/gpt-6-luna", "generert": "2026-11-22",
+        "kommando": "python scripts/generer_demoinnhold.py --live", "preferanser": {},
+        "avveininger": {f"{jonas.id}:{mette.id}": {"paastander": [myk.felt]}},
+    }, ensure_ascii=False), encoding="utf-8")
+
+    klient = TestClient(lag_app(engine=engine, ki=DemoKiAdapter(datafil)))
+    logg_inn(klient)
+    svar = klient.get(f"{LISTE}/{jonas.id}/avveining").json()
+    assert svar["status"] == "ok"
+    assert svar["ki_kilde"] == "forhandsgenerert"
+    assert svar["paastander"] == [myk.tekst]
+
+
+def test_demo_adapter_rapporterer_mal_kilde_i_http_svaret_uten_oppslag(engine, tmp_path: Path) -> None:
+    """Ingen treff i datafilen gir `ki_kilde: "mal"` i HTTP-svaret, aldri `avveining_feilet`
+    så lenge kandidaten har minst én myk faktor-påstand."""
+    rangert = _rangert_uten_tolkning(engine)
+    ingrid = rangert[3]  # referansen blir rangert[0] (Jonas) etter P-07-regelen
+    datafil = tmp_path / "demoinnhold.json"
+    datafil.write_text(json.dumps({
+        "kontraktsversjon": KONTRAKTSVERSJON, "modell": "openai/gpt-6-luna", "generert": "2026-11-22",
+        "kommando": "python scripts/generer_demoinnhold.py --live", "preferanser": {}, "avveininger": {},
+    }, ensure_ascii=False), encoding="utf-8")
+
+    klient = TestClient(lag_app(engine=engine, ki=DemoKiAdapter(datafil)))
+    logg_inn(klient)
+    svar = klient.get(f"{LISTE}/{ingrid.id}/avveining").json()
+    assert svar["status"] == "ok"
+    assert svar["ki_kilde"] == "mal"
+    assert svar["paastander"]

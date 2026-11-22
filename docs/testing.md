@@ -272,8 +272,9 @@ eksakt.
   nytt. En tekst som endres under kallet, lagres ikke. En tolkning lagret etter visning
   gir 409 `endret_grunnlag`, og forsøkene underveis endrer ikke merket. `with
   TestClient(lag_app(ki=...))` starter tråden, og appen svarer mens tolkningen pågår.
-  Uten `ki` startes ingen tråd. `ki_fra_miljo` logger én WARNING uten nøkkel, med `demo`
-  og med ukjent modus, og nøkkelen havner ikke i loggen.
+  Uten `ki` startes ingen tråd. `ki_fra_miljo` logger én WARNING uten nøkkel og med
+  ukjent modus, og nøkkelen havner ikke i loggen. (Fra story 5.7: uten nøkkel eller med
+  `KI_MODUS=demo` returneres `DemoKiAdapter` i stedet for `None` — se nedenfor.)
 - **Etter gjennomgangen:** modulobjektet `app` får adapteren når nøkkelen er satt
   (`importlib.reload`, uten lifespan), en nøkkel med kontrolltegn eller ikke-ASCII slår
   av tolkningen, 429 med reset i fortiden eller i sekunder venter minst 1 s, en reset med
@@ -383,3 +384,35 @@ og en falsk klokke. Flyttesten og tolketesten er parametrisert over `ADAPTERFABR
 der story 5.7 legger til `DemoKiAdapter` (AD-6). Hva testen beviser og ikke beviser, står
 i [KI-loggen](ki-logg/2026-11-21-lekkasjeinvariant.md). Storyen endrer ikke UI, så
 OP-16-sjekklisten gjelder ikke.
+
+## Story 5.7 – demo-modus uten API-nøkkel (2026-11-22)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-5-7-demo-modus-uten-api-nokkel.md)
+og [KI-loggen](ki-logg/2026-11-22-demo-modus-uten-api-nokkel.md) dekker detaljene. Ny
+testmodul [`test_demo.py`](../backend/tester/ki/test_demo.py) (15 tester) kontrollerer
+`DemoKiAdapter` isolert med egne, lokale datafiler i `tmp_path` — ikke mot den ekte
+`demoinnhold.json` som ligger i repoet, så testene er uavhengige av om noen har kjørt
+`scripts/generer_demoinnhold.py --live`: kjent/ukjent preferansetekst, en forhåndsgenerert
+Avveining som består eller ikke består faktakontrollen, intet oppslag, ingen myk faktor i
+det hele tatt, feil kontraktsversjon, manglende/ugyldig datafil, og at `siste_kilde` er
+isolert per tråd under samtidige kall. `test_lekkasjeinvariant.py` kjører nå begge
+adaptere (`openrouter`, `demo`) i `ADAPTERFABRIKKER`, inkludert den negative kontrollen,
+som utelater kombinasjonen `(demo, kontroller_forklaringsforespørslene)` siden den aldri
+kan bli rød for en adapter uten HTTP. `test_avveining.py` sin
+`test_begge_kilder_kontrollerer_alle_påstandene_mot_uavrundet_rangering` har nå `"demo"`
+som tredje kilde, mot en ekte `DemoKiAdapter`.
+
+Ingen frontendendring i denne storien. `npm run build` og `npm run test` bekrefter bare at
+de tre `ki_kilde`-verdiene ikke knekker eksisterende typer eller tester. Kjent gap:
+`gyldigAvveining` (`frontend/src/kandidater.ts`) godtar bare `ki_kilde === "live"`, så
+Avveiningspanelet viser ikke demo-modusens innhold før en UI-story utvider den — ført i
+`deferred-work.md`. OP-16-sjekklisten gjelder derfor ikke for denne storien.
+
+`backend/adaptere/ki/demoinnhold.json` er en gyldig, tom plassholder i denne leveransen:
+agentsesjonens godkjenningssystem avviste de betalte OpenRouter-kallene
+`scripts/generer_demoinnhold.py --live` skulle gjøre. Demo-modus fungerer korrekt
+(faller til «kunne ikke tolkes» og mal-svar for alt), men viser ikke de faktiske
+fasit-tolkningene før et gruppemedlem kjører kommandoen selv og committer resultatet.
+
+Kjørt 2026-11-22: 873 av 873 backendtester (hele samlingen, Windows), 52 + 58
+frontendtester, og frontendbygget.

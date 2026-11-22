@@ -193,10 +193,41 @@ IFS= read -rsp 'OpenRouter-nøkkel: ' OPENROUTER_API_KEY && export OPENROUTER_AP
 ```
 
 `OPENROUTER_MODEL` velger en annen modell (tom gir `openai/gpt-6-luna`). `KI_MODUS`
-er `openrouter` (standard) eller `demo`. Uten nøkkel, med `demo` eller med en ukjent
-verdi starter backend som vanlig, men tolker ingenting og skriver én linje i
-terminalen, for eksempel `Preferansetolkning er av: OPENROUTER_API_KEY er ikke satt.
-Se README.` Demo-modus med ferdige svar kommer i story 5.7.
+er `openrouter` (standard) eller `demo`.
+
+#### Demo-modus uten nøkkel (story 5.7, AD-6, SM-9)
+
+Mangler `OPENROUTER_API_KEY`, starter backend automatisk i demo-modus: ingen
+nettverkskall, ingen venting og appen krasjer ikke. Backend skriver én linje i
+terminalen, for eksempel `Preferansetolkning kjører i demo-modus:
+OPENROUTER_API_KEY er ikke satt. Se README.` Det samme gjelder et eksplisitt satt
+`KI_MODUS=demo`, med eller uten nøkkel (da uten noen WARNING, siden det er et
+bevisst valg). Et ukjent `KI_MODUS` eller en nøkkel/modell med feil form gir
+fortsatt ingen KI i det hele tatt, akkurat som før story 5.7.
+
+Demo-modus (`DemoKiAdapter`, `backend/adaptere/ki/demo.py`) viser forhåndsgenererte
+svar for de 15 fasittekstene i PRD §4.5 og for Avveiningen til de fire Gyldige
+kandidatene på vakt #4127, laget med `OpenRouterKiAdapter` og samme prompt som live
+(se `docs/ki-logg/`). Innholdet ligger i `backend/adaptere/ki/demoinnhold.json` og
+regenereres med:
+
+```
+python scripts/generer_demoinnhold.py --live
+```
+
+(19 betalte kall, se skriptets docstring). Uten `--live` er det en tørrkjøring.
+Hver forhåndsgenerert Avveining faktakontrolleres på nytt mot gjeldende tall ved
+hvert oppslag (P-06): endrer testdataene eller vektene seg, faller demo-modus
+automatisk tilbake til et mal-svar satt sammen av kode, aldri en foreldet
+sammenligning. En preferansetekst uten forhåndsgenerert treff gir «kunne ikke
+tolkes» med midlertidig 50 poeng, aldri en oppdiktet kategori.
+
+Kjent begrensning: frontend viser i dag kildelinjen («Forhåndsgenerert
+KI-forklaring» / «Satt sammen fra beregnede tall») bare for `ki_kilde: "live"`
+(`frontend/src/kandidater.ts`, `gyldigAvveining`). Avveininger fra demo-modus
+(`"forhandsgenerert"` eller `"mal"`) blir derfor ikke vist av dagens frontend, selv
+om backend-svaret er riktig. Dette er et åpent punkt for en egen UI-story, se
+`_bmad-output/implementation-artifacts/deferred-work.md`.
 
 Dette er verdt å vite:
 

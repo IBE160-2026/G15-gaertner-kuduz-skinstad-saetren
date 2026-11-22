@@ -1,0 +1,173 @@
+{
+  "avveininger": {
+    "3:6": {
+      "paastander": [
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 3,
+          "retning": "opp",
+          "type": "egen"
+        },
+        {
+          "faktor": "preferanse",
+          "kandidat_id": 3,
+          "retning": "ned",
+          "type": "egen"
+        },
+        {
+          "faktor": "total",
+          "kandidat_id": 3,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        }
+      ]
+    },
+    "4:6": {
+      "paastander": [
+        {
+          "faktor": "preferanse",
+          "kandidat_id": 4,
+          "retning": "opp",
+          "type": "egen"
+        },
+        {
+          "faktor": "preferanse",
+          "kandidat_id": 4,
+          "referanse_id": 6,
+          "retning": "høyere",
+          "type": "sammenligning"
+        },
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 4,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        }
+      ]
+    },
+    "5:6": {
+      "paastander": [
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 5,
+          "retning": "ned",
+          "type": "egen"
+        },
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 5,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        },
+        {
+          "faktor": "total",
+          "kandidat_id": 5,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        }
+      ]
+    },
+    "6:5": {
+      "paastander": [
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 6,
+          "retning": "opp",
+          "type": "egen"
+        },
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 6,
+          "referanse_id": 5,
+          "retning": "høyere",
+          "type": "sammenligning"
+        }
+      ]
+    }
+  },
+  "generert": "2026-11-22",
+  "kommando": "python scripts/generer_demoinnhold.py --live",
+  "kontraktsversjon": 1,
+  "modell": "openai/gpt-6-luna",
+  "preferanser": {
+    "For meg spiller det ingen rolle om jeg får en ekstravakt.": {
+      "begrunnelse": "Personen sier at det ikke spiller noen rolle om det blir en ekstravakt.",
+      "kategori": "noytral",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Hvis dere mangler folk, stiller jeg gjerne på en ekstravakt.": {
+      "begrunnelse": "Sier seg gjerne villig til å ta en ekstravakt dersom det mangler folk.",
+      "kategori": "positiv_ved_behov",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg er positiv til ekstravakter, selv om jeg ikke aktivt ber om flere.": {
+      "begrunnelse": "Uttrykker positivitet til ekstravakter uten å be aktivt om flere.",
+      "kategori": "positiv_ved_behov",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg foretrekker å slippe ekstravakter, men kan ta en hvis det trengs.": {
+      "begrunnelse": "Foretrekker å slippe ekstravakter, men kan ta en ved behov.",
+      "kategori": "foretrekker_a_slippe",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg har ingen ønsker om flere eller færre vakter.": {
+      "begrunnelse": "Oppgir ingen ønsker om flere eller færre vakter.",
+      "kategori": "noytral",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg stiller meg nøytral til å jobbe utover den oppsatte turnusen.": {
+      "begrunnelse": "Personen oppgir å være nøytral til å jobbe utover oppsatt turnus.",
+      "kategori": "noytral",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg trenger ikke flere vakter, men tar gjerne en ekstra ved behov.": {
+      "begrunnelse": "Trenger ikke flere vakter, men tar gjerne en ekstra ved behov.",
+      "kategori": "positiv_ved_behov",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg vil gjerne jobbe mer enn den oppsatte turnusen.": {
+      "begrunnelse": "Ønsker gjerne å jobbe mer enn den oppsatte turnusen.",
+      "kategori": "onsker_flere",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg ønsker flere vakter denne uken.": {
+      "begrunnelse": "Personen ønsker flere vakter denne uken.",
+      "kategori": "onsker_flere",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg ønsker færre vakter og ber om å slippe ekstraarbeid.": {
+      "begrunnelse": "Personen ønsker færre vakter og å slippe ekstraarbeid.",
+      "kategori": "vil_unnga",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg ønsker helst bare de oppsatte vaktene, men kan stille dersom dere mangler folk.": {
+      "begrunnelse": "Foretrekker de oppsatte vaktene, men kan stille dersom det mangler folk.",
+      "kategori": "foretrekker_a_slippe",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg ønsker ikke ekstravakter denne uken.": {
+      "begrunnelse": "Ønsker ikke ekstravakter denne uken.",
+      "kategori": "vil_unnga",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Jeg ønsker kun å jobbe de vaktene som allerede står i turnusen.": {
+      "begrunnelse": "Ønsker kun å jobbe vaktene som allerede står i turnusen.",
+      "kategori": "vil_unnga",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Prioriter meg gjerne når det blir ledige ekstravakter.": {
+      "begrunnelse": "Ber om å bli prioritert når ekstravakter blir ledige.",
+      "kategori": "onsker_flere",
+      "modell": "openai/gpt-6-luna"
+    },
+    "Spør helst andre først, men jeg er åpen for en ekstravakt ved bemanningsbehov.": {
+      "begrunnelse": "Foretrekker at andre blir spurt først, men er åpen for en ekstravakt ved bemanningsbehov.",
+      "kategori": "foretrekker_a_slippe",
+      "modell": "openai/gpt-6-luna"
+    }
+  }
+}

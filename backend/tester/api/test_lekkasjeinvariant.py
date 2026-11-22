@@ -20,10 +20,12 @@ venting.
 """
 
 import json
+import tempfile
 from collections import Counter
 from collections.abc import Callable, Iterator
 from copy import copy, deepcopy
 from dataclasses import dataclass, field, replace
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -32,6 +34,7 @@ from sqlalchemy import Engine, update
 from adaptere.api import main
 from adaptere.api.main import lag_app
 from adaptere.ki import avveining
+from adaptere.ki.demo import KONTRAKTSVERSJON, DemoKiAdapter
 from adaptere.ki.openrouter import PROMPT, URL, HttpSvar, OpenRouterKiAdapter, Tolkefeil
 from adaptere.ki.openrouter import skjema as preferanseskjema
 from adaptere.lagring.database import lag_engine, lag_sessionmaker, opprett_skjema
@@ -107,6 +110,12 @@ class RegistrerendePort:
         self.forklaringer.append((kandidat, referanse))
         return self._ki.forklar(kandidat, referanse)
 
+    @property
+    def siste_kilde(self) -> str | None:
+        # Forwarding slik ruten i main.py ser den (DemoKiAdapter har attributtet,
+        # OpenRouterKiAdapter har det ikke, se adaptere/ki/demo.py).
+        return getattr(self._ki, "siste_kilde", None)
+
 
 def openrouter(transport: RegistrerendeTransport) -> OpenRouterKiAdapter:
     # Falsk klokke: begrenseren (18 per minutt) venter uten faktisk søvn.
@@ -114,9 +123,32 @@ def openrouter(transport: RegistrerendeTransport) -> OpenRouterKiAdapter:
     return OpenRouterKiAdapter("test", transport=transport, klokke=klokke, sov=klokke.sov, veggklokke=klokke.vegg)
 
 
-# Story 5.7 legger til `pytest.param(demo, id="demo")` her (AD-6). Fabrikken får
-# transporten og kan la være å bruke den. Kontrollene på porten gjelder da som før.
-ADAPTERFABRIKKER = [pytest.param(openrouter, id="openrouter")]
+def _demo_datafil() -> Path:
+    """Egen, isolert datafil for denne testmodulen, skrevet én gang.
+
+    Bruker aldri den committede `backend/adaptere/ki/demoinnhold.json`: den kan endre
+    innhold uavhengig av denne testen (regenerert av `scripts/generer_demoinnhold.py`),
+    og lekkasjetesten skal ikke stille og utilsiktet endre dekning når det skjer.
+    """
+    mappe = Path(tempfile.mkdtemp(prefix="demoinnhold-lekkasjeinvariant-"))
+    sti = mappe / "demoinnhold.json"
+    sti.write_text(json.dumps({
+        "kontraktsversjon": KONTRAKTSVERSJON, "modell": "openai/gpt-6-luna", "generert": "2026-11-22",
+        "kommando": "python scripts/generer_demoinnhold.py --live", "preferanser": {}, "avveininger": {},
+    }, ensure_ascii=False), encoding="utf-8")
+    return sti
+
+
+DEMO_DATAFIL = _demo_datafil()
+
+
+def demo(_transport: RegistrerendeTransport) -> DemoKiAdapter:
+    """Samme fabrikksignatur som `openrouter()`; demo bruker aldri transporten (AD-6)."""
+    return DemoKiAdapter(DEMO_DATAFIL)
+
+
+FABRIKKER = {"openrouter": openrouter, "demo": demo}
+ADAPTERFABRIKKER = [pytest.param(f, id=navn) for navn, f in FABRIKKER.items()]
 
 
 # --- Flyten ------------------------------------------------------------------------
@@ -561,14 +593,26 @@ def lekk(monkeypatch: pytest.MonkeyPatch, lekket_id: int) -> None:
     monkeypatch.setattr(main, "vurder_kandidater", lekkende)
 
 
-@pytest.mark.parametrize("kontroll", INVARIANTKONTROLLER, ids=lambda k: k.__name__)
+# `kontroller_forklaringsforespørslene` kan ikke feile for en adapter uten HTTP (demo):
+# den returnerer tidlig når transporten ikke har fått noen "avveining"-kall, uansett
+# lekkasje. Den kombinasjonen gir derfor ingen mening som negativ kontroll og er
+# utelatt her (se deferred-work.md, oppfølging av PR #37-gjennomgangen).
+NEGATIV_KONTROLL_PARAMS = [
+    pytest.param(navn, kontroll, id=f"{navn}-{kontroll.__name__}")
+    for navn in FABRIKKER
+    for kontroll in INVARIANTKONTROLLER
+    if not (navn == "demo" and kontroll is kontroller_forklaringsforespørslene)
+]
+
+
+@pytest.mark.parametrize(("fabrikk_navn", "kontroll"), NEGATIV_KONTROLL_PARAMS)
 @pytest.mark.parametrize("regel", list(ÉN_PER_REGEL))
 def test_negativ_kontroll_hver_invariantkontroll_feiler_ved_lekkasje(
-    regel: str, kontroll: Callable, engine: Engine, monkeypatch: pytest.MonkeyPatch,
+    regel: str, fabrikk_navn: str, kontroll: Callable, engine: Engine, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     lekket_id = ÉN_PER_REGEL[regel]
     lekk(monkeypatch, lekket_id)
-    flyt = kjør_flyt(openrouter, engine)
+    flyt = kjør_flyt(FABRIKKER[fabrikk_navn], engine)
     # Lekkasjen er virkelig: den utelukkede står som rad og ble sendt til forklaringsporten.
     assert lekket_id in {r["id"] for r in flyt.liste["kandidater"]}
     assert flyt.ki is not None and lekket_id in {k.id for k, _ in flyt.ki.forklaringer}
