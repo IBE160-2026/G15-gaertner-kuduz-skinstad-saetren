@@ -1,6 +1,6 @@
 # Åpne punkter
 
-- [ ] 2026-11-22 [Gjennomgang av PR 36](963-2026-11-22-00-11-29-gjennomgang-pr-36.md) — Dekk ekstra modellmeldinger, endret preferansetekst og utelukkede ID-er i nestede API-felt med negative tester før godkjenning av story 5.6.
+- [x] 2026-11-22 [Gjennomgang av PR 36](963-2026-11-22-00-11-29-gjennomgang-pr-36.md) — Dekk ekstra modellmeldinger, endret preferansetekst og utelukkede ID-er i nestede API-felt med negative tester før godkjenning av story 5.6 (løst 2026-11-22 i `fcc6823`, 792 backendtester bestod).
 
 - [x] 2026-11-20 [Avveining per kandidat](964-2026-11-20-20-11-33-avveining-per-kandidat.md) — Kim valgte kandidatens egen eksakte totalscore som sammenligningspunkt for faktorpoengene (løst 2026-11-20).
 
