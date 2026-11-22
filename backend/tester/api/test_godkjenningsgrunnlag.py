@@ -15,7 +15,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import Engine, event, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
-from adaptere.lagring.modeller import OSLO, AnsattRad, Base, GodkjenningRad, VaktRad
+from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke
+from adaptere.lagring.modeller import OSLO, AnsattRad, Base, BrukerRad, GodkjenningRad, VaktRad
 from adaptere.lagring.preferansetolkning import lagre_resultat
 from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING, fyll_testdata
 from domene.porter.rangering import TolketPreferanse
@@ -71,6 +72,51 @@ def assert_ikke_funnet(respons) -> None:  # type: ignore[no-untyped-def]
     assert feilsvar("ikke_funnet")(respons.json())
     for navn in NAVN.values():
         assert navn not in respons.text
+
+
+@pytest.mark.parametrize("vaktnummer", range(4261, 4266))
+def test_ny_vurdering_og_godkjenning_ved_datagrensen(
+    klient: TestClient, engine: Engine, vaktnummer: int,
+) -> None:
+    """P-08: faktiske seedvakter, uten å utvide KS-04 eller flytte tidene."""
+    logg_inn(klient)
+    with lag_sessionmaker(engine).begin() as session:
+        vakt = session.scalar(select(VaktRad).where(VaktRad.vaktnummer == vaktnummer))
+        assert vakt is not None
+        assert vakt.tildelt_ansatt_id is not None
+        vakttype, starttime, sluttdag, sluttime = (
+            ("dag", 7, 4, 15) if vaktnummer <= 4263 else
+            ("kveld", 15, 4, 23) if vaktnummer == 4264 else ("natt", 23, 5, 7)
+        )
+        assert vakt.vakttype == vakttype
+        assert vakt.start == datetime(2026, 10, 4, starttime, tzinfo=OSLO)
+        assert vakt.slutt == datetime(2026, 10, sluttdag, sluttime, tzinfo=OSLO)
+        vakt.satt_opp_ansatt_id = vakt.tildelt_ansatt_id
+        vakt.tildelt_ansatt_id = None
+        vakt.mangler_bemanning = True
+
+    før = øyeblikksbilde(engine)
+    forventet = {
+        "status": "datafeil", "kode": "mangler_turnusgrunnlag",
+        "datagrense": "2026-10-05T00:00:00+02:00",
+    }
+    for _ in range(2):
+        svar = klient.get(f"/api/vakter/{vaktnummer}/kandidater")
+        assert svar.status_code == 200
+        assert svar.json() == forventet
+    for ansatt_id in (JONAS, METTE):
+        grunnlag = klient.get(sti(vaktnummer, ansatt_id))
+        assert grunnlag.status_code == 200
+        assert grunnlag.json() == forventet
+        with lag_sessionmaker(engine)() as session:
+            bruker_id = session.scalar(select(BrukerRad.id))
+            assert bruker_id is not None
+            merke = grunnlagsmerke(session, bruker_id, vaktnummer, ansatt_id)
+        for sendt_merke in ("0" * 64, merke):
+            godkjenning = klient.post(sti(vaktnummer, ansatt_id), json={"grunnlagsmerke": sendt_merke})
+            assert godkjenning.status_code == 200
+            assert godkjenning.json() == forventet
+    assert øyeblikksbilde(engine) == før
 
 
 # --- Gyldig kandidat -------------------------------------------------------------
