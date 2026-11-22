@@ -24,10 +24,8 @@ Repoet inneholder gruppens applikasjon og dokumentasjon av utvikling, testing og
   – tekniske beslutninger (AD-1 og videre) som holder delene konsistente.
 - [Epics og stories](_bmad-output/planning-artifacts/epics.md) – oppdelingen av arbeidet. Fremdriften
   står i [sprintstatus](_bmad-output/implementation-artifacts/sprint-status.yaml).
-  Når storystatus endres, kjør `python scripts/synkroniser_storyfigur.py` fra
-  prosjektroten og ta med den oppdaterte [figuren](docs/figurer/epics-stories-avhengigheter.svg)
-  i samme commit. `python scripts/synkroniser_storyfigur.py --sjekk` kontrollerer
-  uten å endre filen; CI kjører samme kontroll.
+  [Avhengighetsfiguren](docs/figurer/epics-stories-avhengigheter.svg) oppdateres manuelt
+  når storystatus endres.
 - [Beslutningsreferat](docs/beslutninger/avklaringspunkter.md) – gruppevedtak (AV-, K-, OP- og KS-punkter)
   fra møtet 2026-11-02 og senere oppdateringer.
 
