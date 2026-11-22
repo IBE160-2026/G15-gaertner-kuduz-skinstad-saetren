@@ -10,6 +10,7 @@ bytter ut, slik at ingen test bruker nettverk, nøkkel eller faktisk venting.
 import http.client
 import json
 import logging
+import ssl
 import threading
 import time
 from collections.abc import Callable, Mapping
@@ -33,17 +34,18 @@ STANDARD_MODELL = "openai/gpt-6-luna"
 # AD-7: én felles begrenser for begge KI-funksjonene.
 PER_MINUTT = 18
 SAMTIDIGE = 5
-# FORSLAG, valgt av Mithad 2026-11-16, ikke gruppevedtak (P-05/OP-03, PRD §8):
+# AV-19 (vedtatt 2026-11-16, verdiene er Mithads forslag i PR #30; P-05/OP-03):
 # ved 5xx og nettverksfeil 3 nye forsøk etter 2, 4 og 8 s. 429 teller ikke mot de
 # tre, men all venting teller mot et budsjett på 90 s per tekst, målt fra første
-# forsøk på å få plass i begrenseren. Tidsavbrudd per kall er min(45 s, gjenstående).
+# forsøk på å få plass i begrenseren. Tidsavbrudd per kall er min(45 s, gjenstående);
+# de 45 s er ikke en del av AV-19.
 VENTETRINN_S = (2.0, 4.0, 8.0)
 TIDSBUDSJETT_S = 90.0
 MAKS_TIDSAVBRUDD_S = 45.0
-# 429 uten lesbar `X-RateLimit-Reset`: vent ett helt vindu (OpenRouter teller per
-# minutt, se docs/ki-logg/2026-10-16-robusthet-luna.md). Også et forslag.
+# AV-19: 429 uten lesbar `X-RateLimit-Reset` venter ett helt vindu (OpenRouter teller
+# per minutt, se docs/ki-logg/2026-10-16-robusthet-luna.md).
 VENTING_429_UTEN_RESET_S = 60.0
-# Forslag: minst 1 s venting ved 429, også når reset er passert eller oppgitt i
+# AV-19: minst 1 s venting ved 429, også når reset er passert eller oppgitt i
 # sekunder, så gjentatte kall ikke bruker opp det felles vinduet på 18 per minutt.
 MIN_VENTING_429_S = 1.0
 MAKS_TOKENS = 600
@@ -125,7 +127,25 @@ def urllib_transport(url: str, kropp: bytes, headere: Mapping[str, str], tidsavb
         feil.close()
         return HttpSvar(feil.code, headere_ut, b"")
     except (URLError, TimeoutError, OSError, http.client.HTTPException) as feil:
-        raise Nettverksfeil(type(feil).__name__) from None
+        raise Nettverksfeil(nettverksårsak(feil)) from None
+
+
+def nettverksårsak(feil: BaseException) -> str:
+    """Feiltypene og eventuell SSL-kode, for eksempel
+    `URLError/SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED`.
+
+    Bare typenavn og OpenSSLs faste kode, aldri feilteksten, så ingenting fra
+    forespørselen kan havne i loggen.
+    """
+    deler = [type(feil).__name__]
+    grunn = feil.reason if isinstance(feil, URLError) else None
+    if isinstance(grunn, BaseException):
+        deler.append(type(grunn).__name__)
+        feil = grunn
+    kode = getattr(feil, "reason", None) if isinstance(feil, ssl.SSLError) else None
+    if isinstance(kode, str) and kode.isascii() and kode.isidentifier():
+        deler.append(kode)
+    return "/".join(deler)
 
 
 def skjema() -> dict:
@@ -301,7 +321,9 @@ class OpenRouterKiAdapter:
                             svar = self._transport_med_frist(kropp, headere, frist, plass)
                         else:
                             svar = self._transport(URL, kropp, headere, min(MAKS_TIDSAVBRUDD_S, gjenstår))
-                    except Nettverksfeil:
+                    except Nettverksfeil as feil:
+                        # Uten dette ser loggen bare `nettverk` (macOS-sertifikatfeilen 2026-11-16).
+                        logger.warning("Nettverksfeil mot OpenRouter: %s", feil)
                         svar = None
             except TidsbudsjettOpbrukt:
                 return Tolkefeil("tidsbudsjett")

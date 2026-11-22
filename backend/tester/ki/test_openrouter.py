@@ -6,6 +6,8 @@ ingen faktisk venting. Klokka går bare når `sov` kalles eller transporten flyt
 
 import io
 import json
+import logging
+import ssl
 from collections.abc import Callable, Mapping
 from contextlib import ExitStack
 from dataclasses import dataclass, field
@@ -430,3 +432,42 @@ def test_transport_nettverksfeil(monkeypatch: pytest.MonkeyPatch, feil: Exceptio
     falsk_opener(monkeypatch, feil)
     with pytest.raises(Nettverksfeil):
         send()
+
+
+def sertifikatfeil(kode: object = "CERTIFICATE_VERIFY_FAILED") -> ssl.SSLCertVerificationError:
+    # Slik `urllib` på macOS uten sertifikatlager feilet 2026-11-16. Fra Python settes
+    # ikke `reason`, så testen setter den som OpenSSL ville gjort.
+    feil = ssl.SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] Bearer hemmelig")
+    feil.reason = kode
+    return feil
+
+
+@pytest.mark.parametrize(("feil", "årsak"), [
+    (URLError(sertifikatfeil()), "URLError/SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED"),
+    (sertifikatfeil(), "SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED"),
+    (URLError(ConnectionRefusedError(61, "Bearer hemmelig")), "URLError/ConnectionRefusedError"),
+    (URLError("Bearer hemmelig"), "URLError"),
+    (TimeoutError("Bearer hemmelig"), "TimeoutError"),
+    (sertifikatfeil("ikke en kode: Bearer hemmelig"), "SSLCertVerificationError"),
+    (sertifikatfeil(None), "SSLCertVerificationError"),
+])
+def test_nettverksfeil_viser_årsaken_uten_feiltekst(
+    monkeypatch: pytest.MonkeyPatch, feil: Exception, årsak: str,
+) -> None:
+    falsk_opener(monkeypatch, feil)
+    with pytest.raises(Nettverksfeil) as fanget:
+        send()
+    assert str(fanget.value) == årsak
+    assert fanget.value.__cause__ is None and fanget.value.__suppress_context__
+
+
+def test_nettverksfeil_logges_som_warning_uten_nøkkel(caplog: pytest.LogCaptureFixture) -> None:
+    klokke = FalskKlokke()
+    transport = FalskTransport([Nettverksfeil("URLError/SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED"), ok()])
+    with caplog.at_level(logging.WARNING, logger="adaptere.ki.openrouter"):
+        assert isinstance(adapter(klokke, transport).tolk(TEKST_4), TolketPreferanse)
+    advarsler = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert [r.getMessage() for r in advarsler] == [
+        "Nettverksfeil mot OpenRouter: URLError/SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED",
+    ]
+    assert NØKKEL not in caplog.text and TEKST_4 not in caplog.text

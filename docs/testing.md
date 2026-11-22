@@ -100,6 +100,11 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   miljøet i hver test.
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
   import-linter-kontrakten som forbyr `domene` å importere `adaptere` (AD-1, AD-2).
+- **Lekkasjeinvarianten ved kjøring** ([`test_lekkasjeinvariant.py`](../backend/tester/api/test_lekkasjeinvariant.py),
+  story 5.6): hele API-flyten for #4127 med ekte `OpenRouterKiAdapter` og registrerende
+  falsk transport. Ingen utelukket ID eller navn når forklaringsporten, og ingen utelukket
+  står i kandidatrader, godkjenningsgrunnlag eller avveiningssvar (NFR2, SM-2). En negativ
+  kontroll lar én utelukket per hard regel slippe gjennom og viser at hver kontroll blir rød.
 
 ### Frontend: ren logikk (`node:test`)
 
@@ -357,3 +362,12 @@ og 46 komponenttester. Backend ble kjørt med Python 3.12.14 og pakkene i `.venv
 Med `pytest tester/ki/test_avveining.py tester/api/test_avveining.py` fra `backend/` kan du kjøre faktakontrollen og forklaringsruten separat. KI-testene bruker falsk klokke og transport. API-testene bruker ekte rangering og midlertidig database. De sjekker blant annet at rute, kandidatrad og godkjenningsgrunnlag har samme kandidatbundne merke, og at ukjente og utelukkede kandidater gir samme 404 før et modellkall.
 
 For å kontrollere den smale tabellen, åpne vakt #4127 i et vindu på 680 × 700 px med loddrett rullefelt. Rull tabellen helt til høyre, og kontroller at hele ulempekolonnen vises. Bruk Enter på «Vis begrunnelse» for neste kandidat. Begge panelene skal stå åpne. Velg kandidaten og kontroller nøkkeltall og kildelinje i kandidatkortet. [Resultater med både reservetekst og lokal testtransport](ki-logg/2026-11-20-avveining-per-kandidat.md#nettleserkontroll).
+
+## Story 5.6 – utelukkede kandidater når aldri KI-laget
+
+Med `pytest tester/api/test_lekkasjeinvariant.py -v` fra `backend/` kjøres
+kjøretidstesten av lekkasjeinvarianten alene. Den bruker ingen nettverk eller nøkkel,
+og en falsk klokke. Flyttesten og tolketesten er parametrisert over `ADAPTERFABRIKKER`,
+der story 5.7 legger til `DemoKiAdapter` (AD-6). Hva testen beviser og ikke beviser, står
+i [KI-loggen](ki-logg/2026-11-21-lekkasjeinvariant.md). Storyen endrer ikke UI, så
+OP-16-sjekklisten gjelder ikke.

@@ -41,7 +41,7 @@ text{font-family:Arial,sans-serif;fill:#172b3a}.title{font-size:34px;font-weight
 <g><rect x="665" y="1600" width="230" height="58" rx="7" class="done"/><text x="680" y="1624">5.3 Avveining</text><text x="680" y="1644" class="label">Etter rangert kandidat 4.4</text></g>
 <g><rect x="935" y="1600" width="250" height="58" rx="7" class="todo"/><text x="950" y="1624">5.4 KI-reservetekst</text><text x="950" y="1644" class="label">Sammen med 5.3</text></g>
 <g><rect x="1225" y="1600" width="250" height="58" rx="7" class="todo"/><text x="1240" y="1624">5.5 Progressiv visning</text><text x="1240" y="1644" class="label">Avveining pågår</text></g>
-<g><rect x="1515" y="1600" width="210" height="58" rx="7" class="todo"/><text x="1530" y="1624">5.6 Lekkasjetest</text><text x="1530" y="1644" class="label">KI-grense</text></g>
+<g><rect x="1515" y="1600" width="210" height="58" rx="7" class="done"/><text x="1530" y="1624">5.6 Lekkasjetest</text><text x="1530" y="1644" class="label">KI-grense</text></g>
 <g><rect x="75" y="1720" width="250" height="58" rx="7" class="todo"/><text x="90" y="1744">5.7 Demo-modus</text><text x="90" y="1764" class="label">Kan parallelliseres</text></g>
 <g><rect x="365" y="1720" width="250" height="58" rx="7" class="todo"/><text x="380" y="1744">5.8 Sensor / live KI</text><text x="380" y="1764" class="label">Levering av nøkkel er åpen</text></g>
 <g><rect x="655" y="1720" width="300" height="58" rx="7" class="todo"/><text x="670" y="1744">5.9 Redigere preferanser</text><text x="670" y="1764" class="label">Etter fungerende kjerneflyt (P-10B)</text></g>
