@@ -42,6 +42,7 @@ export default function Avveiningspanel({ vaktnummer, kandidat, merke }: {
   ];
   return <section className="avveiningspanel" aria-label={t.tittel(kandidat.navn)}>
     <h3 className="overskrift">{t.tittel(kandidat.navn)}</h3>
+    <div role="status" aria-live="polite">{svar === "reserve" && <p>{t.reservetekst}</p>}</div>
     <p>{t.kvalifisert}</p>
     <p className="meta">{t.sammenligning(énDesimal.format(kandidat.totalscore))}</p>
     <dl>{fakta.map(([faktor, verdi]) => {
@@ -56,7 +57,8 @@ export default function Avveiningspanel({ vaktnummer, kandidat, merke }: {
     })}</dl>
     <div aria-live="polite">
       {typeof svar === "object" && svar.paastander.map((tekst) => <p key={tekst}>{tekst}</p>)}
-      <p className="meta">{svar === "laster" ? t.laster : svar === "reserve" ? t.reserve : t.kilde(svar.modell)}</p>
+      {svar !== "reserve" && <p className="meta">{svar === "laster" ? t.laster : t.kilde(svar.modell)}</p>}
     </div>
+    {svar === "reserve" && <p className="meta">{t.reserve}</p>}
   </section>;
 }

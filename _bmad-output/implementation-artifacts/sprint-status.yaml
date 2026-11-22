@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-22-2026 11:07
+last_updated: 11-22-2026 11:10
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -72,7 +72,7 @@ development_status:
   5-1-tolke-tekstbaserte-ansattpreferanser-med-ki: done
   5-2-rangeringen-bruker-tolkede-preferanser: done
   5-3-avveining-per-kandidat: done
-  5-4-reservetekst-når-ki-forklaringen-feiler: review # Eksisterende PR #37, head be59221, kontrollert på GitHub 22.11; ikke levert på main ennå
+  5-4-reservetekst-når-ki-forklaringen-feiler: done
   5-5-rader-vises-før-forklaringene-er-ferdige: backlog
   5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: done # PR #36 merget 22.11, 1e1a57b; demoutvidelsen følger 5.7
   5-7-demo-modus-uten-api-nøkkel: backlog

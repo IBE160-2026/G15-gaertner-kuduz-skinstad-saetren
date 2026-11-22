@@ -12,10 +12,11 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Stacken er React/TypeScript med Vite, Python/FastAPI og SQLite via SQLAlchemy.
 KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.5, 4.7, 5.1 og 5.2 er ferdige: skjelett, lagring med fiktive
+Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.5, 4.7, 5.1–5.4 og 5.6 er ferdige: skjelett, lagring med fiktive
 testdata, innlogging med designtokens og appskall, beskyttede flater, vaktoversikt og
 valg av vakt, godkjenning og bemanning av vakten, Ekskludert-boksen, rangeringen med
-rangeringstabell, avviksnotatet på godkjenningsflaten og tolkning av preferansetekster.
+rangeringstabell, avviksnotatet på godkjenningsflaten, tolkning av preferansetekster,
+faktakontrollert avveining per kandidat, reservetekst når KI-forklaringen feiler og testen av at utelukkede aldri når KI-laget.
 Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
 kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,

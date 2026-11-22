@@ -882,6 +882,7 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Hvem:** Johannes W. Gaertner bygget story 4.6 og rettet funnet Mithad Kuduz postet 2026-11-19 (`a8fbc0a`: ulempekolonnen kunne havne delvis under de faste kolonnene ved 680 px/16 px når siden trenger loddrett scroll). Mithad reverifiserte uavhengig og godkjente/merget PR #32.
 - **Kvalitetssikring:** Mithad kjørte den oppdaterte nettleserkontrollen selv i en egen headless Chrome-instans mot en ny scratch-database; alle kontroller bestod, med loddrett rullefelt bekreftet til stede. Build, 52 modultester og 48 komponenttester bestod. Se `.logs/mithad-kuduz/980-2026-11-19-21-50-00-gjennomgang-pr-32.md`.
 - **Status:** Story 4.6 er **ikke** satt til `done`. Johannes har to egne åpne punkter i sin `issues.md` (en kort manuell kontroll i et vanlig, ikke-headless Chrome-vindu, og en designavklaring om totalscore over to linjer). `sprint-status.yaml` står fortsatt som `review`.
+- **Senere 2026-11-22:** Johannes avklarte designpunktet: det er greit at totalscoren brytes over to linjer når det trengs, og det kan rettes senere hvis det viser seg å bli feil. Den manuelle kontrollen med rullefelt gjenstår, og 4.6 står fortsatt som `review`.
 - **Ikke endret:** Andre AV-, K-, OP- og KS-punkter.
 
 ### 2026-11-20 – Story 5.2 (OP-18)

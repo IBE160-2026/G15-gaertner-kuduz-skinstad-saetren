@@ -3,10 +3,12 @@ import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import { nySesjonsgenerasjon, type RangertKandidat } from "../../src/api";
+import App from "../../src/App";
 import { Kandidatliste } from "../../src/komponenter/Kandidatflate";
 import Godkjenningsflate from "../../src/komponenter/Godkjenningsflate";
+import { kandidatsti } from "../../src/navigasjon";
 import { TEKSTER } from "../../src/tekster";
-import { GODKJENNING_JONAS, JONAS, METTE, TO_GYLDIGE, falskFetch, feil, json, kallTil, ok, type FalskFetch } from "./hjelpere";
+import { GODKJENNING_JONAS, JONAS, MEG, METTE, TO_GYLDIGE, VAKT_4127, VAKTOVERSIKT, falskFetch, feil, json, kallTil, ok, type FalskFetch } from "./hjelpere";
 
 const t = TEKSTER.kandidatflate.avveining;
 const g = TEKSTER.godkjenning;
@@ -103,6 +105,67 @@ test("ny preferansetolkning bytter nr. 1 og forkaster ventende tekst fra tidlige
   const panel = screen.getByRole("region", { name: t.tittel(METTE.navn) });
   expect(within(panel).getByText(/Ønsker flere vakter · 100,0 poeng/)).toBeTruthy();
   expect(screen.getAllByText(t.kilde(modell))).toHaveLength(1);
+});
+
+test("én forklaring feiler, den andre lykkes og kandidaten med reservetekst kan godkjennes", async () => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const reserve = { status: "avveining_feilet", vaktnummer: 4127, kandidat_id: JONAS.id, grunnlagsmerke: JONAS.grunnlagsmerke };
+  const tekst = "Ulempescoren er lavere enn hos Jonas Bakke før avrunding (40,0 mot 86,7).";
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, METTE] }),
+    [forklaring(JONAS)]: ok(reserve), [forklaring(METTE)]: ok(live(METTE, tekst)),
+    [grunnlag]: ok(GODKJENNING_JONAS), [`POST ${grunnlag}`]: ok({ status: "godkjent" }),
+    "/api/vaktoversikt": ok(VAKTOVERSIKT),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<App />);
+  await screen.findByText(t.laster);
+  const jonas = within(screen.getByRole("region", { name: t.tittel(JONAS.navn) }));
+  const statusfelt = jonas.getByRole("status");
+  expect(statusfelt.getAttribute("aria-live")).toBe("polite");
+  expect(statusfelt.textContent).toBe("");
+  expect(screen.queryByText(t.reservetekst)).toBeNull();
+  expect(screen.queryByText(t.reserve)).toBeNull();
+
+  const bruker = userEvent.setup();
+  await bruker.click(screen.getByRole("button", { name: t.visEtikett(METTE.navn) }));
+  expect(await screen.findByText(tekst)).toBeTruthy();
+  await fullfør(reserve);
+  expect(within(screen.getByRole("region", { name: t.tittel(JONAS.navn) })).getByRole("status")).toBe(statusfelt);
+  expect(within(statusfelt).getByText(t.reservetekst)).toBeTruthy();
+
+  async function kontrollerReserve() {
+    const panel = within(await screen.findByRole("region", { name: t.tittel(JONAS.navn) }));
+    const reservetekst = await panel.findByText(t.reservetekst);
+    expect(panel.getByRole("status").contains(reservetekst)).toBe(true);
+    expect(panel.getByText(t.reserve).closest("[aria-live], [role=status]")).toBeNull();
+    expect(panel.queryByText(t.laster)).toBeNull();
+    expect(panel.queryByText(t.kilde(modell))).toBeNull();
+    expect(panel.queryByText(tekst)).toBeNull();
+    for (const [faktor, verdi] of [
+      [t.kostnad, /2\s?960,00/],
+      [t.timebelastning, /16:00 t:min i uka \(44,4 %\)/],
+      [t.ulempe, /40 ulempepoeng · Kveld 4 t · helg 15 t · natt 2 t/],
+      [t.preferanse, /Preferanse venter på tolkning · 50,0 poeng/],
+    ] as const) {
+      const etikett = panel.getByText(faktor, { selector: "dt" });
+      expect(reservetekst.compareDocumentPosition(etikett) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(etikett.nextElementSibling?.textContent).toMatch(verdi);
+    }
+  }
+  await kontrollerReserve();
+  const mette = within(screen.getByRole("region", { name: t.tittel(METTE.navn) }));
+  expect(mette.getByText(t.kilde(modell))).toBeTruthy();
+  expect(mette.getByText(tekst)).toBeTruthy();
+  expect(mette.queryByText(t.reservetekst)).toBeNull();
+  expect(mette.queryByText(t.reserve)).toBeNull();
+  await bruker.click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  await kontrollerReserve();
+  await bruker.click(screen.getByRole("button", { name: g.godkjenn }));
+  expect(await screen.findByText(TEKSTER.vaktvalg.godkjent(JONAS.navn, 4127))).toBeTruthy();
+  const poster = fetch.mock.calls.filter(([sti, init]) => String(sti) === grunnlag && init?.method === "POST");
+  expect(poster.map(([, init]) => JSON.parse(String(init?.body)))).toEqual([{ grunnlagsmerke: JONAS.grunnlagsmerke }]);
 });
 
 test("409 henter nytt grunnlag og ny avveining, og neste POST bruker nettopp dette merket", async () => {
