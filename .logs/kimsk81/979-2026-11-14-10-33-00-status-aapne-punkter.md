@@ -58,3 +58,26 @@ De 15 gjenværende avkryssingene er oppdatert i [issues.md](issues.md).
 - Fire gjelder produktbevis og levering. Det gjenstår lokal problemvalidering, P-13-prøven med designvurdering, sammenligning med godkjent proposal ved innlevering og gruppas valg av sensornøkkel, betaling og kreditt.
 - Fire gjelder gruppevalg og dokumentasjon. Det gjenstår sluttdato for nattevakter, generell versjonslåsing, presisering av «åtte timer» i AV-02 og samordning av epic 4-konteksten.
 - Tre gjelder KI og datagrunnlag. Disse er betinget støtte for flere serverprosesser og A–B–A ved tekstredigering, om 5.9 skal leveres eller utsettes, og restkontrollene for P-06/P-08. KS-03s 16 tidskategoriruter og #4127-fasiten er allerede dekket.
+
+## 2026-11-22 kl. 10:41 — Kimsk81
+
+### Oppgave
+
+Bruk BMAD til å prioritere handlinger som kan lukke flere punkter, og gi konklusjonen som en instruks til en ny chat.
+
+### Plan
+
+- Bruk bmad-help, den installerte katalogen, sammenslått konfigurasjon, punktlisten, sprintstatus og OP-16-sjekklisten til å velge passende arbeidsflyter.
+- Prioriter kontroller og dokumentrettelser som kan utføres nå, og beskriv hvilke rester som trenger testperson eller gruppevalg.
+
+### Resultat
+
+Anbefalte først nettleserkontroll av godkjenningsflyt, Vaktvalg, begge varselmerker og 4.6, deretter dokumentrettelser i epic 4-kontekst og AV-02, og samlet kontroll av P-08 og KI-språk. OP-16 sier at automatisert dekkede funksjonsflyter slipper samme manuelle kontroll. Ny chat bør derfor vurdere om de gamle funksjonstestkravene kan avsluttes med eksisterende bevis, samtidig som layout, kontrast og synlig fokus undersøkes i nettleser.
+
+Instruksen peker til bmad-help [BH], Sprint Status [SS] med handling status, Walkthrough [WT] for menneskelig gjennomgang og Build [BD] ved nødvendige kode- og testendringer. Build følger prosjektets krav om underagenter. Gruppevalg om nattevaktdato, versjonslåser, 5.9 og sensorbetaling må avklares med brukeren. P-13 krever en faktisk testperson og kan kombineres med innsamling av lokal problemvalidering. E-02 kan forberedes nå og sluttføres ved innlevering. Støtte for flere serverprosesser er fortsatt betinget av fremtidig driftsbehov.
+
+BMAD-konfigurasjonen ble løst med backendens Python etter at uv ble stoppet av tilgang til sin cache. Katalogen og eksisterende prosjektbevis ble lest. Ingen nye apptester ble kjørt i denne planleggingsoppfølgingen.
+
+### Åpne punkter
+
+De eksisterende 15 punktene i issues.md videreføres. Ingen nye punkter.
