@@ -105,3 +105,7 @@ Tre underagenter på Opus gjennomgikk diffen uavhengig: Blind Hunter (12 funn), 
 | Grensetilfeller 5 | false | Ingen ansatt i testdataene har et navn som inneholder navnet til en utelukket (kontrollert med skript). |
 
 Etter rettingene bestod `test_lekkasjeinvariant.py` 21 av 21, og hele backendsamlingen 738 av 738.
+
+### Oppfølging av PR #36, 22. november 2026
+
+Gjennomgangen av `e59adf4` viste at en ekstra modellmelding, et tillegg i den sendte preferanseteksten og en nestet referanse-ID i detaljsvarene kunne passere kontrollene. Alle tre funn ble rettet i testmodulen. Den utvidede kontrollen kjøres også med endret svarskjema, tekstkodet ID og en ID føyd til en avveiningssetning. [Forsøk før og etter retting](../../docs/ki-logg/2026-11-22-oppfolging-pr-36.md).

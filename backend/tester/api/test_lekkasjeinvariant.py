@@ -22,20 +22,25 @@ venting.
 import json
 from collections import Counter
 from collections.abc import Callable, Iterator
+from copy import copy, deepcopy
 from dataclasses import dataclass, field, replace
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine
+from sqlalchemy import Engine, update
 
 from adaptere.api import main
 from adaptere.api.main import lag_app
+from adaptere.ki import avveining
 from adaptere.ki.openrouter import PROMPT, URL, HttpSvar, OpenRouterKiAdapter, Tolkefeil
-from adaptere.lagring.testdata import ANSATTE, FASIT, PREFERANSER
+from adaptere.ki.openrouter import skjema as preferanseskjema
+from adaptere.lagring.database import lag_engine, lag_sessionmaker, opprett_skjema
+from adaptere.lagring.modeller import AnsattRad
+from adaptere.lagring.testdata import ANSATTE, FASIT, PREFERANSER, fyll_testdata, legg_til_turnusansvarlig
 from domene.porter.rangering import RangertKandidat, TolketPreferanse
 from domene.regelmotor.ulempebelastning import beregn_ulempebelastning
 from domene.typer import Datafeil
-from tester.api.test_innlogging import NOKKEL, engine, logg_inn  # noqa: F401
+from tester.api.test_innlogging import NOKKEL, PASSORD, engine, logg_inn  # noqa: F401
 from tester.api.test_kandidater import ID_VED_NAVN, KOMPETANSE, UTFALL_TIL_ÅRSAK
 from tester.ki.test_openrouter import FalskKlokke, innhold
 
@@ -186,6 +191,7 @@ def kandidat_ider(verdi: object, nøkler: tuple[str, ...] = ("kandidat_id", "ref
     if isinstance(verdi, dict):
         for k, v in verdi.items():
             if k in nøkler:
+                assert type(v) is int, f"{k} må være en heltalls-ID, fikk {v!r}"
                 yield v
             yield from kandidat_ider(v, nøkler)
     elif isinstance(verdi, list):
@@ -195,6 +201,65 @@ def kandidat_ider(verdi: object, nøkler: tuple[str, ...] = ("kandidat_id", "ref
 
 def nevner_utelukket(verdi: object) -> set[str]:
     return {navn for s in strenger(verdi) for navn in UTELUKKEDE.values() if navn in s}
+
+
+def brukerdata(forespørsel: dict, systemtekst: str, portnavn: str, svarskjema: dict) -> dict:
+    assert set(forespørsel) == {"model", "max_tokens", "reasoning", "provider", "messages", "response_format"}
+    assert forespørsel["response_format"] == {
+        "type": "json_schema", "json_schema": {"name": portnavn, "strict": True, "schema": svarskjema},
+    }
+    meldinger = forespørsel["messages"]
+    assert len(meldinger) == 2
+    system, bruker = meldinger
+    assert system == {"role": "system", "content": systemtekst}
+    assert set(bruker) == {"role", "content"} and bruker["role"] == "user"
+    assert isinstance(bruker["content"], str)
+
+    def unike_felt(par: list[tuple[str, object]]) -> dict:
+        objekt = dict(par)
+        assert len(objekt) == len(par), "duplikatfelt i brukermeldingen"
+        return objekt
+
+    data = json.loads(bruker["content"], object_pairs_hook=unike_felt)
+    assert isinstance(data, dict)
+    return data
+
+
+def kontroller_tolking(flyt: Flyt, *, med_http: bool) -> None:
+    assert flyt.ki is not None and flyt.transport is not None
+    forventet = Counter(PREFERANSE_VED_ID.values())
+    assert Counter(flyt.ki.tolkninger) == forventet
+    sendt: Counter[str] = Counter()
+    for forespørsel in flyt.transport.til("preferanse"):
+        data = brukerdata(forespørsel, PROMPT, "preferanse", preferanseskjema())
+        assert set(data) == {"tekst"} and isinstance(data["tekst"], str)
+        assert not list(kandidat_ider(forespørsel))
+        sendt[data["tekst"]] += 1
+    assert sendt == (forventet if med_http else Counter())
+
+
+def poenggrunnlag(rad: RangertKandidat | None) -> dict | None:
+    if rad is None:
+        return None
+    return {"kandidat_id": rad.id, "plass": rad.plass,
+            "poeng": {f: float(getattr(rad.eksakte_poeng, f))
+                      for f in ("kostnad", "timebelastning", "ulempe", "preferanse", "total")}}
+
+
+def kontroller_påstand(påstand: dict, kandidat: RangertKandidat, referanse: RangertKandidat | None) -> None:
+    # Påstandenes felt og verdier må være avgrenset selv om adapterens påstandsgenerator endres.
+    assert påstand["kandidat_id"] == kandidat.id
+    faktorer = {"kostnad", "timebelastning", "ulempe", "preferanse"}
+    if påstand["type"] == "regler":
+        assert set(påstand) == {"type", "kandidat_id"}
+    elif påstand["type"] == "egen":
+        assert set(påstand) == {"type", "kandidat_id", "faktor", "retning"}
+        assert påstand["faktor"] in faktorer and påstand["retning"] in {"opp", "ned"}
+    else:
+        assert påstand["type"] == "sammenligning" and referanse is not None
+        assert set(påstand) == {"type", "kandidat_id", "referanse_id", "faktor", "retning"}
+        assert påstand["referanse_id"] == referanse.id
+        assert påstand["faktor"] in faktorer | {"total"} and påstand["retning"] in {"høyere", "lavere", "lik"}
 
 
 def kontroller_forklaringsporten(flyt: Flyt) -> None:
@@ -213,13 +278,23 @@ def kontroller_forklaringsforespørslene(flyt: Flyt) -> None:
     En adapter uten HTTP (demo, story 5.7) sender ingen forespørsler, og da dekker
     `kontroller_forklaringsporten` grensen alene.
     """
-    assert flyt.transport is not None
-    for forespørsel in flyt.transport.til("avveining"):
-        data = json.loads(forespørsel["messages"][1]["content"])
+    assert flyt.transport is not None and flyt.ki is not None
+    forespørsler = flyt.transport.til("avveining")
+    if not forespørsler:
+        return
+    assert len(forespørsler) == len(flyt.ki.forklaringer)
+    for forespørsel, (kandidat, referanse) in zip(forespørsler, flyt.ki.forklaringer, strict=True):
+        data = brukerdata(forespørsel, avveining.PROMPT, "avveining", avveining.skjema())
         ider = set(kandidat_ider(data))
         assert ider and not ider & UTELUKKEDE.keys(), \
             f"utelukket ID i forklaringsforespørselen: {ider & UTELUKKEDE.keys()}"
         assert not nevner_utelukket(forespørsel)
+        assert set(data) == {"kandidat", "referanse", "tillatte"}
+        assert data["kandidat"] == poenggrunnlag(kandidat)
+        assert data["referanse"] == poenggrunnlag(referanse)
+        assert isinstance(data["tillatte"], list) and data["tillatte"]
+        for påstand in data["tillatte"]:
+            kontroller_påstand(påstand, kandidat, referanse)
 
 
 def kontroller_api_svar(flyt: Flyt) -> None:
@@ -230,16 +305,28 @@ def kontroller_api_svar(flyt: Flyt) -> None:
     # Hele listesvaret unntatt Ekskludert-boksen, så også et nytt toppfelt fanges.
     uten_boks = {k: v for k, v in flyt.liste.items() if k != "utelukkelser"}
     assert not nevner_utelukket(uten_boks)
-    assert not set(kandidat_ider(uten_boks, ("id", "kandidat_id", "referanse_id"))) & UTELUKKEDE.keys()
+    idfelt = ("id", "kandidat_id", "referanse_id")
+    assert not set(kandidat_ider(uten_boks, idfelt)) & UTELUKKEDE.keys()
     for id, grunnlag in flyt.grunnlag.items():
         assert grunnlag["status"] == "ok" and grunnlag["kandidat"]["id"] == id and id in GYLDIGE
         if grunnlag["topprangert"] is not None:
             assert grunnlag["topprangert"]["id"] in GYLDIGE
         assert not nevner_utelukket(grunnlag)
+        assert not set(kandidat_ider(grunnlag, idfelt)) & UTELUKKEDE.keys()
     assert flyt.avveininger
     for id, avv in flyt.avveininger.items():
         assert avv["kandidat_id"] == id and id in GYLDIGE
         assert not nevner_utelukket(avv)
+        assert not set(kandidat_ider(avv, idfelt)) & UTELUKKEDE.keys()
+    # Live-ruten skal bare vise faktakontrollert tekst for det aktuelle kandidatparet.
+    # Tall i lovlige poengsummer kan være identiske med en utelukket kandidats ID.
+    assert flyt.transport is not None and flyt.ki is not None
+    if flyt.transport.til("avveining"):
+        for kandidat, referanse in flyt.ki.forklaringer:
+            svar = flyt.avveininger[kandidat.id]
+            if svar["status"] == "ok":
+                tillatte = {p.tekst for p in avveining.tillatte_påstander(kandidat, referanse)}
+                assert set(svar["paastander"]) <= tillatte
 
 
 def kontroller_direkte_oppslag(flyt: Flyt) -> None:
@@ -296,19 +383,126 @@ def test_utelukkede_når_aldri_forklaringsporten_gjennom_hele_flyten(fabrikk: Ca
 @pytest.mark.parametrize("fabrikk", ADAPTERFABRIKKER)
 def test_tolkingsporten_får_bare_tekst_også_fra_senere_utelukkede(fabrikk: Callable, engine: Engine) -> None:
     flyt = kjør_flyt(fabrikk, engine)
-    ki, transport = flyt.ki, flyt.transport
-    assert ki is not None and transport is not None
-    # Tillatt etter AD-2: tolkingen skjer før filtreringen.
-    assert set(ki.tolkninger) >= {PREFERANSE_VED_ID[i] for i in UTELUKKEDE.keys() & PREFERANSE_VED_ID.keys()}
-    for forespørsel in transport.til("preferanse"):
-        assert forespørsel["messages"][0]["content"] == PROMPT
-        data = json.loads(forespørsel["messages"][1]["content"])
-        assert set(data) == {"tekst"} and isinstance(data["tekst"], str)
-        assert not list(kandidat_ider(forespørsel))
-        # Ingen vaktstatus eller kandidatfelt i brukermeldingen. Systemprompten er dekket over.
-        kropp = json.dumps(forespørsel["messages"][1:], ensure_ascii=False)
-        for forbudt in ("kandidat", "utelukk", "gyldig", "vaktnummer", str(VAKT)):
-            assert forbudt not in kropp
+    kontroller_tolking(flyt, med_http=fabrikk is openrouter)
+
+
+@pytest.fixture(scope="module")
+def registrert_flyt(tmp_path_factory: pytest.TempPathFactory) -> Flyt:
+    testmotor = lag_engine(tmp_path_factory.mktemp("lekkasjekontroll") / "api.db")
+    try:
+        opprett_skjema(testmotor)
+        with lag_sessionmaker(testmotor).begin() as session:
+            fyll_testdata(session)
+            legg_til_turnusansvarlig(session, PASSORD, "tilfeldig")
+        return kjør_flyt(openrouter, testmotor)
+    finally:
+        testmotor.dispose()
+
+
+@pytest.fixture
+def flyt(registrert_flyt: Flyt) -> Flyt:
+    """Uavhengige kopier av observasjonene som endres i de isolerte kontrollene."""
+    assert registrert_flyt.ki is not None and registrert_flyt.transport is not None
+    ki = copy(registrert_flyt.ki)
+    ki.tolkninger = ki.tolkninger.copy()
+    transport = copy(registrert_flyt.transport)
+    transport.forespørsler = deepcopy(transport.forespørsler)
+    return replace(registrert_flyt, ki=ki, transport=transport,
+                   grunnlag=deepcopy(registrert_flyt.grunnlag), avveininger=deepcopy(registrert_flyt.avveininger))
+
+
+@pytest.mark.parametrize("portnavn", ["avveining", "preferanse"])
+@pytest.mark.parametrize("avvik", ["systemtekst", "systemrolle", "brukerrolle", "ekstra_melding",
+                                   "meldingsfelt", "ekstra_forespørselsfelt", "skjemabeskrivelse"])
+def test_meldingsavvik_avvises(portnavn: str, avvik: str, flyt: Flyt) -> None:
+    assert flyt.transport is not None
+    forespørsel = flyt.transport.til(portnavn)[0]
+    meldinger = forespørsel["messages"]
+    lekket = str(next(iter(UTELUKKEDE)))
+    if avvik == "systemtekst":
+        meldinger[0]["content"] += f" {lekket}"
+    elif avvik == "systemrolle":
+        meldinger[0]["role"] = "assistant"
+    elif avvik == "brukerrolle":
+        meldinger[1]["role"] = "assistant"
+    elif avvik == "ekstra_melding":
+        meldinger.append({"role": "user", "content": lekket})
+    elif avvik == "meldingsfelt":
+        meldinger[1]["name"] = lekket
+    elif avvik == "ekstra_forespørselsfelt":
+        forespørsel["metadata"] = {"ansatt_id": lekket}
+    else:
+        forespørsel["response_format"]["json_schema"]["description"] = f"Kandidat-ID {lekket}"
+    with pytest.raises(AssertionError):
+        if portnavn == "avveining":
+            kontroller_forklaringsforespørslene(flyt)
+        else:
+            kontroller_tolking(flyt, med_http=True)
+
+
+@pytest.mark.parametrize("sted", ["brukerinnhold", "kandidat", "poeng", "påstand"])
+def test_ukjent_felt_med_utelukket_id_i_forklaringen_avvises(sted: str, flyt: Flyt) -> None:
+    assert flyt.transport is not None
+    bruker = flyt.transport.til("avveining")[0]["messages"][1]
+    data = json.loads(bruker["content"])
+    steder = {"brukerinnhold": data, "kandidat": data["kandidat"], "poeng": data["referanse"]["poeng"],
+              "påstand": data["tillatte"][0]}
+    steder[sted]["intern_id"] = next(iter(UTELUKKEDE))
+    bruker["content"] = json.dumps(data)
+    with pytest.raises(AssertionError):
+        kontroller_forklaringsforespørslene(flyt)
+
+
+@pytest.mark.parametrize("grense", ["port", "transport"])
+@pytest.mark.parametrize("avvik", ["endret", "mangler", "ekstra"])
+def test_avvik_fra_råtekst_per_ansatt_avvises(grense: str, avvik: str, flyt: Flyt) -> None:
+    assert flyt.ki is not None and flyt.transport is not None
+    # To ansatte har samme råtekst. Å miste den ene er usynlig ved mengdesammenligning.
+    tekst = next(t for t, n in Counter(PREFERANSE_VED_ID.values()).items() if n > 1)
+    if grense == "port":
+        tekster = flyt.ki.tolkninger
+        if avvik == "mangler":
+            tekster.remove(tekst)
+        elif avvik == "ekstra":
+            tekster.append(tekst)
+        else:
+            tekster[tekster.index(tekst)] = f"{tekst} [status=ute]"
+    else:
+        forespørsel = next(f for f in flyt.transport.til("preferanse")
+                          if json.loads(f["messages"][1]["content"])["tekst"] == tekst)
+        if avvik == "mangler":
+            flyt.transport.forespørsler.remove(forespørsel)
+        elif avvik == "ekstra":
+            flyt.transport.forespørsler.append(forespørsel)
+        else:
+            forespørsel["messages"][1]["content"] = json.dumps({"tekst": f"{tekst} [status=ute]"})
+    with pytest.raises(AssertionError):
+        kontroller_tolking(flyt, med_http=True)
+
+
+def test_legitime_ord_i_råteksten_tillates(engine: Engine, monkeypatch: pytest.MonkeyPatch) -> None:
+    ansatt_id = next(iter(PREFERANSE_VED_ID))
+    tekst = "Jeg er en gyldig kandidat til vaktnummer 4127."
+    monkeypatch.setitem(PREFERANSE_VED_ID, ansatt_id, tekst)
+    with engine.begin() as tilkobling:
+        tilkobling.execute(update(AnsattRad).where(AnsattRad.id == ansatt_id).values(preferanse=tekst))
+    kontroller_tolking(kjør_flyt(openrouter, engine), med_http=True)
+
+
+@pytest.mark.parametrize("endepunkt", ["grunnlag", "avveininger"])
+@pytest.mark.parametrize("idfelt", ["id", "kandidat_id", "referanse_id"])
+@pytest.mark.parametrize("idtype", [int, str])
+def test_nestet_utelukket_id_i_api_svar_avvises(endepunkt: str, idfelt: str, idtype: type, flyt: Flyt) -> None:
+    svar = flyt.grunnlag if endepunkt == "grunnlag" else flyt.avveininger
+    next(iter(svar.values()))["historikk"] = [{"kobling": {idfelt: idtype(next(iter(UTELUKKEDE)))}}]
+    with pytest.raises(AssertionError):
+        kontroller_api_svar(flyt)
+
+
+def test_utelukket_id_i_påstandstekst_avvises(flyt: Flyt) -> None:
+    next(iter(flyt.avveininger.values()))["paastander"].append(f"Kandidat-ID {next(iter(UTELUKKEDE))}")
+    with pytest.raises(AssertionError):
+        kontroller_api_svar(flyt)
 
 
 @pytest.mark.parametrize("felt", ["kandidat_id", "referanse_id"])

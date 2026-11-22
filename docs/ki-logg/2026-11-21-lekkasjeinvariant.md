@@ -3,6 +3,8 @@
 Dato: 2026-11-21. Testkoden er skrevet av Claude (Opus 5.5) som implementeringsunderagent
 i `bmad-build` (rute `dispatch`), på branchen `story-5.6-utelukkede-aldri-ki`.
 
+Gjennomgangen 22. november fant tre tilfeller der de opprinnelige kontrollene slapp gjennom en utelukket ID. Rettelsene og kjøringene før og etter er dokumentert i [oppfølgingen av PR #36](2026-11-22-oppfolging-pr-36.md).
+
 ## Oppgave og prompt
 
 Ragnhild startet story 5.6 og godkjente spesifikasjonen
