@@ -1,6 +1,7 @@
 """Avveining gjennom den beskyttede ruten og ekte adapter med falsk transport."""
 
 import json
+import logging
 from dataclasses import replace
 
 import pytest
@@ -12,7 +13,7 @@ from adaptere.ki.openrouter import HttpSvar, Nettverksfeil, OpenRouterKiAdapter
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.modeller import AnsattRad
 from tester.api.test_innlogging import engine, logg_inn  # noqa: F401
-from tester.ki.test_openrouter import FalskKlokke, FalskTransport, adapter, innhold, status
+from tester.ki.test_openrouter import FalskKlokke, FalskTransport, adapter, innhold, sertifikatfeil, status
 from tester.regelmotor.test_rangering import DATAGRENSE, HISTORIKKSTART, VAKT, kandidat
 
 
@@ -130,6 +131,18 @@ def test_livefeil_gir_kandidatbundet_reservesvar_innen_fristen(engine, utfall, v
     assert klokke.søvn == venting
     assert len(transport.kall) == len(venting) + 1
     assert klokke() - start <= 90
+
+
+def test_direkte_sertifikatfeil_logger_årsaken_uten_feiltekst(engine, caplog):
+    # Samme årsak i loggen som fra `urllib_transport` (769b3fb), også når feilen kommer rett fra transporten.
+    klokke, transport = FalskKlokke(), FalskTransport([sertifikatfeil()])
+    klient = TestClient(lag_app(engine=engine, ki=adapter(klokke, transport)))
+    logg_inn(klient)
+    with caplog.at_level(logging.WARNING, logger="adaptere.ki.openrouter"):
+        assert klient.get(f"{LISTE}/6/avveining").json()["status"] == "avveining_feilet"
+    advarsler = [r.getMessage() for r in caplog.records if r.name == "adaptere.ki.openrouter"]
+    assert advarsler == ["Nettverksfeil mot OpenRouter: SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED"] * 4
+    assert "Bearer hemmelig" not in caplog.text
 
 
 def test_transporttidsavbrudd_bruker_opp_de_90_sekundene(engine):

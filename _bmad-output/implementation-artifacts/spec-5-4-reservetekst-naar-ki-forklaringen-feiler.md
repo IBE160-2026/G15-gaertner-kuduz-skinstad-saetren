@@ -47,7 +47,7 @@ Panelet henter teksten fra frontendens tekstliste. Foreslått ordlyd er «Vi kun
 
 ## Implementation Notes
 
-Fellespanelet viser den godkjente teksten før nøkkeltallene ved feilsvar. API-testene bruker midlertidig SQLite og en falsk klokke. Den forhåndsgenererte testadapteren prøver den virkelige faktakontrollen med de samme kandidatene og påstandene som live-adapteren. En komponenttest følger brukeren gjennom App, og en nettleserkontroll lagret bemanningen i en isolert database etter en simulert 402. [KI-logg og målinger](../../docs/ki-logg/2026-11-21-reservetekst-ved-ki-feil.md).
+Fellespanelet viser den godkjente teksten før nøkkeltallene ved feilsvar. API-testene bruker midlertidig SQLite og en falsk klokke. Den forhåndsgenererte testadapteren prøver den virkelige faktakontrollen med de samme kandidatene og påstandene som live-adapteren. Den er definert i testen og er ikke en `Forklarer`, så ruten med en ekte forhåndsgenerert kilde prøves først i 5.7 (`deferred-work.md`). En komponenttest følger brukeren gjennom App, og en nettleserkontroll lagret bemanningen i en isolert database etter en simulert 402. [KI-logg og målinger](../../docs/ki-logg/2026-11-21-reservetekst-ved-ki-feil.md).
 
 ## Spec Change Log
 
@@ -67,6 +67,11 @@ Fellespanelet viser den godkjente teksten før nøkkeltallene ved feilsvar. API-
 | Grensetilfeller 4 | medium | Bekreftet at bare kildelinjen var i et dynamisk statusfelt ved feil. Samme retting som Blind 1. |
 | Ekstra grensekontroll 1 | medium | Bekreftet manglende kunngjøring av veiledning. Samme retting som Blind 1. |
 | Ekstra grensekontroll 2 | medium | Bekreftet at testoppslag kunne treffe et frakoblet panel. Samme retting som Blind 3. |
+| PR-gjennomgang 1 | medium | Etter fletting med `main` (769b3fb) brukte den nye `except OSError` bare typenavnet og mistet SSL-koden i loggen. Bruker nå `nettverksårsak`, med test på avveiningsruten. |
+| PR-gjennomgang 2 | low | Vurderingsmatrisen fremstilte transportfunnet som en produksjonsfeil. Den gjaldt bare injiserte transporter. Ordlyden er rettet. |
+| PR-gjennomgang 3 | low | «Forhåndsgenerert» prøvde bare en testklasse. Påstanden er avgrenset i KI-loggen, og kontrollen mot ekte kilde er ført i `deferred-work.md` for 5.7. |
+| PR-gjennomgang 4 | low | Grensen på 19 sifre var ikke testet (grense 399 bestod alt). Tester for 19 og 20 sifre er lagt til. |
+| PR-gjennomgang 5 | low | `>=` i den felles `_send` endrer også tolkningen fra 5.1 (AV-19). Innenfor AV-19, men utestet for `tolk`. Test for 89 og 90 s er lagt til. |
 
 ## Verification
 

@@ -6,7 +6,7 @@ Kim ba om «bmad-build story 5.4 på egen branch med PR», ba om å ta beskrivel
 
 ## Leveranse og retting
 
-Panelet viser nå en forklaring på hva brukeren kan gjøre ved KI-feil, før de fire beregnede nøkkeltallene. Kildelinjen under tallene identifiserer reserveteksten. Begge flatene bruker den samme norske teksten. Testene følger tidsavbrudd, transportfeil og forkastede påstander gjennom adapteren. Forhåndsgenererte testdata bruker den samme faktakontrollen som live-svar. Produksjonsoppsettet for demo hører til story 5.7.
+Panelet viser nå en forklaring på hva brukeren kan gjøre ved KI-feil, før de fire beregnede nøkkeltallene. Kildelinjen under tallene identifiserer reserveteksten. Begge flatene bruker den samme norske teksten. Testene følger tidsavbrudd, transportfeil og forkastede påstander gjennom adapteren. En testadapter med forhåndsgenererte påstander kaller den samme valideringsfunksjonen som live-adapteren. Adapteren er definert i testen, så den viser ikke at en ekte forhåndsgenerert kilde bruker kontrollen. Det må vises med demo-adapteren i story 5.7. Produksjonsoppsettet for demo hører til story 5.7.
 
 Før rettingen stoppet en direkte `TimeoutError` fra en injisert transport etter første kall. En ny API-test forventet tre nye forsøk med venting på 2, 4 og 8 sekunder. Standardtransporten oversatte allerede et slikt tidsavbrudd til nettverksfeil. Rettelsen lar transporttråden behandle et direkte tidsavbrudd på samme måte. Sluttfristen for en transport som fortsatt kjører, gjelder fra første live-kall (AV-15).
 
