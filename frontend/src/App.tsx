@@ -4,6 +4,7 @@ import {
   nySesjonsgenerasjon, settSesjonsvarsler, type Innlogget,
 } from "./api";
 import Appbar from "./komponenter/Appbar";
+import { AvveiningerForVakt } from "./avveiningsoppslag";
 import LoggInn from "./komponenter/LoggInn";
 import Vaktvalg from "./komponenter/Vaktvalg";
 import Kandidatflate from "./komponenter/Kandidatflate";
@@ -27,6 +28,7 @@ export default function App() {
   const retryknapp = useRef<HTMLButtonElement>(null);
   const vaktnummer = vaktnummerFraSti(sti);
   const godkjenning = godkjenningFraSti(sti);
+  const aktivVakt = vaktnummer ?? godkjenning?.vaktnummer;
 
   useEffect(() => {
     if (kontrollfeil || navigasjonsfeil) retryknapp.current?.focus();
@@ -165,16 +167,19 @@ export default function App() {
       )}
       {bruker === null && <LoggInn onInnlogget={innlogget} onForsinketInnlogging={kontroller} startfeil={startfeil} />}
       {bruker && sti === OVERSIKT_STI && <Vaktvalg onVelgVakt={velgVakt} bekreftelse={bekreftelse} />}
-      {bruker && vaktnummer !== null && <Kandidatflate key={vaktnummer} vaktnummer={vaktnummer} onVelg={velgKandidat} />}
-      {bruker && godkjenning !== null && (
-        <Godkjenningsflate
-          key={`${godkjenning.vaktnummer}/${godkjenning.ansattId}`}
-          vaktnummer={godkjenning.vaktnummer}
-          ansattId={godkjenning.ansattId}
-          onTilbake={() => velgVakt(godkjenning.vaktnummer)}
-          onGodkjent={godkjent}
-          onTilOversikt={tilVaktvalg}
-        />
+      {bruker && aktivVakt !== undefined && (
+        <AvveiningerForVakt key={`${gjeldendeSesjonsgenerasjon()}/${aktivVakt}`}>
+          {godkjenning ? (
+            <Godkjenningsflate
+              key={godkjenning.ansattId}
+              vaktnummer={aktivVakt}
+              ansattId={godkjenning.ansattId}
+              onTilbake={() => velgVakt(aktivVakt)}
+              onGodkjent={godkjent}
+              onTilOversikt={tilVaktvalg}
+            />
+          ) : <Kandidatflate vaktnummer={aktivVakt} onVelg={velgKandidat} />}
+        </AvveiningerForVakt>
       )}
       {bruker && sti !== OVERSIKT_STI && vaktnummer === null && godkjenning === null && (
         <main className="innhold"><section className="panel">

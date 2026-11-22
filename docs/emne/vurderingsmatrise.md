@@ -4,7 +4,8 @@ Arbeidsdokument for gruppen, opprettet 2026-10-12. Tiltakene er vår anvendelse 
 
 Oppdatert 2026-11-22 med [praktiske kontrollbevis](../testing/2026-11-22/kontroll.md).
 Regelmotor, rangering, godkjenning og avveining per kandidat er implementert;
-5.4 er i eksisterende PR #37, og 5.5/5.7/5.8/5.9 gjenstår. Eldre milepælsavsnitt
+5.4 er merget i PR #37. Story 5.5 er implementert og testet på storybranchen.
+5.7/5.8/5.9 gjenstår. Eldre milepælsavsnitt
 bevarer status på de angitte datoene og er ikke dagens sprintstatus.
 Lenke til faktiske bevis kreves før tiltak merkes ferdig. Godkjent proposal er
 `ee6d798`; [E-02-sammenligningen](e-02-proposal-sammenligning.md) er forberedt,
@@ -252,6 +253,10 @@ For kriterium 1–5 viser tre uavhengige gjennomganger blant annet hvordan en fe
 For kriterium 2–4 viser testene at en turnusansvarlig kan velge og godkjenne kandidaten selv om forklaringen feiler. En annen kandidat kan samtidig få en gyldig forklaring. Nettleserkontrollen følger en simulert HTTP 402 helt til bekreftet bemanning i en egen testdatabase. [API-testene](../../backend/tester/api/test_avveining.py) · [komponenttesten](../../frontend/tester/komponenter/avveining.test.tsx) · [nettleserkontrollen](../ki-logg/2026-11-21-reservetekst-ved-ki-feil.md#nettleserkontroll).
 
 For kriterium 1 og 5 dokumenterer KI-loggen hvordan en rød test avdekket at et tidsavbrudd kastet direkte fra en injisert testtransport hoppet over nye forsøk. Standardtransporten `urllib_transport` gjorde allerede slike feil om til nettverksfeil, så produksjonsveien var ikke berørt. PR-gjennomgangen 22. november la til tester for grensen på 19 sifre i `X-RateLimit-Reset` og for at fristgrensen også gjelder preferansetolkningen, og lot den nye feilhåndteringen bruke samme årsak i loggen som `main` ([oppfølging](../ki-logg/2026-11-22-oppfolging-pr-37.md)). Storyen er ferdig etter gjennomgang og merge av PR #37 i `4bca0ae` (godkjent av Johannes W. Gärtner). [KI-loggen](../ki-logg/2026-11-21-reservetekst-ved-ki-feil.md) · [spesifikasjon og gjennomgang](../../_bmad-output/implementation-artifacts/spec-5-4-reservetekst-naar-ki-forklaringen-feiler.md) · [PR #37](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/37).
+
+## Story 5.5 – progressiv lasting, 2026-11-22
+
+For kriterium 1–5 viser App-testene at turnusansvarlig kan velge mens forklaringen venter, og at samme kandidat og grunnlagsmerke gir ett forklaringskall gjennom rangering og godkjenning. En negativ kontroll gjenskapte dobbeltkallet og gjorde to tester røde. Nettleserkontrollen på 680 px fulgte to kandidater med ulik svartid gjennom ekte FastAPI, med synlig tastaturfokus og riktig radplassering. [Spesifikasjon](../../_bmad-output/implementation-artifacts/spec-5-5-progressiv-lasting.md) · [komponenttester](../../frontend/tester/komponenter/avveining.test.tsx) · [transportvalg og kontrollresultater](../ki-logg/2026-11-22-progressiv-lasting.md).
 
 ## Story 5.6 – utelukkede kandidater når aldri KI-laget, 2026-11-21
 
