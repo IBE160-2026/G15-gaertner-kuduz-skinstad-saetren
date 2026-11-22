@@ -85,6 +85,13 @@ Kostnadsvisning ble også lagt på godkjenningsflaten slik at P-09s nye bekrefte
 
 ## Verification
 
+**Restkontroll 2026-11-22:** Raden med både «Høy belastning» og «Inkluderer overtid»
+er kontrollert i vanlig Chrome 158.0.8127.36 ved 680/960/1080/1600 × 700 px, normal
+skrift og faktisk Chrome «Stor». Tab/Enter valgte Ingrid til godkjenningsflaten ved
+alle bredder, med synlig fokus og uten siderulling. #4102 ble forlenget med 24 minutter
+bare i separat testdatabase og deretter gjenopprettet. [Bilder, beregninger og avgrensninger](../../docs/testing/2026-11-22/kontroll.md).
+Skjermleseromfanget følger tidligere v1-avgrensning; ingen ny faktisk opplesing er påstått.
+
 **Commands:** Backend `.venv\Scripts\python -m pytest`; frontend `npm.cmd run build` og `npm.cmd run test` sekvensielt. Testene skal bestå.
 
 **Manuell kontroll:** Ved manglende automatisert dekning kontroller layout ved 680, 960, 1080 og 1600 px, farger, fokus, større skrift og ekte backend (AV-17, OP-16). Dokumenter faktiske resultater.

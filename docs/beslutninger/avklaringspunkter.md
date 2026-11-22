@@ -109,7 +109,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 - **Problemstilling:** Hvilke standardvakttider brukes i demonstrasjonsgrunnlaget?
 - **Alternativer i PDF:** A: Dag 07–15, kveld 15–23, natt 23–07; B: Dag 07–15, kveld 15–22:30, natt 22–07:30. Gruppen vedtok A **med eget tillegg**.
 - **Codex:** Ny rapport anbefalte A; eldre rapport B.
-- **Gruppens beslutning:** **Dag 07:00–15:00; mellom 10:00–18:00; kveld 15:00–23:00; natt 23:00–07:00 neste dag.** Alle varer åtte timer.
+- **Gruppens beslutning:** **Dag 07:00–15:00; mellom 10:00–18:00; kveld 15:00–23:00; natt 23:00–07:00 neste dag.** Alle varer åtte timer på døgn uten klokkeomstilling. Ved overgang til/fra sommertid regnes faktisk forløpt tid; nattevakten over overgangen varer henholdsvis 7 og 9 timer, se [KS-03-kontrollen](ks-03-tidskategorier-2026-11-15.md). Presiseringen er godkjent av Kim 2026-11-22 som samordning med KS-03; vakttidene og beslutnings-ID-en er beholdt.
 - **Begrunnelse:** Mellomvakten gir flere mulige vaktkombinasjoner når hvilebestemmelsene ellers begrenser valg av erstatter. Eksempel: Etter kveldsvakt til 23:00 gir neste dags dagvakt 07:00 bare 8 timers hvile; mellomvakt 10:00 gir 11 timer (forutsatt at øvrige regler også er oppfylt).
 - **Teknisk konsekvens:** Seeddata, testfasit, vaktmaler og mockuper må støtte fire vakttyper. Regelmotoren må kontrollere hvile og kollisjon ut fra faktiske start/sluttidspunkt. Overlapp mellom **forskjellige** ansattes vakter er ikke i seg selv en regelbrudd.
 - **Berørte områder:** Story 1.2/1.5, mockuper, DESIGN/EXPERIENCE, scenarioene #4127/#4189, rangerings-/tidsberegning, Story 4.7.

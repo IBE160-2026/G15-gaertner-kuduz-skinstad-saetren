@@ -103,6 +103,11 @@ Målrettet uavhengig gjennomgang etter AD-5-refaktoreringen fant to forhold: (1)
 
 ## Verification
 
+**Restkontroll 2026-11-22:** Fargekontrast og synlig fokus på «Til Vaktvalg» ved
+allerede bemannet vakt er kontrollert i vanlig Chrome 158.0.8127.36 mot ekte backend
+og separat testdatabase. En konkurrerende godkjenning ga riktig melding, automatisk
+synlig tastaturfokus og fungerende Enter-retur. [Målinger og skjermbilder](../../docs/testing/2026-11-22/kontroll.md).
+
 **Commands:**
 - `backend/.venv/Scripts/python -m pytest` — alle backendtester og arkitekturkontrakten består.
 - `npm.cmd run build` og `npm.cmd run test` fra `frontend/` — bygg og alle komponenttester består.

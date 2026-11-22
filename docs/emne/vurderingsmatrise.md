@@ -2,7 +2,13 @@
 
 Arbeidsdokument for gruppen, opprettet 2026-10-12. Tiltakene er vår anvendelse av [sensorveiledningen](sensorveiledning-del-1.md), ikke nye emnekrav. Vektene er veiledende innenfor del 1, som teller 70 % av samlet karakter. Matrisen gir ingen karaktergaranti.
 
-Oppdatert 2026-11-10 med dokumentmilepælen for P-01–P-13/E-01/E-02. Lenke til faktiske bevis må legges inn før et tiltak merkes ferdig. Appskjelett, lagring med fiktive testdata og innlogging er implementert og merget. Kjerneflyten med regelmotor, rangering, KI-forklaringer og godkjenning gjenstår. Dette er ikke en full revisjon av repo eller historikk. Godkjent proposal er identifisert som `ee6d798` (E-02); sluttkontroll mot levert app gjenstår.
+Oppdatert 2026-11-22 med [praktiske kontrollbevis](../testing/2026-11-22/kontroll.md).
+Regelmotor, rangering, godkjenning og avveining per kandidat er implementert;
+5.4 er i eksisterende PR #37, og 5.5/5.7/5.8/5.9 gjenstår. Eldre milepælsavsnitt
+bevarer status på de angitte datoene og er ikke dagens sprintstatus.
+Lenke til faktiske bevis kreves før tiltak merkes ferdig. Godkjent proposal er
+`ee6d798`; [E-02-sammenligningen](e-02-proposal-sammenligning.md) er forberedt,
+mens sluttkontroll på innleveringsversjonen gjenstår.
 
 | Kriterium | Vekt | Forventet leveranse i turnusprosjektet | Bevis / grunnlag nå | Gjenstår / neste tiltak |
 |---|---:|---|---|---|
@@ -13,6 +19,30 @@ Oppdatert 2026-11-10 med dokumentmilepælen for P-01–P-13/E-01/E-02. Lenke til
 | Kodekvalitet og arkitektur | 10 % | Tydelig skille mellom regelmotor, rangering, KI-forklaringer og brukergrensesnitt. | [Arkitektur](../../_bmad-output/planning-artifacts/architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md): React/TypeScript/Vite, Python/FastAPI, SQLite/SQLAlchemy og OpenRouter. Appskjelett, lagring og innlogging finnes i `backend/` og `frontend/` (story 1.1–1.3, se bevis nedenfor). Regelmotor, rangering og KI-adapter gjenstår. | Implementer og kontroller at koden følger dokumentasjonen. Testverktøyets HTTP-klient er ikke et valg av appens klientbibliotek. |
 | README og kjørbarhet | 10 % | Verifiserte kommandoer, versjoner, konfigurasjon, testdata og testinstruksjoner. | [README](../../README.md) lenker til [verifisert modelltestkommando](../modelltest-openrouter.md); [.env.example](../../.env.example) dokumenterer variablene uten verdier. | Installasjon, oppstart og tester for appen er dokumentert i README og kontrollert som beskrevet under story 1.1–1.3. Kontroll fra ren klone er gjennomført på macOS 2026-11-12: 337 av 337 backendtester og 26 av 26 frontendtester bestått (OP-05, se [Test på macOS og fra ren klone](#test-på-macos-og-fra-ren-klone-2026-11-11-og-2026-11-12)). |
 | Ryddighet i repoet | 5 % | Tydelig skille mellom kode, dokumentasjon og ressurser; ingen hemmeligheter eller byggeartefakter. | [Gitignore](../../.gitignore), [original sensorveiledning](sensorveiledning-del-1.pdf), [agentinstruksjoner](../../AGENTS.md). | Kontroller sporede filer og historikk ved milepæler. Bekreft at nye dokumenter følger gruppens utsjekking. |
+
+## Praktisk oppfølging av åpne punkter — 2026-11-22
+
+- **Kriterium 3 og 5:** [P-08-testtillegget](../../backend/tester/api/test_godkjenningsgrunnlag.py),
+  [spesifikasjon med to uavhengige gjennomganger](../../_bmad-output/implementation-artifacts/spec-p-08-fem-periodekantvakter.md)
+  og [KI-loggen](../ki-logg/2026-11-22-p-08-periodekantvakter.md) dokumenterer
+  stopp for alle fem faktiske #4261–#4265 uten rangering eller lagring. 219 relevante
+  backendtester og 54 eksisterende komponenttester bestod; `10706fa`.
+- **Kriterium 3 og 4:** [Nettleserkontrollen](../testing/2026-11-22/kontroll.md)
+  dokumenterer Chrome-versjon, headful prosess, faktisk 15 px rullefelt, 680/960/1080/1600 px,
+  normal og faktisk Chrome «Stor», kontrast, synlig tastaturfokus, Vaktvalgs tom-/feiltilstander
+  og ekte backend. De seks tilhørende punktene i Kims issues er lukket.
+  Kim godkjente totalscore over to linjer. 4.6 er `done`; P-13 er uavhengig åpen.
+- **Kriterium 4:** [P-13-protokollen](../testing/2026-11-22/p13-protokoll.md)
+  bevarer Kims interne prøve og skal senere utvides med en person utenfor gruppen.
+  Intern forståelse alene lukker ikke punktet og dokumenterer ikke validert brukerbehov.
+- **Kriterium 1 og 2:** [E-02-forberedelsen](e-02-proposal-sammenligning.md)
+  knytter løftene fra `ee6d798` til eksisterende bevis og presiserer sluttkontrollen
+  på innleveringscommit. [Fire gruppevalg](../beslutninger/avklaringsrunde-2026-11-22.md)
+  har anbefaling, konsekvens og konkret vedtakstekst; forslagene er ikke vedtak.
+- **Kriterium 1 og 5:** Epic 4-konteksten er samordnet med gjeldende vedtak;
+  AV-02 er presisert med Kims uttrykkelige samtykke mot KS-03s faktiske 7/9 timer.
+  5.4 er allerede i [PR #37](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/37)
+  og skal ikke bygges på nytt. Endelig reservetekst venter PR-behandling og integrasjonskontroll.
 
 ## Dokumentgjennomgang 2026-10-26
 

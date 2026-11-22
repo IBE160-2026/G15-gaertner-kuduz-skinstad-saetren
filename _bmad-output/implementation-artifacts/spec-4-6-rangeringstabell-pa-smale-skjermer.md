@@ -52,6 +52,14 @@ context:
 
 ## Code Map
 
+**Sluttkontroll 2026-11-22:** Endelig CSS er kontrollert i Chrome 158.0.8127.36,
+680 × 700 px med faktisk 15 px loddrett rullefelt. Ulempekolonnen har 17,66 px
+klaring til de faste kolonnene ved maksimal høyreskrolling med normal tekst.
+Alle fire bredder er også kontrollert med faktisk Chrome «Stor». Kim godkjente
+totalscore på to linjer i menneskelig WT-gjennomgang. Storyen er `done`;
+[bevis og kjente avgrensninger](../../docs/testing/2026-11-22/kontroll.md).
+P-13 videreføres etter Kims krav om en ekstern testperson, uavhengig av 4.6.
+
 - `frontend/src/stil/app.css` -- `.tabell` (l.328–360) har `border-collapse: collapse` og `nowrap`-celler. Med `collapse` følger ikke kantene sticky-cellene i Chrome, så `.rangeringstabell .tabell` får `border-collapse: separate; border-spacing: 0`. Første og andre `th`/`td` får `position: sticky`, `left: 0` og `left: var(--rank-column-width)`, `z-index` over de andre cellene og bakgrunn etter radtypen. «Nr.»-cellen får `width`/`min-width`/`max-width` lik tokenet og `white-space: normal`, slik at totalscoren kan brytes. `.tabellbeholder` (l.320) har allerede `position: relative` og `overflow-x: auto`. Behold `.preferansecelle`-unntaket (l.439).
 - `frontend/src/stil/tokens.css` -- nytt token `--rank-column-width` i `rem`, med kommentar. Det er et bevisst avvik fra «faste bredder i px», fordi kolonnen inneholder tekst som skal skalere (AV-13).
 - `frontend/src/komponenter/Kandidatflate.tsx` -- `Rangeringstabell`/`Kandidatrad` (l.181–306). Det trengs trolig ingen JSX-endring; selektorene kan bruke `:nth-child`. Legg bare til klasser hvis selektorene blir skjøre, og ikke flytt tilstand.

@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-21-2026 16:34
+last_updated: 11-22-2026 11:07
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -58,13 +58,13 @@ development_status:
   3-2-gjennomføre-godkjenning-og-bemanne-vakten: done
   epic-3-retrospective: optional
 
-  epic-4: in-progress
+  epic-4: done
   4-1-timer-i-perioden-per-kandidat: done
   4-2-arbeidsbelastningslinje-med-terskel: done
   4-3-forenklet-kostnad-per-kandidat: done
   4-4-rangering-av-gyldige-kandidater: done
   4-5-avviksnotat-og-nøkkeltall-på-godkjenningsflaten: done
-  4-6-rangeringstabellen-på-smalere-skjermer: review
+  4-6-rangeringstabellen-på-smalere-skjermer: done # Endelig Chrome/rullefelt-kontroll og Kims designvalg 22.11; docs/testing/2026-11-22/kontroll.md
   4-7-ulempebelastning-per-kandidat: done
   epic-4-retrospective: optional
 
@@ -72,9 +72,9 @@ development_status:
   5-1-tolke-tekstbaserte-ansattpreferanser-med-ki: done
   5-2-rangeringen-bruker-tolkede-preferanser: done
   5-3-avveining-per-kandidat: done
-  5-4-reservetekst-når-ki-forklaringen-feiler: backlog
+  5-4-reservetekst-når-ki-forklaringen-feiler: review # Eksisterende PR #37, head be59221, kontrollert på GitHub 22.11; ikke levert på main ennå
   5-5-rader-vises-før-forklaringene-er-ferdige: backlog
-  5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: review
+  5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: done # PR #36 merget 22.11, 1e1a57b; demoutvidelsen følger 5.7
   5-7-demo-modus-uten-api-nøkkel: backlog
   5-8-sensor-kan-kjøre-live-ki: backlog
   5-9-redigere-preferansetekst-etter-kjerneflyt: backlog
@@ -83,11 +83,11 @@ action_items:
   - epic: 4
     action: "P-13/OP-02: Mobil og nettbrett er avklart som v2 (AV-17, 2026-11-14); story 4.6 gjelder smale nettleservinduer. Planlagt arbeidsmål (ikke eget fristvedtak): etter fungerende kandidatvisning og før story 4.6 ferdigstilles, dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige. Én testperson og ett operativsystem og én skjermflate holder; akseptmålet er alle tre uten hint (referatet §12). Dokumenter også hva testpersonen forstod eller misforstod, hvilke designendringer gruppa vurderte, hva som ble valgt eller avvist og hvorfor. Ved endring: ta vare på skjermbilder før og etter, og kontroller at rettingen virker. Hvis designet beholdes: begrunn det ut fra observasjonene. Før resultatet med lenke til test- og designbevis under «Design og brukeropplevelse» i docs/emne/vurderingsmatrise.md."
     owner: "gruppa"
-    status: open
+    status: open # Kim 22.11: intern prøve lukker ikke punktet; også en person utenfor gruppen skal testes. docs/testing/2026-11-22/p13-protokoll.md
   - epic: 2
-    action: "P-08/KS-04: Test at ny vurdering av #4261–#4265 og annet ufullstendig datagrunnlag stopper uten rangering/godkjenning; bevar #4127/#4189-fasit og KS-04s avgrensede godkjenning."
+    action: "P-08/KS-04: Ny vurdering, godkjenningsgrunnlag og POST for alle #4261–#4265 stopper med datafeil, riktig datagrense og uendret database. #4127/#4189-fasit bevart. 219 relevante backendtester bestod 22.11; spec-p-08-fem-periodekantvakter.md og docs/ki-logg/2026-11-22-p-08-periodekantvakter.md."
     owner: "gruppa"
-    status: open
+    status: done
   - epic: 5
     action: "P-10B: Start story 5.9 først etter fungerende kjerneflyt. Hvis tiden ikke rekker, dokumenter den som utsatt. P-07s valgfrie sammenligning er strekkmål, og P-12B er ikke v1-krav."
     owner: "gruppa"

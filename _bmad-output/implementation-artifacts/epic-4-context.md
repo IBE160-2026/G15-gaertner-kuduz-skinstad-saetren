@@ -32,7 +32,8 @@ story-/sprint-nøkler.
 
 - **Kostnadsmodell:** hver ansatt har en individuell timelønn (bare testdata, ingen nye
   lagringsfelt i dette epicet). Ordinær ukentlig terskel er 36 timer; timer utover det i
-  en kalenderuke koster 150 %. Vaktkostnad = forskjellen i modellert lønnskostnad før og
+  en kalenderuke koster 150 %. Det gjøres ikke fratrekk for opprinnelig ansatts lønn
+  (P-01). Vaktkostnad = forskjellen i modellert lønnskostnad før og
   etter tildelingen, summert over hver kalenderuke vakten berører (håndterer ukeskifte og
   sommertidsskifte via faktisk forløpt tid i `Europe/Oslo`). Vises med to desimaler,
   merket «Ordinær» eller «Inkluderer overtid»; ingen enkelt kr/t-tall skal vises som satsen
@@ -57,18 +58,22 @@ story-/sprint-nøkler.
   Kostnad og timebelastning bruker en skala relativ til de andre gyldige kandidatene for
   denne vakten (lavest = 100, høyest = 0, lineært imellom; er alle like, får alle 50).
   Ulempe bruker den faste ulempescore-skalaen over, uavhengig av andre kandidater.
-  Preferanse gir midlertidig 50 poeng (med egen venting-/feilstatus) til KI-tolkningen fra
-  Epic 5 er koblet inn; manglende preferansetekst merkes «Ingen registrert» i stedet for
-  et uriktig nøytralt valg. Kompetanse er bare en hard regel (Epic 2) og gir aldri
+  Lagret preferansetolkning gir 100/75/50/25/0 poeng for `onsker_flere`,
+  `positiv_ved_behov`, `noytral`, `foretrekker_a_slippe` og `vil_unnga` (PRD §4.5).
+  Manglende, ventende eller feilet tolkning gir midlertidig 50 med egen status (P-05,
+  AV-19); manglende preferansetekst merkes «Ingen registrert», ikke nøytral tolkning.
+  Story 5.1/5.2 bruker lagrede tolkninger; rangeringen gjør ingen KI-kall.
+  Kompetanse er bare en hard regel (Epic 2) og gir aldri
   rangeringspoeng — kandidater som bare skiller seg på kompetanse over minstekravet, får
   identisk poengsum.
 - Rangeringen skal være fullt reproduserbar: samme input → samme rekkefølge, hver gang,
   inkludert likhetsbryting. Poeng og totaler beregnes og sorteres uavrundet; viste
   poengsummer avrundes bare til én desimal, så like viste poengsummer garanterer ikke like
-  underliggende totaler. Likhet i uavrundet totalscore brytes av stigende ansatt-ID — men
-  siden kostnad brukes som `float` (ikke `Decimal`) i dette epicet, kan nær-like totaler
-  skille seg i et siste siffer og ikke utløse den likhetsbrytingen; storyens spesifikasjon
-  må definere hvordan likhet i totalen faktisk fastslås gitt dette.
+  underliggende totaler. Faktorpoeng og totalscore regnes eksakt med `Fraction` fra
+  faktiske `float`-verdier og tidsverdier; vektene er 2/5, 1/5, 3/20 og 1/4.
+  Eksakt lik `Fraction`, uten toleranse, brytes av stigende ansatt-ID (AV-05, K-03,
+  vedtaket 15.11 i referatet §11). Konvertering til `float` i porten påvirker ikke
+  sorteringen. Porten bærer også `EksaktePoeng` for faktakontroll i story 5.3.
 - Minst ett testscenario må vise at den billigste gyldige kandidaten *ikke* rangeres øverst
   (myke faktorer kan veie tyngre enn kostnad), og ett må vise to kandidater som er
   identiske på kostnad, timebelastning og preferanse, men skiller seg bare på
@@ -94,6 +99,25 @@ story-/sprint-nøkler.
   også grunnlaget senere stories i Epic 5 bygger sine KI-forklaringer fra, så formen her
   avgrenser hva som er tilgjengelig nedstrøms.
 - En kandidat utelukket av en hard regel skal aldri kunne opptre i rangeringen.
+- **Lønnsgrunnlag og datadekning (P-08):** individuell timelønn lagres som et positivt
+  SQLite-heltall (4.3s validerte lagringskontrakt). Ukjent/ugyldig lønn er datafeil,
+  ikke null kostnad. Nødvendig historikk,
+  berørte kalenderuker og hvilevindu må være dekket; dokumentert fri er null timer,
+  ukjent historikk er ikke fri. KS-04-godkjenningen gjelder #4127/#4189, ikke alle
+  periodekantvakter. #4261–#4265 skal stoppe ved ny vurdering med datagrense 05.10 kl. 00.
+- **Uavhengig fasit (AV-07, AV-12, KS-02):** forventninger regnes på forhånd,
+  uavhengig av produksjonskoden. Bevar fasiten for #4127/#4189 og skill tydelig mellom
+  rangering med lagrede tolkninger og midlertidige 50 poeng. Ny rangeringsfasit krever
+  ny kontroll; KS-03s tidstabell godkjenner ingen totalscore.
+- **Konsistent grunnlag (P-09, AD-5):** kandidatliste, valgt kandidat og topprangert
+  bygges fra samme konsistente lesing. POST validerer gjeldende data og kandidatbundet
+  grunnlagsmerke før atomisk lagring. Endret lønn, vakt eller lagret tolkning gir nye
+  beregninger og krever ny bekreftelse; klienten forkaster gamle svar.
+- **Referansesammenligning (P-06/P-07, K-04):** nr. 1 sammenlignes med nr. 2,
+  øvrige med nr. 1; én gyldig kandidat har ingen referanse. KI foreslår strukturerte
+  påstander, mens kode kontrollerer identitet, referanse, faktor og retning mot eksakte
+  fakta og setter inn navn/tall. Ugyldig svar gir merket reservetekst. Dette er forskjellig
+  fra avviksnotatet for valgt mot topprangert og fra faktorretning mot egen totalscore.
 
 ## UX & Interaction Patterns
 
@@ -121,8 +145,8 @@ story-/sprint-nøkler.
     `Avviksnotat`-komponenten over, som også dekker endret grunnlag før ny
     bekreftelse (P-09). 675 backendtester, 52 modultester og 41 komponenttester
     besto. Se [KI-loggen](../../docs/ki-logg/2026-11-17-avviksnotat.md).
-    Nettleserkontroll og menneskelig gjennomgang gjenstår, så storyen er fortsatt
-    `in-progress` i `sprint-status.yaml`, ikke ferdig.
+    Storyen er nå `done` i `sprint-status.yaml`; tidligere kontroll- og testtall over
+    er historiske bevis fra implementeringen, ikke en ny testkjøring.
 - Desktop og gjeldende tilgjengelighetskrav er bindende for dette epicet. Mobil-/
   nettbrettstøtte er utsatt til v2 — den smale skjermen-storyen (4.6) gjelder bare smale
   skrivebordsvinduer (1080 px, 960 px, 680 px), ikke telefon eller nettbrett: full tabell
@@ -138,7 +162,18 @@ story-/sprint-nøkler.
     rettingene etter kodegjennomgangen. Med 20 px skrift ved 680 px står ulempekolonnen ikke
     helt synlig når tabellen er rullet helt til høyre, men kan rulles fram. Se
     [KI-loggen](../../docs/ki-logg/2026-11-19-smale-skjermer.md). Den manuelle
-    sjekklisten er bestått (2026-11-19), og PR-gjennomgang gjenstår, så storyen er `review`.
+    kontrollen før CSS-rettelsen er historisk. Storyen er `done` etter endelig
+    Chrome-kontroll ved 680 px med loddrett rullefelt og Kims godkjenning av
+    totalscore over to linjer 22.11; [kontrollrapport](../../docs/testing/2026-11-22/kontroll.md).
+    P-13 står uavhengig åpen og skal også gjennomføres med en person utenfor gruppen.
+
+## Grunnlag for samordningen 2026-11-22
+
+[Beslutningsreferatet](../../docs/beslutninger/avklaringspunkter.md) §11–13 (AV-05,
+AV-07, AV-12, AV-19, K-03, KS-02/03/04, P-05–P-09),
+`backend/domene/regelmotor/rangering.py`, `backend/domene/porter/rangering.py`,
+`backend/tester/regelmotor/test_rangering.py` og gjeldende sprintstatus. Samordningen
+fører inn eksisterende vedtak og implementasjon; den endrer ingen modellvalg.
 
 ## Cross-Story Dependencies
 

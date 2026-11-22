@@ -1,5 +1,14 @@
 # Testoversikt og manuell sjekkliste
 
+**Oppfølging 22.11.2026:** [Kontrollrapporten](testing/2026-11-22/kontroll.md)
+lukker restkontrollene av godkjenningskontrast / Til Vaktvalg-fokus, Vaktvalgs
+tom- og feiltilstand, raden med begge varsler og endelig 4.6-CSS i vanlig Chrome
+med rullefelt. Kim godkjente totalscore på to linjer. 219 relevante backendtester
+og 54 komponenttester bestod; P-08 dekker nå alle fem faktiske #4261–#4265.
+Tidligere «ikke kontrollert»-omtaler nedenfor er historisk status før denne
+oppfølgingen. [P-13](testing/2026-11-22/p13-protokoll.md) holdes åpen til også en
+person utenfor gruppen har prøvd; intern prøve med Kim dokumenteres separat.
+
 Hva som testes automatisk, hvordan testene kjøres, og hva som fortsatt kontrolleres for
 hånd og hvorfor. Dette er testplanen sensorveiledningen ber om under kriterium 3,
 «dokumenterte manuelle tester eller testplaner der automatiske tester ikke er

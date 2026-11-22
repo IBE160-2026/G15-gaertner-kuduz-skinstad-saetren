@@ -88,6 +88,7 @@
 ## Deferred from: code review of spec-4-2-belastningslinje-med-terskel.md (2026-11-15)
 
 - Epic 4-konteksten er forkortet og har mistet sentrale detaljer om normalisering over alle gyldige (lavest gir 100), preferanseskala, uavhengig fasit, P-09, opprinnelig ansatts lønn og referansesammenligning. Samordne mot styrende dokumenter før senere stories bruker konteksten.
+  Løst 2026-11-22: `epic-4-context.md` er samordnet med disse føringene og eksakt `Fraction` etter referatet §11–13. Ingen modellvalg endret. Se `docs/testing/2026-11-22/kontroll.md` og Kims sesjonslogg om praktisk oppfølging.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-4-4-rangering-av-gyldige-kandidater.md`
   summary: "[LØST 2026-11-16, rettet i AGENTS.md] Statuslinjen i AGENTS.md sier at story 4.4 er «implementert og til gjennomgang». Det blir feil når PR-en er merget, og den gjentar det `sprint-status.yaml` allerede holder rede på."
