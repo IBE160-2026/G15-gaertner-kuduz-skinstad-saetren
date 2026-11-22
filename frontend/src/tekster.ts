@@ -159,6 +159,7 @@ export const TEKSTER = {
       sammenligning: (score: string) => `Kandidatens totalscore er ${score}. Retningen viser om faktorpoengene ligger over eller under totalscoren før avrunding.`,
       poengnavn: { kostnad: "kostnadspoeng", timebelastning: "timebelastningspoeng", ulempe: "i ulempescore", preferanse: "preferansepoeng" },
       laster: "Henter KI-forklaring …", reserve: "Reservetekst · KI-forklaring utilgjengelig",
+      reservetekst: "Vi kunne ikke vise en kontrollert KI-forklaring. Du kan bruke nøkkeltallene nedenfor til å vurdere kandidaten.",
       kilde: (modell: string) => `KI-generert · ${modell}`,
       kostnad: "Vaktkostnad", timebelastning: "Timebelastning", ulempe: "Ulempebelastning", preferanse: "Preferanse",
     },

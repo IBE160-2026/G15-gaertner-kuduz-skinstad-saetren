@@ -194,7 +194,8 @@ test("endret grunnlag hentes på nytt og krever nytt trykk", async () => {
   expect(within(kort).getByText(TEKSTER.kandidatflate.kostnadOvertid)).toBeTruthy();
   expect(within(kort).getByText("Ordinær: 4:00 t:min ved 300,00 kr/t")).toBeTruthy();
   expect(within(kort).getByText("Overtid: 4:00 t:min ved 450,00 kr/t")).toBeTruthy();
-  expect(screen.getByRole("status").textContent).toBe(t.endret);
+  const bekreftelse = screen.getByRole("region", { name: t.bekreftOverskrift });
+  expect(within(bekreftelse).getByRole("status").textContent).toBe(t.endret);
   expect(onGodkjent).not.toHaveBeenCalled();
   await bruker.click(screen.getByRole("button", { name: t.godkjenn }));
   expect(onGodkjent).toHaveBeenCalledTimes(1);

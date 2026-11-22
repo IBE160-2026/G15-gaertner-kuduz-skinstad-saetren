@@ -75,6 +75,41 @@ def test_én_feil_forkaster_hele_svaret(feil):
     assert not kontroller(en, to, egen(), feil)
 
 
+class ForhåndsgenerertTestadapter:
+    """Leser et ferdig påstandssett og bruker faktakontrollen på gjeldende rangering."""
+
+    def __init__(self, svar):
+        self.svar = svar
+
+    def forklar(self, kandidat, referanse):
+        return valider(self.svar, tillatte_påstander(kandidat, referanse))
+
+
+@pytest.mark.parametrize("kilde", ["live", "forhåndsgenerert"])
+@pytest.mark.parametrize("tillegg", [
+    None, {**egen(), "kandidat_id": 999}, egen("kompetanse"), {**mot("kostnad", "høyere"), "referanse_id": 3},
+    {**egen(), "beløp": 2400}, {**egen("preferanse"), "kategori": "onsker_flere"},
+    mot("kostnad", "lavere"), mot("preferanse", "høyere"), mot("kostnad", "lik"),
+], ids=["gyldig", "ukjent-kandidat", "ukjent-faktor", "feil-referanse", "modellbeløp", "modellkategori",
+        "omvendt-kostnad", "feil-preferanse", "falsk-likhet"])
+def test_begge_kilder_kontrollerer_alle_påstandene_mot_uavrundet_rangering(kilde, tillegg):
+    # Tredje lønn utvider min–maks slik at de to første kostnadspoengene begge vises som 100,0.
+    en, to, _ = ranger(vurder(kandidat(1, lønn=300), kandidat(2, lønn=301), kandidat(3, lønn=10000)), VAKT)
+    assert en.eksakte_poeng.kostnad > to.eksakte_poeng.kostnad
+    gyldig = mot("kostnad", "høyere")
+    svar = {"paastander": [gyldig] if tillegg is None else [gyldig, tillegg]}
+    if kilde == "live":
+        transport = FalskTransport([HttpSvar(200, {}, innhold(svar))])
+        forklaring = adapter(FalskKlokke(), transport).forklar(en, to)
+        assert len(transport.kall) == 1
+    else:
+        forklaring = ForhåndsgenerertTestadapter(svar).forklar(en, to)
+    if tillegg is None:
+        assert forklaring == ["Kostnadspoengene er høyere enn hos Ansatt 2 før avrunding (100,0 mot 100,0)."]
+    else:
+        assert forklaring is None
+
+
 def test_én_gyldig_eller_bare_hard_regel_og_total():
     en, to = kandidater()
     regler = {"type": "regler", "kandidat_id": en.id}

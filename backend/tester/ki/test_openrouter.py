@@ -211,6 +211,26 @@ def test_429_over_budsjett_venter_ikke() -> None:
     assert klokke.søvn == []
 
 
+def test_429_med_19_sifre_leses_og_går_over_budsjettet() -> None:
+    # Grensen i `_venting_429`: 19 sifre leses som tidsstempel, 20 sifre er uleselige.
+    klokke = FalskKlokke()
+    transport = FalskTransport([status(429, {"x-ratelimit-reset": "9" * 19}), ok()])
+    assert adapter(klokke, transport).tolk(TEKST_4) == Tolkefeil("tidsbudsjett")
+    assert len(transport.kall) == 1
+    assert klokke.søvn == []
+
+
+@pytest.mark.parametrize(("sekunder", "søvn", "kall"), [(89, [89], 2), (90, [], 1)])
+def test_tolk_venter_ikke_når_ventingen_slutter_ved_fristen(sekunder: int, søvn: list[float], kall: int) -> None:
+    # Story 5.4 endret `>` til `>=` i den felles `_send`, så grensen gjelder også tolkningen.
+    klokke = FalskKlokke()
+    reset = str(int((klokke.vegg() + sekunder) * 1000))
+    transport = FalskTransport([status(429, {"x-ratelimit-reset": reset}), ok()])
+    assert isinstance(adapter(klokke, transport).tolk(TEKST_4), TolketPreferanse if kall == 2 else Tolkefeil)
+    assert klokke.søvn == søvn
+    assert len(transport.kall) == kall
+
+
 def test_429_uten_reset_venter_ett_vindu() -> None:
     klokke, transport = FalskKlokke(), FalskTransport([status(429), ok()])
     assert isinstance(adapter(klokke, transport).tolk(TEKST_4), TolketPreferanse)
@@ -352,7 +372,9 @@ def test_429_med_reset_i_sekunder_venter_minst_ett_sekund() -> None:
     assert klokke.søvn == [1]
 
 
-@pytest.mark.parametrize("verdi", ["²", "١٢٣", "12a", "-5", ""])
+@pytest.mark.parametrize("verdi", ["²", "١٢٣", "12a", "-5", "", pytest.param("9" * 400, id="over-flyttallsgrensen"),
+                                   pytest.param("9" * 20, id="20-sifre"),
+                                   pytest.param("9" * 5000, id="over-heltallsgrensen")])
 def test_429_med_uleselig_reset_venter_ett_vindu(verdi: str) -> None:
     klokke = FalskKlokke()
     transport = FalskTransport([status(429, {"x-ratelimit-reset": verdi}), ok()])
