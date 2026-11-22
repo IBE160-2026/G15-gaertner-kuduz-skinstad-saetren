@@ -53,5 +53,12 @@ Johannes ba om å rette punkt 1–5 («Gjør nødvendige utbedringer/tilpasninge
   - Frontend er ikke endret av PR-oppfølgingen eller av `main` siden flettebasen, så frontendtestene ble ikke kjørt på nytt.
 - **Ikke pushet.** Branchen inneholder også de to lokale commitene på `main` (`a7b0082`, `efbc60a`). `main` bør derfor pushes før branchen.
 
-### Åpne punkter etter rettingene
-- PR #37: Kim eller et annet gruppemedlem ser over rettingene i `b947014` før merge. Det gjelder særlig at Kims KI-logg og matrisetekst er endret.
+### Kommentar, godkjenning og fletting
+- **Push:** `main` ble pushet først, deretter PR-branchen. Ingen andre hadde pushet i mellomtiden.
+- **Kommentar på PR #37:** gjennomgangen, de fem rettingene, kontrollen og funnene som ikke ble rettet ([kommentaren](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/37#issuecomment-7077582254)). Kim er bedt om å se over `b947014`.
+- **Godkjenning og fletting:** alle sju CI-sjekker var grønne på `b947014`, også frontend på Node 22.12 og LTS. Johannes godkjente, og PR-en ble flettet i `4bca0ae`.
+- **Status (`33d7f85`):** story 5.4 er satt til `done` i `sprint-status.yaml`, storyfiguren, AGENTS.md og vurderingsmatrisen.
+- **Branchen** `story/5-4-reservetekst-naar-ki-forklaringen-feiler` er ikke slettet.
+
+### Åpne punkter etter flettingen
+- Kim ser over Johannes' rettinger i `b947014` i ettertid. Det gjelder særlig endringene i KI-loggen og matriseteksten. Innvendinger rettes på `main`.
