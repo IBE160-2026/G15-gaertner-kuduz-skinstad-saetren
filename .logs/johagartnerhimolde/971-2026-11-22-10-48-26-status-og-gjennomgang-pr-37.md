@@ -35,4 +35,23 @@ Hente siste oppdateringer og få en gjennomgang av dem. Deretter rette status so
 - **Ikke gjort:** Ingen kommentar er postet på PR #37, og ingen endringer er gjort på branchen.
 
 ### Åpne punkter
-- PR #37: Johannes vurderer funnene og gir Kim tilbakemelding på PR-en. De anbefalte rettingene før merge er konfliktløsningen med `nettverksårsak`, ordlyden i matrisen og KI-loggen, en test av 20-sifret reset og en omtale av at `>=` også gjelder `tolk`.
+- ~~PR #37: Johannes vurderer funnene og gir Kim tilbakemelding.~~ Løst samme dag, se oppfølgingen nedenfor.
+
+### Oppfølging samme dag: rettinger på PR-branchen
+Johannes ba om å rette punkt 1–5 («Gjør nødvendige utbedringer/tilpasninger til punkt 1-5»).
+
+- **Fletting (`4701c4e`):** `main` er flettet inn i `story/5-4-reservetekst-naar-ki-forklaringen-feiler`. Konfliktene i `sprint-status.yaml` og `vurderingsmatrise.md` er løst, og storyfiguren stemmer.
+- **Rettinger (`b947014`):**
+  - `nettverksårsak(feil)` er brukt i den nye `except OSError`, med en API-test for direkte sertifikatfeil.
+  - Ordlyden om transportfunnet er rettet i matrisen.
+  - Påstanden om forhåndsgenererte testdata er avgrenset i KI-loggen og spesifikasjonen, og ført i `deferred-work.md` for 5.7.
+  - Nye tester for reset med 19 og 20 sifre, og for fristgrensen i `tolk` (89 og 90 s).
+  - Fem nye rader i spesifikasjonens Review Triage Log, og en ny KI-logg: `docs/ki-logg/2026-11-22-oppfolging-pr-37.md`.
+- **Kvalitetssikring:**
+  - Hver av de tre kodeendringene ble tilbakestilt, og testene ble røde for alle tre.
+  - 830 av 830 backendtester bestod etter flettingen.
+  - Frontend er ikke endret av PR-oppfølgingen eller av `main` siden flettebasen, så frontendtestene ble ikke kjørt på nytt.
+- **Ikke pushet.** Branchen inneholder også de to lokale commitene på `main` (`a7b0082`, `efbc60a`). `main` bør derfor pushes før branchen.
+
+### Åpne punkter etter rettingene
+- PR #37: Kim eller et annet gruppemedlem ser over rettingene i `b947014` før merge. Det gjelder særlig at Kims KI-logg og matrisetekst er endret.
