@@ -918,6 +918,15 @@ Respekter dokumentets statusmarkeringer; ved konflikt med øvrige prosjektinstru
 - **Status:** Story 5.2 er `done` i `sprint-status.yaml`.
 - **Ikke endret:** Akseptansekriteriene selv og andre AV-, K-, OP- og KS-punkter.
 
+### 2026-11-22 – Nattevakters dato i v1
+
+Kim godkjente punkt 1 i den [samlede avklaringsrunden](avklaringsrunde-2026-11-22.md):
+startdato videreføres på vaktflatene i v1. Visning av sluttdato for nattevakter
+utsettes til én samlet UX-endring på alle relevante flater i v2. Det lukker
+oppfølgingsspørsmålet fra PR #16 for v1. AV-02s klokkeslett og KS-03s faktiske
+varigheter endres ikke. Dette er Kims eksplisitte valg i runden, ikke en påstand
+om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt åpne.
+
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
 Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.

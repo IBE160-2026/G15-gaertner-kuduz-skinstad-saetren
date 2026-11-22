@@ -1,6 +1,7 @@
 # Fire gjenstående gruppevalg
 
-Forslag til én samlet avklaringsrunde 22.11.2026. Dette er **ikke vedtak**.
+Forslag til én samlet avklaringsrunde 22.11.2026. Punkt 1 er godkjent av Kim;
+punkt 2–4 står fortsatt som forslag.
 Hele gruppa er beslutningseier for sensoropplegget (AV-16/ÅB-8). Kim kan føre
 gruppas svar når fullmakten eller enigheten er bekreftet. Ingen nøkkel, betaling
 eller kontoendring utføres som del av denne dokumentasjonen.
@@ -19,5 +20,11 @@ og AV-16/ÅB-8 i [referatet](avklaringspunkter.md#13-målbare-prd-mål-og-beslut
 
 ## Svar
 
-Avventer gruppas samlede svar. Ingen av de fire punktene lukkes bare fordi
-vedtakstekst er foreslått.
+Kim svarte 22.11: «1 ok 2 avvent til gruppeavgjørelse 3. Holdes åpen foreløpig
+4. Holdes åpen foreløpig».
+
+- Punkt 1: startdato beholdes i v1, samlet sluttdatoendring utsettes til v2.
+  Godkjent av Kim i denne avklaringsrunden; ført i referatet og Kims punktliste.
+- Punkt 2: avventer uttrykkelig gruppeavgjørelse; ingen generell låsepolicy vedtatt her.
+- Punkt 3: fortsatt åpen. Forslaget om utsettelse er ikke vedtatt; 5.9 står i backlog.
+- Punkt 4: fortsatt åpen. Ingen eier, betalingsforpliktelse eller kreditt er fastsatt.
