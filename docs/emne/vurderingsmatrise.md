@@ -35,10 +35,17 @@ mens sluttkontroll på innleveringsversjonen gjenstår.
 - **Kriterium 4:** [P-13-protokollen](../testing/2026-11-22/p13-protokoll.md)
   bevarer Kims interne prøve og skal senere utvides med en person utenfor gruppen.
   Intern forståelse alene lukker ikke punktet og dokumenterer ikke validert brukerbehov.
+  Den faktiske interne prøven avdekket en misforståelse av datafeil og et uklart
+  neste steg. [UX-rettingen med KI-logg](../ki-logg/2026-11-22-p-13-datafeil-og-neste-steg.md)
+  og før-/etter-bildene viser en konkret iterasjon etter brukerobservasjon.
+  Kim fant A mer forståelig og oppfattet etterpå stopp i vurderingen på B.
+  Han har ingen egen turnuserfaring; behovsvalideringen er derfor fortsatt åpen.
 - **Kriterium 1 og 2:** [E-02-forberedelsen](e-02-proposal-sammenligning.md)
   knytter løftene fra `ee6d798` til eksisterende bevis og presiserer sluttkontrollen
   på innleveringscommit. [Fire gruppevalg](../beslutninger/avklaringsrunde-2026-11-22.md)
   har anbefaling, konsekvens og konkret vedtakstekst; forslagene er ikke vedtak.
+  I den etterfølgende runden godkjente Kim videreført startdato i v1 og utsettelse
+  av samlet sluttdatoendring til v2. De øvrige tre gruppevalgene ble holdt åpne.
 - **Kriterium 1 og 5:** Epic 4-konteksten er samordnet med gjeldende vedtak;
   AV-02 er presisert med Kims uttrykkelige samtykke mot KS-03s faktiske 7/9 timer.
   5.4 er allerede i [PR #37](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/37)

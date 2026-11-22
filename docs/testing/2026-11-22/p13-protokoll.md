@@ -24,18 +24,52 @@ aktive app. Først etter svar 1/2 vises [A](p13-visning-a.png) og
 feiltilstand før svarene er registrert. Noter om deltakeren brukte bilde eller
 appen; et beskrevet valg er forståelsesbevis, ikke en observert knapphandling.
 
-## Intern prøve — pågår
+## Intern prøve — gjennomført med oppfølging
 
-- Deltaker: Kim, gruppemedlem. Tidligere turnuserfaring ikke oppgitt.
-- Testflate: nettleser og skjermbilder i chatten; faktisk brukt flate bekreftes ved avslutning.
+- Deltaker: Kim, gruppemedlem. På spørsmål om egen erfaring med å finne erstatter til en vakt svarte han: «Det har jeg ikke erfaring med».
+- Testflate: forsøkt gjennom app/innlogging, deretter A/B som direkte PNG-bilder generert fra Chrome på Windows ved 1600 × 1000 px. Direkte knappbruk hos deltakeren er ikke observert; valg av Mette ble beskrevet med ord.
 - Oppgave 1, ordrett: «Fordi den har lavest ulempepoeng av kandidatene».
 - Oppgave 2, ordrett: «Mette Solberg. Klikke på velg knappen og godkjenn erstatter kappen på neste side».
 - Oppgave 3: Presentert, men første forsøk viste innlogging i begge lenker fordi deltakerens Chrome hadde en egen sesjon. Ordrett: «A og B er like. Det er innlogging så jeg ville lagt inn brukernavn og passord og trykket logg inn». Dette er et tilgangsproblem i testopplegget og skåres ikke som feil forståelse av kandidattilstandene. Testtilgang er gitt, og nytt svar avventes uten hint om innholdet.
 - Etter innlogging svarte Kim: «Begge er like. Jeg ville klikket inn på velg vakt - finn erstatter». Deltakeren hadde fremdeles ikke fått bekreftet tilgang til de to tilstandene; heller ikke dette skåres som feil på oppgaven. Ingen årsak i appen er fastslått. For å fjerne leveringsproblemet ble de lagrede A/B-bildene servert direkte som PNG fra en egen, lokal HTTP-server på port 8765. Begge lenker ble verifisert med HTTP 200 og `image/png` før deltakeren fikk dem. Endelig svar avventes.
 - Oppgave 3 etter riktig bildelevering, ordrett: «Den ene har ingen gyldige kandidater, veit ikke hva jeg skulle gjort. den andre har gyldige kandidater, men gyldig turnus finnes ikke så får ikke valgt noen men ville gjort det om det var tilgjengelig».
 - Observasjon: Kim skiller null treff fra en datamangel, men tolker B som at gyldige kandidater finnes. Det kan appen ikke vite når vurderingen er stoppet. Overskriften «Gyldige kandidater» over datafeilen er en mulig årsak. I A ble rådet om innleie ikke brukt som neste steg. Testleder forklarte deretter forskjellen. En senere kontroll med Kim må derfor merkes som prøve etter forklaring, ikke som en ny prøve uten hint.
-- Misforståelser og vurdering: Avventes til alle svar er registrert.
-- Gruppas designvurdering, eventuell retting og ny kontroll: Ikke utført ennå.
+- Misforståelse: B ble oppfattet som at gyldige kandidater allerede var kjent. Testleder vurderte overskriften som misvisende i datafeiltilstanden. I A ble innleierådet ikke funnet som neste steg.
+
+## Rettelse og intern oppfølging etter forklaring
+
+Med `bmad-build` og egen kontekst-/gjennomgangsagent ble datafeiloverskriften
+endret til «Kandidatvurdering». Meldingen presiserer nå at appen ikke kan avgjøre
+hvem som er gyldig. Den vedtatte innleieteksten er flyttet foran utelukkelsesboksen
+og vises som brødtekst fremfor metatekst. Ingen ny knapp eller endring av regler.
+
+- Før: [A](p13-visning-a.png) og [B](p13-visning-b.png).
+- Etter: [A ved 1600 px](p13-etter-a-1600-16.png) og [B ved 1600 px](p13-etter-b-1600-16.png).
+- Smalt vindu og større tekst: [A ved 680 px / 20 px](p13-etter-a-680-20.png),
+  [B ved 680 px / 20 px](p13-etter-b-680-20.png). Ekte backend, ingen siderulling
+  eller tekstoverlapp, full datagrense og ingen valg ved datafeil.
+- To utvidede tester feilet før rettingen. Etterpå bestod bygg, 52 modultester
+  og 57 komponenttester. Etter blind gjennomgang bestod bygg og de 27 kandidatflatetestene
+  igjen, med sikring av typografi, tekstorden og tilstandsavhengig overskrift.
+
+Kims vurdering av A, ordrett: «A: mer forståelig, men jeg ville kanskje sagt
+\"Innleie av personell burde vurderes\"». Den nye plasseringen beholdes.
+Forslaget om «burde» er vurdert, men ikke innført: P-11 vedtok «kan vurderes»,
+og prototypen kjenner ikke situasjonen godt nok til å anbefale at innleie burde skje.
+Dette er testleders begrunnelse; ingen ny samlet gruppeavstemning om ordlyden er utført.
+B-oppfølgingen, ordrett: «Kandidater kan ikke vurderes fordi det ikke er noen
+gydig turnus. Da stopper det seg for meg». Kim oppfatter nå stopp i selve vurderingen,
+og hevder ikke lenger at gyldige kandidater er kjent. Videre fremgang er fortsatt
+uklar. Testleder presiserte at datagrunnlaget må kontrolleres utenfor denne visningen,
+og la til neste-steg-setningen «Få turnusgrunnlaget kontrollert og oppdatert før ny
+vurdering.» Den siste setningen er teknisk og visuelt kontrollert, men er ikke
+prøvd uten hint med en deltaker. Ingen ny redigerings-/importfunksjon er innført.
+Den interne prøven er ikke godkjent som en ny prøve uten hint.
+Det er ikke dokumentert at alle tre oppgavene ble løst uten hint i første prøve.
+
+Endelig B etter siste neste-steg-setning: [1600 px / 16 px](p13-endelig-b-1600-16.png)
+og [680 px / 20 px](p13-endelig-b-680-20.png). Mellomversjonen Kim svarte på er
+bevart i `p13-etter-b-*.png`; den er ikke overskrevet med den siste teksten.
 
 ## Behovssamtale etter oppgavene
 
@@ -48,6 +82,10 @@ Be om konkrete erfaringer, ikke bare om løsningen virker nyttig:
 
 Skill opplevd problem fra antatt nytte. Hvis deltakeren mangler turnuserfaring,
 gir testen forståelsesbevis, men svakt grunnlag for å hevde validert brukerbehov.
+
+Kim har ikke slik erfaring. Det er derfor ikke dokumentert noe konkret turnustilfelle,
+tidsbruk eller behovsbevis gjennom denne prøven. Problemvalidering står åpen og bør
+kombineres med den eksterne prøven med en person som har relevant erfaring.
 
 ## Ekstern prøve — gjenstår
 

@@ -162,3 +162,23 @@ oppfinne en forklaring. Tidligere nettleser-/testbevis er i branchens KI-logg fr
 21.11. Denne økten har ikke kjørt branchens kode på nytt eller merget PR-en.
 **P-08 er fullført; samlepunktet P-06/P-08 holdes åpent bare for behandlingen og
 integrasjonskontrollen av endelig 5.4-reservetekst.**
+
+## Intern P-13-prøve og etterfølgende retting
+
+Den faktiske prøven med Kim avdekket at overskriften «Gyldige kandidater» ved
+datafeil kunne gi inntrykk av at gyldighet var kjent. Overskriften er nå
+«Kandidatvurdering», og teksten forklarer både usikkerheten og nødvendig
+kontroll/oppdatering av grunnlaget før ny vurdering. Den vedtatte innleieteksten
+ved null gyldige er flyttet foran utelukkelsesboksen og vises som brødtekst.
+Regler, datagrense og tilgjengelige handlinger er uendret.
+
+[Prøve med ordrette svar og før-/etter-bilder](p13-protokoll.md) ·
+[KI-logg, to røde tester og uavhengig gjennomgang](../../ki-logg/2026-11-22-p-13-datafeil-og-neste-steg.md).
+Etter siste retting bestod frontendbygg og 52 modultester + 57 komponenttester.
+Visuell etterkontroll med ekte backend ved 680/1600 px og 16/20 px grunnskrift
+fant ingen siderulling eller tekstoverlapp. Dette er en ny tekstendring etter
+kontrollene ovenfor, ikke en endring av CSS-en som lukket 4.6.
+
+P-13 og behovsvalidering er åpne. Kim har ingen turnuserfaring, og den siste
+neste-steg-setningen har ennå ingen prøve uten hint. Ekstern prøve og gruppas
+endelige designvurdering gjenstår.

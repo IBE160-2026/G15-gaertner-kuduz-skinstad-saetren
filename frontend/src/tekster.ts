@@ -99,6 +99,7 @@ export const TEKSTER = {
     minstenivaa: (nivaa: number) => `Minstenivå ${nivaa} av 4`,
     // Kandidatlisten (story 2.1).
     kandidaterOverskrift: "Gyldige kandidater",
+    datafeilOverskrift: "Kandidatvurdering",
     // Tomtilstanden (story 2.6, UX-DR16, P-11).
     ingenGyldige:
       "Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.",
@@ -122,7 +123,7 @@ export const TEKSTER = {
     ulempePoeng: (poeng: string) => `${poeng} p`,
     ulempeFordeling: (kveld: string, helg: string, natt: string) =>
       `Kveld ${kveld} t · helg ${helg} t · natt ${natt} t`,
-    datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler.",
+    datafeil: "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler. Vi kan derfor ikke avgjøre hvem som er gyldig for vakten. Få turnusgrunnlaget kontrollert og oppdatert før ny vurdering.",
     datagrense: (tid: string) => `Turnusgrunnlaget går til ${tid}.`,
     // Rangeringstabellen (story 4.4, UX-DR7–DR11). Kolonnen for «Velg» har en skjult
     // overskrift; der kommer også ekspanderen fra epic 5.

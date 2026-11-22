@@ -8,6 +8,9 @@ og 54 komponenttester bestod; P-08 dekker nå alle fem faktiske #4261–#4265.
 Tidligere «ikke kontrollert»-omtaler nedenfor er historisk status før denne
 oppfølgingen. [P-13](testing/2026-11-22/p13-protokoll.md) holdes åpen til også en
 person utenfor gruppen har prøvd; intern prøve med Kim dokumenteres separat.
+Den interne prøven avdekket en misforståelse av datafeil og et uklart neste steg;
+[retting og før-/etter-bevis](ki-logg/2026-11-22-p-13-datafeil-og-neste-steg.md)
+viser den påfølgende UX-iterasjonen. Endelig frontendbygg og 52 + 57 tester bestod.
 
 Hva som testes automatisk, hvordan testene kjøres, og hva som fortsatt kontrolleres for
 hånd og hvorfor. Dette er testplanen sensorveiledningen ber om under kriterium 3,

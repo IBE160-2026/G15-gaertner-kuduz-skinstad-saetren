@@ -183,7 +183,7 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
   );
   if (tilstand.type === "datafeil") return (
     <section className="panel kandidater kandidater-datafeil datafeil" aria-labelledby="kandidater-tittel">
-      {overskrift}
+      <h2 id="kandidater-tittel" className="overskrift">{t.datafeilOverskrift}</h2>
       <div role="alert">
         <p className="brodtekst datafeil-tekst">{t.datafeil}</p>
         <p className="meta">{t.datagrense(datoOgKlokke(tilstand.datagrense))}</p>
@@ -199,8 +199,8 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
         <span className="alert-icon" aria-hidden="true">!</span>
         <p className="brodtekst">{t.ingenGyldige}</p>
       </div>
+      <p className="brodtekst tomtilstand-innleie">{t.innleie}</p>
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
-      <p className="meta tomtilstand-innleie">{t.innleie}</p>
     </section>
   );
 

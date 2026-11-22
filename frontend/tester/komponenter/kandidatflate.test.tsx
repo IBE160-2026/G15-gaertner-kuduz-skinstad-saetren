@@ -24,7 +24,9 @@ async function rendreMed(kandidater: Svar | Svar[], onVelg = vi.fn()) {
   const fetch = falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: kandidater });
   const bruker = userEvent.setup();
   render(<Kandidatflate vaktnummer={4127} onVelg={onVelg} />);
-  const del = await screen.findByRole("region", { name: t.kandidaterOverskrift });
+  const del = await screen.findByRole("region", {
+    name: new RegExp(`^(${regexTekst(t.kandidaterOverskrift)}|${regexTekst(t.datafeilOverskrift)})$`),
+  });
   // Vent til «Henter kandidatene …» er borte.
   await vi.waitFor(() => expect(within(del).queryByText(t.kandidaterLaster)).toBeNull());
   return { fetch, bruker, del, onVelg };
@@ -119,6 +121,7 @@ describe("Kandidatliste (story 2.1)", () => {
       { ...grunnlag, id: 3, navn: "Overtid", kostnad: { total: 3600, ordinære_timer: 0, overtidstimer: 8, ordinær_sats: 300, overtidssats: 450 } },
     ] } satisfies Kandidatsvar;
     const { del } = await rendreMed(ok(svar));
+    expect(within(del).getByRole("heading", { name: t.kandidaterOverskrift })).toBeTruthy();
     const rad = (navn: string) => radFor(del, navn);
     const format = (n: number) => new Intl.NumberFormat("nb-NO", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/\s/g, " ");
     expect(within(rad("Ordinær")).getByText(`${t.kostnadOverskrift}: ${format(2400)} kr`)).toBeTruthy();
@@ -189,6 +192,10 @@ describe("Kandidatliste (story 2.1)", () => {
     const { datagrense } = KANDIDATER_DATAFEIL;
 
     const varsel = within(del).getByRole("alert");
+    expect(within(del).getByRole("heading", { name: t.datafeilOverskrift })).toBeTruthy();
+    expect(within(del).queryByRole("heading", { name: t.kandidaterOverskrift })).toBeNull();
+    expect(varsel.textContent).toContain("ikke avgjøre hvem som er gyldig");
+    expect(varsel.textContent).toContain("Få turnusgrunnlaget kontrollert og oppdatert før ny vurdering.");
     expect(within(varsel).getByText(t.datafeil)).toBeTruthy();
     expect(within(varsel).getByText(t.datagrense(datoOgKlokke(datagrense)))).toBeTruthy();
     expect(within(del).queryByRole("table")).toBeNull();
@@ -300,7 +307,12 @@ describe("Tomtilstanden (story 2.6)", () => {
     expect(ikon?.getAttribute("aria-hidden")).toBe("true");
     expect(within(del).getByText(ekskludertBoksTekst(INGEN_GYLDIGE.utelukkelser))).toBeTruthy();
     expect(within(del).getByText(/^24 utelukket/)).toBeTruthy();
-    expect(within(del).getByText(t.innleie)).toBeTruthy();
+    const innleie = within(del).getByText(t.innleie);
+    expect(innleie.classList.contains("brodtekst")).toBe(true);
+    expect(innleie.classList.contains("meta")).toBe(false);
+    expect(within(del).getByRole("heading", { name: t.kandidaterOverskrift })).toBeTruthy();
+    const utelukkelser = within(del).getByText(ekskludertBoksTekst(INGEN_GYLDIGE.utelukkelser));
+    expect(innleie.compareDocumentPosition(utelukkelser) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(del).queryByRole("link")).toBeNull();
     const knapper = within(del).getAllByRole("button");
     expect(knapper).toHaveLength(1);
