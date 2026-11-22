@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
-import { gjeldendeSesjonsgenerasjon, hentAvveining, type Avveiningssvar, type Faktor, type RangertKandidat } from "../api";
+import { useContext, useEffect, useState } from "react";
+import { gjeldendeSesjonsgenerasjon, type Faktor, type RangertKandidat } from "../api";
+import { Avveiningsoppslag, type Panelresultat } from "../avveiningsoppslag";
 import { timerOgMinutter, énDesimal } from "../format";
-import { gyldigAvveining, preferansetekst } from "../kandidater";
+import { preferansetekst } from "../kandidater";
 import { TEKSTER } from "../tekster";
 
 const t = TEKSTER.kandidatflate.avveining;
 const tall = new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 1 });
 const kroner = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
-type Live = Extract<Avveiningssvar, {status: "ok"}>;
 
 export default function Avveiningspanel({ vaktnummer, kandidat, merke }: {
   vaktnummer: number; kandidat: RangertKandidat; merke: string;
 }) {
-  const [svar, settSvar] = useState<Live | "laster" | "reserve">("laster");
+  const [svar, settSvar] = useState<Panelresultat | "laster">("laster");
+  const slåOpp = useContext(Avveiningsoppslag);
   const id = kandidat.id;
   const sesjon = gjeldendeSesjonsgenerasjon();
   useEffect(() => {
@@ -21,16 +22,12 @@ export default function Avveiningspanel({ vaktnummer, kandidat, merke }: {
     // Ved StrictMode-opprydding før første mikrooppgave skal bare den aktive effekten sende kallet.
     async function last() {
       if (!gjelder()) return;
-      try {
-        const data = await hentAvveining(vaktnummer, id);
-        if (gjelder()) settSvar(gyldigAvveining(data, vaktnummer, id, merke) ? data : "reserve");
-      } catch {
-        if (gjelder()) settSvar("reserve");
-      }
+      const resultat = await slåOpp(vaktnummer, id, merke);
+      if (gjelder()) settSvar(resultat ?? "reserve");
     }
     void Promise.resolve().then(last);
     return () => { aktiv = false; };
-  }, [vaktnummer, id, merke, sesjon]);
+  }, [vaktnummer, id, merke, sesjon, slåOpp]);
 
   const u = kandidat.ulempebelastning;
   const fakta: [Faktor, string][] = [
