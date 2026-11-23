@@ -222,12 +222,11 @@ automatisk tilbake til et mal-svar satt sammen av kode, aldri en foreldet
 sammenligning. En preferansetekst uten forhåndsgenerert treff gir «kunne ikke
 tolkes» med midlertidig 50 poeng, aldri en oppdiktet kategori.
 
-Kjent begrensning: frontend viser i dag kildelinjen («Forhåndsgenerert
-KI-forklaring» / «Satt sammen fra beregnede tall») bare for `ki_kilde: "live"`
-(`frontend/src/kandidater.ts`, `gyldigAvveining`). Avveininger fra demo-modus
-(`"forhandsgenerert"` eller `"mal"`) blir derfor ikke vist av dagens frontend, selv
-om backend-svaret er riktig. Dette er et åpent punkt for en egen UI-story, se
-`_bmad-output/implementation-artifacts/deferred-work.md`.
+Etter innlogging viser appbaren «Demo-modus». Velg vakt #4127 og åpne en
+kandidats begrunnelse. Med de medfølgende testdataene viser både kandidatlisten
+og godkjenningsflaten «Forhåndsgenerert KI-forklaring» med modell og dato.
+Når vaktens, kandidatens eller referansens faktagrunnlag gir et nytt oppslag,
+vises «Satt sammen fra beregnede tall, ikke KI-generert».
 
 Dette er verdt å vite:
 

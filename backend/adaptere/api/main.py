@@ -26,8 +26,9 @@ from sqlalchemy.orm import Session, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from adaptere.api import sesjon
+from adaptere.forklaringsgrunnlag import forklaringsnøkkel
 from adaptere.ki.avveining import Retning, faktorretninger
-from adaptere.ki.demo import DemoKiAdapter
+from adaptere.ki.demo import DemoKiAdapter, DemoOppslag
 from adaptere.ki.openrouter import STANDARD_MODELL, Forklarer, OpenRouterKiAdapter, Tolker, leverandør
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
@@ -82,6 +83,7 @@ class InnloggingInn(BaseModel):
 
 
 class InnloggetUt(BaseModel):
+    demomodus: bool
     navn: str
     avdeling: str
 
@@ -322,6 +324,7 @@ class AvveiningUt(BaseModel):
     # story 5.7). Se `avveining()` for hvordan kilden avgjøres.
     ki_kilde: Literal["live", "forhandsgenerert", "mal"]
     modell: str
+    generert: str | None = None
     paastander: list[str]
 
 
@@ -456,6 +459,7 @@ def lag_app(
     minutter = sesjon.les_minutter(None if minutter is None else str(minutter))
     engine = engine or lag_engine()
     okter = lag_sessionmaker(engine)
+    demomodus = isinstance(ki, DemoOppslag)
     tolkelaaser: dict[int, LockType] = {}
     laasevakt = threading.Lock()
 
@@ -524,12 +528,12 @@ def lag_app(
         if bruker is None:
             return feil(401, "feil_innlogging")
         sesjon.sett_cookie(respons, sesjon.lag_token(bruker.id, nokkel, minutter), minutter)
-        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
+        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling, demomodus=demomodus)
 
     @app.get("/api/meg", response_model=InnloggetUt)
     def meg(request: Request) -> InnloggetUt:
         bruker = request.state.bruker
-        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
+        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling, demomodus=demomodus)
 
     @app.get("/api/vaktoversikt", response_model=VaktoversiktUt)
     def vaktoversikt(request: Request, okt: Okt) -> VaktoversiktUt | JSONResponse:
@@ -564,7 +568,7 @@ def lag_app(
                             utelukkelser=utelukkelser)
 
     @app.get("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/avveining",
-             response_model=AvveiningUt | AvveiningFeiletUt | DatafeilUt)
+             response_model=AvveiningUt | AvveiningFeiletUt | DatafeilUt, response_model_exclude_none=True)
     def avveining(vaktnummer: int, ansatt_id: int, request: Request):
         with okter() as okt:
             grunnlag = les_rangering(okt, request.state.bruker.id, vaktnummer)
@@ -578,13 +582,16 @@ def lag_app(
             identitet = dict(vaktnummer=vaktnummer, kandidat_id=ansatt_id, grunnlagsmerke=grunnlag.merke(ansatt_id))
         # Slipp lesetransaksjonen før venting og nettverkskall.
         if isinstance(ki, Forklarer):
-            paastander = ki.forklar(valgt, referanse)
-            if paastander:
-                # `OpenRouterKiAdapter` har ikke `siste_kilde` og er alltid "live".
-                # `DemoKiAdapter` (story 5.7) setter den per tråd i `forklar()` selv
-                # (se docstringen i `adaptere/ki/demo.py` for hvorfor det er trygt).
-                kilde = getattr(ki, "siste_kilde", None) or "live"
-                return AvveiningUt(**identitet, ki_kilde=kilde, modell=ki.modell, paastander=paastander)
+            if isinstance(ki, DemoOppslag):
+                nøkkel = forklaringsnøkkel(grunnlag.vakt, grunnlag.gyldige[ansatt_id], valgt, referanse)
+                paastander = ki.forklar_med_oppslag(valgt, referanse, nøkkel)
+                kilde = ki.siste_kilde
+                generert = ki.generert if kilde == "forhandsgenerert" else None
+            else:
+                paastander = ki.forklar(valgt, referanse)
+                kilde, generert = "live", None
+            if paastander and kilde:
+                return AvveiningUt(**identitet, ki_kilde=kilde, modell=ki.modell, generert=generert, paastander=paastander)
         return AvveiningFeiletUt(**identitet)
 
     @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/preferanse", response_model=None)

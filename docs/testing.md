@@ -402,17 +402,14 @@ kan bli rød for en adapter uten HTTP. `test_avveining.py` sin
 `test_begge_kilder_kontrollerer_alle_påstandene_mot_uavrundet_rangering` har nå `"demo"`
 som tredje kilde, mot en ekte `DemoKiAdapter`.
 
-Ingen frontendendring i denne storien. `npm run build` og `npm run test` bekrefter bare at
-de tre `ki_kilde`-verdiene ikke knekker eksisterende typer eller tester. Kjent gap:
-`gyldigAvveining` (`frontend/src/kandidater.ts`) godtar bare `ki_kilde === "live"`, så
-Avveiningspanelet viser ikke demo-modusens innhold før en UI-story utvider den — ført i
-`deferred-work.md`. OP-16-sjekklisten gjelder derfor ikke for denne storien.
+[API-testen](../backend/tester/api/test_avveining.py) starter demoen med den
+leverte datafilen, sjekker fire forhåndsgenererte treff for #4127 og øker
+referansekandidatens timelønn fra 370 til 371 kroner. Jonas beholder sin egen
+totalscore, og neste oppslag gir maltekst. Adaptertestene dekker også endring av
+vaktnummer og kompetanse mens de rangerte kandidatene holdes faste.
 
-`backend/adaptere/ki/demoinnhold.json` er en gyldig, tom plassholder i denne leveransen:
-agentsesjonens godkjenningssystem avviste de betalte OpenRouter-kallene
-`scripts/generer_demoinnhold.py --live` skulle gjøre. Demo-modus fungerer korrekt
-(faller til «kunne ikke tolkes» og mal-svar for alt), men viser ikke de faktiske
-fasit-tolkningene før et gruppemedlem kjører kommandoen selv og committer resultatet.
-
-Kjørt 2026-11-22: 873 av 873 backendtester (hele samlingen, Windows), 52 + 58
-frontendtester, og frontendbygget.
+[Komponenttestene](../frontend/tester/komponenter/avveining.test.tsx) følger
+begge demokilder fra kandidatlisten til godkjenningen. De kontrollerer appbaren,
+kildelinjen og påstandene. En forhåndsgenerert forklaring krever kildebelegg
+med modell og dato. Nettleserkontrollen med ekte backend står i
+[KI-loggen](ki-logg/2026-11-22-demo-modus-uten-api-nokkel.md#rettelser-etter-gjennomgang-av-pr-38).

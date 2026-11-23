@@ -16,8 +16,9 @@ from pathlib import Path
 import pytest
 
 from adaptere.ki.avveining import tillatte_påstander, valider
-from adaptere.ki.demo import KONTRAKTSVERSJON, DemoKiAdapter
-from adaptere.ki.openrouter import STANDARD_MODELL, Tolkefeil
+from adaptere.forklaringsgrunnlag import KONTRAKTSVERSJON, forklaringsnøkkel
+from adaptere.ki.demo import DemoKiAdapter
+from adaptere.ki.openrouter import Tolkefeil
 from domene.porter.rangering import TolketPreferanse
 from tester.ki.test_avveining import egen, mot
 from tester.regelmotor.test_rangering import VAKT, kandidat, vurder
@@ -77,9 +78,9 @@ def test_ugyldig_lagret_preferanse_gir_tolkefeil(tmp_path: Path, oppføring: obj
 def test_forhandsgenerert_svar_som_bestaar_kontroll_brukes(tmp_path: Path) -> None:
     en, to = kandidater()
     gyldig = mot("kostnad", "høyere")
-    sti = skriv(tmp_path, avveininger={f"{en.id}:{to.id}": {"paastander": [gyldig]}})
+    sti = skriv(tmp_path, avveininger={"testnøkkel": {"paastander": [gyldig]}})
     ki = DemoKiAdapter(sti)
-    svar = ki.forklar(en, to)
+    svar = ki.forklar_med_oppslag(en, to, "testnøkkel")
     assert svar == valider({"paastander": [gyldig]}, tillatte_påstander(en, to))
     assert svar is not None
     assert ki.siste_kilde == "forhandsgenerert"
@@ -89,18 +90,41 @@ def test_forhandsgenerert_svar_som_ikke_bestaar_kontroll_faller_til_mal(tmp_path
     en, to = kandidater()
     # Svaret peker på en umulig sammenligning (motsatt retning) og består aldri valider().
     ugyldig = mot("kostnad", "lavere")
-    sti = skriv(tmp_path, avveininger={f"{en.id}:{to.id}": {"paastander": [ugyldig]}})
+    sti = skriv(tmp_path, avveininger={"testnøkkel": {"paastander": [ugyldig]}})
     ki = DemoKiAdapter(sti)
-    svar = ki.forklar(en, to)
+    svar = ki.forklar_med_oppslag(en, to, "testnøkkel")
     assert svar is not None and svar == ki._mal(tillatte_påstander(en, to))  # noqa: SLF001
     assert ki.siste_kilde == "mal"
     assert any(p.myk_faktor for p in tillatte_påstander(en, to) if p.tekst in svar)
 
 
+@pytest.mark.parametrize("metadata", [{"modell": None}, {"modell": "  "}, {"generert": "2026-02-31"}])
+def test_manglende_kildebelegg_gir_mal(tmp_path, metadata):
+    en, to = kandidater()
+    svar = {"paastander": [mot("kostnad", "høyere")]}
+    ki = DemoKiAdapter(skriv(tmp_path, avveininger={"treff": svar}, **metadata))
+    assert ki.forklar_med_oppslag(en, to, "treff")
+    assert ki.siste_kilde == "mal"
+
+
+def test_endret_vakt_eller_grunndata_gir_mal_selv_med_samme_rangering(tmp_path):
+    en, to = kandidater()
+    ansatt = kandidat(en.id)
+    nøkkel = forklaringsnøkkel(VAKT, ansatt, en, to)
+    svar = {"paastander": [mot("kostnad", "høyere")]}
+    ki = DemoKiAdapter(skriv(tmp_path, avveininger={nøkkel: svar}))
+    for vakt, grunnlag in [
+        (replace(VAKT, vaktnummer=VAKT.vaktnummer + 1), ansatt),
+        (VAKT, replace(ansatt, kompetanse={**ansatt.kompetanse, "natt": 4})),
+    ]:
+        assert ki.forklar_med_oppslag(en, to, forklaringsnøkkel(vakt, grunnlag, en, to))
+        assert ki.siste_kilde == "mal"
+
+
 def test_intet_oppslag_gir_mal(tmp_path: Path) -> None:
     en, to = kandidater()
     ki = DemoKiAdapter(skriv(tmp_path))
-    svar = ki.forklar(en, to)
+    svar = ki.forklar_med_oppslag(en, to, "testnøkkel")
     assert svar is not None and ki.siste_kilde == "mal"
     tillatte = tillatte_påstander(en, to)
     assert set(svar) <= {p.tekst for p in tillatte}
@@ -116,9 +140,9 @@ def test_ingen_myk_faktor_gir_none_uavhengig_av_lagret_svar(tmp_path: Path) -> N
     lik = Fraction(50)
     en = replace(en, eksakte_poeng=type(en.eksakte_poeng)(lik, lik, lik, lik, lik))
     # Et lagret svar finnes, men skal aldri brukes uten en myk faktor i det hele tatt.
-    sti = skriv(tmp_path, avveininger={f"{en.id}:": {"paastander": [egen()]}})
+    sti = skriv(tmp_path, avveininger={"uten-referanse": {"paastander": [egen()]}})
     ki = DemoKiAdapter(sti)
-    assert ki.forklar(en, None) is None
+    assert ki.forklar_med_oppslag(en, None, "uten-referanse") is None
     assert ki.siste_kilde is None
 
 
@@ -138,7 +162,7 @@ def test_manglende_datafil_gir_tom_data_med_advarsel(tmp_path: Path, caplog: pyt
     with caplog.at_level(logging.WARNING):
         ki = DemoKiAdapter(tmp_path / "finnes-ikke.json")
     assert ki.tolk(TEKST) == Tolkefeil("ubrukelig")
-    assert ki.modell == STANDARD_MODELL
+    assert ki.modell == ""
     assert any(r.levelno == logging.WARNING for r in caplog.records)
 
 
@@ -168,19 +192,19 @@ def test_to_adaptere_mot_manglende_datafil_deler_ikke_samme_dict(tmp_path: Path)
 def test_siste_kilde_er_isolert_per_trad(tmp_path: Path) -> None:
     en, to = kandidater()
     gyldig = mot("kostnad", "høyere")
-    sti = skriv(tmp_path, avveininger={f"{en.id}:{to.id}": {"paastander": [gyldig]}})
+    sti = skriv(tmp_path, avveininger={"testnøkkel": {"paastander": [gyldig]}})
     ki = DemoKiAdapter(sti)
     start = threading.Barrier(2)
     resultater: dict[str, object] = {}
 
     def forhandsgenerert() -> None:
         start.wait(5)
-        ki.forklar(en, to)
+        ki.forklar_med_oppslag(en, to, "testnøkkel")
         resultater["forhandsgenerert"] = ki.siste_kilde
 
     def mal() -> None:
         start.wait(5)
-        ki.forklar(en, None)  # samme kandidat, annen referanse -> annen nøkkel -> intet oppslag -> mal
+        ki.forklar_med_oppslag(en, None, "uten-referanse")  # samme kandidat, annen referanse -> annen nøkkel -> intet oppslag -> mal
         resultater["mal"] = ki.siste_kilde
 
     t1, t2 = threading.Thread(target=forhandsgenerert), threading.Thread(target=mal)

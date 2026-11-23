@@ -17,6 +17,7 @@ export default function Appbar({ bruker, onLoggUt }: Props) {
           : bruker === null
             ? TEKSTER.ikkeInnlogget
             : <>
+                {bruker.demomodus && <span className="appbar-demo">{TEKSTER.demoModus}</span>}
                 <span>{TEKSTER.innlogget(bruker.navn, bruker.avdeling)}</span>
                 <button type="button" className="button-secondary" onClick={onLoggUt}>
                   {TEKSTER.loggUt}

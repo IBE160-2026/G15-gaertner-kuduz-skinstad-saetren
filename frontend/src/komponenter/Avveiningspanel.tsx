@@ -7,12 +7,20 @@ import { TEKSTER } from "../tekster";
 const t = TEKSTER.kandidatflate.avveining;
 const tall = new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 1 });
 const kroner = new Intl.NumberFormat("nb-NO", { style: "currency", currency: "NOK" });
-type Live = Extract<Avveiningssvar, {status: "ok"}>;
+type Forklaring = Extract<Avveiningssvar, {status: "ok"}>;
+
+function kildelinje(svar: Forklaring): string {
+  switch (svar.ki_kilde) {
+    case "live": return t.kilde(svar.modell);
+    case "forhandsgenerert": return t.forhandsgenerert(svar.modell, svar.generert);
+    case "mal": return t.mal;
+  }
+}
 
 export default function Avveiningspanel({ vaktnummer, kandidat, merke }: {
   vaktnummer: number; kandidat: RangertKandidat; merke: string;
 }) {
-  const [svar, settSvar] = useState<Live | "laster" | "reserve">("laster");
+  const [svar, settSvar] = useState<Forklaring | "laster" | "reserve">("laster");
   const id = kandidat.id;
   const sesjon = gjeldendeSesjonsgenerasjon();
   useEffect(() => {
@@ -57,7 +65,7 @@ export default function Avveiningspanel({ vaktnummer, kandidat, merke }: {
     })}</dl>
     <div aria-live="polite">
       {typeof svar === "object" && svar.paastander.map((tekst) => <p key={tekst}>{tekst}</p>)}
-      {svar !== "reserve" && <p className="meta">{svar === "laster" ? t.laster : t.kilde(svar.modell)}</p>}
+      {svar !== "reserve" && <p className="meta">{svar === "laster" ? t.laster : kildelinje(svar)}</p>}
     </div>
     {svar === "reserve" && <p className="meta">{t.reserve}</p>}
   </section>;

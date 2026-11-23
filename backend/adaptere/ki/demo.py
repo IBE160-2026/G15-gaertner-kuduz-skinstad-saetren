@@ -11,7 +11,7 @@ To slag innhold, aldri blandet:
 - Preferansetolkning: oppslag på selve teksten. Treffer den ikke (ukjent tekst),
   gir `tolk` en endelig `Tolkefeil("ubrukelig")`, akkurat som et ubrukelig
   live-svar ville gjort (P-05, AD-6 punkt 1). Ingen kategori diktes opp.
-- Avveining: oppslag på `(kandidat_id, referanse_id)`. Et treff faktakontrolleres
+- Avveining: oppslag på et avtrykk av vakt, kandidat, referanse og kontraktsversjon. Et treff faktakontrolleres
   på nytt mot *gjeldende* tall med samme `avveining.valider`/`tillatte_påstander`
   som live (P-06) — mønsteret er `ForhåndsgenerertTestadapter` i
   `tester/ki/test_avveining.py`. Består den ikke, eller finnes det intet oppslag,
@@ -19,37 +19,27 @@ To slag innhold, aldri blandet:
   fritekst eller KI-generert (AD-6). Har kandidaten ingen myk faktor-påstand i det
   hele tatt, er svaret `None`, likt dagens live-kontrakt (ingen demo-spesiell feil).
 
-`ki_kilde` for ruten: `adaptere/api/main.py` kan ikke lese et vanlig returnert
-attributt trygt, fordi `forklar()` bare får returnere `list[str] | None`
-(samme form som `Forklarer`-protokollen, AD-6). Kilden for *siste* kall på denne
-tråden står i `siste_kilde`, i en `threading.local`, satt rett før `forklar()`
-returnerer og lest av ruten rett etter (synkron rute, ingen mellomliggende kall
-på samme tråd). To samtidige forespørsler kjører på to forskjellige tråder, hver
-med sin egen lokale verdi, så det er ikke en delt tilstand mellom forespørsler.
-`OpenRouterKiAdapter` er uendret og har ikke dette attributtet; ruten faller
-tilbake til `"live"` når attributtet mangler.
+API-et gir demoadapteren et avtrykk beregnet før portgrensen. Live-porten får
+bare kandidat og referanse. Den synkrone ruten leser demoens kilde på samme
+tråd som oppslaget, slik at samtidige forespørsler kan bruke hver sin kilde.
 """
 
 import json
 import logging
 import threading
+from datetime import date
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Protocol, runtime_checkable
 
+from adaptere.forklaringsgrunnlag import KONTRAKTSVERSJON
 from adaptere.ki import avveining
-from adaptere.ki.openrouter import STANDARD_MODELL, Tolkefeil
+from adaptere.ki.openrouter import Tolkefeil
 from domene.porter.rangering import RangertKandidat, TolketPreferanse
 from domene.regelmotor.rangering import PREFERANSEPOENG
 
 logger = logging.getLogger(__name__)
 
 DATAFIL = Path(__file__).with_name("demoinnhold.json")
-# Heves når formen på demoinnhold.json endres, slik at et eldre eller ødelagt
-# datasett aldri blir lest som om det var dette formatet (P-06: ingen foreldet
-# sammenligning vises). Må stemme med `KONTRAKTSVERSJON` i
-# `scripts/generer_demoinnhold.py`.
-KONTRAKTSVERSJON = 1
-
 KiKilde = Literal["forhandsgenerert", "mal"]
 
 
@@ -57,10 +47,6 @@ def _tom_data() -> dict:
     # Et nytt dict ved hver feil, ikke en delt singleton: flere DemoKiAdapter-
     # instanser (f.eks. i tester) skal aldri kunne aliasere samme mutable dict.
     return {"preferanser": {}, "avveininger": {}}
-
-
-def _nøkkel(kandidat_id: int, referanse_id: int | None) -> str:
-    return f"{kandidat_id}:{'' if referanse_id is None else referanse_id}"
 
 
 def _les_data(sti: Path) -> dict:
@@ -85,6 +71,19 @@ def _les_data(sti: Path) -> dict:
     return rått
 
 
+@runtime_checkable
+class DemoOppslag(Protocol):
+    """Tillegget til forklaringsporten som kan slå opp et kildebelagt demosvar."""
+
+    generert: str | None
+
+    @property
+    def siste_kilde(self) -> KiKilde | None: ...
+
+    def forklar_med_oppslag(self, kandidat: RangertKandidat, referanse: RangertKandidat | None,
+                            oppslagsnøkkel: str | None) -> list[str] | None: ...
+
+
 class DemoKiAdapter:
     """`Tolker` og `Forklarer` uten nettverk. Samme form som `OpenRouterKiAdapter`.
 
@@ -99,8 +98,11 @@ class DemoKiAdapter:
         self._preferanser: dict[str, dict] = preferanser if isinstance(preferanser, dict) else {}
         self._avveininger: dict[str, dict] = avveininger if isinstance(avveininger, dict) else {}
         modell = data.get("modell")
-        self.modell: str = modell if isinstance(modell, str) and modell else STANDARD_MODELL
-        self.generert: str = data.get("generert", "") if isinstance(data.get("generert", ""), str) else ""
+        self.modell = modell.strip() if isinstance(modell, str) else ""
+        try:
+            self.generert = date.fromisoformat(data["generert"]).isoformat()
+        except (KeyError, ValueError, TypeError):
+            self.generert = None
         self._lokal = threading.local()
 
     def __repr__(self) -> str:
@@ -123,14 +125,18 @@ class DemoKiAdapter:
         return TolketPreferanse(kategori=kategori, begrunnelse=begrunnelse, modell=modell)
 
     def forklar(self, kandidat: RangertKandidat, referanse: RangertKandidat | None) -> list[str] | None:
+        return self.forklar_med_oppslag(kandidat, referanse, None)
+
+    def forklar_med_oppslag(self, kandidat: RangertKandidat, referanse: RangertKandidat | None,
+                            oppslagsnøkkel: str | None) -> list[str] | None:
         tillatte = avveining.tillatte_påstander(kandidat, referanse)
         if not any(p.myk_faktor for p in tillatte):
             # Likt dagens live-kontrakt: ingen myk faktor i det hele tatt gir `None`,
             # ikke en demo-spesifikk feil (AD-6, matrisen).
             self._lokal.kilde = None
             return None
-        lagret = self._avveininger.get(_nøkkel(kandidat.id, referanse.id if referanse is not None else None))
-        if isinstance(lagret, dict):
+        lagret = self._avveininger.get(oppslagsnøkkel)
+        if self.modell and self.generert and isinstance(lagret, dict):
             svar = avveining.valider(lagret, tillatte)
             if svar is not None:
                 self._lokal.kilde = "forhandsgenerert"

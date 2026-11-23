@@ -26,11 +26,20 @@ export type Kandidattilstand =
 /** Så mange av de høyest rangerte vises før «Vis alle gyldige kandidater» (SM-3, AV-15). */
 export const SYNLIGE_KANDIDATER = 5;
 
+function gyldigKildedato(dato: string): boolean {
+  if (typeof dato !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(dato)) return false;
+  const tid = Date.parse(dato);
+  return Number.isFinite(tid) && new Date(tid).toISOString().slice(0, 10) === dato;
+}
+
 export function gyldigAvveining(svar: Avveiningssvar | {status: "datafeil"}, vakt: number, id: number, merke: string):
   svar is Extract<Avveiningssvar, {status: "ok"}> {
-  return svar?.status === "ok" && svar.ki_kilde === "live" && svar.vaktnummer === vakt
+  if (svar?.status !== "ok") return false;
+  const kjentKilde = svar.ki_kilde === "live" || svar.ki_kilde === "mal"
+    || (svar.ki_kilde === "forhandsgenerert" && gyldigKildedato(svar.generert));
+  return kjentKilde && svar.vaktnummer === vakt
     && svar.kandidat_id === id && !!merke && svar.grunnlagsmerke === merke
-    && typeof svar.modell === "string" && !!svar.modell.trim()
+    && (svar.ki_kilde === "mal" || (typeof svar.modell === "string" && !!svar.modell.trim()))
     && Array.isArray(svar.paastander) && svar.paastander.length > 0
     && svar.paastander.every((tekst) => typeof tekst === "string" && !!tekst.trim());
 }

@@ -1,77 +1,6 @@
 {
   "avveininger": {
-    "3:6": {
-      "paastander": [
-        {
-          "faktor": "ulempe",
-          "kandidat_id": 3,
-          "retning": "opp",
-          "type": "egen"
-        },
-        {
-          "faktor": "preferanse",
-          "kandidat_id": 3,
-          "retning": "ned",
-          "type": "egen"
-        },
-        {
-          "faktor": "total",
-          "kandidat_id": 3,
-          "referanse_id": 6,
-          "retning": "lavere",
-          "type": "sammenligning"
-        }
-      ]
-    },
-    "4:6": {
-      "paastander": [
-        {
-          "faktor": "preferanse",
-          "kandidat_id": 4,
-          "retning": "opp",
-          "type": "egen"
-        },
-        {
-          "faktor": "preferanse",
-          "kandidat_id": 4,
-          "referanse_id": 6,
-          "retning": "høyere",
-          "type": "sammenligning"
-        },
-        {
-          "faktor": "ulempe",
-          "kandidat_id": 4,
-          "referanse_id": 6,
-          "retning": "lavere",
-          "type": "sammenligning"
-        }
-      ]
-    },
-    "5:6": {
-      "paastander": [
-        {
-          "faktor": "ulempe",
-          "kandidat_id": 5,
-          "retning": "ned",
-          "type": "egen"
-        },
-        {
-          "faktor": "ulempe",
-          "kandidat_id": 5,
-          "referanse_id": 6,
-          "retning": "lavere",
-          "type": "sammenligning"
-        },
-        {
-          "faktor": "total",
-          "kandidat_id": 5,
-          "referanse_id": 6,
-          "retning": "lavere",
-          "type": "sammenligning"
-        }
-      ]
-    },
-    "6:5": {
+    "00ad07604c0804a73d79d47f90346ae50fe9a89f142763701f43d97ea88c22df": {
       "paastander": [
         {
           "faktor": "ulempe",
@@ -87,11 +16,82 @@
           "type": "sammenligning"
         }
       ]
+    },
+    "2c00eec925d37fef1b9b89c78bc6ffd7699eef1629a3c490f16a5a6f71b21b54": {
+      "paastander": [
+        {
+          "faktor": "preferanse",
+          "kandidat_id": 4,
+          "retning": "opp",
+          "type": "egen"
+        },
+        {
+          "faktor": "preferanse",
+          "kandidat_id": 4,
+          "referanse_id": 6,
+          "retning": "høyere",
+          "type": "sammenligning"
+        },
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 4,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        }
+      ]
+    },
+    "b86e367fd7758b0f09b34696b7f29e9a8abc7e51e2f895a1a174e47883e6160e": {
+      "paastander": [
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 5,
+          "retning": "ned",
+          "type": "egen"
+        },
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 5,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        },
+        {
+          "faktor": "total",
+          "kandidat_id": 5,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        }
+      ]
+    },
+    "cdd87fe183ccfb0b84ebb2b1bfed686d1b60a8af3d661b6afd5783681bce7430": {
+      "paastander": [
+        {
+          "faktor": "ulempe",
+          "kandidat_id": 3,
+          "retning": "opp",
+          "type": "egen"
+        },
+        {
+          "faktor": "preferanse",
+          "kandidat_id": 3,
+          "retning": "ned",
+          "type": "egen"
+        },
+        {
+          "faktor": "total",
+          "kandidat_id": 3,
+          "referanse_id": 6,
+          "retning": "lavere",
+          "type": "sammenligning"
+        }
+      ]
     }
   },
   "generert": "2026-11-22",
   "kommando": "python scripts/generer_demoinnhold.py --live",
-  "kontraktsversjon": 1,
+  "kontraktsversjon": 2,
   "modell": "openai/gpt-6-luna",
   "preferanser": {
     "For meg spiller det ingen rolle om jeg får en ekstravakt.": {

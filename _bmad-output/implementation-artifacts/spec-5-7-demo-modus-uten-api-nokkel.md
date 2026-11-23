@@ -99,6 +99,8 @@ context:
 
 ## Implementation Notes
 
+**Oppfølging 2026-11-23.** Etter gjennomgang av PR #38 ba Kim om å rette demooppslaget og kildemerkingen. Notatene nedenfor beskriver den første implementeringen. Gjeldende løsning, testbevis og behandling av funn står i [PR-rettingen](spec-pr38-demooppslag-og-kildemerking.md).
+
 - **Mekanismen for `ki_kilde` i ruten (Design Notes-spørsmålet):** `OpenRouterKiAdapter`
   er uendret og har ingen kilde-attributt (alltid `"live"` implisitt). `DemoKiAdapter`
   setter `siste_kilde` i en `threading.local` inne i `forklar()`, rett før den returnerer,

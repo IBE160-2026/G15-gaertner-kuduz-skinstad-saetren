@@ -192,3 +192,15 @@ Review Triage Log står i spesifikasjonen. Sju funn ble rettet av samme implemen
 Kvalitetssikring av rettingene: `cd backend && .venv\Scripts\python -m pytest` →
 **877 av 877 bestått** (opp fra 873: fire nye tester). Ingen frontendendring i denne
 runden.
+
+## Rettelser etter gjennomgang av PR 38
+
+**Oppgave og prompt.** Kim ba Codex om å «Utfør dine anbefalte endringer» og deretter «fortsett». Anbefalingene fulgte en uavhengig kontroll av `111deed`. Der fikk alle fire kandidatene på #4127 reservetekst i nettleseren, og en lønnsendring hos referansen ga fortsatt et forhåndsgenerert treff.
+
+**Leveranse.** GPT-6 i Codex oppdaterte oppslagsnøkkelen i generatoren og API-et, demoadapteren, appbaren og det delte avveiningspanelet. Nøklene ble beregnet fra den opprinnelige seedrangeringen og de 15 lagrede tolkningene. De fire råsvarene bestod faktakontroll før de ble overført. Dette krevde ingen nye modellkall.
+
+**Rettelser av generert kode.** To uavhengige gjennomganger avdekket at første utkast utelot kandidatens grunndata og endret kallesignaturen for live-adaptere. Kilden manglet dessuten sikker håndtering av blank modell og innpakkede adaptere. En komponenttest blandet grunnlagsmerker fra to testoppsett og ble rød. Testen fikk samme kandidat i listen, forklaringen og godkjenningsgrunnlaget. Funn og rettelser er dokumentert i [spesifikasjonen](../../_bmad-output/implementation-artifacts/spec-pr38-demooppslag-og-kildemerking.md).
+
+**Nettleserkontroll 2026-11-23.** Med egen SQLite-database, ekte backend og produksjonsbygd frontend i et vindu på 680 × 700 px viste appbaren «Demo-modus» etter innlogging. På #4127 viste kandidatlisten og godkjenningsflaten «Forhåndsgenerert KI-forklaring · openai/gpt-6-luna, 2026-11-22». Etter at Mette Solbergs timelønn ble endret fra 370 til 371 kroner, viste begge flatene «Satt sammen fra beregnede tall, ikke KI-generert». Godkjenning av Jonas Bakke bemannet vakten og tok brukeren tilbake til vaktoversikten. Demomerket var synlig også etter ny sidelasting. Live-adapterens oppførsel ble prøvd med falsk transport.
+
+**Automatisert sluttkontroll 2026-11-23.** Hele backend-samlingen bestod med 882 tester. Frontend bygde og alle 52 Node-tester og 62 komponenttester bestod. Generatorens tørrkjøring fullførte.

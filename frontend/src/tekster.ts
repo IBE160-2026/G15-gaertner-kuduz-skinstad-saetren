@@ -25,6 +25,7 @@ export function feiltekst(kode: string): string {
 
 export const TEKSTER = {
   merkevare: "TURNUSHJELPEREN",
+  demoModus: "Demo-modus",
   ikkeInnlogget: "Ikke innlogget",
   loggUt: "Logg ut",
   sesjonUtlopt: "Sesjonen er utløpt. Logg inn på nytt.",
@@ -161,6 +162,8 @@ export const TEKSTER = {
       poengnavn: { kostnad: "kostnadspoeng", timebelastning: "timebelastningspoeng", ulempe: "i ulempescore", preferanse: "preferansepoeng" },
       laster: "Henter KI-forklaring …", reserve: "Reservetekst · KI-forklaring utilgjengelig",
       reservetekst: "Vi kunne ikke vise en kontrollert KI-forklaring. Du kan bruke nøkkeltallene nedenfor til å vurdere kandidaten.",
+      forhandsgenerert: (modell: string, dato: string) => `Forhåndsgenerert KI-forklaring · ${modell}, ${dato}`,
+      mal: "Satt sammen fra beregnede tall, ikke KI-generert",
       kilde: (modell: string) => `KI-generert · ${modell}`,
       kostnad: "Vaktkostnad", timebelastning: "Timebelastning", ulempe: "Ulempebelastning", preferanse: "Preferanse",
     },

@@ -13,7 +13,8 @@ import pytest
 from adaptere.ki.avveining import faktorretninger, tillatte_påstander, valider
 from adaptere.ki import openrouter
 from adaptere.ki.begrenser import Begrenser, TidsbudsjettOpbrukt
-from adaptere.ki.demo import KONTRAKTSVERSJON, DemoKiAdapter
+from adaptere.forklaringsgrunnlag import KONTRAKTSVERSJON
+from adaptere.ki.demo import DemoKiAdapter
 from adaptere.ki.openrouter import HttpSvar, OpenRouterKiAdapter
 from domene.regelmotor.rangering import Rangeringsparametere, ranger
 from tester.ki.test_openrouter import FalskKlokke, FalskTransport, adapter, innhold, ok, status
@@ -121,8 +122,8 @@ def test_begge_kilder_kontrollerer_alle_påstandene_mot_uavrundet_rangering(kild
     else:
         # Ekte `DemoKiAdapter` (ikke en test-mal), per oppfølgingen av PR #37: en
         # demokilde som hopper over faktakontrollen, skal gi rød test her.
-        demo_ki = DemoKiAdapter(skriv_demoinnhold(tmp_path, f"{en.id}:{to.id}", svar))
-        forklaring = demo_ki.forklar(en, to)
+        demo_ki = DemoKiAdapter(skriv_demoinnhold(tmp_path, "testnøkkel", svar))
+        forklaring = demo_ki.forklar_med_oppslag(en, to, "testnøkkel")
     if tillegg is None:
         assert forklaring == ["Kostnadspoengene er høyere enn hos Ansatt 2 før avrunding (100,0 mot 100,0)."]
         if demo_ki is not None:

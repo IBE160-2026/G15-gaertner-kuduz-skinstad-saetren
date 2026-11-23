@@ -96,7 +96,7 @@ def port(forespørsel: dict) -> str:
 class RegistrerendePort:
     """Samme porter som adapteren den pakker inn, og registrerer hvert kall."""
 
-    def __init__(self, ki: OpenRouterKiAdapter) -> None:
+    def __init__(self, ki: OpenRouterKiAdapter | DemoKiAdapter) -> None:
         self._ki = ki
         self.modell = ki.modell
         self.forklaringer: list[tuple[RangertKandidat, RangertKandidat | None]] = []
@@ -110,11 +110,20 @@ class RegistrerendePort:
         self.forklaringer.append((kandidat, referanse))
         return self._ki.forklar(kandidat, referanse)
 
+
+class RegistrerendeDemoPort(RegistrerendePort):
+    def __init__(self, ki: DemoKiAdapter) -> None:
+        super().__init__(ki)
+        self._demo = ki
+        self.generert = ki.generert
+
+    def forklar_med_oppslag(self, kandidat, referanse, oppslagsnøkkel):
+        self.forklaringer.append((kandidat, referanse))
+        return self._demo.forklar_med_oppslag(kandidat, referanse, oppslagsnøkkel)
+
     @property
-    def siste_kilde(self) -> str | None:
-        # Forwarding slik ruten i main.py ser den (DemoKiAdapter har attributtet,
-        # OpenRouterKiAdapter har det ikke, se adaptere/ki/demo.py).
-        return getattr(self._ki, "siste_kilde", None)
+    def siste_kilde(self):
+        return self._demo.siste_kilde
 
 
 def openrouter(transport: RegistrerendeTransport) -> OpenRouterKiAdapter:
@@ -178,7 +187,8 @@ def svar(klient: TestClient, sti: str) -> tuple[int, dict]:
 def kjør_flyt(fabrikk: Callable, engine: Engine) -> Flyt:
     """Hele flyten gjennom API-et. Samler svarene og kontrollerer ingenting selv."""
     transport = RegistrerendeTransport()
-    ki = RegistrerendePort(fabrikk(transport))
+    adapter = fabrikk(transport)
+    ki = RegistrerendeDemoPort(adapter) if isinstance(adapter, DemoKiAdapter) else RegistrerendePort(adapter)
     app = lag_app(nokkel=NOKKEL, engine=engine, ki=ki)
     with TestClient(app) as klient:
         # Bakgrunnstolkningen ved oppstart, også av tekster fra senere utelukkede.
@@ -376,6 +386,20 @@ INVARIANTKONTROLLER = [kontroller_forklaringsporten, kontroller_forklaringsfores
 
 
 # --- Testene -----------------------------------------------------------------------
+
+
+def test_innpakket_demo_bevarer_kildedata_og_modus(engine: Engine) -> None:
+    adapter = RegistrerendeDemoPort(DemoKiAdapter())
+    app = lag_app(engine=engine, ki=adapter)
+    with TestClient(app) as klient:
+        app.state.tolketråd.join(timeout=10)
+        assert not app.state.tolketråd.is_alive()
+        logg_inn(klient)
+        assert klient.get("/api/meg").json()["demomodus"] is True
+        forklaring = klient.get(f"{LISTE}/6/avveining").json()
+        assert forklaring["ki_kilde"] == "forhandsgenerert"
+        assert forklaring["generert"] == adapter.generert
+        assert len(adapter.forklaringer) == 1
 
 
 def test_fasiten_for_4127_har_utelukkelser_etter_alle_fire_regler() -> None:

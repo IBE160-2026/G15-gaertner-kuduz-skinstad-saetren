@@ -15,7 +15,7 @@ betalte kall mot OpenRouter, innenfor samme takt/begrenser (AD-7) som appen bruk
 
 `DemoKiAdapter` faktakontrollerer hvert Avveining-oppslag på nytt mot gjeldende,
 uavrundede tall ved hver visning (P-06), så datafilen trenger ikke selve tallene —
-bare kandidat- og referanse-ID og modellens rå svar. Endrer testdataene eller
+et avtrykk av hele forklaringsgrunnlaget og modellens rå svar. Endrer testdataene eller
 vektene seg etter at filen ble generert, faller demo-modus automatisk tilbake til
 mal-svar for den avveiningen, i stedet for å vise en foreldet sammenligning.
 
@@ -36,7 +36,7 @@ if str(BACKEND) not in sys.path:
 import modelltest_openrouter as base  # noqa: E402 (sys.path må settes først)
 
 from adaptere.ki import avveining  # noqa: E402
-from adaptere.ki.demo import KONTRAKTSVERSJON  # noqa: E402
+from adaptere.forklaringsgrunnlag import KONTRAKTSVERSJON, forklaringsnøkkel  # noqa: E402
 from adaptere.ki.openrouter import OpenRouterKiAdapter, Tolkefeil, les_jsoninnhold  # noqa: E402
 from adaptere.lagring.database import lag_engine, lag_sessionmaker, opprett_skjema  # noqa: E402
 from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag  # noqa: E402
@@ -156,6 +156,7 @@ def main() -> int:
 
     print(f"Genererer Avveininger for {len(rangert)} Gyldige kandidater på vakt #{VAKT} ...")
     avveininger: dict[str, dict] = {}
+    ansatte = {ansatt.id: ansatt for ansatt in grunnlag.ansatte}
     for kandidat in rangert:
         referanse = referanse_for(rangert, kandidat.id)
         tillatte = avveining.tillatte_påstander(kandidat, referanse)
@@ -174,7 +175,7 @@ def main() -> int:
             print(f"ADVARSEL: Avveining for kandidat {kandidat.id} ({kandidat.navn}) består ikke "
                  "faktakontrollen og lagres ikke; demo faller tilbake til mal for denne.", file=sys.stderr)
             continue
-        nøkkel = f"{kandidat.id}:{'' if referanse is None else referanse.id}"
+        nøkkel = forklaringsnøkkel(grunnlag.vakt, ansatte[kandidat.id], kandidat, referanse)
         avveininger[nøkkel] = rått
         print(f"  kandidat {kandidat.id} ({kandidat.navn}) mot referanse "
              f"{referanse.id if referanse else None}: lagret")
