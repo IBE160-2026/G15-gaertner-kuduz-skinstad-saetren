@@ -21,3 +21,27 @@ Ragnhild ville vite hva det åpne punktet om loggoppsett for backend går ut på
 - Implementere loggoppsettet i en ny `bmad-build`-økt fra `spec-loggoppsett-backend.md` (`ready-for-dev`).
 - Oppdatere `ARCHITECTURE-SPINE.md` (linje 116 og 215) om runtime-logging ved neste arkitekturgjennomgang eller i retrospektiven for epic 5 (valg C).
 - Si fra til Kim at loggoppsettet gjør INFO-meldingen for `KI_MODUS=demo` i PR #38 synlig.
+
+## 2026-11-23 kl. 10:16 — Ragnhild
+
+### Oppgave
+Bygge spesifikasjonen [spec-loggoppsett-backend.md](../../_bmad-output/implementation-artifacts/spec-loggoppsett-backend.md) med `bmad-build`, slik at INFO-fremdriften fra preferansetolkningen vises i terminalen.
+
+### Plan
+- Modellvalg: ikke i tabellen; etter regelen Sonnet. Økten kjørte Opus (Ragnhilds faste valg). Ny rad i `docs/modellvalg-stories.md`.
+- Implementering med en underagent fra spesifikasjonen alene.
+- Uavhengig gjennomgang med tre agenter på Opus (Blind Hunter, Edge Case Hunter, Verification Gap). Funnene kontrollert mot koden og ført i triageloggen i spesifikasjonen.
+- Rettinger sendt tilbake til samme implementeringsagent.
+
+### Resultat
+- `vis_applogg_i_terminalen` i `backend/adaptere/api/main.py` gir loggeren `adaptere` én terminalhandler på INFO, kalt før `ki_fra_miljo()`. Rot- og uvicorn-loggerne er urørt.
+- Nye tester: `tester/api/test_terminallogg.py` (åtte, blant dem en subprosesstest mot ekte stderr) og én i `test_preferansetolkning.py` om at `tolk_ventende` logger INFO-linjene uten preferansetekst.
+- README skrevet om, `deferred-work.md` oppdatert (punktet løst, nytt punkt om spinen), KI-logg i `docs/ki-logg/2026-11-23-loggoppsett-backend.md`.
+- Gjennomgangen ga 17 funn: 5 rettet (to testhull, README-påstander, advarselstesten, KI-loggen), 12 avvist med begrunnelse. Ingenting utsatt.
+- `pytest`: 844 av 844 bestått. Committet i `61d3877` på `main`, ikke pushet.
+- Lukket punktet om å implementere loggoppsettet og punktet fra 2026-11-21 om å avklare det.
+
+### Åpne punkter
+- Live-kontroll med nøkkel (19 betalte kall) er ikke kjørt. Den er valgfri etter spesifikasjonen; INFO-veien dekkes av testene.
+- Oppdatere `ARCHITECTURE-SPINE.md` om runtime-logging (står allerede i `issues.md`).
+- Si fra til Kim om PR #38 (står allerede i `issues.md`).
