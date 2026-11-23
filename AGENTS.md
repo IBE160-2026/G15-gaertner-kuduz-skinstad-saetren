@@ -148,6 +148,8 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
     egen testmodul i `tester/regelmotor/`. `tester/test_arkitektur.py` kjører
     import-linter-kontrakten i `pyproject.toml`, som forbyr `domene` å importere
     `adaptere` (AD-1, AD-2). Nye moduler under `domene/` faller inn under kontrakten.
+    Den kjører også linteren ruff med reglene i `[tool.ruff]` (bare feilregler, ingen
+    formatterer). I frontend avviser `npm run build` ubrukte variabler og parametre.
     KI-testene i `tester/ki/` bruker falsk transport og falsk klokke, og
     `tester/conftest.py` fjerner `OPENROUTER_API_KEY`, `KI_MODUS` og
     `OPENROUTER_MODEL` fra miljøet i hver test. Ingen test gjør nettverkskall.

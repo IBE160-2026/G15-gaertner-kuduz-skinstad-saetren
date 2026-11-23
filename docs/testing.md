@@ -116,7 +116,8 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   [`tester/conftest.py`](../backend/tester/conftest.py) fjerner KI-variablene fra
   miljøet i hver test.
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
-  import-linter-kontrakten som forbyr `domene` å importere `adaptere` (AD-1, AD-2).
+  import-linter-kontrakten som forbyr `domene` å importere `adaptere` (AD-1, AD-2), og
+  linteren ruff med reglene i `[tool.ruff]` i `pyproject.toml`.
 - **Lekkasjeinvarianten ved kjøring** ([`test_lekkasjeinvariant.py`](../backend/tester/api/test_lekkasjeinvariant.py),
   story 5.6): hele API-flyten for #4127 med ekte `OpenRouterKiAdapter` og registrerende
   falsk transport. Ingen utelukket ID eller navn når forklaringsporten, og ingen utelukket
