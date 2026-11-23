@@ -59,3 +59,6 @@
 - [ ] 2026-11-23 [loggoppsett-backend](977-2026-11-23-09-33-06-loggoppsett-backend.md) — Oppdatere `ARCHITECTURE-SPINE.md` (linje 116 og 215) om runtime-logging ved neste arkitekturgjennomgang eller i retrospektiven for epic 5 (valg C).
 - [ ] 2026-11-23 [loggoppsett-backend](977-2026-11-23-09-33-06-loggoppsett-backend.md) — Si fra til Kim at loggoppsettet gjør INFO-meldingen for `KI_MODUS=demo` i PR #38 synlig.
 - [ ] 2026-11-23 [loggoppsett-backend](977-2026-11-23-09-33-06-loggoppsett-backend.md) — Live-kontroll av terminalfremdriften med nøkkel (19 betalte kall) er ikke kjørt. Valgfri; testene dekker INFO-veien.
+- [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Gruppa skriver refleksjonsrapporten fra `docs/emne/refleksjonsrapport-stoffgrunnlag.md`. Malen har plass til tre medlemmer, vi er fire.
+- [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Prompter fra planleggingen i september og samarbeidsverktøy utenom GitHub finnes ikke i repoet; gruppa fyller inn.
+- [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Ta opp sensornøkkelen (ÅB-8: eier, betaler, kreditt) i gruppa.
