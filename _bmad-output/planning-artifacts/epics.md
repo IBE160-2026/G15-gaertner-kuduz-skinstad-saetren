@@ -1235,8 +1235,9 @@ So that jeg kan se live KI-forklaringer uten egen konto og uten å spørre grupp
 
 **Given** README
 **When** sensor følger den
-**Then** README forklarer: kopier `.env.example` til `.env`, lim inn nøkkelen fra innleveringen, og start appen
-**And** README forklarer at appen uten nøkkel starter i demo-modus, og hvordan man ser hvilken modus som er aktiv
+**Then** README forklarer: sett nøkkelen fra innleveringen som `OPENROUTER_API_KEY` i terminalen (PowerShell og bash), og start backend i samme terminal
+**And** README sier at backend ikke leser `.env`, slik at en nøkkel lagt der ikke brukes (AV-20, 2026-11-23)
+**And** README forklarer at appen uten nøkkel starter i demo-modus, og at sensor ser hvilken modus som er aktiv i appbaren («Demo-modus»)
 **And** README sier hva sensor ser hvis kreditten er brukt opp: reservetekst, ikke krasj
 
 **Given** innleveringsfristen

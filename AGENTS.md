@@ -12,11 +12,14 @@ regler filtrerer bort ugyldige kandidater, en enkel modell rangerer de gyldige, 
 forklarer avveiningene. Gruppeprosjekt i IBE160 ved Høgskolen i Molde, fire medlemmer.
 Stacken er React/TypeScript med Vite, Python/FastAPI og SQLite via SQLAlchemy.
 KI-leverandøren er OpenRouter med `openai/gpt-6-luna` (valgt 2026-10-16, før det
-Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.5, 4.7, 5.1–5.4 og 5.6 er ferdige: skjelett, lagring med fiktive
+Haiku 5.5). Story 1.1–1.6, 2.1–2.6, 3.1, 3.2, 4.1–4.7 og 5.1–5.7 er ferdige; 5.8 og 5.9
+står i backlog. Det ferdige omfatter skjelett, lagring med fiktive
 testdata, innlogging med designtokens og appskall, beskyttede flater, vaktoversikt og
 valg av vakt, godkjenning og bemanning av vakten, Ekskludert-boksen, rangeringen med
-rangeringstabell, avviksnotatet på godkjenningsflaten, tolkning av preferansetekster,
-faktakontrollert avveining per kandidat, reservetekst når KI-forklaringen feiler og testen av at utelukkede aldri når KI-laget.
+rangeringstabell (også i smale vinduer), avviksnotatet på godkjenningsflaten, tolkning av preferansetekster,
+faktakontrollert avveining per kandidat, reservetekst når KI-forklaringen feiler, testen av
+at utelukkede aldri når KI-laget, rader som vises før forklaringene er ferdige og
+demo-modus uten API-nøkkel.
 Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
 kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,
@@ -85,6 +88,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   beslutningstest Haiku mot Luna (`2026-10-16-beslutningstest-haiku-luna.md`) og
   robusthetstest av Luna med fasittest mot PRD §4.5 (`2026-10-16-robusthet-luna.md`).
   Luna er valgt. Kravene fra robusthetstesten står i AD-7 i arkitekturen.
+- Teknisk referanse for utviklere: `docs/teknisk-referanse.md` (utviklingskjøring,
+  database, API og KI-integrasjonen). Testdetaljer og manuelle kontroller:
+  `docs/testing.md`.
 - Når et gruppemedlem spør hvordan de får lagt inn API-nøkkelen eller kjører live
   mot Luna: følg skillen `api-nokkel-oppsett` (`.claude/skills/` og `.agents/skills/`).
   Les aldri `.env`.
@@ -130,8 +136,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
      Med `OPENROUTER_API_KEY` satt i terminalen tolkes ventende preferansetekster i
      bakgrunnen ved oppstart (19 betalte kall med testdataene, ca. 1–2 min). `--reload`
      starter tolkningen på nytt for tekster som ikke er ferdige. `KI_MODUS` er
-     `openrouter` (standard) eller `demo`; uten nøkkel, med `demo` eller ukjent verdi
-     tolkes ingenting, og én WARNING-linje logges. En tolkning som lagres mens
+     `openrouter` (standard) eller `demo`. Uten nøkkel eller med `demo` kjører
+     `DemoKiAdapter` (story 5.7, AD-6): forhåndsgenererte tolkninger og avveininger fra
+     `backend/adaptere/ki/demoinnhold.json`, uten nettverkskall, og ellers maltekst satt
+     sammen av godkjente påstander. Ukjent `KI_MODUS`, ugyldige tegn i nøkkelen eller feil
+     form på `OPENROUTER_MODEL` gir ingen KI. Begge tilfellene logger én linje. En tolkning som lagres mens
      godkjenningsflaten er åpen, gir `endret_grunnlag` (P-09). Etter story 5.1 må en
      eldre database slettes, fordi `ansatt` har nye kolonner.
   - Test: `.venv\Scripts\python -m pytest`. Testene bygger appen med `lag_app` mot en
@@ -185,6 +194,12 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Oppsett som skal gjelde hele gruppa må ligge i sporede filer.
   `_bmad/config.user.toml`, `_bmad/custom/*.user.toml` og `.claude/settings.local.json`
   er gitignorerte og gjelder bare din maskin.
+- README er skrevet for sensor og nye brukere, og holdes kort (ryddet 2026-11-23,
+  `87db4d9`). Rekkefølgen er: om appen, medlemmer, forutsetninger, kom i gang, slik
+  bruker du appen, KI, konfigurasjon, tester, feilsøking, mappestruktur, planlegging og
+  prosess. Nye problemer føres under «Feilsøking» som «symptom: tiltak». API, KI-drift og
+  database står i `docs/teknisk-referanse.md`, og testdetaljer i `docs/testing.md`. Legg
+  slikt der og lenk fra README i stedet for å utvide README.
 - Koden skal virke på tvers av operativsystem: `pathlib` for stier, eksplisitt
   `encoding="utf-8"` ved lesing, skriving og underprosesser, og ingen kall eller
   kommandoer som bare finnes på Windows. README viser både PowerShell og bash. Fysisk

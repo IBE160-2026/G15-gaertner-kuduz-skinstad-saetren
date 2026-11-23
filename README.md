@@ -247,6 +247,9 @@ kontrolleres manuelt og hvorfor, står i [docs/testing.md](docs/testing.md).
 ## Planlegging og prosess
 
 - [Produktbrief](product-brief.md): problemet, målgruppen og omfanget
+- Tilbakemelding fra faglærer på [produktbriefen](tilbakemelding-product-brief.md) (2026-10-06)
+  og [PRD-en](_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/tilbakemelding-prd.md) (2026-11-12),
+  som er fulgt opp i brief, PRD og epics
 - [PRD](_bmad-output/planning-artifacts/prds/prd-ibe160-turnusprosjekt-2026-09-26/prd.md): krav, harde regler og rangering
 - UX: [DESIGN](_bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/DESIGN.md)
   (utseende) og [EXPERIENCE](_bmad-output/planning-artifacts/ux-designs/ux-ibe160-turnusprosjekt-2026-09-26/EXPERIENCE.md) (oppførsel)

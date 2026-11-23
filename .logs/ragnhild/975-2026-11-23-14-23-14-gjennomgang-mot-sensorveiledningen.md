@@ -67,4 +67,30 @@ Ragnhild ville vite hvordan gruppa ligger an mot sensorveiledningen for del 1. A
 ### Åpne punkter
 - Sensorutkastet `docs/innlevering/til-sensor-innlogging.md` lenker til to README-overskrifter som har fått nye navn, og lenkene er brutte. Det må avklares med Johannes.
 - Testtallene i tabellen i `docs/testing.md` er fra 2026-11-14.
-- Punkt 4 og 5 fra analysen (P-13 og linter/rotfil) gjenstår.
+
+**Punkt 5, linter (PR #40):**
+- Ragnhild ba om en undersøkelse av hvorfor manglende linter ikke ble fanget opp.
+- Funn:
+  - Vurderingsmatrisen fra 12.10 gjorde kriterium 5 om til ett tiltak uten linter-punktet.
+  - Rutinen ved milepæler pekte bare på nivåbeskrivelsene.
+  - Ingen story eide kodestil.
+  - `bmad-build`-gjennomgangene ser bare på diffen for hver story.
+  - Ingen dokumenter nevnte linter, bortsett fra sensorveiledningen.
+- Måling: med feilreglene fant ruff 1 reelt funn, 8 stilfunn og 203 falske treff fra fixtures. En formatterer ville skrevet om 40–48 av 70 filer. Frontend ga 0 feil med strengere `tsc`.
+- Valgt etter forslag: den lille varianten i en branch med PR, uten formatterer, importsortering og ESLint, slik at 5.8 kan gå parallelt.
+- Levert på `linter-ruff-tsconfig`, `206ed1e`, [PR #40](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/40):
+  - `ruff==0.17.6` med `[tool.ruff]`, og ruff kjøres fra `tester/test_arkitektur.py`.
+  - `noUnusedLocals` og `noUnusedParameters` i `tsconfig.json`.
+  - Rettinger som reglene krever, i tre testfiler, uten endret testlogikk.
+  - Én linje i README, AGENTS.md og `docs/testing.md`, og oppdatert rad 5 og milepælsrutine i matrisen.
+  - KI-logg i `docs/ki-logg/2026-11-23-linter.md`.
+- Ragnhild stoppet delingen av semikolonlinjene i `test_demo.py` til hun hadde fått en forklaring, og godkjente den etterpå.
+- Kontroll: ruff grønn, 892 backendtester, `npm run build`, 52 + 74 frontendtester. Negativ kontroll av begge sjekkene (F401 og TS6133), med filene tilbakestilt.
+
+**Punkt 5, den løse fila i roten:**
+- `tilbakemelding-product-brief.md` er faglærers tilbakemelding på produktbriefen. Bård Pettersen la den inn 2026-10-06 (`6a1b17d`). Den er fulgt opp: PRD-oppdateringen 06.10, harde regler og vekting 15.10, demo-modus 18.10 og story 5.7.
+- Ragnhild valgte å la fila ligge og lenke til den fra README, sammen med faglærers PRD-tilbakemelding (2026-11-12). Endringen er gjort rett på `main`.
+
+### Åpne punkter (oppdatert)
+- PR #40 trenger gjennomgang og merge av et annet gruppemedlem.
+- Punkt 4 (P-13 med en person utenfor gruppa) gjenstår.
