@@ -52,6 +52,19 @@ Ragnhild ville vite hvordan gruppa ligger an mot sensorveiledningen for del 1. A
 - Bestemt av Ragnhild: oppryddingen venter til PR #38 er merget, fordi den PR-en også endrer README med 35 linjer. Arbeidet skal gjøres i en branch med PR.
 - Sensorutkastet `docs/innlevering/til-sensor-innlogging.md` (Johannes, 07.11, ikke godkjent) er gjennomgått. Det tas stilling til når den nye README er skrevet: kortes ned med rettede lenker, eller slås inn i README etter avtale med Johannes. Johannes har det som åpent punkt i sin `issues.md`.
 
+**Punkt 3, README (gjennomført etter at PR #38 ble merget, `8a9bdfc`):**
+- Appen ble kjørt uten nøkkel mot en egen testdatabase før skrivingen. Demo-modus tolket alle 19 preferansetekstene, rangeringen for #4127 ble Jonas, Mette, Thomas, Ingrid, og avveiningen ga `ki_kilde: forhandsgenerert`. #4189 ga 0 gyldige og 24 utelukkede.
+- `README.md` er skrevet om etter planen, fra ca. 2 900 til 1 450 ord.
+- Ny fil `docs/teknisk-referanse.md` samler API-et, KI-integrasjonen (modusvalg, takt og nye forsøk, demo-modus, macOS-sertifikater) og databasen, kontrollert mot `backend/adaptere/api/main.py`.
+- `docs/testing.md` har fått to testdetaljer fra README.
+- Kontroll:
+  - README-stegene er fulgt i en ren klone (Python 3.15.2, Node 26.8.1), med innlogging gjennom Vite-proxyen.
+  - `npm audit` melder fortsatt 1 høy sårbarhet, slik README sier.
+  - Alle relative lenker og ankre i de tre filene virker.
+- Ragnhild valgte å committe rett på `main` i stedet for PR, siden det bare er dokumentasjon, og hun hadde varslet gruppa. Committet i `87db4d9`.
+- Skjermbilde er ikke med. Det er ikke et krav («gjerne» i kriterium 6) og tas eventuelt rett før innlevering.
+
 ### Åpne punkter
-- README-oppryddingen etter planen over, når PR #38 er merget.
-- Punkt 4 og 5 fra analysen (P-13 og linter/rotfil/agentmapper) gås gjennom videre i denne økten.
+- Sensorutkastet `docs/innlevering/til-sensor-innlogging.md` lenker til to README-overskrifter som har fått nye navn, og lenkene er brutte. Det må avklares med Johannes.
+- Testtallene i tabellen i `docs/testing.md` er fra 2026-11-14.
+- Punkt 4 og 5 fra analysen (P-13 og linter/rotfil) gjenstår.
