@@ -5,6 +5,10 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: Fremdriftsmeldingene fra `tolk_ventende` («N tekster venter», «tolket») er `logger.info`, og backend har ingen loggoppsett. Med `uvicorn adaptere.api.main:app` vises bare advarsler og feil, så ingen ser fremdriften i terminalen.
   evidence: Live-kontroll 2026-11-16: 19 tolkninger ga ingen linjer i terminalen, bare uvicorns egne. Fremdriften ble fulgt i databasen. README er rettet til å si at fremdriften ikke vises. Å vise den krever en kodeendring (loggoppsett eller `--log-level`-avklaring) og er ikke gjort.
+  status: Løst 2026-11-23. `vis_applogg_i_terminalen` i `adaptere/api/main.py` gir loggeren `adaptere` én terminalhandler på INFO (`INFO:     …`), kalt før `ki_fra_miljo()`. Rot- og uvicorn-loggerne er urørt, og `caplog` fanger som før. Tester i `tester/api/test_terminallogg.py`, README rettet. Se [KI-loggen](../../docs/ki-logg/2026-11-23-loggoppsett-backend.md).
+- source_spec: `_bmad-output/implementation-artifacts/spec-loggoppsett-backend.md`
+  summary: `ARCHITECTURE-SPINE.md` sier at runtime-/driftslogging ikke er besluttet (Consistency Conventions, linje 116, og Deferred, linje 215), mens backend nå viser appens INFO-meldinger i terminalen.
+  evidence: Valg C (Ragnhild 2026-11-23): endringen er behandlet som en feilretting innenfor det utsatte punktet, og spinen er ikke rørt. Spinen bør oppdateres ved neste arkitekturgjennomgang eller i retrospektiven for epic 5.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: Testdataene kan ikke vise at preferansepoeng endrer rekkefølgen. Bare #4127 har gyldige kandidater (fire), og marginene er så store at 25 % preferansevekt ikke snur dem. Jonas, Mette, Thomas og Ingrid står i samme rekkefølge før og etter tolkning.
   evidence: Live-kontroll 2026-11-16: scorene endret seg som regnet (+6,25, +6,25, −12,50, +12,50), rekkefølgen ikke. At poengene kan snu en rekkefølge dekkes bare av enhetstestene i `tester/regelmotor/test_rangering.py`.
