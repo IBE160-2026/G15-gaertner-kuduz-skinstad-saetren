@@ -13,6 +13,12 @@ from sqlalchemy import Engine, select, update
 
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag
+from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
+from adaptere.lagring.testdata import ANSATTE, FASIT, MANGLER_BEMANNING, PERIODE_SLUTT, PERIODE_START
+from domene.regelmotor.rangering import ranger
+from domene.regelmotor.vurdering import norsk_sorteringsnøkkel, vurder_kandidater
+from domene.typer import Kandidat, Kandidatvurdering
+from tester.api.test_innlogging import engine, feilsvar, klient, logg_inn  # noqa: F401
 
 
 def test_kostnadsfasit_og_identisk_godkjenningsgrunnlag(klient):
@@ -46,14 +52,9 @@ def test_ugyldig_lønn_stopper_begge_kandidatsvar(klient, monkeypatch):
     respons = klient.get("/api/vakter/4127/kandidater/6")
     assert respons.status_code == 200
     assert_datafeil(respons.json())
-from adaptere.lagring.modeller import OSLO, AnsattRad, BrukerRad, TurnusRad, VaktRad
-from adaptere.lagring.testdata import ANSATTE, FASIT, MANGLER_BEMANNING, PERIODE_SLUTT, PERIODE_START
-from domene.regelmotor.rangering import ranger
-from domene.regelmotor.vurdering import norsk_sorteringsnøkkel, vurder_kandidater
-from domene.typer import Kandidat, Kandidatvurdering
-from tester.api.test_innlogging import engine, feilsvar, klient, logg_inn  # noqa: F401
 
-NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
+
+NAVN ={ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
 ID_VED_NAVN = {navn: ansatt_id for ansatt_id, navn in NAVN.items()}
 # To ansatte med samme navn ville la ID_VED_NAVN peke på feil id (den sist vunnet).
 assert len(ID_VED_NAVN) == len(NAVN)
