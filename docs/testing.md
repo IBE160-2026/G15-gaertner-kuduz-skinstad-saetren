@@ -419,3 +419,21 @@ begge demokilder fra kandidatlisten til godkjenningen. De kontrollerer appbaren,
 kildelinjen og påstandene. En forhåndsgenerert forklaring krever kildebelegg
 med modell og dato. Nettleserkontrollen med ekte backend står i
 [KI-loggen](ki-logg/2026-11-22-demo-modus-uten-api-nokkel.md#rettelser-etter-gjennomgang-av-pr-38).
+
+## Story 5.8 – sensor kan kjøre live KI (2026-11-23)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-5-8-sensor-kan-kjore-live-ki.md)
+endrer README og legger til [sjekklisten for live KI](innlevering/sjekkliste-live-ki.md).
+README ber sensor kontrollere at forklaringene merkes «KI-generert · <modell>», og at
+appbaren ikke viser «Demo-modus». En ny
+[komponenttest](../frontend/tester/komponenter/avveining.test.tsx) («live KI viser
+KI-kilden og ikke demomerket i appbaren») dekker frontenddelen: med `demomodus: false` og
+et live-svar vises «KI-generert · <modell>», og appbaren er uten demomerket. Manglende
+demomerke alene beviser ikke live, fordi backend uten KI (for eksempel ved en nøkkel med
+ugyldige tegn) heller ikke viser det. Det er KI-merket på forklaringen som viser live. At
+oppbrukt kreditt gir reservetekst, dekkes av de eksisterende 402-testene i
+[`test_avveining.py`](../backend/tester/api/test_avveining.py), og at preferansene da
+«kunne ikke tolkes», av `test_4xx_prøves_ikke_på_nytt` (402 inkludert) i
+[`test_openrouter.py`](../backend/tester/ki/test_openrouter.py). Det er ikke prøvd mot en
+ekte tom konto. Live-flyten med sensornøkkelen kontrolleres manuelt fra en ren klone ved
+innlevering, etter sjekklisten.

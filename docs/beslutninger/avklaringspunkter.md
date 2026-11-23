@@ -90,6 +90,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | OP-17 | Story 4.5 | Meldt 2026-11-17 | Mithad Kuduz tar Story 4.5, Avviksnotat og nøkkeltall på godkjenningsflaten. Avhengighetene (4.2, 4.3, 4.4, 4.7) er alle `done`. Bygget med Sonnet 5 etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 | OP-18 | Story 5.2 | Meldt 2026-11-20; implementert, gjennomgått (PR #34) og merget av Kim O. Skinstad 2026-11-20 | Mithad Kuduz tar Story 5.2, Rangeringen bruker tolkede preferanser. Avhengighetene (4.4, 5.1) er begge `done`. Bygget med Sonnet 5, gjennomgang med Opus, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
 | OP-19 | Story 5.7 | Meldt 2026-11-22 | Mithad Kuduz tar Story 5.7, Demo-modus uten API-nøkkel. Avhengighetene (5.1, 5.3, 4.7) er alle `done`. Bygges med Sonnet 5, etter anbefalingen i docs/modellvalg-stories.md. | Mithad Kuduz |
+| OP-20 | Story 5.8 | Meldt 2026-11-23 | Ragnhild Sætren tar Story 5.8, Sensor kan kjøre live KI, på branchen `story-5.8-sensor-live-ki`. Avhengigheten 5.7 er `done`. README-delen følger AV-20; levering av nøkkel avhenger fortsatt av ÅB-8. | Ragnhild Sætren |
 
 ## 3. Detaljerte hovedbeslutninger
 

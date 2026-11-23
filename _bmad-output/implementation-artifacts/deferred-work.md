@@ -146,3 +146,9 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-7-demo-modus-uten-api-nokkel.md`
   summary: `scripts/generer_demoinnhold.py` har ingen delvis lagring eller gjenopptak. Ett mislykket kall blant de 19 (feil i `tolk()` eller et ubrukelig Avveining-svar) avbryter hele kjøringen med `return 2` og forkaster alle tidligere betalte kall i samme kjøring, i stedet for å lagre det som allerede er hentet.
   evidence: Funnet av step-04-gjennomgangens Blind Hunter-lag 2026-11-22, bekreftet ved lesing av `main()` (linje 127-131 og 156-159). Lav praktisk kostnad i dag: 19 kall får plass innenfor kontoens grense på 20 Luna-kall per minutt (AD-7), så en full ny kjøring etter en feil er billig. Verdt en sjekkpunkt-/gjenopptaksmekanisme hvis skriptet senere dekker flere tekster eller vakter.
+- source_spec: none
+  summary: "Story 5.8, innlevering: lever nøkkelen til sensor i innleveringsteksten etter at ÅB-8 er avgjort (felles utviklingsnøkkel eller egen sensornøkkel med kredittgrense), kjør nøkkelsjekken av git-historikken og noter resultatet, og la én person installere fra en ren klone bare etter README og kjøre flyten både med sensornøkkelen og i demo-modus."
+  evidence: Delt ut av story 5.8 2026-11-23 (Ragnhild valgte «Del opp» i bmad-build). Oppgavene kan bare gjøres nær innleveringsfristen, og nøkkelleveransen venter på ÅB-8 (epics.md). Byggøkten for 5.8 lager README-veiledningen, kommandoen for nøkkelsjekken og sjekklisten disse oppgavene følger.
+- source_spec: none
+  summary: "Story 5.8, etter sensur: slett eller bytt nøkkelen sensor fikk i OpenRouter, og navngi den ansvarlige personen i innleveringen."
+  evidence: Delt ut av story 5.8 2026-11-23 (Ragnhild valgte «Del opp» i bmad-build). Kan først gjøres etter at sensuren er ferdig (epics.md, story 5.8, siste akseptkriterium).

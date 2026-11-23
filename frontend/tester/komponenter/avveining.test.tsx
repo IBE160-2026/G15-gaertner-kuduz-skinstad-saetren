@@ -333,6 +333,20 @@ test.each([
   expect(screen.queryByText(t.reserve)).toBeNull();
 });
 
+test("live KI viser KI-kilden og ikke demomerket i appbaren", async () => {
+  // Story 5.8: README ber sensor se etter at «Demo-modus» mangler når nøkkelen er satt.
+  window.history.replaceState(null, "", kandidatsti(4127));
+  falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, METTE] }),
+    [forklaring(JONAS)]: ok(live(JONAS, "Kontrollert livetekst.")),
+  });
+  render(<App />);
+  expect(await screen.findByText(t.kilde(modell))).toBeTruthy();
+  expect(screen.getByText("Kontrollert livetekst.")).toBeTruthy();
+  expect(within(screen.getByRole("banner")).queryByText(TEKSTER.demoModus)).toBeNull();
+});
+
 test("én forklaring feiler, den andre lykkes og kandidaten med reservetekst kan godkjennes", async () => {
   window.history.replaceState(null, "", kandidatsti(4127));
   const andre = { ...METTE, grunnlagsmerke: JONAS.grunnlagsmerke };
