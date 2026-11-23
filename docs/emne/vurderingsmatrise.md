@@ -4,7 +4,7 @@ Arbeidsdokument for gruppen, opprettet 2026-10-12. Tiltakene er vår anvendelse 
 
 Oppdatert 2026-11-22 med [praktiske kontrollbevis](../testing/2026-11-22/kontroll.md).
 Regelmotor, rangering, godkjenning og avveining per kandidat er implementert;
-5.4 er merget i PR #37. Story 5.5 er implementert og testet på storybranchen.
+5.4 er merget i PR #37. Story 5.5 er merget i PR #39 (2026-11-22).
 5.7/5.8/5.9 gjenstår. Eldre milepælsavsnitt
 bevarer status på de angitte datoene og er ikke dagens sprintstatus.
 Lenke til faktiske bevis kreves før tiltak merkes ferdig. Godkjent proposal er
@@ -256,7 +256,7 @@ For kriterium 1 og 5 dokumenterer KI-loggen hvordan en rød test avdekket at et 
 
 ## Story 5.5 – progressiv lasting, 2026-11-22
 
-For kriterium 1–5 viser App-testene at turnusansvarlig kan velge mens forklaringen venter, og at samme kandidat og grunnlagsmerke gir ett forklaringskall gjennom rangering og godkjenning. En negativ kontroll gjenskapte dobbeltkallet og gjorde to tester røde. Nettleserkontrollen på 680 px fulgte to kandidater med ulik svartid gjennom ekte FastAPI, med synlig tastaturfokus og riktig radplassering. [Spesifikasjon](../../_bmad-output/implementation-artifacts/spec-5-5-progressiv-lasting.md) · [komponenttester](../../frontend/tester/komponenter/avveining.test.tsx) · [transportvalg og kontrollresultater](../ki-logg/2026-11-22-progressiv-lasting.md).
+For kriterium 1–5 viser App-testene at turnusansvarlig kan velge mens forklaringen venter, og at samme kandidat og grunnlagsmerke gir ett forklaringskall gjennom rangering og godkjenning. En negativ kontroll gjenskapte dobbeltkallet og gjorde to tester røde. Nettleserkontrollen på 680 px fulgte to kandidater med ulik svartid gjennom ekte FastAPI, med synlig tastaturfokus og riktig radplassering. [Spesifikasjon](../../_bmad-output/implementation-artifacts/spec-5-5-progressiv-lasting.md) · [komponenttester](../../frontend/tester/komponenter/avveining.test.tsx) · [transportvalg og kontrollresultater](../ki-logg/2026-11-22-progressiv-lasting.md). Storyen er ferdig etter gjennomgang og merge av [PR #39](https://github.com/IBE160-2026/G15-gaertner-kuduz-skinstad-saetren/pull/39) i `d0598bd` (godkjent av Mithad Kuduz).
 
 ## Story 5.6 – utelukkede kandidater når aldri KI-laget, 2026-11-21
 
