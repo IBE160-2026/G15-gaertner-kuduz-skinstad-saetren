@@ -35,6 +35,11 @@ kjøres ikke den andre. Bare komponenttestene kjøres med `npx vitest run` fra `
 (`npx.cmd` i PowerShell), og `npx vitest` kjører dem på nytt ved hver lagring (watch).
 Én fil: `npx vitest run tester/komponenter/kandidatflate.test.tsx`.
 
+Backendtestene bygger appen mot egne databaser i en midlertidig mappe og rører ikke
+`backend/turnushjelperen.db`. `node --test` finner alle testfiler i `frontend/` utenom
+`node_modules`. Formateringstestene kjøres én gang til i en underprosess med
+`TZ=America/New_York`, slik at de ikke består bare fordi maskinen går i Oslo-tid.
+
 CI ([`.github/workflows/`](../.github/workflows/)) kjører backendtestene med Python 3.12
 og nyeste 3.x, og `npm run build` og `npm run test` med Node 22.12 og nyeste LTS, ved
 hver push. Testene av modellverktøyene i `scripts/` og den manuelle sjekklisten under
