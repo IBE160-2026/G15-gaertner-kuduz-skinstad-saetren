@@ -87,7 +87,10 @@ Ragnhild ville vite hvordan gruppa ligger an mot sensorveiledningen for del 1. A
 - Ragnhild stoppet delingen av semikolonlinjene i `test_demo.py` til hun hadde fått en forklaring, og godkjente den etterpå.
 - Kontroll: ruff grønn, 892 backendtester, `npm run build`, 52 + 74 frontendtester. Negativ kontroll av begge sjekkene (F401 og TS6133), med filene tilbakestilt.
 
+**Punkt 5, den løse fila i roten:**
+- `tilbakemelding-product-brief.md` er faglærers tilbakemelding på produktbriefen. Bård Pettersen la den inn 2026-10-06 (`6a1b17d`). Den er fulgt opp: PRD-oppdateringen 06.10, harde regler og vekting 15.10, demo-modus 18.10 og story 5.7.
+- Ragnhild valgte å la fila ligge og lenke til den fra README, sammen med faglærers PRD-tilbakemelding (2026-11-12). Endringen er gjort rett på `main`.
+
 ### Åpne punkter (oppdatert)
 - PR #40 trenger gjennomgang og merge av et annet gruppemedlem.
-- Den løse fila `tilbakemelding-product-brief.md` i roten er ikke behandlet. Den er en del av punkt 5 fra analysen.
 - Punkt 4 (P-13 med en person utenfor gruppa) gjenstår.
