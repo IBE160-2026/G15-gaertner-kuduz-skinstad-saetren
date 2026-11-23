@@ -1,7 +1,7 @@
 # Åpne punkter
 
-- [ ] 2026-11-22 [PR 38, demooppslag](961-2026-11-22-21-55-39-gjennomgang-pr-38.md) — Bind forhåndsgenererte forklaringer til hele faktagrunnlaget. Test at endrede referansetall gir maltekst også når påstandsretningen holder (AD-6).
-- [ ] 2026-11-22 [PR 38, demovisning](961-2026-11-22-21-55-39-gjennomgang-pr-38.md) — Vis forhåndsgenerert forklaring og mal med riktig kildelinje i avveiningspanelet, og merk appbaren med «Demo-modus» etter innlogging. Kontroller flyten på #4127 (UX-DR27, SM-9).
+- [x] 2026-11-22 [PR 38, demooppslag](961-2026-11-22-21-55-39-gjennomgang-pr-38.md) — Bind forhåndsgenererte forklaringer til hele faktagrunnlaget. Test at endrede referansetall gir maltekst også når påstandsretningen holder (AD-6). (løst 2026-11-23 i `ca2381a`)
+- [x] 2026-11-22 [PR 38, demovisning](961-2026-11-22-21-55-39-gjennomgang-pr-38.md) — Vis forhåndsgenerert forklaring og mal med riktig kildelinje i avveiningspanelet, og merk appbaren med «Demo-modus» etter innlogging. Kontroller flyten på #4127 (UX-DR27, SM-9). (løst 2026-11-23 i `ca2381a`)
 
 **Gjennomgang 22. november 2026.** Første gjennomgang lukket 11 av 26 punkter. Praktisk oppfølging lukket ytterligere sju; åtte gjenstår. P-08-delen er fullført, mens endelig reservetekst i PR #37 holder samlepunktet åpent. P-13 holdes åpen til også en person utenfor gruppen har testet. De daterte merknadene under hvert punkt viser hva som er kontrollert. Avsnittet «Statuskontroll 2026-11-07» lenger ned er historikk. [Sesjonslogg](979-2026-11-14-10-33-00-status-aapne-punkter.md)
 
