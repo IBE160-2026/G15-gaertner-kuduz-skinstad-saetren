@@ -1,6 +1,6 @@
 """Fasiten er regnet fra kategorigrensene i KS-03, uavhengig av koden."""
 
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import pytest

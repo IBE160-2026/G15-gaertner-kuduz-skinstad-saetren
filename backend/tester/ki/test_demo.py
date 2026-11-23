@@ -208,7 +208,9 @@ def test_siste_kilde_er_isolert_per_trad(tmp_path: Path) -> None:
         resultater["mal"] = ki.siste_kilde
 
     t1, t2 = threading.Thread(target=forhandsgenerert), threading.Thread(target=mal)
-    t1.start(); t2.start()
-    t1.join(5); t2.join(5)
+    t1.start()
+    t2.start()
+    t1.join(5)
+    t2.join(5)
     assert not t1.is_alive() and not t2.is_alive()
     assert resultater == {"forhandsgenerert": "forhandsgenerert", "mal": "mal"}

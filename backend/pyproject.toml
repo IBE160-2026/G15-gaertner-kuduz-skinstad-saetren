@@ -7,6 +7,20 @@ requires-python = ">=3.12"
 testpaths = ["tester"]
 pythonpath = ["."]
 
+# Linter for kodestil og vanlige feil (sensorveiledningen, kriterium 5). Bare
+# feilreglene (syntaks, ubrukte importer og navn); importrekkefølge og formatering
+# er bevisst ikke med. Kjøres av `tester/test_arkitektur.py` som del av `pytest`.
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+# pytest-fixtures importeres og brukes som parameternavn, som ruff tolker som
+# omdefinering av et ubrukt navn.
+"tester/**" = ["F811"]
+
 # Domenekjernen importerer aldri adaptere (AD-1, AD-2). Kontrakten gjelder hele
 # `domene`, også `domene.regelmotor`, `domene.porter` og nye moduler direkte under
 # `domene/`. Indirekte importer er også forbudt. Kontrakten kjøres av

@@ -212,7 +212,8 @@ bare finnes i minnet.
 | Frontend: typesjekk og bygg | `frontend/` | `npm run build` |
 
 Ingen test gjør nettverkskall eller rører databasen din. KI-testene bruker en falsk
-OpenRouter. GitHub Actions kjører de samme testene på Linux ved hver push, med laveste
+OpenRouter. Backendtestene kjører også linteren ruff, og `npm run build` avviser
+ubrukte variabler og parametre. GitHub Actions kjører de samme testene på Linux ved hver push, med laveste
 og nyeste støttede versjon av Python og Node. Hva som testes automatisk, hva som
 kontrolleres manuelt og hvorfor, står i [docs/testing.md](docs/testing.md).
 
