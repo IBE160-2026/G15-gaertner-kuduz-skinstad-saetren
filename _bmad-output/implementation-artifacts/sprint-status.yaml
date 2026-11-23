@@ -75,8 +75,8 @@ development_status:
   5-4-reservetekst-når-ki-forklaringen-feiler: done
   5-5-rader-vises-før-forklaringene-er-ferdige: done # PR #39 godkjent av Mithad og merget 22.11, d0598bd
   5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: done # PR #36 merget 22.11, 1e1a57b; demoutvidelsen følger 5.7
-  5-7-demo-modus-uten-api-nøkkel: done # PR #38 merget 22.11, 8a9bdfc
-  5-8-sensor-kan-kjøre-live-ki: review # Ragnhild, branch story-5.8-sensor-live-ki (OP-20); innleveringsoppgavene er utsatt (deferred-work.md)
+  5-7-demo-modus-uten-api-nøkkel: done # PR #38 godkjent av Kim og merget 23.11, 8a9bdfc; Kims oppfølging (demooppslag/kildemerking) committet på samme branch
+  5-8-sensor-kan-kjøre-live-ki: done # PR #41 godkjent av Mithad og merget 23.11 (OP-20, Ragnhild); innleveringsoppgavene er utsatt (deferred-work.md)
   5-9-redigere-preferansetekst-etter-kjerneflyt: backlog
   epic-5-retrospective: optional
 action_items:
