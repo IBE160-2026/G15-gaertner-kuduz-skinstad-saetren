@@ -35,5 +35,23 @@ Ragnhild ville vite hvordan gruppa ligger an mot sensorveiledningen for del 1. A
 - Kjønnspunktet er flyttet fra «Gjenstår» til «Bevis», fordi robusthetstesten av Luna fant 0 brudd.
 - Alle lenkede filer er kontrollert. Committet på `main` i `4aad46d`, ikke pushet.
 
+**Punkt 3, README (plan, ingen endringer):**
+- Hele README er lest og kontrollert mot koden.
+- Feil som ble funnet:
+  - «Kandidatlisten kommer i Epic 2» står fortsatt.
+  - Kandidatene beskrives som «alfabetisk», men de har vært rangert siden 4.4.
+  - Rangering, kostnad, ulempe, KI-avveining (5.3), reservetekst (5.4) og avviksnotat (4.5) er ikke beskrevet.
+  - API-beskrivelsen har gamle svarformater og mangler endepunktene for avveining og «Prøv igjen».
+  - Vite-sårbarheten vises til OP-16, men vedtaket står i §11 i referatet (14.11).
+  - Testtallene er gamle.
+- Foreslått struktur, i ti seksjoner: om appen, medlemmer, forutsetninger, kom i gang, slik bruker du appen, konfigurasjon, tester, feilsøking, mappestruktur, planlegging og prosess.
+- Hvor innholdet flyttes:
+  - API-beskrivelsen og KI-driftsdetaljene til én ny fil, `docs/teknisk-referanse.md`.
+  - Testdetaljene til `docs/testing.md`.
+  - Gamle testtall fjernes, siden de allerede står i matrisen og i OP-05.
+- Bestemt av Ragnhild: oppryddingen venter til PR #38 er merget, fordi den PR-en også endrer README med 35 linjer. Arbeidet skal gjøres i en branch med PR.
+- Sensorutkastet `docs/innlevering/til-sensor-innlogging.md` (Johannes, 07.11, ikke godkjent) er gjennomgått. Det tas stilling til når den nye README er skrevet: kortes ned med rettede lenker, eller slås inn i README etter avtale med Johannes. Johannes har det som åpent punkt i sin `issues.md`.
+
 ### Åpne punkter
-Punkt 3–5 fra analysen (README, P-13 og linter/rotfil/agentmapper) gås gjennom videre i denne økten og føres i loggen etter hvert.
+- README-oppryddingen etter planen over, når PR #38 er merget.
+- Punkt 4 og 5 fra analysen (P-13 og linter/rotfil/agentmapper) gås gjennom videre i denne økten.
