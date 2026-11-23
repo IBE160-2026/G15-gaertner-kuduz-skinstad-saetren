@@ -27,7 +27,9 @@ from sqlalchemy.orm import Session, sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from adaptere.api import sesjon
+from adaptere.forklaringsgrunnlag import forklaringsnøkkel
 from adaptere.ki.avveining import Retning, faktorretninger
+from adaptere.ki.demo import DemoKiAdapter, DemoOppslag
 from adaptere.ki.openrouter import STANDARD_MODELL, Forklarer, OpenRouterKiAdapter, Tolker, leverandør
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
@@ -127,6 +129,7 @@ class InnloggingInn(BaseModel):
 
 
 class InnloggetUt(BaseModel):
+    demomodus: bool
     navn: str
     avdeling: str
 
@@ -363,8 +366,11 @@ class AvveiningUt(BaseModel):
     vaktnummer: int
     kandidat_id: int
     grunnlagsmerke: str
-    ki_kilde: Literal["live"] = "live"
+    # "live" (OpenRouterKiAdapter), "forhandsgenerert" eller "mal" (DemoKiAdapter,
+    # story 5.7). Se `avveining()` for hvordan kilden avgjøres.
+    ki_kilde: Literal["live", "forhandsgenerert", "mal"]
     modell: str
+    generert: str | None = None
     paastander: list[str]
 
 
@@ -405,35 +411,41 @@ TOLKETRÅD = "preferansetolkning"
 
 
 def ki_fra_miljo() -> Tolker | None:
-    """KI-adapteren fra miljøet, eller None når preferansetolkningen er av (AD-6, story 5.1).
+    """KI-adapteren fra miljøet (AD-6, story 5.1/5.7).
 
     `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` (tom gir `openai/gpt-6-luna`) og
-    `KI_MODUS` (`openrouter` | `demo`, tom gir `openrouter`). Mangler nøkkelen, er
-    modus `demo` eller ukjent, eller har modellen feil form, logges én WARNING og
-    ingen tolkning startes. `DemoKiAdapter` kommer i story 5.7. Brukes bare for
-    modulobjektet `app`; nøkkelen logges aldri.
+    `KI_MODUS` (`openrouter` | `demo`, tom gir `openrouter`). Mangler nøkkelen,
+    returneres `DemoKiAdapter` uansett om `KI_MODUS` er `openrouter` (standard)
+    eller eksplisitt satt (SM-9: appen skal kunne kjøres fra et rent klonet repo
+    uten nøkkelen). Eksplisitt `KI_MODUS=demo` gir også `DemoKiAdapter`, med eller
+    uten nøkkel. Et ugyldig oppsett som ikke handler om en manglende nøkkel
+    (ukjent `KI_MODUS`, ugyldige tegn i nøkkelen eller feil form på modellen) gir
+    fortsatt ingen KI (`None`), som før story 5.7. Live-modus faller aldri stille
+    tilbake til demo ved en kjøretidsfeil; det gjelder bare her, ved oppstart.
+    Brukes bare for modulobjektet `app`; nøkkelen logges aldri.
     """
     modus = os.environ.get("KI_MODUS", "").strip() or "openrouter"
     nøkkel = os.environ.get("OPENROUTER_API_KEY", "").strip()
     modell = os.environ.get("OPENROUTER_MODEL", "").strip() or STANDARD_MODELL
     if modus not in KI_MODUSER:
-        grunn = "KI_MODUS er ukjent (gyldig: openrouter, demo)"
-    elif modus == "demo":
-        grunn = "KI_MODUS er demo, og demo-modus er ikke bygget ennå"
-    elif not nøkkel:
-        grunn = "OPENROUTER_API_KEY er ikke satt"
-    elif not nøkkel.isascii() or not nøkkel.isprintable():
+        logger.warning("Preferansetolkning er av: KI_MODUS er ukjent (gyldig: openrouter, demo). Se README.")
+        return None
+    if modus == "demo":
+        logger.info("Preferansetolkning kjører i demo-modus (KI_MODUS=demo, AD-6).")
+        return DemoKiAdapter()
+    if not nøkkel:
+        logger.warning("Preferansetolkning kjører i demo-modus: OPENROUTER_API_KEY er ikke satt. Se README.")
+        return DemoKiAdapter()
+    if not nøkkel.isascii() or not nøkkel.isprintable():
         # http.client gjengir headerverdien i feilmeldingen, så nøkkelen kunne havnet i loggen.
-        grunn = "OPENROUTER_API_KEY har ugyldige tegn"
-    else:
-        try:
-            leverandør(modell)
-        except ValueError:
-            grunn = "OPENROUTER_MODEL må ha formen <leverandør>/<modell>"
-        else:
-            return OpenRouterKiAdapter(nøkkel, modell)
-    logger.warning("Preferansetolkning er av: %s. Se README.", grunn)
-    return None
+        logger.warning("Preferansetolkning er av: OPENROUTER_API_KEY har ugyldige tegn. Se README.")
+        return None
+    try:
+        leverandør(modell)
+    except ValueError:
+        logger.warning("Preferansetolkning er av: OPENROUTER_MODEL må ha formen <leverandør>/<modell>. Se README.")
+        return None
+    return OpenRouterKiAdapter(nøkkel, modell)
 
 
 def tolk_ventende(okter: sessionmaker[Session], ki: Tolker, laaser: dict[int, LockType] | None = None, vakt: LockType | None = None) -> None:
@@ -493,6 +505,7 @@ def lag_app(
     minutter = sesjon.les_minutter(None if minutter is None else str(minutter))
     engine = engine or lag_engine()
     okter = lag_sessionmaker(engine)
+    demomodus = isinstance(ki, DemoOppslag)
     tolkelaaser: dict[int, LockType] = {}
     laasevakt = threading.Lock()
 
@@ -561,12 +574,12 @@ def lag_app(
         if bruker is None:
             return feil(401, "feil_innlogging")
         sesjon.sett_cookie(respons, sesjon.lag_token(bruker.id, nokkel, minutter), minutter)
-        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
+        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling, demomodus=demomodus)
 
     @app.get("/api/meg", response_model=InnloggetUt)
     def meg(request: Request) -> InnloggetUt:
         bruker = request.state.bruker
-        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling)
+        return InnloggetUt(navn=bruker.navn, avdeling=bruker.avdeling, demomodus=demomodus)
 
     @app.get("/api/vaktoversikt", response_model=VaktoversiktUt)
     def vaktoversikt(request: Request, okt: Okt) -> VaktoversiktUt | JSONResponse:
@@ -601,7 +614,7 @@ def lag_app(
                             utelukkelser=utelukkelser)
 
     @app.get("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/avveining",
-             response_model=AvveiningUt | AvveiningFeiletUt | DatafeilUt)
+             response_model=AvveiningUt | AvveiningFeiletUt | DatafeilUt, response_model_exclude_none=True)
     def avveining(vaktnummer: int, ansatt_id: int, request: Request):
         with okter() as okt:
             grunnlag = les_rangering(okt, request.state.bruker.id, vaktnummer)
@@ -615,9 +628,16 @@ def lag_app(
             identitet = dict(vaktnummer=vaktnummer, kandidat_id=ansatt_id, grunnlagsmerke=grunnlag.merke(ansatt_id))
         # Slipp lesetransaksjonen før venting og nettverkskall.
         if isinstance(ki, Forklarer):
-            paastander = ki.forklar(valgt, referanse)
-            if paastander:
-                return AvveiningUt(**identitet, modell=ki.modell, paastander=paastander)
+            if isinstance(ki, DemoOppslag):
+                nøkkel = forklaringsnøkkel(grunnlag.vakt, grunnlag.gyldige[ansatt_id], valgt, referanse)
+                paastander = ki.forklar_med_oppslag(valgt, referanse, nøkkel)
+                kilde = ki.siste_kilde
+                generert = ki.generert if kilde == "forhandsgenerert" else None
+            else:
+                paastander = ki.forklar(valgt, referanse)
+                kilde, generert = "live", None
+            if paastander and kilde:
+                return AvveiningUt(**identitet, ki_kilde=kilde, modell=ki.modell, generert=generert, paastander=paastander)
         return AvveiningFeiletUt(**identitet)
 
     @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/preferanse", response_model=None)

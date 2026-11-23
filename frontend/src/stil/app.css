@@ -47,7 +47,12 @@ button {
   letter-spacing: var(--letter-spacing-brand);
 }
 
-/* Plass til en «Demo-modus»-tag til venstre for brukeren (Epic 5). */
+.appbar-demo {
+  border: var(--border-width) solid currentColor;
+  border-radius: var(--radius-sm);
+  padding-inline: var(--space-2);
+}
+
 .appbar-hoyre {
   display: flex;
   flex-wrap: wrap;

@@ -115,7 +115,7 @@ export function falskFetchMedReserve(ruter: Record<string, Svar | Svar[]>): Fals
 
 // --- Testdata (samme vakt og ansatte som i fiktive testdata) -------------------
 
-export const MEG: Innlogget = { navn: "Kari Vestby", avdeling: "Kirurgisk sengepost" };
+export const MEG: Innlogget = { demomodus: false, navn: "Kari Vestby", avdeling: "Kirurgisk sengepost" };
 
 export const VAKTOVERSIKT: Vaktoversikt = {
   avdeling: "Kirurgisk sengepost",

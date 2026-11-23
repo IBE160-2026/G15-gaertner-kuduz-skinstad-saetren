@@ -1,7 +1,7 @@
 // HTTP mot API-et gjennom Vite-proxyen for /api (OP-10). Sesjonen ligger i en
 // httpOnly-cookie som nettleseren sender selv. Tokenet ses aldri av koden her.
 
-export type Innlogget = { navn: string; avdeling: string };
+export type Innlogget = { navn: string; avdeling: string; demomodus: boolean };
 export type PassordKilde = "tilfeldig" | "personlig" | null;
 
 // GET /api/vaktoversikt (story 1.5). Tidspunktene er ISO 8601 med offset.
@@ -79,7 +79,10 @@ export type RangertKandidat = Kandidat & {
 
 type Avveiningsgrunnlag = { vaktnummer: number; kandidat_id: number; grunnlagsmerke: string };
 export type Avveiningssvar = Avveiningsgrunnlag & (
-  | { status: "ok"; ki_kilde: "live"; modell: string; paastander: string[] }
+  | ({ status: "ok"; modell: string; paastander: string[] } & (
+      | { ki_kilde: "live" | "mal" }
+      | { ki_kilde: "forhandsgenerert"; generert: string }
+    ))
   | { status: "avveining_feilet" }
 );
 

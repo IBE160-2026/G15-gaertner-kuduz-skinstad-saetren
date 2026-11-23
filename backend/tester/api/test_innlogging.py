@@ -35,7 +35,7 @@ from adaptere.lagring.testdata import fyll_testdata, legg_til_turnusansvarlig
 BACKEND = Path(__file__).resolve().parents[2]
 PASSORD = "riktig-hest-batteri"
 NOKKEL = b"n" * 32
-KARI = {"navn": "Kari Vestby", "avdeling": "Kirurgisk sengepost"}
+KARI = {"demomodus": False, "navn": "Kari Vestby", "avdeling": "Kirurgisk sengepost"}
 RIKTIG = {"brukernavn": "kari.vestby", "passord": PASSORD}
 
 

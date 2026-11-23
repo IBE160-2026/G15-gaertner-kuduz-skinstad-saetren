@@ -17,6 +17,7 @@ from sqlalchemy import Engine, select, update
 
 from adaptere.api.main import TOLKETRÅD, ki_fra_miljo, lag_app, tolk_ventende
 from adaptere.api.sesjon import STANDARD_MINUTTER
+from adaptere.ki.demo import DemoKiAdapter
 from adaptere.ki.openrouter import HttpSvar, OpenRouterKiAdapter, Tolkefeil
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke
@@ -282,21 +283,38 @@ def advarsler(caplog: pytest.LogCaptureFixture) -> list[str]:
     return [r.getMessage() for r in caplog.records if r.levelno == logging.WARNING]
 
 
-def test_uten_nøkkel_er_tolkningen_av_med_én_advarsel(caplog: pytest.LogCaptureFixture) -> None:
+def test_uten_nøkkel_starter_demo_med_én_advarsel(caplog: pytest.LogCaptureFixture) -> None:
+    """AD-6/SM-9/story 5.7: manglende nøkkel gir `DemoKiAdapter`, ikke `None`."""
     with caplog.at_level(logging.WARNING):
-        assert ki_fra_miljo() is None
-    assert advarsler(caplog) == ["Preferansetolkning er av: OPENROUTER_API_KEY er ikke satt. Se README."]
+        ki = ki_fra_miljo()
+    assert isinstance(ki, DemoKiAdapter)
+    assert advarsler(caplog) == [
+        "Preferansetolkning kjører i demo-modus: OPENROUTER_API_KEY er ikke satt. Se README."]
+
+
+@pytest.mark.parametrize("nøkkel", ["hemmelig-test", "   "])
+def test_ki_modus_demo_gir_demokiadapter_uansett_nøkkel(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, nøkkel: str,
+) -> None:
+    """Eksplisitt `KI_MODUS=demo` gir alltid `DemoKiAdapter`, med eller uten nøkkel (AD-6)."""
+    monkeypatch.setenv("KI_MODUS", "demo")
+    monkeypatch.setenv("OPENROUTER_API_KEY", nøkkel)
+    with caplog.at_level(logging.WARNING):
+        ki = ki_fra_miljo()
+    assert isinstance(ki, DemoKiAdapter)
+    # Et bevisst valg av demo-modus er ikke en degradert tilstand og gir ingen WARNING.
+    assert advarsler(caplog) == []
+    assert "hemmelig-test" not in caplog.text
 
 
 @pytest.mark.parametrize(("modus", "nøkkel", "del_av_melding"), [
-    ("demo", "hemmelig-test", "KI_MODUS er demo"),
     ("live", "hemmelig-test", "KI_MODUS er ukjent"),
     ("OpenRouter", "hemmelig-test", "KI_MODUS er ukjent"),
-    ("openrouter", "   ", "OPENROUTER_API_KEY er ikke satt"),
 ])
 def test_tolkningen_er_av(
     monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, modus: str, nøkkel: str, del_av_melding: str,
 ) -> None:
+    """Et ukjent `KI_MODUS` er fortsatt en feil (ingen KI), uendret av story 5.7."""
     monkeypatch.setenv("KI_MODUS", modus)
     monkeypatch.setenv("OPENROUTER_API_KEY", nøkkel)
     with caplog.at_level(logging.WARNING):
@@ -355,7 +373,8 @@ def test_modulobjektet_app_får_adapteren_fra_miljøet(monkeypatch: pytest.Monke
     finally:
         monkeypatch.delenv("OPENROUTER_API_KEY")
         importlib.reload(main)
-    assert main.app.state.ki is None
+    # Manglende nøkkel gir DemoKiAdapter, ikke None (AD-6/SM-9, story 5.7).
+    assert isinstance(main.app.state.ki, DemoKiAdapter)
 
 
 def test_gammel_database_stopper_tolkningen_med_én_feilmelding(

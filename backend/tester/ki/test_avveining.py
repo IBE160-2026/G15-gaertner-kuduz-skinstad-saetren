@@ -1,16 +1,20 @@
 """Faktakontroll for live og forhåndsgenererte påstander (P-06, P-07)."""
 
+import json
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from fractions import Fraction
+from pathlib import Path
 
 import pytest
 
 from adaptere.ki.avveining import faktorretninger, tillatte_påstander, valider
 from adaptere.ki import openrouter
 from adaptere.ki.begrenser import Begrenser, TidsbudsjettOpbrukt
+from adaptere.forklaringsgrunnlag import KONTRAKTSVERSJON
+from adaptere.ki.demo import DemoKiAdapter
 from adaptere.ki.openrouter import HttpSvar, OpenRouterKiAdapter
 from domene.regelmotor.rangering import Rangeringsparametere, ranger
 from tester.ki.test_openrouter import FalskKlokke, FalskTransport, adapter, innhold, ok, status
@@ -85,27 +89,51 @@ class ForhåndsgenerertTestadapter:
         return valider(self.svar, tillatte_påstander(kandidat, referanse))
 
 
-@pytest.mark.parametrize("kilde", ["live", "forhåndsgenerert"])
+def skriv_demoinnhold(tmp_path: Path, nøkkel: str, svar: dict) -> Path:
+    sti = tmp_path / "demoinnhold.json"
+    sti.write_text(json.dumps({
+        "kontraktsversjon": KONTRAKTSVERSJON, "modell": "openai/gpt-6-luna", "generert": "2026-11-22",
+        "kommando": "python scripts/generer_demoinnhold.py --live", "preferanser": {},
+        "avveininger": {nøkkel: svar},
+    }, ensure_ascii=False), encoding="utf-8")
+    return sti
+
+
+@pytest.mark.parametrize("kilde", ["live", "forhåndsgenerert", "demo"])
 @pytest.mark.parametrize("tillegg", [
     None, {**egen(), "kandidat_id": 999}, egen("kompetanse"), {**mot("kostnad", "høyere"), "referanse_id": 3},
     {**egen(), "beløp": 2400}, {**egen("preferanse"), "kategori": "onsker_flere"},
     mot("kostnad", "lavere"), mot("preferanse", "høyere"), mot("kostnad", "lik"),
 ], ids=["gyldig", "ukjent-kandidat", "ukjent-faktor", "feil-referanse", "modellbeløp", "modellkategori",
         "omvendt-kostnad", "feil-preferanse", "falsk-likhet"])
-def test_begge_kilder_kontrollerer_alle_påstandene_mot_uavrundet_rangering(kilde, tillegg):
+def test_begge_kilder_kontrollerer_alle_påstandene_mot_uavrundet_rangering(kilde, tillegg, tmp_path: Path):
     # Tredje lønn utvider min–maks slik at de to første kostnadspoengene begge vises som 100,0.
     en, to, _ = ranger(vurder(kandidat(1, lønn=300), kandidat(2, lønn=301), kandidat(3, lønn=10000)), VAKT)
     assert en.eksakte_poeng.kostnad > to.eksakte_poeng.kostnad
     gyldig = mot("kostnad", "høyere")
     svar = {"paastander": [gyldig] if tillegg is None else [gyldig, tillegg]}
+    demo_ki = None
     if kilde == "live":
         transport = FalskTransport([HttpSvar(200, {}, innhold(svar))])
         forklaring = adapter(FalskKlokke(), transport).forklar(en, to)
         assert len(transport.kall) == 1
-    else:
+    elif kilde == "forhåndsgenerert":
         forklaring = ForhåndsgenerertTestadapter(svar).forklar(en, to)
+    else:
+        # Ekte `DemoKiAdapter` (ikke en test-mal), per oppfølgingen av PR #37: en
+        # demokilde som hopper over faktakontrollen, skal gi rød test her.
+        demo_ki = DemoKiAdapter(skriv_demoinnhold(tmp_path, "testnøkkel", svar))
+        forklaring = demo_ki.forklar_med_oppslag(en, to, "testnøkkel")
     if tillegg is None:
         assert forklaring == ["Kostnadspoengene er høyere enn hos Ansatt 2 før avrunding (100,0 mot 100,0)."]
+        if demo_ki is not None:
+            assert demo_ki.siste_kilde == "forhandsgenerert"
+    elif demo_ki is not None:
+        # Et lagret svar som ikke består kontrollen, faller til et mal-svar satt
+        # sammen av kode (AD-6) — aldri `None` som for live/forhåndsgenerert, og
+        # aldri de forkastede påstandene fra `tillegg`.
+        assert forklaring == demo_ki._mal(tillatte_påstander(en, to))  # noqa: SLF001
+        assert demo_ki.siste_kilde == "mal"
     else:
         assert forklaring is None
 

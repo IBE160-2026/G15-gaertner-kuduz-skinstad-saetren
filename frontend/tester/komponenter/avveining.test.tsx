@@ -310,6 +310,29 @@ test("ny preferansetolkning bytter nr. 1 og forkaster ventende tekst fra tidlige
   expect(screen.getAllByText(t.kilde(modell))).toHaveLength(1);
 });
 
+test.each([
+  ["forhandsgenerert", t.forhandsgenerert(modell, "2026-11-22")],
+  ["mal", t.mal],
+])("viser %s i både kandidatlisten og godkjenningen", async (kilde, etikett) => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const svar = { ...live(JONAS, "Kontrollert demotekst."), ki_kilde: kilde,
+    ...(kilde === "forhandsgenerert" ? { generert: "2026-11-22" } : {}) };
+  falskFetch({
+    "/api/meg": ok({ ...MEG, demomodus: true }), "/api/vakter/4127": ok(VAKT_4127),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, METTE] }),
+    [forklaring(JONAS)]: ok(svar), [grunnlag]: ok(GODKJENNING_JONAS),
+  });
+  render(<App />);
+  expect(await screen.findByText(etikett)).toBeTruthy();
+  expect(screen.getByText("Kontrollert demotekst.")).toBeTruthy();
+  expect(within(screen.getByRole("banner")).getByText(TEKSTER.demoModus)).toBeTruthy();
+  await userEvent.setup().click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  await screen.findByRole("button", { name: g.godkjenn });
+  expect(await screen.findByText(etikett)).toBeTruthy();
+  expect(screen.getByText("Kontrollert demotekst.")).toBeTruthy();
+  expect(screen.queryByText(t.reserve)).toBeNull();
+});
+
 test("én forklaring feiler, den andre lykkes og kandidaten med reservetekst kan godkjennes", async () => {
   window.history.replaceState(null, "", kandidatsti(4127));
   const andre = { ...METTE, grunnlagsmerke: JONAS.grunnlagsmerke };
@@ -409,7 +432,8 @@ test("409 henter nytt grunnlag og ny avveining, og neste POST bruker nettopp det
 
 test.each([
   { kandidat_id: METTE.id }, { vaktnummer: 4189 }, { grunnlagsmerke: METTE.grunnlagsmerke },
-  { ki_kilde: "forhandsgenerert" }, { paastander: [] },
+  { ki_kilde: "forhandsgenerert" }, { ki_kilde: "forhandsgenerert", generert: "2026-02-31" },
+  { ki_kilde: "ukjent" }, { paastander: [] },
 ])("godkjenning forkaster svar med feil identitet, kilde eller innhold (%o)", async (avvik) => {
   falskFetch({
     [grunnlag]: ok(GODKJENNING_JONAS),

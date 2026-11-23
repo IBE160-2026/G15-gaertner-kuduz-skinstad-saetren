@@ -3,16 +3,18 @@
 import json
 import logging
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import event, update
 
 from adaptere.api.main import lag_app
+from adaptere.ki.demo import KONTRAKTSVERSJON, DemoKiAdapter
 from adaptere.ki.openrouter import HttpSvar, Nettverksfeil, OpenRouterKiAdapter
 from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.modeller import AnsattRad
-from tester.api.test_innlogging import engine, logg_inn  # noqa: F401
+from tester.api.test_innlogging import RIKTIG, engine, logg_inn  # noqa: F401
 from tester.ki.test_openrouter import FalskKlokke, FalskTransport, adapter, innhold, sertifikatfeil, status
 from tester.regelmotor.test_rangering import DATAGRENSE, HISTORIKKSTART, VAKT, kandidat
 
@@ -215,3 +217,50 @@ def test_utelukket_navn_forkaster_hele_forklaringen_og_valgt_kandidat_kan_godkje
     assert (annen_forklaring["kandidat_id"], annen_forklaring["ki_kilde"]) == (annen["id"], "live")
     assert annen_forklaring["paastander"]
     assert klient.post(sti, json={"grunnlagsmerke": valgt["grunnlagsmerke"]}).json() == {"status": "godkjent"}
+
+
+# --- story 5.7: `ki_kilde` fra en ekte `DemoKiAdapter`, gjennom den ekte ruten -----
+
+
+def test_demo_med_levert_innhold_og_endret_referanse(engine) -> None:
+    """Samme ID og retning hos referansen, men ny vaktkostnad, skal gi mal (AD-6)."""
+    app = lag_app(engine=engine, ki=DemoKiAdapter())
+    with TestClient(app) as klient:
+        app.state.tolketråd.join(10)
+        assert not app.state.tolketråd.is_alive()
+        innlogging = klient.post("/api/innlogging", json=RIKTIG)
+        assert innlogging.json()["demomodus"] is True
+        assert klient.get("/api/meg").json()["demomodus"] is True
+        rader = klient.get(LISTE).json()["kandidater"]
+        assert [r["id"] for r in rader] == [6, 5, 3, 4]
+        for rad in rader:
+            svar = klient.get(f"{LISTE}/{rad['id']}/avveining").json()
+            assert svar["ki_kilde"] == "forhandsgenerert" and svar["generert"]
+            assert svar["paastander"]
+
+        with lag_sessionmaker(engine).begin() as økt:
+            økt.get(AnsattRad, 5).timelønn += 1
+        etter = klient.get(LISTE).json()["kandidater"]
+        assert [r["id"] for r in etter] == [6, 5, 3, 4]
+        assert etter[0]["totalscore"] == rader[0]["totalscore"]
+        assert etter[1]["totalscore"] != rader[1]["totalscore"]
+        svar = klient.get(f"{LISTE}/6/avveining").json()
+        assert svar["ki_kilde"] == "mal" and svar["paastander"]
+        assert "generert" not in svar
+
+
+def test_demo_adapter_rapporterer_mal_kilde_i_http_svaret_uten_oppslag(engine, tmp_path: Path) -> None:
+    """Ingen treff i datafilen gir `ki_kilde: "mal"` i HTTP-svaret, aldri `avveining_feilet`
+    så lenge kandidaten har minst én myk faktor-påstand."""
+    datafil = tmp_path / "demoinnhold.json"
+    datafil.write_text(json.dumps({
+        "kontraktsversjon": KONTRAKTSVERSJON, "modell": "openai/gpt-6-luna", "generert": "2026-11-22",
+        "kommando": "python scripts/generer_demoinnhold.py --live", "preferanser": {}, "avveininger": {},
+    }, ensure_ascii=False), encoding="utf-8")
+
+    klient = TestClient(lag_app(engine=engine, ki=DemoKiAdapter(datafil)))
+    logg_inn(klient)
+    svar = klient.get(f"{LISTE}/4/avveining").json()
+    assert svar["status"] == "ok"
+    assert svar["ki_kilde"] == "mal"
+    assert svar["paastander"]
