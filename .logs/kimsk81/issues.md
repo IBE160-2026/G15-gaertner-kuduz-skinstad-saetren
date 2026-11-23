@@ -1,5 +1,7 @@
 # Åpne punkter
 
+- [ ] 2026-11-23 [Sensorvurdering av del 1](960-2026-11-23-21-23-00-sensorvurdering-del-1.md) — Presiser i README at 19 preferansetolkninger gjelder nyinnlastede testdata og at gyldige lagrede tolkninger gjenbrukes. Rett steg 2-lenken i innloggingsutkastet til sensor.
+
 - [x] 2026-11-22 [PR 38, demooppslag](961-2026-11-22-21-55-39-gjennomgang-pr-38.md) — Bind forhåndsgenererte forklaringer til hele faktagrunnlaget. Test at endrede referansetall gir maltekst også når påstandsretningen holder (AD-6). (løst 2026-11-23 i `ca2381a`)
 - [x] 2026-11-22 [PR 38, demovisning](961-2026-11-22-21-55-39-gjennomgang-pr-38.md) — Vis forhåndsgenerert forklaring og mal med riktig kildelinje i avveiningspanelet, og merk appbaren med «Demo-modus» etter innlogging. Kontroller flyten på #4127 (UX-DR27, SM-9). (løst 2026-11-23 i `ca2381a`)
 
