@@ -60,6 +60,10 @@ nøkkel, nøkkelprefiks utover `sk-or-v1-…` eller kredittbeløp skal inn i den
 - [ ] **Navngi den som sletter eller bytter nøkkelen etter sensur**, i teksten under.
   Ansvarlig: ______
 
+> **Kjøring og innlogging.** Start appen etter [README: Kom i gang](../../README.md#kom-i-gang).
+> Logg inn som `kari.vestby`. Passordet velger du selv i steg 2, variant A. Det står
+> ikke noe passord i repoet.
+>
 > **Live KI.** Appen kan kjøres uten nøkkel i demo-modus. For live KI mot OpenRouter
 > bruker du denne nøkkelen: `<nøkkel settes inn ved innlevering>`. Sett den som
 > `OPENROUTER_API_KEY` i samme terminal som du starter backend fra, slik
