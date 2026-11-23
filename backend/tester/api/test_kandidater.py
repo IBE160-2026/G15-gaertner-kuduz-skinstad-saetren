@@ -54,7 +54,7 @@ def test_ugyldig_lønn_stopper_begge_kandidatsvar(klient, monkeypatch):
     assert_datafeil(respons.json())
 
 
-NAVN ={ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
+NAVN = {ansatt_id: navn for ansatt_id, navn, *_ in ANSATTE}
 ID_VED_NAVN = {navn: ansatt_id for ansatt_id, navn in NAVN.items()}
 # To ansatte med samme navn ville la ID_VED_NAVN peke på feil id (den sist vunnet).
 assert len(ID_VED_NAVN) == len(NAVN)
