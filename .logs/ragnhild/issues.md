@@ -63,4 +63,9 @@
 - [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Prompter fra planleggingen i september og samarbeidsverktøy utenom GitHub finnes ikke i repoet; gruppa fyller inn.
 - [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Ta opp sensornøkkelen (ÅB-8: eier, betaler, kreditt) i gruppa.
 - [x] 2026-11-23 [status-5-7](974-2026-11-23-17-29-20-status-5-7.md) — `AGENTS.md`: oppdater prosjektbeskrivelsen slik at story 5.5 og 5.7 står som ferdige. (løst 2026-11-23, også 4.6 og `KI_MODUS`-teksten rettet)
-- [ ] 2026-11-23 [av-20-nokkel-i-terminalen](973-2026-11-23-17-50-00-av-20-nokkel-i-terminalen.md) — Story 5.8: README bør be sensor sjekke at appbaren ikke viser «Demo-modus» etter at nøkkelen er satt (AV-20).
+- [x] 2026-11-23 [av-20-nokkel-i-terminalen](973-2026-11-23-17-50-00-av-20-nokkel-i-terminalen.md) — Story 5.8: README bør be sensor sjekke at appbaren ikke viser «Demo-modus» etter at nøkkelen er satt (AV-20). (løst 2026-11-23, `f1101fa` på branchen story-5.8-sensor-live-ki)
+- [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — PR for `story-5.8-sensor-live-ki` er ikke åpnet; et annet gruppemedlem skal gjennomgå den.
+- [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — AV-08: registrer rettingen av `AGENTS.md` (`a58f457`) i §11 i beslutningsreferatet, på `main`.
+- [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — Story 5.8: innleveringsoppgavene (ÅB-8, nøkkelsjekk, test fra ren klone, nøkkel i innleveringsteksten, sletting etter sensur) etter `docs/innlevering/sjekkliste-live-ki.md`.
+- [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — `docs/innlevering/til-sensor-innlogging.md`: brutt lenke til README steg 2 (overskriften heter nå «2. Last testdata og velg passord»).
+- [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — Nøkkelsjekkene i sjekklisten er ikke kjørt i PowerShell.
