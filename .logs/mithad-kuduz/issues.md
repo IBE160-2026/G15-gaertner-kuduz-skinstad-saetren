@@ -2,7 +2,7 @@
 
 - [ ] 2026-11-23 [gjennomgang-pr-39-og-synk-etter-pr-38](976-2026-11-23-17-05-00-gjennomgang-pr-39-og-synk-etter-pr-38.md) — Les Ragnhilds `loggoppsett-backend`-leveranse og refleksjonsrapporten i detalj (bare observert at de kom inn med pullen 2026-11-23, ikke gjennomgått)
 - [x] 2026-11-23 [gjennomgang-pr-39-og-synk-etter-pr-38](976-2026-11-23-17-05-00-gjennomgang-pr-39-og-synk-etter-pr-38.md) — Epic 5: story 5-8 (sensor kan kjøre live KI) og 5-9 (redigere preferansetekst) gjenstår, begge `backlog` (løst 2026-11-23: 5-8 godkjent og merget (PR #41), 5-9 gjenstår fortsatt)
-- [ ] 2026-11-23 [gjennomgang-pr-41-og-pr-40](975-2026-11-23-20-31-00-gjennomgang-pr-41-og-pr-40.md) — Fullfør gjennomgangen av PR #40 (linter/ruff): README/AGENTS.md/vurderingsmatrise, ki-loggen og testrettingene er ikke lest, og ingen egen build/test-verifisering er kjørt
+- [x] 2026-11-23 [gjennomgang-pr-41-og-pr-40](975-2026-11-23-20-31-00-gjennomgang-pr-41-og-pr-40.md) — Fullfør gjennomgangen av PR #40 (linter/ruff): README/AGENTS.md/vurderingsmatrise, ki-loggen og testrettingene er ikke lest, og ingen egen build/test-verifisering er kjørt (løst 2026-11-23: gjennomgått, ett funn rettet (mellomrom-regresjon), godkjent og merget PR #40, 15c669c)
 
 - [x] 2026-10-30 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — Spesifikasjonen for 1.2 er ikke godkjent. Fire spørsmål er ubesvart: drop_all/create_all, «i denne storien», fordelingen på #4189 og gamle verdier. (løst 2026-10-30)
 - [x] 2026-10-30 [story-1-2-fiktiv-turnus](998-2026-10-30-19-02-24-story-1-2-fiktiv-turnus.md) — 10 funn fra gjennomgangen av spesifikasjonen for 1.2 er ikke lagt inn. (løst 2026-10-30)
