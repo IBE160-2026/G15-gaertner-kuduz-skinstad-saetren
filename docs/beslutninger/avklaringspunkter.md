@@ -985,6 +985,24 @@ om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt
   av `bmad-project-context` lager den teksten på nytt.
 - **Ikke endret:** Policy, konvensjoner, loggregler og de andre AV-, K-, OP- og KS-punktene.
 
+### 2026-11-23 – README-strukturen i `AGENTS.md` (AV-08)
+
+- **Hvem:** Ragnhild Sætren ba om endringen og godkjente den. Den gikk rett på `main`
+  som en avgrenset dokumentasjonsendring etter regelen for branch og PR.
+- **Grunnlag:** README ble ryddet 2026-11-23 (`87db4d9`), og tekniske detaljer ble flyttet
+  til `docs/teknisk-referanse.md`. Ingen regel sa at strukturen skal følges. I story 5.8
+  la implementeringsagenten først tre nye avsnitt inn i README, og strukturen ble bare
+  fulgt fordi Ragnhild avviste forslaget (KI-loggen for story 5.8, punkt 1).
+- **Endret i `AGENTS.md`:**
+  - «Hvor ting ligger»: nytt punkt om `docs/teknisk-referanse.md` og `docs/testing.md`.
+  - «Konvensjoner som avviker fra standard»: nytt punkt om README. README er for sensor
+    og nye brukere, rekkefølgen på avsnittene står fast, nye problemer føres under
+    «Feilsøking» som «symptom: tiltak», og tekniske detaljer legges i den tekniske
+    referansen eller `docs/testing.md` med lenke fra README.
+- **Merk:** Begge punktene ligger innenfor `bmad:context`-markørene. En senere kjøring
+  av `bmad-project-context` lager den teksten på nytt.
+- **Ikke endret:** README, `docs/teknisk-referanse.md` og de andre reglene i `AGENTS.md`.
+
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
 Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.

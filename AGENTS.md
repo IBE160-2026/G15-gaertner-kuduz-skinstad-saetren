@@ -88,6 +88,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   beslutningstest Haiku mot Luna (`2026-10-16-beslutningstest-haiku-luna.md`) og
   robusthetstest av Luna med fasittest mot PRD §4.5 (`2026-10-16-robusthet-luna.md`).
   Luna er valgt. Kravene fra robusthetstesten står i AD-7 i arkitekturen.
+- Teknisk referanse for utviklere: `docs/teknisk-referanse.md` (utviklingskjøring,
+  database, API og KI-integrasjonen). Testdetaljer og manuelle kontroller:
+  `docs/testing.md`.
 - Når et gruppemedlem spør hvordan de får lagt inn API-nøkkelen eller kjører live
   mot Luna: følg skillen `api-nokkel-oppsett` (`.claude/skills/` og `.agents/skills/`).
   Les aldri `.env`.
@@ -191,6 +194,12 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
 - Oppsett som skal gjelde hele gruppa må ligge i sporede filer.
   `_bmad/config.user.toml`, `_bmad/custom/*.user.toml` og `.claude/settings.local.json`
   er gitignorerte og gjelder bare din maskin.
+- README er skrevet for sensor og nye brukere, og holdes kort (ryddet 2026-11-23,
+  `87db4d9`). Rekkefølgen er: om appen, medlemmer, forutsetninger, kom i gang, slik
+  bruker du appen, KI, konfigurasjon, tester, feilsøking, mappestruktur, planlegging og
+  prosess. Nye problemer føres under «Feilsøking» som «symptom: tiltak». API, KI-drift og
+  database står i `docs/teknisk-referanse.md`, og testdetaljer i `docs/testing.md`. Legg
+  slikt der og lenk fra README i stedet for å utvide README.
 - Koden skal virke på tvers av operativsystem: `pathlib` for stier, eksplisitt
   `encoding="utf-8"` ved lesing, skriving og underprosesser, og ingen kall eller
   kommandoer som bare finnes på Windows. README viser både PowerShell og bash. Fysisk
