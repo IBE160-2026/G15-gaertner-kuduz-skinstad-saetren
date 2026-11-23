@@ -159,8 +159,8 @@ tolkninger som er lagret.
   ([`demoinnhold.json`](backend/adaptere/ki/demoinnhold.json)). Forklaringene finnes for
   de fire kandidatene på #4127 og merkes «Forhåndsgenerert KI-forklaring». Endres
   tallene, vises en tekst satt sammen av kode i stedet, og den merkes slik.
-- **Live mot OpenRouter.** Sett nøkkelen i terminalen før du starter backend. Backend
-  leser ikke `.env`.
+- **Live mot OpenRouter.** Sett nøkkelen i samme terminal som du starter backend fra.
+  Backend leser ikke `.env`.
 
   PowerShell:
 
@@ -178,7 +178,10 @@ tolkninger som er lagret.
 
   Modellen er `openai/gpt-6-luna`. Ved oppstart tolkes preferansetekstene i bakgrunnen
   med 19 betalte kall, og det tar 1–2 minutter. Fremdriften vises i terminalen, og appen
-  kan brukes imens.
+  kan brukes imens. Live er aktiv når forklaringene merkes
+  «KI-generert · openai/gpt-6-luna», appbaren ikke viser «Demo-modus», og terminalen ikke
+  skriver demo-linjen fra steg 3. Står det «Demo-modus» likevel, eller viser forklaringene
+  reservetekst, se [Feilsøking](#feilsøking).
 
 Feilhåndtering, nye forsøk og flere detaljer står i
 [teknisk referanse](docs/teknisk-referanse.md#ki-integrasjonen).
@@ -228,6 +231,20 @@ kontrolleres manuelt og hvorfor, står i [docs/testing.md](docs/testing.md).
 - **Live KI på macOS: alle tekster står som «kunne ikke tolkes» (`nettverk`):** Python
   mangler rotsertifikater. Start backend med
   `SSL_CERT_FILE=/etc/ssl/cert.pem .venv/bin/python -m uvicorn adaptere.api.main:app`.
+- **«Demo-modus» i appbaren selv om du har satt nøkkelen:** Backend fant ikke nøkkelen,
+  og terminalen skriver demo-linjen fra steg 3. En nøkkel i `.env` eller i en annen
+  terminal brukes ikke. Stopp backend med Ctrl+C, sett nøkkelen og start backend på nytt
+  i samme terminal.
+- **Live KI: forklaringene er reservetekst og preferansene «kunne ikke tolkes» (`4xx`):**
+  Kreditten er brukt opp, eller nøkkelen er ugyldig. Appen krasjer ikke. Forklaringene
+  merkes «Reservetekst · KI-forklaring utilgjengelig» og viser nøkkeltallene,
+  preferansene får midlertidig 50 poeng, og rangering og godkjenning virker. Appen
+  bytter ikke selv til demo-modus. Vil du bruke den, stopper du backend med Ctrl+C og
+  starter den i en ny terminal uten nøkkel.
+- **Ikke «Demo-modus», men forklaringene er reservetekst og terminalen skriver
+  `Preferansetolkning er av: OPENROUTER_API_KEY har ugyldige tegn`:** Nøkkelen ble limt
+  inn feil. Stopp backend med Ctrl+C, sett nøkkelen på nytt i samme terminal (lim inn
+  nøyaktig) og start backend igjen.
 - **Logget ut uten grunn:** Backend har startet på nytt. Logg inn igjen.
 
 ## Mappestruktur

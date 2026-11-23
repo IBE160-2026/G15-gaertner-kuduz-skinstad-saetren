@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-23-2026 17:47
+last_updated: 11-23-2026 18:15
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -76,7 +76,7 @@ development_status:
   5-5-rader-vises-før-forklaringene-er-ferdige: done # PR #39 godkjent av Mithad og merget 22.11, d0598bd
   5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: done # PR #36 merget 22.11, 1e1a57b; demoutvidelsen følger 5.7
   5-7-demo-modus-uten-api-nøkkel: done # PR #38 merget 22.11, 8a9bdfc
-  5-8-sensor-kan-kjøre-live-ki: in-progress # Ragnhild, branch story-5.8-sensor-live-ki (OP-20)
+  5-8-sensor-kan-kjøre-live-ki: review # Ragnhild, branch story-5.8-sensor-live-ki (OP-20); innleveringsoppgavene er utsatt (deferred-work.md)
   5-9-redigere-preferansetekst-etter-kjerneflyt: backlog
   epic-5-retrospective: optional
 action_items:
