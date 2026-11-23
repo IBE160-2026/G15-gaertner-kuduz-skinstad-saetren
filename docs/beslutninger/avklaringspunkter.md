@@ -964,6 +964,27 @@ om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt
   Backend og README er ikke endret i dette vedtaket. README-teksten følges opp i
   story 5.8. De andre AV-, K-, OP- og KS-punktene.
 
+### 2026-11-23 – `AGENTS.md` oppdatert etter story 4.6, 5.5 og 5.7 (AV-08)
+
+- **Hvem:** Ragnhild Sætren ba om endringen og godkjente den. Den gikk rett på `main`
+  (`a58f457`) som en avgrenset dokumentasjonsrettelse etter regelen for branch og PR.
+  Registreringen her kommer i etterkant, fordi den ble glemt ved commiten.
+- **Grunnlag:** Prosjektbeskrivelsen i `AGENTS.md` sa at «5.1–5.4 og 5.6» var ferdige,
+  og nevnte ikke 4.6, 5.5 og 5.7, som alle er merget. `KI_MODUS`-avsnittet under
+  «Kjøring og verifisering» sa at ingenting tolkes uten nøkkel eller med `demo`. Det har
+  vært feil siden story 5.7 (PR #38). Avviket var også ført i `deferred-work.md` av
+  gjennomgangen av 5.7.
+- **Endret i `AGENTS.md`:**
+  - Statuslisten: 4.1–4.7 og 5.1–5.7 er ferdige, og 5.8 og 5.9 står i backlog. Oppsummeringen
+    av hva som er ferdig, nevner nå smale vinduer, rader før forklaringene og demo-modus.
+  - `KI_MODUS`-avsnittet: uten nøkkel eller med `demo` kjører `DemoKiAdapter` med
+    forhåndsgenererte svar og maltekst. Bare ukjent `KI_MODUS`, ugyldige tegn i nøkkelen
+    eller feil modellform gir ingen KI. Teksten følger docstringen til `ki_fra_miljo()` i
+    `backend/adaptere/api/main.py`.
+- **Merk:** Begge avsnittene ligger innenfor `bmad:context`-markørene. En senere kjøring
+  av `bmad-project-context` lager den teksten på nytt.
+- **Ikke endret:** Policy, konvensjoner, loggregler og de andre AV-, K-, OP- og KS-punktene.
+
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
 Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.
