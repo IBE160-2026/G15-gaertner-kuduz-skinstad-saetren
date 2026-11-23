@@ -79,6 +79,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-17 | Mobil, nettbrett og smale vinduer | Vedtatt 2026-11-14 | Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer, for eksempel på en skjerm på høykant eller med flere vinduer side om side. Story 4.6 skrives om (§11). | Johannes W. Gaertner, Mithad Kuduz og Ragnhild Sætren |
 | AV-18 | Porttyper i `domene/porter` | Vedtatt ved godkjenning av PR #29 den 16.11.2026 (Ragnhild Sætren), gjennom gruppas vanlige PR-prosess der ett medlem gjennomgår og godkjenner på vegne av gruppa. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Krever ingen separat gruppegodkjenning. | Portene `TolketPreferanse` og `RangertKandidat` er frosne dataklasser uten logikk, ikke Pydantic-modeller som arkitekturen opprinnelig sa. Pydantic brukes i `adaptere/api` (§11). | Ragnhild Sætren (gjennomgang av PR #29); bekreftes av gruppa |
 | AV-19 | Feilregler for preferansetolkning (P-05/OP-03) | Vedtatt 2026-11-16 (Ragnhild Sætren, på vegne av gruppa) | Ved 5xx og nettverksfeil 3 nye forsøk etter 2, 4 og 8 s. 429 teller ikke som forsøk og venter til `X-RateLimit-Reset` (minst 1 s; 60 s uten lesbar verdi). All venting for én tekst er begrenset til 90 s. 402, andre 4xx og ubrukelige svar prøves ikke på nytt. Sluttstatus er `kunne_ikke_tolkes` med feiltype lagret. Se §11. «Prøv igjen»-knappen er ikke en del av dette vedtaket. | Ragnhild Sætren (verdiene er Mithad Kuduz' forslag i PR #30) |
+| AV-20 | Nøkkel til live KI for sensor (story 5.8) | Vedtatt 2026-11-23 | Sensor setter `OPENROUTER_API_KEY` i terminalen før backend startes, slik README allerede viser. Backend leser fortsatt ikke `.env`. Akseptkriteriet i story 5.8 om å kopiere `.env.example` til `.env` er rettet. Hvilken nøkkel sensor får (ÅB-8), er ikke avgjort her (§11). | Hele gruppa; Ragnhild Sætren bekreftet på vegne av gruppa |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
@@ -941,6 +942,27 @@ om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt
   - Bygges med Claude Sonnet 5, etter anbefalingen i `docs/modellvalg-stories.md`.
 - **Grunnlag:** `docs/modellvalg-stories.md` og epics, story 5.7.
 - **Ikke endret:** De andre AV-, K-, OP- og KS-punktene.
+
+### 2026-11-23 – Nøkkelen settes i terminalen (AV-20, story 5.8)
+
+- **Hvem:** Hele gruppa. Ragnhild Sætren bekreftet vedtaket på vegne av gruppa.
+- **Problemet:** Akseptkriteriet i story 5.8 (skrevet 2026-10-14) ba README forklare
+  at sensor kopierer `.env.example` til `.env` og limer inn nøkkelen. Backend leser
+  ikke `.env`; nøkkelen hentes bare fra miljøet i terminalen (`ki_fra_miljo()` i
+  `backend/adaptere/api/main.py`). Fulgte sensor kriteriet, ville appen startet i
+  demo-modus uten feilmelding (story 5.7), og sensor kunne trodd det var live KI.
+  Bare modelltest-skriptene i `scripts/` leser `.env`.
+- **Vurderte alternativer:**
+  - A: Rette kriteriet. Sensor setter nøkkelen i terminalen, som README allerede viser
+    for PowerShell og bash. Ingen kodeendring, og nøkkelen lagres ikke i en fil.
+  - B: La backend lese `.env`. Enklere for sensor, men en kodeendring som snur
+    valget om at backend ikke leser `.env`, og nøkkelen ligger lagret på disk.
+- **Vedtak:** Alternativ A.
+- **Endret:** Akseptkriteriet i `_bmad-output/planning-artifacts/epics.md`, story 5.8.
+  README skal også si at sensor kontrollerer at appbaren ikke viser «Demo-modus».
+- **Ikke endret:** ÅB-8 (hvilken nøkkel sensor får, og kreditten) er fortsatt åpen.
+  Backend og README er ikke endret i dette vedtaket. README-teksten følges opp i
+  story 5.8. De andre AV-, K-, OP- og KS-punktene.
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
