@@ -10,12 +10,13 @@ from _thread import LockType
 import logging
 import os
 import secrets
+import sys
 import threading
 from collections.abc import AsyncIterator, Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Literal, TextIO
 
 from fastapi import Depends, FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
@@ -67,6 +68,51 @@ MELDINGER: dict[str, str] = {
 RUTEKODER = {404: "ikke_funnet", 405: "metode_ikke_tillatt"}
 
 logger = logging.getLogger(__name__)
+
+TERMINALFORMAT = "%(levelname)s:     %(message)s"  # INFO-linjene ser ut som uvicorns egne
+TERMINALMERKE = "_turnushjelperen_terminal"
+
+
+class _Terminalhandler(logging.StreamHandler):  # type: ignore[type-arg]
+    """StreamHandler som slår opp `sys.stderr` ved hver post når ingen strøm er gitt.
+
+    Da skriver den til gjeldende stderr også når pytest bytter den ut etter at
+    modulen er importert, slik `logging.lastResort` gjør.
+    """
+
+    def __init__(self, strøm: TextIO | None = None) -> None:
+        super().__init__(strøm)
+        self._strøm = strøm
+
+    @property  # type: ignore[override]
+    def stream(self) -> TextIO:
+        return self._strøm if self._strøm is not None else sys.stderr
+
+    @stream.setter
+    def stream(self, verdi: TextIO | None) -> None:
+        self._strøm = verdi
+
+
+def vis_applogg_i_terminalen(strøm: TextIO | None = None) -> logging.Handler:
+    """Gir loggeren `adaptere` én terminalhandler på INFO, slik at fremdriften synes.
+
+    Uten oppsett viser Python bare WARNING og høyere fra appens loggere. Rotloggeren
+    og uvicorns loggere røres ikke, og `propagate` forblir `True`, så pytests
+    `caplog` fanger postene som før. Handleren er merket, så gjentatte kall, også
+    etter `importlib.reload`, legger ikke til en ny. `strøm` er for testene; uten
+    den skrives det til gjeldende `sys.stderr`.
+    """
+    applogger = logging.getLogger("adaptere")
+    applogger.setLevel(logging.INFO)
+    for handler in applogger.handlers:
+        if getattr(handler, TERMINALMERKE, False):
+            return handler
+    handler = _Terminalhandler(strøm)
+    setattr(handler, TERMINALMERKE, True)
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(logging.Formatter(TERMINALFORMAT))
+    applogger.addHandler(handler)
+    return handler
 
 
 def feil(status: int, kode: str, headers: dict[str, str] | None = None) -> JSONResponse:
@@ -682,4 +728,5 @@ def lag_app(
     return app
 
 
+vis_applogg_i_terminalen()
 app = lag_app(ki=ki_fra_miljo())

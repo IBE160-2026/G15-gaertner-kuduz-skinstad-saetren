@@ -82,6 +82,10 @@ graph LR
 
 **P-08/P-09-presisering:** Ukjent nødvendig turnusdekning, ugyldige tider eller manglende vakt-/kostnadsgrunnlag er en datafeil, ikke `ingen_gyldige_kandidater` eller dokumentert fri. Kandidatvurdering og Godkjenning stoppes. API-/UI-kontrakten skal skille disse tilstandene; forsinkede svar for tidligere Vakt/Kandidat forkastes, og endret grunnlag krever ny beregning og bekreftelse. Eksakte feilkoder fastsettes i berørte stories. Datafeil i kandidatvurderingen er et 200-svar med `status: "datafeil"`, `kode: "mangler_turnusgrunnlag"` og `datagrense` (ISO 8601 med offset), uten kandidatliste, fastsatt i story 2.1 (Johannes, 2026-11-11), og valget binder story 2.6.
 
+**Progressiv lasting av Avveining (story 5.5, UX-DR12/13).** `GET /api/vakter/{vakt}/kandidater` returnerer rangeringen med nøkkeltall. Første rad åpnes automatisk. Hver åpnet rad henter sin forklaring med `GET /api/vakter/{vakt}/kandidater/{id}/avveining` og kan fullføre uavhengig. Godkjenning henter sitt eget ferske grunnlag. For samme sesjon, vakt, kandidat og grunnlagsmerke deler flatene forespørselen og resultatet i minnet til brukeren avslutter arbeidet med vakten (P-09/P-12). Ett forklaringskall fra nettleseren kan utløse flere leverandørforsøk etter AD-7. [Transportvalg og verifisering](../../../../docs/ki-logg/2026-11-22-progressiv-lasting.md).
+
+Appens «Avbryt» går tilbake til kandidatlisten innen samme flyt. Nettleserens Tilbake og Fram kontrollerer sesjonen på nytt og starter et nytt oppslag. Ved transportfeil eller svar med feil identitet får panelet reservetekst, og en senere montering kan hente på nytt. Et bekreftet `avveining_feilet` for gjeldende identitet kan deles mellom flatene.
+
 ### AD-5 — Lagringsadapteren eier databaseskjemaet
 
 - **Binds:** Godkjenning (FR-12), Innlogging (FR-13), `adaptere/lagring`
@@ -208,5 +212,4 @@ turnushjelperen/
 - **SQLite-skjema/migreringsverktøy** (AD-5) — f.eks. Alembic vs. håndrullet migrering er ikke valgt. Gjeldende SQLAlchemy-versjon står i `backend/requirements.txt` (se Stack); ID-format (int vs. UUID) er heller ikke fastsatt (se Consistency Conventions).
 - **Feilenvelope-detaljer** (AD-4) — envelope-form og statusdiskriminator er besluttet; eksakte feilkode-verdier og fullt responsskjema per endepunkt er ikke.
 - **Historisk Avveining (P-12B)** — utsatt; ikke krav i v1. En senere beslutning må omfatte både nøyaktig vist tekst og beregningsgrunnlag.
-- **Transport for progressiv lasting av Avveining** (EXPERIENCE.md § State Patterns, «Beregner rangering», merket `[ASSUMPTION]`) — at rader vises før KI-forklaringen er ferdig er foreslått, men om dette løses med streaming, polling, eller flere separate kall er ikke besluttet.
 - **Runtime-/driftslogging** — ikke besluttet (skilt fra den allerede bindende KI-genereringsloggen i `docs/ki-logg/`, se Consistency Conventions).

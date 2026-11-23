@@ -99,9 +99,10 @@ NFR14 (Kjørbar uten gruppens nøkkel): Appen kan kjøres i demo-modus uten API-
 - Migreringsverktøy og ID-format. Gjeldende SQLAlchemy-versjon står i `backend/requirements.txt`; JWT-utløpstiden er avklart i AD-3.
 - Preferansetolkningens feilbudsjett og klientbibliotek mot OpenRouter. Avveiningens takt og nye forsøk er avklart i AD-7.
 - Eksakte feilkoder og responsskjema per endepunkt.
-- Transport for progressiv lasting av Avveining (streaming, polling eller separate kall).
 - Historisk lagring av vist Avveining og beregningsgrunnlag er utsatt utenfor v1 (P-12).
 - Runtime-logging.
+
+Story 5.5 avklarte transporten for progressiv lasting. Hver åpnet rad henter sin Avveining med et eget GET-kall. [AD-4](architecture/architecture-ibe160-turnusprosjekt-2026-09-29/ARCHITECTURE-SPINE.md#ad-4--én-feilresponsform-i-api-et).
 
 ### Åpne beslutninger
 

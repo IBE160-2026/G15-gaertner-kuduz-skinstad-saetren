@@ -102,6 +102,20 @@ def test_lagret_gyldig_tolkning_gir_ingen_nye_kall(engine: Engine) -> None:
     assert igjen.tekster == []
 
 
+def test_fremdriften_logges_på_info_uten_preferansetekst(engine: Engine, caplog: pytest.LogCaptureFixture) -> None:
+    okter = lag_sessionmaker(engine)
+    with okter() as okt:
+        med_tekst = okt.scalars(select(AnsattRad.id).where(AnsattRad.preferanse.is_not(None))).all()
+    assert len(med_tekst) == 19
+    with caplog.at_level(logging.INFO, logger="adaptere.api.main"):
+        tolk_ventende(okter, FasitKi())
+    meldinger = [r.getMessage() for r in caplog.records if r.name == "adaptere.api.main" and r.levelno == logging.INFO]
+    assert [m for m in meldinger if m.endswith("tekster venter.")] == ["Preferansetolkning: 19 tekster venter."]
+    tolket = sorted(m for m in meldinger if m.endswith(": tolket."))
+    assert tolket == sorted(f"Preferansetolkning for ansatt {i}: tolket." for i in med_tekst)
+    assert not any(tekst in caplog.text for tekst, _ in PREFERANSER.values())
+
+
 def test_feil_gir_kunne_ikke_tolkes_og_prøves_ved_neste_oppstart(klient: TestClient, engine: Engine) -> None:
     okter = lag_sessionmaker(engine)
     feil = FeilKi("nettverk")

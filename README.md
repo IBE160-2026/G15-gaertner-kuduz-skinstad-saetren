@@ -163,17 +163,26 @@ tekst er tolket, viser kandidatlisten «Preferanse venter på tolkning» med mid
 og hver Ansatt tolkes for seg, så det blir 19 betalte kall. Med høyst 18 kall i
 minuttet tar det ca. 1–2 minutter. Ferdige tolkninger lagres i databasen og tolkes
 ikke på nytt. En tekst som ikke kunne tolkes, vises som «Preferanse kunne ikke
-tolkes» og prøves igjen neste gang backend starter. Det finnes ennå ingen knapp for
-nytt forsøk.
+tolkes» og prøves igjen neste gang backend starter. Turnusansvarlig kan også be om et
+nytt forsøk med knappen «Prøv igjen» på raden.
 
-Fremdriften vises ikke i terminalen. Backend logger hver tekst på nivå INFO, og
+Fremdriften for tolkningen ved oppstart vises i terminalen. INFO-linjene ser ut som
+uvicorns egne. Først kommer hvor mange tekster som venter, så én linje per tekst som
+blir tolket:
+
+```
+INFO:     Preferansetolkning: 19 tekster venter.
+INFO:     Preferansetolkning for ansatt 3: tolket.
+```
+
+En tekst som er endret underveis, gir `… forkastet: teksten er endret.`, og en tekst
+som ikke kunne tolkes, gir en `WARNING:`-linje, for eksempel `Preferansetolkning for
+ansatt 3: kunne ikke tolkes (nettverk).` Linjene viser ansattnummeret, aldri
+preferanseteksten eller nøkkelen. «Prøv igjen» skriver ingen linjer. Tolkingen er
+ferdig når ingen rad i kandidatlisten lenger sier «Preferanse venter på tolkning».
+
 Kjør backend med én worker. Låsene som samordner preferansetolkning ved oppstart og
 brukerutløste forsøk deles ikke mellom flere serverprosesser.
-
-uvicorn viser ikke INFO fra appens egne meldinger i oppsettet over. I terminalen ser du
-bare advarsler, for eksempel `kunne ikke tolkes (nettverk)`, og feil. Hent
-kandidatlisten på nytt for å følge med: tolkingen er ferdig når ingen rad lenger sier
-«Preferanse venter på tolkning».
 
 Backend leser ikke `.env`. Nøkkelen settes i terminalen før uvicorn startes, uten at
 den vises på skjermen:

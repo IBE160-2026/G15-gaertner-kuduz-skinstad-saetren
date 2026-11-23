@@ -44,6 +44,7 @@ av Johannes 2026-11-10. Ikke drøftet i gruppa ennå — er dere uenige, endre t
 | 5.6 Utelukkede når aldri KI-laget | Sonnet, gjennomgang med Opus | Sikkerhetsgaranti |
 | 5.7 Demomodus | Sonnet | Konfigurasjon |
 | 5.8 Live-KI for sensor | Sonnet | Konfigurasjon og dokumentasjon |
+| Loggoppsett for backend (feilretting) | Sonnet | Avgrenset konfigurasjon, feil synes i terminalen |
 
 Står en story ikke i tabellen, for eksempel P-10B, bruk regelen over og før den inn her.
 

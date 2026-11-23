@@ -6,9 +6,9 @@ import { nySesjonsgenerasjon, type RangertKandidat } from "../../src/api";
 import App from "../../src/App";
 import { Kandidatliste } from "../../src/komponenter/Kandidatflate";
 import Godkjenningsflate from "../../src/komponenter/Godkjenningsflate";
-import { kandidatsti } from "../../src/navigasjon";
+import { godkjenningssti, kandidatsti } from "../../src/navigasjon";
 import { TEKSTER } from "../../src/tekster";
-import { GODKJENNING_JONAS, JONAS, MEG, METTE, TO_GYLDIGE, VAKT_4127, VAKTOVERSIKT, falskFetch, feil, json, kallTil, ok, type FalskFetch } from "./hjelpere";
+import { GODKJENNING_JONAS, GODKJENNING_METTE, INGEN_GYLDIGE, JONAS, MEG, METTE, TO_GYLDIGE, VAKT_4127, VAKTOVERSIKT, falskFetch, feil, json, kallTil, ok, type FalskFetch } from "./hjelpere";
 
 const t = TEKSTER.kandidatflate.avveining;
 const g = TEKSTER.godkjenning;
@@ -30,15 +30,218 @@ function godkjenning() {
 function forsinkFørste(fetch: FalskFetch, sti: string) {
   let send!: (svar: Response) => void;
   let tatt = false;
-  vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) => {
-    if (String(input) === sti && !tatt) {
+  const vanlig = fetch.getMockImplementation()!;
+  fetch.mockImplementation((input, init) => {
+    if (String(input) === sti && (init?.method ?? "GET") === "GET" && !tatt) {
       tatt = true;
       return new Promise<Response>((resolve) => { send = resolve; });
     }
-    return fetch(input, init);
+    return vanlig(input, init);
   });
-  return async (svar: object) => act(async () => { send(json(svar)); });
+  return async (svar: object, status = 200) => act(async () => { send(json(svar, status)); });
 }
+
+test.each(["venter", "ferdig"])("samme forklaringskall følger kandidaten til godkjenning når svaret er %s", async (status) => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const tekst = "Jonas har lav timebelastning.";
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, METTE] }),
+    [grunnlag]: ok(GODKJENNING_JONAS),
+    [forklaring(JONAS)]: ok(live(JONAS, "Ekstra forklaringskall.")),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<StrictMode><App /></StrictMode>);
+  await screen.findByText(t.laster);
+  const bruker = userEvent.setup();
+  await bruker.click(screen.getByRole("button", { name: t.skjulEtikett(JONAS.navn) }));
+  await bruker.click(screen.getByRole("button", { name: t.visEtikett(JONAS.navn) }));
+  if (status === "ferdig") {
+    await fullfør(live(JONAS, tekst));
+    await screen.findByText(tekst);
+  }
+  await bruker.click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  await screen.findByRole("button", { name: g.godkjenn });
+  if (status === "venter") {
+    expect(screen.getByText(t.laster)).toBeTruthy();
+    await fullfør(live(JONAS, tekst));
+  }
+  expect(await screen.findByText(tekst)).toBeTruthy();
+  const listekall = kallTil(fetch, liste);
+  await bruker.click(screen.getByRole("button", { name: g.avbryt }));
+  await screen.findByText(tekst);
+  expect(kallTil(fetch, liste)).toBeGreaterThan(listekall);
+  expect(kallTil(fetch, grunnlag)).toBeGreaterThan(0);
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(1);
+  expect(kallTil(fetch, forklaring(METTE))).toBe(0);
+});
+
+test.each([
+  [503, { kode: "tjeneste_utilgjengelig" }],
+  [200, { status: "avveining_feilet", vaktnummer: 4127, kandidat_id: METTE.id, grunnlagsmerke: JONAS.grunnlagsmerke }],
+] as const)("HTTP %i uten gyldig resultat gir reserve, og retur prøver igjen", async (status, svar) => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127), [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS] }),
+    [grunnlag]: ok(GODKJENNING_JONAS), [forklaring(JONAS)]: ok(live(JONAS, "Ny forklaring.")),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<App />);
+  const bruker = userEvent.setup();
+  await screen.findByText(t.laster);
+  await bruker.click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  const godkjenn = await screen.findByRole("button", { name: g.godkjenn });
+  await fullfør(svar, status);
+  await screen.findByText(t.reservetekst);
+  expect(godkjenn).toHaveProperty("disabled", false);
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(1);
+  await bruker.click(screen.getByRole("button", { name: g.avbryt }));
+  await screen.findByText("Ny forklaring.");
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(2);
+});
+
+test("en radfeil lar en ventende forklaring fullføre etter Vis færre og Vis alle", async () => {
+  const kandidater = [JONAS, ...Array.from({ length: 5 }, (_, i) => ({
+    ...METTE, plass: i + 2, id: i + 30, navn: `Kandidat ${i + 2}`,
+  }))];
+  const sjette = kandidater[5];
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127), [liste]: ok({ ...TO_GYLDIGE, kandidater }),
+  });
+  const fullførFørste = forsinkFørste(fetch, forklaring(JONAS));
+  const fullførSjette = forsinkFørste(fetch, forklaring(sjette));
+  render(<App />);
+  await screen.findByText(t.laster);
+  const bruker = userEvent.setup();
+  const visAlle = () => bruker.click(screen.getByRole("button", { name: TEKSTER.kandidatflate.visAlle }));
+  const åpneSjette = () => bruker.click(screen.getByRole("button", { name: t.visEtikett(sjette.navn) }));
+  await visAlle();
+  await åpneSjette();
+  await fullførFørste({ status: "avveining_feilet", vaktnummer: 4127, kandidat_id: JONAS.id, grunnlagsmerke: JONAS.grunnlagsmerke });
+  expect(screen.getByText(t.laster)).toBeTruthy();
+  await bruker.click(screen.getByRole("button", { name: TEKSTER.kandidatflate.visFærre(5) }));
+  await visAlle();
+  await åpneSjette();
+  await fullførSjette(live(sjette, "Forklaring for sjette rad."));
+  const panel = screen.getByRole("region", { name: t.tittel(sjette.navn) });
+  expect(within(panel).getByText("Forklaring for sjette rad.")).toBeTruthy();
+  expect(screen.getByText(t.reservetekst)).toBeTruthy();
+  expect(kallTil(fetch, forklaring(sjette))).toBe(1);
+});
+
+test("nettleserens Tilbake kontrollerer sesjonen før listen hentes på nytt", async () => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127), [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS] }),
+    [grunnlag]: ok(GODKJENNING_JONAS),
+    [forklaring(JONAS)]: [ok(live(JONAS, "Før navigasjon.")), ok(live(JONAS, "Etter ny sesjonskontroll."))],
+  });
+  render(<App />);
+  await screen.findByText("Før navigasjon.");
+  await userEvent.setup().click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  await screen.findByRole("button", { name: g.godkjenn });
+  await act(async () => {
+    const tilbake = new Promise<void>(resolve => window.addEventListener("popstate", () => resolve(), { once: true }));
+    window.history.back();
+    await tilbake;
+  });
+  await screen.findByText("Etter ny sesjonskontroll.");
+  expect(kallTil(fetch, "/api/meg")).toBe(2);
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(2);
+});
+
+test("godkjenning kan fullføres mens forklaringen venter, og neste bemanningsflyt starter med tomt oppslag", async () => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127), "/api/vaktoversikt": ok(VAKTOVERSIKT),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS] }),
+    [grunnlag]: ok(GODKJENNING_JONAS), [`POST ${grunnlag}`]: ok({ status: "godkjent" }),
+    [forklaring(JONAS)]: ok(live(JONAS, "Forklaring fra nytt vaktvalg.")),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<App />);
+  const bruker = userEvent.setup();
+  await screen.findByText(t.laster);
+  await bruker.click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  await bruker.click(await screen.findByRole("button", { name: g.godkjenn }));
+  await screen.findByText(TEKSTER.vaktvalg.godkjent(JONAS.navn, 4127));
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(1);
+  // Samme vakt tilbys på nytt i testoversikten for å isolere flytens levetid fra grunnlagsmerket.
+  await bruker.click(screen.getByRole("button", { name: TEKSTER.vaktvalg.velgVakt }));
+  await screen.findByText("Forklaring fra nytt vaktvalg.");
+  await fullfør(live(JONAS, "Forklaring fra avsluttet flyt."));
+  expect(screen.queryByText("Forklaring fra avsluttet flyt.")).toBeNull();
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(2);
+});
+
+test("en uåpnet kandidat kan velges mens første forklaring venter", async () => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, METTE] }),
+    [`${liste}/${METTE.id}`]: ok(GODKJENNING_METTE),
+    [forklaring(METTE)]: ok(live(METTE, "Forklaring for den valgte kandidaten.")),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<App />);
+  await screen.findByText(t.laster);
+  expect(kallTil(fetch, forklaring(METTE))).toBe(0);
+  await userEvent.setup().click(screen.getByRole("button", { name: g.velgEtikett(METTE.navn) }));
+  await screen.findByText("Forklaring for den valgte kandidaten.");
+  await fullfør(live(JONAS, "Forklaring for førstekandidaten."));
+  expect(screen.queryByText("Forklaring for førstekandidaten.")).toBeNull();
+  expect(kallTil(fetch, forklaring(METTE))).toBe(1);
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(1);
+});
+
+test("ingen gyldige kandidater gir tomtilstanden og null forklaringskall", async () => {
+  const fetch = falskFetch({ "/api/vakter/4189/kandidater": ok(INGEN_GYLDIGE) });
+  render(<Kandidatliste vaktnummer={4189} onVelg={vi.fn()} />);
+  await screen.findByText(TEKSTER.kandidatflate.ingenGyldige);
+  expect(screen.queryByText(t.laster)).toBeNull();
+  expect(fetch.mock.calls.filter(([sti]) => String(sti).endsWith("/avveining"))).toHaveLength(0);
+});
+
+test("et ferskt godkjenningsgrunnlag med nytt merke krever egen forklaring for samme kandidat", async () => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const ny = { ...JONAS, grunnlagsmerke: "f".repeat(64) };
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS] }),
+    [grunnlag]: ok({ ...GODKJENNING_JONAS, kandidat: ny, grunnlagsmerke: ny.grunnlagsmerke }),
+    [forklaring(JONAS)]: ok(live(ny, "Forklaring for nytt grunnlag.")),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<App />);
+  await screen.findByText(t.laster);
+  await userEvent.setup().click(screen.getByRole("button", { name: g.velgEtikett(JONAS.navn) }));
+  await screen.findByText("Forklaring for nytt grunnlag.");
+  await fullfør(live(JONAS, "Forklaring for gammelt grunnlag."));
+  expect(screen.queryByText("Forklaring for gammelt grunnlag.")).toBeNull();
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(2);
+});
+
+test.each([4127, 4189])("ny sesjonskontroll på godkjenningsstien for vakt %i deler ingen tidligere forespørsel", async (vakt) => {
+  window.history.replaceState(null, "", godkjenningssti(4127, JONAS.id));
+  const nySti = `/api/vakter/${vakt}/kandidater/${JONAS.id}`;
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG), [grunnlag]: ok(GODKJENNING_JONAS),
+    [nySti]: ok({ ...GODKJENNING_JONAS, vakt: { ...VAKT_4127, vaktnummer: vakt } }),
+    [`${nySti}/avveining`]: ok({ ...live(JONAS, "Forklaring etter navigasjon."), vaktnummer: vakt }),
+  });
+  const fullfør = forsinkFørste(fetch, forklaring(JONAS));
+  render(<App />);
+  await screen.findByText(t.laster);
+  await act(async () => {
+    window.history.replaceState(null, "", godkjenningssti(vakt, JONAS.id));
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+  await screen.findByText("Forklaring etter navigasjon.");
+  await fullfør(live(JONAS, "Forklaring før navigasjon."));
+  expect(screen.queryByText("Forklaring før navigasjon.")).toBeNull();
+  expect(kallTil(fetch, `${nySti}/avveining`)).toBe(vakt === 4127 ? 2 : 1);
+});
 
 test("åpner nr. 1 én gang, og hver rad kan vises og skjules uavhengig med tastatur", async () => {
   const mette = { ...METTE, faktorpoeng: { ...METTE.faktorpoeng, kostnad: 84.375 }, totalscore: 72.25 };
@@ -132,12 +335,13 @@ test.each([
 
 test("én forklaring feiler, den andre lykkes og kandidaten med reservetekst kan godkjennes", async () => {
   window.history.replaceState(null, "", kandidatsti(4127));
+  const andre = { ...METTE, grunnlagsmerke: JONAS.grunnlagsmerke };
   const reserve = { status: "avveining_feilet", vaktnummer: 4127, kandidat_id: JONAS.id, grunnlagsmerke: JONAS.grunnlagsmerke };
   const tekst = "Ulempescoren er lavere enn hos Jonas Bakke før avrunding (40,0 mot 86,7).";
   const fetch = falskFetch({
     "/api/meg": ok(MEG), "/api/vakter/4127": ok(VAKT_4127),
-    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, METTE] }),
-    [forklaring(JONAS)]: ok(reserve), [forklaring(METTE)]: ok(live(METTE, tekst)),
+    [liste]: ok({ ...TO_GYLDIGE, kandidater: [JONAS, andre] }),
+    [forklaring(JONAS)]: ok(reserve), [forklaring(METTE)]: ok(live(andre, tekst)),
     [grunnlag]: ok(GODKJENNING_JONAS), [`POST ${grunnlag}`]: ok({ status: "godkjent" }),
     "/api/vaktoversikt": ok(VAKTOVERSIKT),
   });
@@ -152,8 +356,18 @@ test("én forklaring feiler, den andre lykkes og kandidaten med reservetekst kan
   expect(screen.queryByText(t.reserve)).toBeNull();
 
   const bruker = userEvent.setup();
+  for (const [kandidat, ulempepoeng] of [[JONAS, "40,0"], [andre, "180,0"]] as const) {
+    const velg = screen.getByRole("button", { name: g.velgEtikett(kandidat.navn) });
+    const rad = velg.closest("tr")!;
+    expect(within(rad).getByText(TEKSTER.kandidatflate.nivaaTag(kandidat.kompetansenivå))).toBeTruthy();
+    expect(within(rad).getByText(TEKSTER.kandidatflate.timerIUka("16:00"))).toBeTruthy();
+    expect(within(rad).getByText(TEKSTER.kandidatflate.ulempePoeng(ulempepoeng))).toBeTruthy();
+    expect(rad.textContent).toMatch(/2\s?960,00 kr/);
+    expect(velg).toHaveProperty("disabled", false);
+  }
   await bruker.click(screen.getByRole("button", { name: t.visEtikett(METTE.navn) }));
   expect(await screen.findByText(tekst)).toBeTruthy();
+  expect(jonas.getByText(t.laster)).toBeTruthy();
   await fullfør(reserve);
   expect(within(screen.getByRole("region", { name: t.tittel(JONAS.navn) })).getByRole("status")).toBe(statusfelt);
   expect(within(statusfelt).getByText(t.reservetekst)).toBeTruthy();
@@ -189,6 +403,8 @@ test("én forklaring feiler, den andre lykkes og kandidaten med reservetekst kan
   expect(await screen.findByText(TEKSTER.vaktvalg.godkjent(JONAS.navn, 4127))).toBeTruthy();
   const poster = fetch.mock.calls.filter(([sti, init]) => String(sti) === grunnlag && init?.method === "POST");
   expect(poster.map(([, init]) => JSON.parse(String(init?.body)))).toEqual([{ grunnlagsmerke: JONAS.grunnlagsmerke }]);
+  expect(kallTil(fetch, forklaring(JONAS))).toBe(1);
+  expect(kallTil(fetch, forklaring(METTE))).toBe(1);
 });
 
 test("409 henter nytt grunnlag og ny avveining, og neste POST bruker nettopp dette merket", async () => {
