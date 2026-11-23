@@ -62,4 +62,4 @@
 - [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Gruppa skriver refleksjonsrapporten fra `docs/emne/refleksjonsrapport-stoffgrunnlag.md`. Malen har plass til tre medlemmer, vi er fire.
 - [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Prompter fra planleggingen i september og samarbeidsverktøy utenom GitHub finnes ikke i repoet; gruppa fyller inn.
 - [ ] 2026-11-23 [refleksjonsrapport-stoffgrunnlag](976-2026-11-23-12-49-06-refleksjonsrapport-stoffgrunnlag.md) — Ta opp sensornøkkelen (ÅB-8: eier, betaler, kreditt) i gruppa.
-- [ ] 2026-11-23 [status-5-7](974-2026-11-23-17-29-20-status-5-7.md) — `AGENTS.md`: oppdater prosjektbeskrivelsen slik at story 5.5 og 5.7 står som ferdige.
+- [x] 2026-11-23 [status-5-7](974-2026-11-23-17-29-20-status-5-7.md) — `AGENTS.md`: oppdater prosjektbeskrivelsen slik at story 5.5 og 5.7 står som ferdige. (løst 2026-11-23, også 4.6 og `KI_MODUS`-teksten rettet)
