@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-25 (P-13 lukket etter ekstern forståelsestest og gruppas designvurdering, ført i §11 og §12); 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -1004,6 +1004,26 @@ om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt
   av `bmad-project-context` lager den teksten på nytt.
 - **Ikke endret:** README, `docs/teknisk-referanse.md` og de andre reglene i `AGENTS.md`.
 
+### 2026-11-25 – P-13 lukket etter ekstern forståelsestest
+
+- **Hvem:** Ragnhild Sætren var testleder. Gruppa godkjente designvurderingen i
+  gruppechatten 2026-11-25, meldt av Ragnhild.
+- **Grunnlag:** MJ, en ressursplanlegger med erfaring med turnus og utenfor gruppa, løste
+  alle tre oppgavene uten hint (Safari på macOS, demo-modus). Det oppfyller akseptmålet
+  i §12 og Kims krav fra 22.11 om en ekstern prøve. Ordrette svar, skjermbilder og
+  behovssamtalen står i [protokollen](../testing/2026-11-22/p13-protokoll.md).
+- **Retting:** MJ forstod ikke neste steg ved datafeil. Datafeilteksten på kandidatflaten
+  ble endret (`0d63d54`, [KI-logg](../ki-logg/2026-11-25-p-13-ekstern-prove-datafeiltekst.md)).
+  Den nye teksten er ikke prøvd på en ny deltaker.
+- **Vedtatt i designvurderingen:** Kandidatvisningen og A (null gyldige) beholdes. Den nye
+  datafeilteksten godtas. «Kan vurderes» (P-11) beholdes, og «burde vurderes» avvises.
+  Datafeilteksten på godkjenningsflaten beholdes. En årsak per datafeil fra backend
+  (AD-4), telefonnummer, bemanning direkte i bemanningssystemet og full tariffavtale er
+  utenfor v1.
+- **Endret:** P-13-raden i §12, protokollen, sprintstatus og vurderingsmatrisen.
+- **Ikke endret:** Problemvalideringen er ikke fullført. Behovssamtalen er et lokalt
+  signal fra én person, ikke et validert behov.
+
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
 Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.
@@ -1022,7 +1042,7 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 | P-10 | Kjerneflyten bruker faste preferanser i testdata. **P-10B planlegges som egen story etter fungerende kjerneflyt**: turnusansvarlig kan redigere tekst, med lagring, tilgangskontroll, ugyldiggjøring av gammel tolkning/forklaring og ny rangering. | B er planlagt v1-tillegg, ikke forutsetning for kjerneflyten; dokumenter som utsatt hvis tiden ikke rekker. Manuell kategori-overstyring er ikke valgt. Johannes' individuelle ønske om høyere prioritet i kilden endrer ikke Kims senere gruppeavklaring. |
 | P-11 | Ved null gyldige vises egen tomtilstand, utelukkelsesoppsummering og teksten «Innleie av personell kan vurderes», uten innleieknapp. | Skill tomtilstanden fra datafeil og lasting i UI-test. |
 | P-12 | Godkjenning lagres varig; vist forklaring lagres ikke historisk i kjerneversjonen. | Historisk forklaringslagring er **ikke v1-krav**. Eventuelt senere valg krever egen story for forklaring og beregningsgrunnlag. |
-| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende. Mobil og nettbrett er avklart som v2 i AV-17 (2026-11-14, §11); v1 skal fungere i smale nettleservinduer på datamaskin. | Felles ansvar: dokumenter en enkel oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. **Avgrensning:** én testperson og ett operativsystem og én skjermflate holder; mobil-/nettbrettavklaringen krever ingen egen forståelsestest. **Akseptmål:** testpersonen løser alle tre oppgavene uten hint. Står hen fast på én, rettes det som skapte misforståelsen, og funnet og rettingen noteres. Dokumenter testperson, operativsystem og skjermflate, svar per oppgave og eventuelle rettinger. Presisert av Johannes 2026-11-11 i godkjenningen av PR #12. Testen er ikke utført. |
+| P-13 / OP-02 | Desktop og gjeldende tilgjengelighetskrav er bindende. Mobil og nettbrett er avklart som v2 i AV-17 (2026-11-14, §11); v1 skal fungere i smale nettleservinduer på datamaskin. | Felles ansvar: dokumenter en enkel oppgavebasert forståelsestest der testpersonen uten hint forklarer nr. 1, finner annen gyldig kandidat og skiller datafeil fra null gyldige. **Avgrensning:** én testperson og ett operativsystem og én skjermflate holder; mobil-/nettbrettavklaringen krever ingen egen forståelsestest. **Akseptmål:** testpersonen løser alle tre oppgavene uten hint. Står hen fast på én, rettes det som skapte misforståelsen, og funnet og rettingen noteres. Dokumenter testperson, operativsystem og skjermflate, svar per oppgave og eventuelle rettinger. Presisert av Johannes 2026-11-11 i godkjenningen av PR #12. **Utført og lukket 2026-11-25:** en person utenfor gruppa løste alle tre oppgavene uten hint, og gruppa godkjente designvurderingen ([protokoll](../testing/2026-11-22/p13-protokoll.md), §11). |
 | E-01 | Faglærers muntlige opplysning er gjengitt: KI i produktet er ikke et formelt emnekrav; KI beholdes som valgt produktscope. | Lukket som dokumentasjonspunkt 2026-11-08; forelesningsdato er ukjent. |
 | E-02 | Commit `ee6d798` er identifisert som godkjent proposal; planavvikene er listet i beslutningsgrunnlaget. | Avklart som dokumentpunkt 2026-11-09. Kontroller faktisk levert app mot proposal og forklar avvik ved innlevering. |
 
@@ -1041,7 +1061,7 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 
 ### AV-16 – Eier for åpne valg
 
-- **Mobil/nettbrett (OP-02/P-13):** AV-16 gjorde hele gruppa til beslutningseier 2026-11-13. Valget ble tatt 2026-11-14 (AV-17, §11): mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer. Desktop og gjeldende tilgjengelighetskrav gjelder fortsatt. P-13s oppgavebaserte forståelsestest er ikke utført.
+- **Mobil/nettbrett (OP-02/P-13):** AV-16 gjorde hele gruppa til beslutningseier 2026-11-13. Valget ble tatt 2026-11-14 (AV-17, §11): mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer. Desktop og gjeldende tilgjengelighetskrav gjelder fortsatt. P-13s oppgavebaserte forståelsestest ble utført og lukket 2026-11-25 (§11).
 - **Sensornøkkel (ÅB-8):** Hele gruppa er beslutningseier. Hvilken OpenRouter-nøkkel sensor får, hvem som betaler og hvor mye kreditt som trengs, avgjøres før innlevering ut fra faktisk forbruk. Ingen nøkkel eller verdi skal inn i repoet.
 
 **Avklart 2026-11-16 (AV-19):** P-05 vedtok avgrensede nye forsøk ved forbigående feil i preferansetolkning. Ventetrinn, antall forsøk, tidsbudsjett, startpunkt for målingen og sluttstatus er nå fastsatt i §11 (AV-19). **Fortsatt åpent:** brukerutløst «Prøv igjen». AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver avveining; de overføres ikke automatisk til tolkning. FR-13s 480 minutter er en overstyrbar standard etter OP-10/AD-3. P-12B om historisk lagring av forklaring er fortsatt utenfor v1 og krever eget vedtak og story.

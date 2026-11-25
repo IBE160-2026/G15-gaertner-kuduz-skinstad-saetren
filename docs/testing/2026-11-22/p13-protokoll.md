@@ -205,5 +205,34 @@ samme testdatabase. Bildene er utsnitt av kandidatdelen, ikke hele vinduet:
 - [B etter rettingen, #4261](../2026-11-25/p13-ekstern-b-etter.png). Teksten brytes over
   tre linjer uten overlapp, og datagrensen står under.
 
-Behovssamtalen med MJ står under «Behovssamtale etter oppgavene». Gjenstår før P-13
-kan lukkes: gruppas designvurdering. Kims krav om ekstern prøve er oppfylt.
+Behovssamtalen med MJ står under «Behovssamtale etter oppgavene». Kims krav om ekstern
+prøve er oppfylt, og gruppas designvurdering står nedenfor.
+
+## Gruppas designvurdering
+
+Skrevet av Ragnhild med Claude 25.11.2026 på grunnlag av den interne prøven 22.11 og
+den eksterne prøven 25.11. Gruppa godkjente punktene uendret.
+
+1. **Kandidatvisningen beholdes uendret.** MJ forklarte plass 1 med de samme faktorene
+   som rangeringen bruker, valgte en annen gyldig kandidat og bemannet vakten uten
+   vansker. MJ fant også Ekskludert-boksen uten hint og leste utelukkelsen riktig.
+   Ingen observasjon tyder på at rangeringstabellen, avveiningen eller valgflyten må
+   endres.
+2. **Null gyldige (A) beholdes som rettet 22.11.** Etter at innleieteksten ble flyttet
+   fram, fant MJ innleie som neste steg uten hint. Det var det Kim ikke fant.
+3. **Den nye datafeilteksten (B) godtas.** MJ skilte datafeil fra null gyldige, men
+   forstod ikke hva som var galt. Teksten ble endret til å si hva appen trenger og hva
+   som skal kontrolleres. Den er ikke prøvd på en ny deltaker, og det er en kjent
+   begrensning. En årsak per datafeil fra backend ble vurdert og avvist for v1, fordi
+   det ville endret API-kontrakten (AD-4) sent i prosjektet.
+4. **«Kan vurderes» beholdes.** Kims forslag «Innleie av personell burde vurderes» ble
+   vurdert og avvist. P-11 vedtok «kan vurderes», og prototypen kjenner ikke
+   situasjonen godt nok til å anbefale innleie.
+5. **Datafeilteksten på godkjenningsflaten beholdes.** Den er ikke prøvd. Kandidatflaten
+   viser ingen «Velg» ved datafeil, så teksten vises bare ved direkte lenke eller hvis
+   grunnlaget endres før godkjenning.
+6. **MJs innspill er utenfor v1.** Telefonnummer til kandidatene, bemanning direkte i
+   bemanningssystemet og full tariffavtale noteres som mulig videreutvikling.
+
+Godkjent av gruppa i gruppechatten 25.11.2026, meldt av Ragnhild. P-13 er lukket
+(beslutningsreferatet §11 og §12).
