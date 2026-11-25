@@ -69,3 +69,4 @@
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — Story 5.8: innleveringsoppgavene (ÅB-8, nøkkelsjekk, test fra ren klone, nøkkel i innleveringsteksten, sletting etter sensur) etter `docs/innlevering/sjekkliste-live-ki.md`.
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — `docs/innlevering/til-sensor-innlogging.md`: brutt lenke til README steg 2 (overskriften heter nå «2. Last testdata og velg passord»).
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — Nøkkelsjekkene i sjekklisten er ikke kjørt i PowerShell.
+- [ ] 2026-11-25 [p-13-ekstern-prove](970-2026-11-25-13-51-45-p-13-ekstern-prove.md) — Gruppa vurderer designet og den nye datafeilteksten før P-13 lukkes i sprintstatus og referatet §12.
