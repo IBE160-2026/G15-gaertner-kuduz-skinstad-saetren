@@ -195,7 +195,9 @@ describe("Kandidatliste (story 2.1)", () => {
     expect(within(del).getByRole("heading", { name: t.datafeilOverskrift })).toBeTruthy();
     expect(within(del).queryByRole("heading", { name: t.kandidaterOverskrift })).toBeNull();
     expect(varsel.textContent).toContain("ikke avgjøre hvem som er gyldig");
-    expect(varsel.textContent).toContain("Få turnusgrunnlaget kontrollert og oppdatert før ny vurdering.");
+    // P-13, ekstern prøve 25.11: teksten må si hva appen trenger og hva som skal kontrolleres.
+    expect(varsel.textContent).toContain("vaktene i ukene før og dagene etter vakten");
+    expect(varsel.textContent).toContain("Kontroller at turnusen for dagene rundt vakten er lagt inn og riktig");
     expect(within(varsel).getByText(t.datafeil)).toBeTruthy();
     expect(within(varsel).getByText(t.datagrense(datoOgKlokke(datagrense)))).toBeTruthy();
     expect(within(del).queryByRole("table")).toBeNull();

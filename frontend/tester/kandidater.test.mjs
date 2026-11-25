@@ -112,7 +112,7 @@ test("laster, feil, datafeil og tom liste har ulik tekst", () => {
   assert.ok(!tilstander.includes(RESERVETEKST));
   for (const tekst of tilstander) assert.ok(!feil.has(tekst), tekst);
   assert.equal(new Set(tilstander).size, tilstander.length);
-  assert.equal(t.datafeil, "Kan ikke beregne kandidater fordi nødvendig turnusgrunnlag mangler. Vi kan derfor ikke avgjøre hvem som er gyldig for vakten. Få turnusgrunnlaget kontrollert og oppdatert før ny vurdering.");
+  assert.equal(t.datafeil, "Kandidatene kan ikke vurderes fordi turnusgrunnlaget rundt vakten mangler eller har feil, så appen kan ikke avgjøre hvem som er gyldig. For å kontrollere hviletid, ukentlig fri og arbeidstid må appen kjenne vaktene i ukene før og dagene etter vakten. Kontroller at turnusen for dagene rundt vakten er lagt inn og riktig, og vurder vakten på nytt.");
   assert.equal(
     t.ingenGyldige,
     "Ingen gyldige kandidater for denne vakten. Dette er ikke en feil eller en lastefeil — regelmotoren har kjørt ferdig og funnet null treff.",
