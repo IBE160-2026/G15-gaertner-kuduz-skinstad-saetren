@@ -20,8 +20,11 @@ Implementere story 5.9 (P-10B) etter spesifikasjonen `_bmad-output/implementatio
 - Uavhengig gjennomgang i tre lag (Blind Hunter, Edge Case Hunter, Verification Gap, Opus): 19 funn, 9 rettet, 8 avvist, 1 utsatt (AGENTS.md). Triagen står i specens Review Triage Log. Full verifisering etter rettelsene: 929 backendtester, frontendbygg, 52 modultester og 90 komponenttester. 404-testen ble rød med grenen slått av.
 - Committet lokalt som `25e50cc` på branchen `story-5.9-redigere-preferansetekst`; sprint-status er `review`. Ikke pushet.
 
+- Manuell test live mot Luna i nettleseren (Ragnhild, macOS): redigering, ny rangering, uendret, Avbryt, Esc, tom tekst og smalt vindu virket. Funn: meldingen etter «Lagre» stod for langt fra kandidaten; rettet med en kort melding i preferansecellen og en ny komponenttest, retestet i nettleseren. 91 komponenttester og 52 modultester bestod.
+- Funn under oppstart: README-kommandoen `read -rsp` virker ikke i zsh, som er standard på macOS (`read: -p: no coprocess`). zsh-varianten `read -rs "VAR?Ledetekst: "` ble brukt.
+
 ### Åpne punkter
 - PR for story 5.9 og gjennomgang av et annet gruppemedlem.
 - AGENTS.md: status for 5.8/5.9 og ny database etter 5.9 (utsatt i `deferred-work.md`).
-- Manuell nettleserkontroll av story 5.9 (OP-16): demo og live, kjent og ukjent tekst, 680/960 px, tastatur, fokus og farger.
-- Live mot Luna er ikke prøvd for redigering av preferansetekst.
+- Manuelt for story 5.9 (OP-16): demo-modus i nettleseren, flyten med bare tastatur, farger og fokusramme, og «endret grunnlag» i to faner.
+- README: zsh-variant av `read -rsp`-kommandoene for passord og nøkkel (macOS).
