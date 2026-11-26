@@ -153,5 +153,5 @@
   summary: "Story 5.8, etter sensur: slett eller bytt nøkkelen sensor fikk i OpenRouter, og navngi den ansvarlige personen i innleveringen."
   evidence: Delt ut av story 5.8 2026-11-23 (Ragnhild valgte «Del opp» i bmad-build). Kan først gjøres etter at sensuren er ferdig (epics.md, story 5.8, siste akseptkriterium).
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
-  summary: AGENTS.md sier fortsatt at 5.8 og 5.9 står i backlog, og nevner bare story 5.1 som grunn til å slette en eldre database (5.9 la til `preferanseversjon`).
-  evidence: Funnet av Blind Hunter i gjennomgangen av story 5.9 2026-11-26. Endringer i agentkontekst holdes utenfor storyens diff; rettes som egen liten endring etter merge.
+  summary: "[LØST 2026-11-26, PR #42] AGENTS.md sa fortsatt at 5.8 og 5.9 står i backlog, og nevner bare story 5.1 som grunn til å slette en eldre database (5.9 la til `preferanseversjon`)."
+  evidence: Funnet av Blind Hunter i gjennomgangen av story 5.9 2026-11-26. Løst 2026-11-26: Ragnhild valgte å rette AGENTS.md i PR #42, så statusen blir riktig når PR-en merges.
