@@ -17,8 +17,10 @@ from adaptere.lagring.modeller import AnsattRad
 from adaptere.lagring.preferansetolkning import (
     TOLKEFORMAT,
     lagre_resultat,
+    lagre_tekst,
     les_tolkning,
     teksthash,
+    tilstandsmerke,
     tolkninger,
     ventende_tekster,
 )
@@ -136,7 +138,7 @@ def test_tolkninger_deler_i_tolkede_og_feilede() -> None:
 
 
 def test_lagret_tolkning(okter: sessionmaker[Session]) -> None:
-    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING)
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
     lagret = rad(okter)
     assert (lagret.tolket_kategori, lagret.tolket_begrunnelse, lagret.tolket_modell) == (
         TOLKNING.kategori, TOLKNING.begrunnelse, TOLKNING.modell)
@@ -147,8 +149,8 @@ def test_lagret_tolkning(okter: sessionmaker[Session]) -> None:
 
 
 def test_feil_nullstiller_tolkning_og_suksess_nullstiller_feil(okter: sessionmaker[Session]) -> None:
-    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING)
-    assert lagre_resultat(okter, JONAS, TEKST_JONAS, "nettverk")
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, "nettverk", versjon=0)
     feilet = rad(okter)
     assert (feilet.tolket_kategori, feilet.tolket_begrunnelse, feilet.tolket_modell, feilet.tolkefeil) == (
         None, None, None, "nettverk")
@@ -157,7 +159,7 @@ def test_feil_nullstiller_tolkning_og_suksess_nullstiller_feil(okter: sessionmak
     # En lagret feil prøves på nytt ved neste oppstart.
     with okter() as session:
         assert (JONAS, TEKST_JONAS) in ventende_tekster(session)
-    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING)
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
     assert rad(okter).tolkefeil is None
     assert les_tolkning(rad(okter)) == TOLKNING
 
@@ -165,12 +167,12 @@ def test_feil_nullstiller_tolkning_og_suksess_nullstiller_feil(okter: sessionmak
 def test_endret_tekst_lagrer_ingenting(okter: sessionmaker[Session]) -> None:
     with okter.begin() as session:
         session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(preferanse="Ny tekst."))
-    assert not lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING)
+    assert not lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
     assert all(getattr(rad(okter), kolonne) is None for kolonne in TOLKNINGSKOLONNER)
 
 
 def test_endret_tekst_etter_lagring_gir_venter(okter: sessionmaker[Session]) -> None:
-    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING)
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
     with okter.begin() as session:
         session.execute(update(AnsattRad).where(AnsattRad.id == JONAS).values(preferanse="Ny tekst."))
     assert les_tolkning(rad(okter)) is None
@@ -180,4 +182,85 @@ def test_endret_tekst_etter_lagring_gir_venter(okter: sessionmaker[Session]) -> 
 
 def test_tom_feiltype_avvises(okter: sessionmaker[Session]) -> None:
     with pytest.raises(ValueError):
-        lagre_resultat(okter, JONAS, TEKST_JONAS, " ")
+        lagre_resultat(okter, JONAS, TEKST_JONAS, " ", versjon=0)
+
+
+def test_uten_forventet_eller_versjon_avvises(okter: sessionmaker[Session]) -> None:
+    """Story 5.9: versjonen sammenlignes alltid, så kallet må oppgi den."""
+    with pytest.raises(ValueError):
+        lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING)
+    assert les_tolkning(rad(okter)) is None
+
+
+# --- Redigering av teksten (story 5.9) ---------------------------------------------
+
+
+def test_testdataene_har_versjon_0(okter: sessionmaker[Session]) -> None:
+    with okter() as session:
+        assert {a.preferanseversjon for a in session.scalars(select(AnsattRad))} == {0}
+
+
+def test_ny_tekst_lagres_trimmet_øker_versjonen_og_nullstiller_tolkningen(okter: sessionmaker[Session]) -> None:
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
+    assert lagre_tekst(okter, JONAS, "  Ny tekst.  ") == 1
+    lagret = rad(okter)
+    assert (lagret.preferanse, lagret.preferanseversjon) == ("Ny tekst.", 1)
+    assert all(getattr(lagret, kolonne) is None for kolonne in TOLKNINGSKOLONNER)
+    assert les_tolkning(lagret) is None
+    assert lagre_tekst(okter, JONAS, "Enda en.") == 2
+
+
+def test_lagret_feil_nullstilles_ved_ny_tekst(okter: sessionmaker[Session]) -> None:
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, "nettverk", versjon=0)
+    assert lagre_tekst(okter, JONAS, "Ny tekst.") == 1
+    assert rad(okter).tolkefeil is None
+
+
+@pytest.mark.parametrize("tekst", ["", "   ", "\n\t"])
+def test_tom_tekst_lagres_som_none(okter: sessionmaker[Session], tekst: str) -> None:
+    assert lagre_tekst(okter, JONAS, tekst) == 1
+    assert rad(okter).preferanse is None
+    assert lagre_tekst(okter, JONAS, "") == "uendret"
+
+
+@pytest.mark.parametrize("tekst", [TEKST_JONAS, f"  {TEKST_JONAS}\n"])
+def test_samme_tekst_er_en_noop(okter: sessionmaker[Session], tekst: str) -> None:
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
+    før = tilstandsmerke(rad(okter))
+    assert lagre_tekst(okter, JONAS, tekst) == "uendret"
+    assert tilstandsmerke(rad(okter)) == før
+    assert les_tolkning(rad(okter)) == TOLKNING
+
+
+def test_ikke_tillatt_eller_ukjent_ansatt_endrer_ingenting(okter: sessionmaker[Session]) -> None:
+    sett: list[bool] = []
+
+    def nei(_session: Session) -> bool:
+        sett.append(True)
+        return False
+
+    assert lagre_tekst(okter, JONAS, "Ny tekst.", nei) == "ikke_funnet"
+    assert sett == [True]
+    assert lagre_tekst(okter, 999_999, "Ny tekst.") == "ikke_funnet"
+    assert (rad(okter).preferanse, rad(okter).preferanseversjon) == (TEKST_JONAS, 0)
+
+
+def test_svar_på_eldre_versjon_lagres_ikke(okter: sessionmaker[Session]) -> None:
+    forventet = tilstandsmerke(rad(okter))
+    assert lagre_tekst(okter, JONAS, "Ny tekst.") == 1
+    assert not lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
+    assert not lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, forventet)
+    assert all(getattr(rad(okter), kolonne) is None for kolonne in TOLKNINGSKOLONNER)
+
+
+def test_a_b_a_forkaster_svaret_på_den_første_a(okter: sessionmaker[Session]) -> None:
+    """Teksten er lik før og etter, men versjonen er ikke (deferred-work fra 5.1)."""
+    forventet = tilstandsmerke(rad(okter))
+    assert lagre_tekst(okter, JONAS, "B") == 1
+    assert lagre_tekst(okter, JONAS, TEKST_JONAS) == 2
+    assert rad(okter).preferanse == TEKST_JONAS
+    assert not lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, forventet)
+    assert not lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, versjon=0)
+    assert les_tolkning(rad(okter)) is None
+    assert lagre_resultat(okter, JONAS, TEKST_JONAS, TOLKNING, tilstandsmerke(rad(okter)))
+    assert les_tolkning(rad(okter)) == TOLKNING

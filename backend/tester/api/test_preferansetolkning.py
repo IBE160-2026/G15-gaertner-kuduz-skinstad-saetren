@@ -392,7 +392,7 @@ def test_gammel_database_stopper_tolkningen_med_én_feilmelding(
     (feil,) = [r for r in caplog.records if r.levelno >= logging.ERROR]
     assert feil.getMessage() == (
         "Preferansetolkning stoppet: kunne ikke lese ansatt-tabellen. Er databasen fra før "
-        "story 5.1? Slett den og last testdata på nytt."
+        "story 5.1 eller 5.9? Slett den og last testdata på nytt."
     )
 
 

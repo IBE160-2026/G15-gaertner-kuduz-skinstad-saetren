@@ -164,6 +164,7 @@ export const rangering = (plass: number) => ({
   stilling: "Sykepleier", ansiennitet: 3, plass, totalscore: 57.5,
   faktorpoeng: { kostnad: 50, timebelastning: 50, ulempe: 100 },
   preferansepoeng: 50, tolkestatus: "venter_paa_tolkning" as const, preferansekategori: null,
+  preferansetekst: null,
 });
 
 /**
@@ -182,6 +183,7 @@ export const JONAS: RangertKandidat = {
   stilling: "Sykepleier", ansiennitet: 3, plass: 1, totalscore: 3335 / 42,
   faktorpoeng: { kostnad: 1780 / 21, timebelastning: 100, ulempe: 260 / 3 },
   preferansepoeng: 50, tolkestatus: "venter_paa_tolkning", preferansekategori: null,
+  preferansetekst: "Jeg trenger ikke flere vakter, men tar gjerne en ekstra ved behov.",
 };
 
 /** To Gyldige kandidater i rangert rekkefølge, som fra API-et. */
@@ -251,6 +253,7 @@ export const METTE: RangertKandidat = {
   stilling: "Sykepleier", ansiennitet: 9, plass: 2, totalscore: 3041 / 42,
   faktorpoeng: { kostnad: 1780 / 21, timebelastning: 100, ulempe: 40 },
   preferansepoeng: 50, tolkestatus: "venter_paa_tolkning", preferansekategori: null,
+  preferansetekst: "Hvis dere mangler folk, stiller jeg gjerne på en ekstravakt.",
 };
 
 export const GODKJENNING_METTE = {

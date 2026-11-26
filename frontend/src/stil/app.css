@@ -445,6 +445,37 @@ button {
   white-space: normal;
 }
 
+/* Redigering av preferanseteksten (story 5.9). */
+.preferanse-redigering {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: var(--preferanse-felt-width);
+  margin-top: var(--space-1);
+}
+
+.preferanse-redigering textarea {
+  width: 100%;
+  min-height: var(--preferanse-felt-rows-min-height);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-panel);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-main);
+  font: inherit;
+  resize: vertical;
+}
+
+.preferanse-handlinger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.preferansecelle > .button-kompakt {
+  margin-top: var(--space-1);
+}
+
 /* Smale vinduer (story 4.6, UX-DR25, UX-DR28, AV-17): «Nr.» og «Kandidat» står fast mot
    venstre kant når tabellen ruller vannrett, så det alltid synes hvem tallene gjelder.
    Bare CSS, ingen layout etter bredde i JavaScript.

@@ -39,7 +39,8 @@ def lag_engine(sti: str | os.PathLike[str] | None = None) -> Engine:
     - `lagre_godkjenning` i `adaptere/lagring/godkjenninger.py` kjører
       `BEGIN IMMEDIATE`, slik at skrivelåsen tas før regelkontroll og skriving
       (AD-5). Driveren starter ikke en ny transaksjon før UPDATE, fordi en allerede
-      er åpen, og `session.commit()` avslutter den.
+      er åpen, og `session.commit()` avslutter den. `lagre_tekst` i
+      `adaptere/lagring/preferansetolkning.py` gjør det samme (story 5.9).
 
     Ikke sett `isolation_level`, `autocommit` eller `execution_options` på engine
     eller tilkobling uten å gå gjennom begge stedene. Med `autocommit=False` åpner

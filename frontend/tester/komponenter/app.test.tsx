@@ -5,7 +5,7 @@ import { expect, test } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "../../src/App";
-import { INNLOGGING_STI, OVERSIKT_STI, godkjenningssti } from "../../src/navigasjon";
+import { INNLOGGING_STI, OVERSIKT_STI, godkjenningssti, kandidatsti } from "../../src/navigasjon";
 import { TEKSTER } from "../../src/tekster";
 import { GODKJENNING_JONAS, MEG, TO_GYLDIGE, VAKT_4127, VAKTOVERSIKT, falskFetchMedReserve as falskFetch, feil, kallTil, ok } from "./hjelpere";
 
@@ -77,4 +77,19 @@ test("godkjenning navigerer til oppdatert Vaktvalg med konkret melding som fjern
   expect(screen.getByText("Jonas Bakke")).toBeTruthy();
   await bruker.click(screen.getByRole("button", { name: TEKSTER.vaktvalg.velgVakt }));
   expect(screen.queryByText(bekreftelse)).toBeNull();
+});
+
+test("demo-modus fra /api/meg gir demomerknaden i preferansefeltet (story 5.9)", async () => {
+  window.history.replaceState(null, "", kandidatsti(4127));
+  const jonas = TO_GYLDIGE.kandidater[0];
+  falskFetch({
+    "/api/meg": ok({ ...MEG, demomodus: true }),
+    "/api/vakter/4127": ok(VAKT_4127),
+    "/api/vakter/4127/kandidater": ok(TO_GYLDIGE),
+  });
+  render(<App />);
+  const bruker = userEvent.setup();
+  const rp = TEKSTER.kandidatflate.redigerPreferanse;
+  await bruker.click(await screen.findByRole("button", { name: rp.endreEtikett(jonas.navn) }));
+  expect(screen.getByText(rp.demo)).toBeTruthy();
 });
