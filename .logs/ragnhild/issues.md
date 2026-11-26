@@ -75,3 +75,4 @@
 - [x] 2026-11-26 [story-5-9-redigere-preferansetekst](969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md) — Story 5.9: redigering ikke prøvd live mot Luna. (løst 2026-11-26: testet live i nettleseren av Ragnhild)
 - [ ] 2026-11-26 [story-5-9-redigere-preferansetekst](969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md) — AGENTS.md: oppdater status for 5.8/5.9 og at databasen må slettes etter 5.9.
 - [x] 2026-11-26 [story-5-9-redigere-preferansetekst](969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md) — README: `read -rsp` virker ikke i zsh (standard på macOS); legg til zsh-variant for passord og nøkkel. (løst 2026-11-26: rettet på `main` i `cc84eb4`)
+- [ ] 2026-11-26 [readme-zsh](968-2026-11-26-16-00-00-readme-zsh.md) — Prøv de nye `read -rs`-linjene i README interaktivt i Git Bash (inntastingen skal ikke vises). zsh er kontrollert 2026-11-26.

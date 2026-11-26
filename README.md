@@ -29,8 +29,8 @@ Alle data er fiktive, og de fire reglene er ingen garanti for full juridisk ette
 
 Appen er testet på Windows og macOS, og testene kjøres på Linux i CI. Kommandoene under
 er for Windows PowerShell. På macOS og Linux bytter du `.venv\Scripts\python` med
-`.venv/bin/python`. Der det står en egen bash-kommando, gjelder den macOS, Linux og
-Git Bash.
+`.venv/bin/python`. Der det står en egen kommando for bash og zsh, gjelder den macOS
+(zsh er standard), Linux og Git Bash.
 
 ## Kom i gang
 
@@ -62,10 +62,10 @@ $env:TURNUSHJELPEREN_PASSORD = [Net.NetworkCredential]::new('', (Read-Host -AsSe
 Remove-Item Env:TURNUSHJELPEREN_PASSORD
 ```
 
-bash:
+bash og zsh:
 
 ```
-IFS= read -rsp 'Velg passord: ' TURNUSHJELPEREN_PASSORD && export TURNUSHJELPEREN_PASSORD
+printf 'Velg passord: '; IFS= read -rs TURNUSHJELPEREN_PASSORD && export TURNUSHJELPEREN_PASSORD; echo
 .venv/bin/python -m adaptere.lagring.testdata
 unset TURNUSHJELPEREN_PASSORD
 ```
@@ -81,7 +81,7 @@ Remove-Item Env:TURNUSHJELPEREN_PASSORD -ErrorAction SilentlyContinue
 .venv\Scripts\python -m adaptere.lagring.testdata
 ```
 
-bash:
+bash og zsh:
 
 ```
 unset TURNUSHJELPEREN_PASSORD
@@ -171,10 +171,10 @@ tolkninger som er lagret.
   .venv\Scripts\python -m uvicorn adaptere.api.main:app
   ```
 
-  bash:
+  bash og zsh:
 
   ```
-  IFS= read -rsp 'OpenRouter-nøkkel: ' OPENROUTER_API_KEY && export OPENROUTER_API_KEY
+  printf 'OpenRouter-nøkkel: '; IFS= read -rs OPENROUTER_API_KEY && export OPENROUTER_API_KEY; echo
   .venv/bin/python -m uvicorn adaptere.api.main:app
   ```
 
