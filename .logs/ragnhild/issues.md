@@ -70,3 +70,4 @@
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — `docs/innlevering/til-sensor-innlogging.md`: brutt lenke til README steg 2 (overskriften heter nå «2. Last testdata og velg passord»).
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — Nøkkelsjekkene i sjekklisten er ikke kjørt i PowerShell.
 - [x] 2026-11-25 [p-13-ekstern-prove](970-2026-11-25-13-51-45-p-13-ekstern-prove.md) — Gruppa vurderer designet og den nye datafeilteksten før P-13 lukkes i sprintstatus og referatet §12. (løst 2026-11-25: gruppa godkjente designvurderingen i gruppechatten, P-13 lukket)
+- [ ] 2026-11-26 [readme-zsh](968-2026-11-26-16-00-00-readme-zsh.md) — Prøv de nye `read -rs`-linjene i README interaktivt i Git Bash og zsh (inntastingen skal ikke vises).
