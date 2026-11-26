@@ -83,5 +83,5 @@ bestod. Retestet i nettleseren av Ragnhild: meldingen står ved Jonas.
 ## Gjenstår
 
 - PR og gjennomgang av et annet gruppemedlem.
-- Manuelt (OP-16): demo-modus i nettleseren, hele flyten med bare tastatur, farger og fokusramme, og «endret grunnlag» med godkjenningen åpen i en annen fane.
+- Manuelt (OP-16): farger og fokusramme, og «endret grunnlag» med godkjenningen åpen i en annen fane, helst på Windows. Demo-modus og tastaturflyten er testet av Ragnhild 2026-11-26 (se `docs/testing.md`).
 - Låsen deles fortsatt ikke mellom prosesser (v1 har én worker). Versjonen gjør at en tekstendring oppdages også mellom prosesser, men to prosesser kan tolke samme versjon samtidig.

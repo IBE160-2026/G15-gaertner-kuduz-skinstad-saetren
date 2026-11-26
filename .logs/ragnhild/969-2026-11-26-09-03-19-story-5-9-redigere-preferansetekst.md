@@ -23,8 +23,10 @@ Implementere story 5.9 (P-10B) etter spesifikasjonen `_bmad-output/implementatio
 - Manuell test live mot Luna i nettleseren (Ragnhild, macOS): redigering, ny rangering, uendret, Avbryt, Esc, tom tekst og smalt vindu virket. Funn: meldingen etter «Lagre» stod for langt fra kandidaten; rettet med en kort melding i preferansecellen og en ny komponenttest, retestet i nettleseren. 91 komponenttester og 52 modultester bestod.
 - Funn under oppstart: README-kommandoen `read -rsp` virker ikke i zsh, som er standard på macOS (`read: -p: no coprocess`). zsh-varianten `read -rs "VAR?Ledetekst: "` ble brukt.
 
+- Manuell test i demo-modus og med bare tastatur (Ragnhild, macOS): demomerknad, «kunne ikke tolkes» for ny tekst, gjenoppretting av Jonas' tekst, Tab/Enter/Esc og synlig fokus virket.
+
 ### Åpne punkter
 - PR for story 5.9 og gjennomgang av et annet gruppemedlem.
 - AGENTS.md: status for 5.8/5.9 og ny database etter 5.9 (utsatt i `deferred-work.md`).
-- Manuelt for story 5.9 (OP-16): demo-modus i nettleseren, flyten med bare tastatur, farger og fokusramme, og «endret grunnlag» i to faner.
+- Manuelt for story 5.9 (OP-16), til den som gjennomgår PR-en, helst på Windows: farger og fokusramme, og «endret grunnlag» i to faner.
 - README: zsh-variant av `read -rsp`-kommandoene for passord og nøkkel (macOS).

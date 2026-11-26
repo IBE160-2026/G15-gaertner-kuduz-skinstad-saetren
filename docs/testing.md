@@ -403,10 +403,16 @@ fordi kandidaten flyttet seg langt fra den. Rettet samme dag: en kort melding vi
 i preferansecellen til kandidaten (`rp.rad`), og ny komponenttest dekker den. Retestet i
 nettleseren: meldingen står ved Jonas.
 
-Gjenstår manuelt (OP-16): demo-modus i nettleseren med en kjent og en ukjent tekst;
-hele flyten med bare tastatur (Tab til «Endre», Enter, Esc og fokus); farger og
-fokusramme etter sjekklisten over; «endret grunnlag» med godkjenningen åpen i en annen
-fane. Regelen `.preferansecelle > .button-kompakt` gir også ny avstand over «Prøv igjen»
+**Manuell test i demo-modus og med tastatur, Ragnhild, macOS, 2026-11-26:** Appbaren
+viste «Demo-modus», og merknaden stod under tekstfeltet. En ny tekst ga «kunne ikke
+tolkes», 50 poeng og «Prøv igjen». Jonas' opprinnelige tekst ble tolket igjen. Med bare
+tastatur virket Tab til «Endre», Enter (fokus til feltet), Tab til «Lagre», Enter, og Esc
+(fokus tilbake til «Endre»), og fokus var synlig hele veien.
+
+Gjenstår manuelt (OP-16), foreslått for den som gjennomgår PR-en, helst på Windows
+(OP-05): farger og fokusramme etter sjekklisten over, og «endret grunnlag» med
+godkjenningen åpen i en annen fane (dekket av
+`test_endring_mens_godkjenning_er_åpen_gir_endret_grunnlag`). Regelen `.preferansecelle > .button-kompakt` gir også ny avstand over «Prøv igjen»
 fra story 5.1; kontroller at den knappen fortsatt står riktig i en rad med «kunne ikke
 tolkes».
 
