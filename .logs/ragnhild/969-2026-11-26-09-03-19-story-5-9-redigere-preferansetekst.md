@@ -16,6 +16,7 @@ Implementere story 5.9 (P-10B) etter spesifikasjonen `_bmad-output/implementatio
 - Frontend: `api.ts`, `Kandidatflate.tsx`, `App.tsx`, `tekster.ts`, `app.css`, `tokens.css`, `hjelpere.ts` og 12 nye komponenttester.
 - Dokumentasjon: README, `docs/teknisk-referanse.md`, `docs/testing.md`, `docs/modellvalg-stories.md`, `docs/emne/vurderingsmatrise.md`, `deferred-work.md`, spesifikasjonens Tasks og Implementation Notes, og KI-loggen `docs/ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md`.
 - Verifisert: 929 backendtester (med arkitektur og ruff), frontendbygg, 52 modultester og 87 komponenttester, skills-speilingen. Åtte mutasjoner (fire backend, fire frontend) ga røde tester. API-et er prøvd mot ekte backend i demo-modus med `curl`.
+- Rettet etter gjennomgang: 404 ved lagring henter rangeringen på nytt i stedet for feilflate, Esc på hele skjemaet, `LAASEVENT_S`, hjelpetekst og README om demo-modus, tre nye komponenttester og riktig ventetid i teknisk referanse. Listen står i KI-loggen under «Rettet etter gjennomgang».
 - Arbeidet er ikke committet (koden ligger ukommittert på branchen `story-5.9-redigere-preferansetekst`).
 
 ### Åpne punkter
