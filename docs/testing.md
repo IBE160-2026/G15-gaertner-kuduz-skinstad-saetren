@@ -155,7 +155,7 @@ har satt opp, feiler testen.
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
 | | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. «Vis bare de 5 øverste» lukker listen igjen, med `aria-expanded` og fokus på knappen. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
 | | «Vis alle» og «Vis full liste» er fortsatt åpne med samme rader når vindusbredden endres (1600 → 680 → 1600), og kandidatene hentes ikke på nytt | 4.6 |
-| | «Endre» i preferansecellen: Lagre sender teksten, henter ny rangering uten å laste siden og viser ikke den gamle avveiningen. Statuslinjen får fokus. Avbryt og Esc lukker uten å lagre og gir fokus til «Endre». 422 beholder teksten. `uendret`, `endret`, `ingen`, `venter` og `feilet` har egne meldinger. Sent svar etter vaktbytte forkastes. Demomerknaden vises bare i demo-modus | 5.9 |
+| | «Endre» i preferansecellen: Lagre sender teksten, henter ny rangering uten å laste siden og viser ikke den gamle avveiningen. Statuslinjen får fokus. Avbryt og Esc lukker uten å lagre og gir fokus til «Endre». 422 beholder teksten. `uendret`, `endret`, `ingen`, `venter` og `feilet` har egne meldinger. Sent svar etter vaktbytte forkastes. Demomerknaden vises bare i demo-modus. Resultatet vises også i preferansecellen til kandidaten etter at han har flyttet seg | 5.9 |
 | [`avveining.test.tsx`](../frontend/tester/komponenter/avveining.test.tsx) | Toppraden henter én forklaring. Andre rader åpnes uavhengig med tastaturet. Feil kandidat gir reservetekst med nøkkeltall. Etter ny preferansetolkning vises forklaringen for den nye topprangerte. | 5.3 |
 | | Godkjenningsflaten avviser svar med feil identitet eller kilde. Et forsinket svar etter sesjonsbytte eller endret grunnlag blir forkastet. Etter HTTP 409 bruker neste godkjenning merket fra det nye grunnlaget. | 5.3 |
 | | Én kandidat får `avveining_feilet` mens en annen får en gyldig forklaring. Begge flater viser reservetekst og fire nøkkeltall for kandidaten som velges. Bekreftelsen sender gjeldende grunnlagsmerke. | 5.4 |
@@ -394,13 +394,21 @@ og en at låsen som ikke blir ledig i tide, gir `venter`. Mutasjoner som fjerner
 versjonssjekken, tilgangskontrollen eller no-op-regelen gjør testene røde
 ([KI-loggen](ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md)).
 
-Gjenstår manuelt (OP-16): åpne #4127 i demo-modus og live, endre en kjent og en ukjent
-tekst med «Endre», og se status og rangering. Kontroller tekstfeltet ved 680 og 960 px
-(tabellen ruller vannrett, ingen siderulling), Tab til «Endre», Enter, Esc og fokus, og
-farger og fokusramme etter sjekklisten over. Regelen `.preferansecelle > .button-kompakt`
-gir også ny avstand over «Prøv igjen» fra story 5.1; kontroller at den knappen fortsatt
-står riktig i en rad med «kunne ikke tolkes». API-et er prøvd mot ekte backend i
-demo-modus med `curl` (se KI-loggen); nettleserkontrollen er ikke gjort.
+**Manuell test live mot Luna, Ragnhild, macOS, 2026-11-26:** Backend startet med nøkkel
+i terminalen (zsh). Appbaren viste ikke «Demo-modus». På #4127 ga en ny tekst for Jonas ny
+kategori og nye poeng, og han flyttet seg nedover i rangeringen. «Uendret» ved lagring
+uten endring, Avbryt, Esc og tom tekst («Ingen registrert») virket, også i et smalt vindu
+(omtrent halv skjerm). **Funn:** statuslinjen over tabellen ble ikke lagt merke til,
+fordi kandidaten flyttet seg langt fra den. Rettet samme dag: en kort melding vises også
+i preferansecellen til kandidaten (`rp.rad`), og ny komponenttest dekker den. Retestet i
+nettleseren: meldingen står ved Jonas.
+
+Gjenstår manuelt (OP-16): demo-modus i nettleseren med en kjent og en ukjent tekst;
+hele flyten med bare tastatur (Tab til «Endre», Enter, Esc og fokus); farger og
+fokusramme etter sjekklisten over; «endret grunnlag» med godkjenningen åpen i en annen
+fane. Regelen `.preferansecelle > .button-kompakt` gir også ny avstand over «Prøv igjen»
+fra story 5.1; kontroller at den knappen fortsatt står riktig i en rad med «kunne ikke
+tolkes».
 
 ## Story 5.3 – avveining per kandidat
 

@@ -466,6 +466,13 @@ button {
   resize: vertical;
 }
 
+/* Resultatet av siste lagring i cellen til kandidaten (manuell test 2026-11-26). Fet og
+   i hovedfarge, ikke `ok`, fordi meldingen også kan si at teksten ikke ble tolket. */
+.preferanse-radmelding {
+  color: var(--color-text-main);
+  font-weight: 700;
+}
+
 .preferanse-handlinger {
   display: flex;
   flex-wrap: wrap;

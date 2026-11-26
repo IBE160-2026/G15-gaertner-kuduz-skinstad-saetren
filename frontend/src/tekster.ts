@@ -193,6 +193,15 @@ export const TEKSTER = {
       venter: "Preferansen er lagret og venter på tolkning. Rangeringen er oppdatert.",
       avvist: (feil: string) => `Preferansen ble ikke lagret. ${feil}`,
       ikkeGyldig: "Kandidaten er ikke lenger gyldig for vakten. Rangeringen er oppdatert.",
+      // Kort utgave i preferansecellen til kandidaten som ble endret (manuell test 2026-11-26).
+      rad: {
+        tolket: "Lagret og tolket nå.",
+        feilet: "Lagret nå, men ikke tolket.",
+        endret: "Endret på nytt mens du lagret.",
+        ingen: "Lagret nå uten preferanse.",
+        venter: "Lagret nå, venter på tolkning.",
+        uendret: "Ingen endring.",
+      },
     },
     visAlle: "Vis alle gyldige kandidater",
     viserAv: (vist: number, totalt: number) => `Viser ${vist} av ${totalt} gyldige kandidater.`,

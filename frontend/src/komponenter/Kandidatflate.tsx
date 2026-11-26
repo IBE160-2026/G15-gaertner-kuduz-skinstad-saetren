@@ -134,12 +134,16 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
   const fokuserFeil = useRef(true);
   // Høyst én preferansetekst redigeres om gangen (story 5.9).
   const [redigerId, setRedigerId] = useState<number | null>(null);
+  // Resultatet av siste lagring vises også i preferansecellen til kandidaten, fordi
+  // kandidaten kan ha flyttet seg langt fra statuslinjen (manuell test 2026-11-26).
+  const [radmelding, setRadmelding] = useState<{ id: number; tekst: string } | null>(null);
   useEffect(() => {
     visningsversjon.current += 1;
     opptatt.current = false;
     setPaagar(false);
     setMelding("");
     setRedigerId(null);
+    setRadmelding(null);
     fokuserFeil.current = true;
     return () => { visningsversjon.current += 1; };
   }, [vaktnummer]);
@@ -154,6 +158,7 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
     const gyldig = () => versjon === visningsversjon.current && generasjon === gjeldendeSesjonsgenerasjon();
     setPaagar(true);
     setMelding(t.tolker);
+    setRadmelding(null);
     statusRef.current?.focus();
     try {
       const svar = await provPreferanse(vaktnummer, id);
@@ -181,6 +186,7 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
     const gyldig = () => versjon === visningsversjon.current && generasjon === gjeldendeSesjonsgenerasjon();
     setPaagar(true);
     setMelding(rp.lagrer);
+    setRadmelding(null);
     statusRef.current?.focus();
     try {
       let svar: { status: LagrePreferanseStatus | "ikke_gyldig" };
@@ -199,6 +205,7 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
       if (svar.status === "uendret") {
         setRedigerId(null);
         setMelding(rp.uendret);
+        setRadmelding({ id, tekst: rp.rad.uendret });
         return;
       }
       const kandidater = await hentKandidater(vaktnummer);
@@ -206,6 +213,8 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
       setRedigerId(null);
       setTilstand(tilstandFraSvar(kandidater));
       setMelding(LAGRET_MELDING[svar.status]);
+      // Ikke ved «ikke_gyldig»: kandidaten står ikke lenger i tabellen.
+      if (svar.status !== "ikke_gyldig") setRadmelding({ id, tekst: rp.rad[svar.status] });
     } catch (feil) {
       if (!gyldig()) return;
       fokuserFeil.current = document.activeElement === statusRef.current;
@@ -270,7 +279,7 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
       <p role="status" tabIndex={-1} ref={statusRef}>{melding}</p>
       <Rangeringstabell
         vaktnummer={vaktnummer} kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling}
-        redigering={{ id: redigerId, demomodus, onApne: setRedigerId, onLukk: () => setRedigerId(null), onLagre: lagrePreferanseHandling }}
+        redigering={{ id: redigerId, demomodus, melding: radmelding, onApne: setRedigerId, onLukk: () => setRedigerId(null), onLagre: lagrePreferanseHandling }}
       />
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
@@ -287,6 +296,8 @@ const k = t.kolonner;
 type Redigering = {
   id: number | null;
   demomodus: boolean;
+  /** Resultatet av siste lagring for én kandidat, vist i cellen (ikke en live-region). */
+  melding: { id: number; tekst: string } | null;
   onApne: (id: number) => void;
   onLukk: () => void;
   onLagre: (id: number, tekst: string) => void;
@@ -416,6 +427,9 @@ function Kandidatrad({ vaktnummer, kandidat: r, alt, onVelg, knappRef, paagar, o
         <span className="tag">{preferansetekst(r)}</span>
         <div className="undertekst">{t.preferansePoeng(énDesimal.format(r.preferansepoeng))}</div>
         {r.tolkestatus === "kunne_ikke_tolkes" && <button type="button" className="button-secondary button-kompakt" disabled={paagar} aria-label={t.provPreferanse(r.navn)} onClick={() => onProv(r.id)}>{TEKSTER.provIgjen}</button>}
+        {redigering.melding?.id === r.id && redigering.id !== r.id && (
+          <div className="undertekst preferanse-radmelding">{redigering.melding.tekst}</div>
+        )}
         <Preferanseredigering kandidat={r} paagar={paagar} redigering={redigering} />
       </td>
       <td>

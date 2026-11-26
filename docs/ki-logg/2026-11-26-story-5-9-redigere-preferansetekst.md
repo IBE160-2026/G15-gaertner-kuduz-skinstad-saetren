@@ -62,9 +62,26 @@ Den uavhengige gjennomgangen fant disse feilene og manglene i den genererte kode
 
 Etter rettingene bestod `tester/api/test_preferanseredigering.py` (25), ruff på de endrede backendfilene, typesjekken og komponenttestene i `kandidatflate.test.tsx` og `app.test.tsx` (45). Full kjøring gjøres av koordinatoren.
 
+## Rettet etter manuell test
+
+Ragnhild testet live mot Luna i nettleseren på macOS 2026-11-26 (se `docs/testing.md`,
+story 5.9). Redigering, ny rangering, «uendret», Avbryt, Esc og tom tekst virket, også i
+smalt vindu. Funnet: meldingen etter «Lagre» står bare i statuslinjen over tabellen, og
+kandidaten kan ha flyttet seg langt fra den, så den ble ikke lagt merke til. Hverken
+spesifikasjonen eller UX-dokumentene sier hvor tilbakemeldingen skal stå; den genererte
+koden fulgte «Prøv igjen»-mønsteret. Ragnhild valgte å rette det i storyen.
+
+Orkestratoren (Claude Opus 5.5) la til en kort melding i preferansecellen til kandidaten
+(`radmelding` i `Kandidatliste`, tekstene `rp.rad` i `tekster.ts`, stilen
+`.preferanse-radmelding`). Statuslinjen blir stående som live-region for skjermlesere.
+Cellemeldingen har egen, kortere tekst, slik at de eksisterende testene som leter etter
+statuslinjens tekst, står uendret. Ny komponenttest viser at meldingen står i raden til
+Jonas etter at han har flyttet seg, og at den forsvinner ved neste handling. Testen ble
+rød da visningen midlertidig ble slått av. Bygg, 52 modultester og 91 komponenttester
+bestod. Retestet i nettleseren av Ragnhild: meldingen står ved Jonas.
+
 ## Gjenstår
 
-- Uavhengig gjennomgang (bmad-build) og PR.
-- Manuell nettleserkontroll (OP-16): demo og live, kjent og ukjent tekst, 680 og 960 px, tastatur, fokus og farger. Ikke gjort.
-- Live mot Luna er ikke prøvd. Logikken er den samme som for «Prøv igjen», og testene bruker falsk KI.
+- PR og gjennomgang av et annet gruppemedlem.
+- Manuelt (OP-16): demo-modus i nettleseren, hele flyten med bare tastatur, farger og fokusramme, og «endret grunnlag» med godkjenningen åpen i en annen fane.
 - Låsen deles fortsatt ikke mellom prosesser (v1 har én worker). Versjonen gjør at en tekstendring oppdages også mellom prosesser, men to prosesser kan tolke samme versjon samtidig.

@@ -92,6 +92,8 @@ context:
 
 2026-11-26, etter gjennomgangen: ni rettelser fra Review Triage Log (patch) er gjort av implementeringsagenten. Orkestratoren kjørte full verifisering: 929 backendtester, frontendbygg, 52 modultester og 90 komponenttester bestod. Den nye 404-testen ble rød da 404-grenen i `lagrePreferanseHandling` midlertidig ble slått av; koden er tilbakestilt.
 
+2026-11-26, manuell test live mot Luna (Ragnhild, macOS): redigering, ny rangering, «uendret», Avbryt, Esc og tom tekst virket, også i smalt vindu. Funn: statuslinjen over tabellen ble ikke lagt merke til fordi kandidaten flyttet seg. Ragnhild valgte å rette i storyen: kort melding også i preferansecellen (`radmelding`, `rp.rad`), ny komponenttest (rød med visningen slått av). Bygg, 52 modultester og 91 komponenttester bestod. Retestet i nettleseren.
+
 ## Review Triage Log
 
 Tre lag kjørt parallelt 2026-11-26 (Blind Hunter, Edge Case Hunter, Verification Gap Reviewer), alle på Opus. Funnene er kontrollert mot koden av orkestratoren; gjennomgåernes alvorlighetsgrad er ikke brukt.

@@ -728,6 +728,29 @@ describe("Endre preferansetekst (story 5.9, P-10B)", () => {
     expect(kallTil(fetch, avveiningUrl)).toBe(1);
   });
 
+  test("resultatet vises også i preferansecellen til kandidaten etter at han har flyttet seg", async () => {
+    const ny = { ...jonas, plass: 2, grunnlagsmerke: "c".repeat(64), preferansetekst: "Ny tekst.",
+      tolkestatus: "tolket" as const, preferansekategori: "vil_unnga", preferansepoeng: 0 };
+    falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }),
+        ok({ ...TO_GYLDIGE, kandidater: [{ ...mette, plass: 1 }, ny] })],
+      [PUT]: ok({ status: "tolket" }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    const felt = await åpne(bruker);
+    await bruker.clear(felt);
+    await bruker.type(felt, "Ny tekst.");
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    const radmelding = await screen.findByText(rp.rad.tolket);
+    expect(radmelding.closest("tr")?.textContent).toContain(jonas.navn);
+    expect(navn()).toEqual([mette.navn, jonas.navn]);
+    // Meldingen forsvinner når en ny handling starter.
+    await åpne(bruker);
+    expect(screen.queryByText(rp.rad.tolket)).toBeNull();
+  });
+
   test("statuslinjen får fokus mens teksten lagres", async () => {
     const fetch = falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas] }) });
     let svar!: (response: Response) => void;
