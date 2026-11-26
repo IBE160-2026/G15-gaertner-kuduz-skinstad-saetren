@@ -70,3 +70,6 @@
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — `docs/innlevering/til-sensor-innlogging.md`: brutt lenke til README steg 2 (overskriften heter nå «2. Last testdata og velg passord»).
 - [ ] 2026-11-23 [story-5-8-sensor-live-ki](972-2026-11-23-18-15-42-story-5-8-sensor-live-ki.md) — Nøkkelsjekkene i sjekklisten er ikke kjørt i PowerShell.
 - [x] 2026-11-25 [p-13-ekstern-prove](970-2026-11-25-13-51-45-p-13-ekstern-prove.md) — Gruppa vurderer designet og den nye datafeilteksten før P-13 lukkes i sprintstatus og referatet §12. (løst 2026-11-25: gruppa godkjente designvurderingen i gruppechatten, P-13 lukket)
+- [ ] 2026-11-26 [story-5-9-redigere-preferansetekst](969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md) — Story 5.9: uavhengig gjennomgang og PR.
+- [ ] 2026-11-26 [story-5-9-redigere-preferansetekst](969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md) — Story 5.9: manuell nettleserkontroll (OP-16) i demo og live, 680/960 px, tastatur, fokus og farger.
+- [ ] 2026-11-26 [story-5-9-redigere-preferansetekst](969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md) — Story 5.9: redigering ikke prøvd live mot Luna.
