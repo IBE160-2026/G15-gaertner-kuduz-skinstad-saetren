@@ -17,9 +17,11 @@ Implementere story 5.9 (P-10B) etter spesifikasjonen `_bmad-output/implementatio
 - Dokumentasjon: README, `docs/teknisk-referanse.md`, `docs/testing.md`, `docs/modellvalg-stories.md`, `docs/emne/vurderingsmatrise.md`, `deferred-work.md`, spesifikasjonens Tasks og Implementation Notes, og KI-loggen `docs/ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md`.
 - Verifisert: 929 backendtester (med arkitektur og ruff), frontendbygg, 52 modultester og 87 komponenttester, skills-speilingen. Åtte mutasjoner (fire backend, fire frontend) ga røde tester. API-et er prøvd mot ekte backend i demo-modus med `curl`.
 - Rettet etter gjennomgang: 404 ved lagring henter rangeringen på nytt i stedet for feilflate, Esc på hele skjemaet, `LAASEVENT_S`, hjelpetekst og README om demo-modus, tre nye komponenttester og riktig ventetid i teknisk referanse. Listen står i KI-loggen under «Rettet etter gjennomgang».
-- Arbeidet er ikke committet (koden ligger ukommittert på branchen `story-5.9-redigere-preferansetekst`).
+- Uavhengig gjennomgang i tre lag (Blind Hunter, Edge Case Hunter, Verification Gap, Opus): 19 funn, 9 rettet, 8 avvist, 1 utsatt (AGENTS.md). Triagen står i specens Review Triage Log. Full verifisering etter rettelsene: 929 backendtester, frontendbygg, 52 modultester og 90 komponenttester. 404-testen ble rød med grenen slått av.
+- Committet lokalt som `25e50cc` på branchen `story-5.9-redigere-preferansetekst`; sprint-status er `review`. Ikke pushet.
 
 ### Åpne punkter
-- Uavhengig gjennomgang og PR for story 5.9.
+- PR for story 5.9 og gjennomgang av et annet gruppemedlem.
+- AGENTS.md: status for 5.8/5.9 og ny database etter 5.9 (utsatt i `deferred-work.md`).
 - Manuell nettleserkontroll av story 5.9 (OP-16): demo og live, kjent og ukjent tekst, 680/960 px, tastatur, fokus og farger.
 - Live mot Luna er ikke prøvd for redigering av preferansetekst.
