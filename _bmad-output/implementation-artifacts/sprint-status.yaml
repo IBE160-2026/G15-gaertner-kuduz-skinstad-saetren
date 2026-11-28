@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-28-2026 10:38
+last_updated: 11-28-2026 11:09
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -78,18 +78,33 @@ development_status:
   5-7-demo-modus-uten-api-nøkkel: done # PR #38 godkjent av Kim og merget 23.11, 8a9bdfc; Kims oppfølging (demooppslag/kildemerking) committet på samme branch
   5-8-sensor-kan-kjøre-live-ki: done # PR #41 godkjent av Mithad og merget 23.11 (OP-20, Ragnhild); innleveringsoppgavene er utsatt (deferred-work.md)
   5-9-redigere-preferansetekst-etter-kjerneflyt: done # PR #42 godkjent av Johannes på vegne av gruppa og merget 28.11, c6817df; rettelser etter gjennomgangen i 9293157
-  epic-5-retrospective: optional
+  epic-5-retrospective: done
 action_items:
   - epic: 4
-    action: "P-13/OP-02: Mobil og nettbrett er avklart som v2 (AV-17, 2026-11-14); story 4.6 gjelder smale nettleservinduer. Planlagt arbeidsmål (ikke eget fristvedtak): etter fungerende kandidatvisning og før story 4.6 ferdigstilles, dokumenter oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus null gyldige. Én testperson og ett operativsystem og én skjermflate holder; akseptmålet er alle tre uten hint (referatet §12). Dokumenter også hva testpersonen forstod eller misforstod, hvilke designendringer gruppa vurderte, hva som ble valgt eller avvist og hvorfor. Ved endring: ta vare på skjermbilder før og etter, og kontroller at rettingen virker. Hvis designet beholdes: begrunn det ut fra observasjonene. Før resultatet med lenke til test- og designbevis under «Design og brukeropplevelse» i docs/emne/vurderingsmatrise.md."
+    action: "P-13/OP-02: Mobil og nettbrett er avklart som v2 (AV-17, 2026-11-14);
+      story 4.6 gjelder smale nettleservinduer. Planlagt arbeidsmål (ikke eget fristvedtak):
+      etter fungerende kandidatvisning og før story 4.6 ferdigstilles, dokumenter
+      oppgavebasert forståelsestest av nr. 1, annen gyldig kandidat og datafeil versus
+      null gyldige. Én testperson og ett operativsystem og én skjermflate holder;
+      akseptmålet er alle tre uten hint (referatet §12). Dokumenter også hva testpersonen
+      forstod eller misforstod, hvilke designendringer gruppa vurderte, hva som ble
+      valgt eller avvist og hvorfor. Ved endring: ta vare på skjermbilder før og etter,
+      og kontroller at rettingen virker. Hvis designet beholdes: begrunn det ut fra
+      observasjonene. Før resultatet med lenke til test- og designbevis under «Design
+      og brukeropplevelse» i docs/emne/vurderingsmatrise.md."
     owner: "gruppa"
     status: done # Ekstern prøve 25.11 (MJ, utenfor gruppa): alle tre oppgaver løst uten hint, datafeilteksten rettet (0d63d54). Gruppa godkjente designvurderingen i gruppechatten 25.11. docs/testing/2026-11-22/p13-protokoll.md, referatet §11
   - epic: 2
-    action: "P-08/KS-04: Ny vurdering, godkjenningsgrunnlag og POST for alle #4261–#4265 stopper med datafeil, riktig datagrense og uendret database. #4127/#4189-fasit bevart. 219 relevante backendtester bestod 22.11; spec-p-08-fem-periodekantvakter.md og docs/ki-logg/2026-11-22-p-08-periodekantvakter.md."
+    action: "P-08/KS-04: Ny vurdering, godkjenningsgrunnlag og POST for alle #4261–#4265
+      stopper med datafeil, riktig datagrense og uendret database. #4127/#4189-fasit
+      bevart. 219 relevante backendtester bestod 22.11; spec-p-08-fem-periodekantvakter.md
+      og docs/ki-logg/2026-11-22-p-08-periodekantvakter.md."
     owner: "gruppa"
     status: done
   - epic: 5
-    action: "P-10B: Start story 5.9 først etter fungerende kjerneflyt. Hvis tiden ikke rekker, dokumenter den som utsatt. P-07s valgfrie sammenligning er strekkmål, og P-12B er ikke v1-krav."
+    action: "P-10B: Start story 5.9 først etter fungerende kjerneflyt. Hvis tiden
+      ikke rekker, dokumenter den som utsatt. P-07s valgfrie sammenligning er strekkmål,
+      og P-12B er ikke v1-krav."
     owner: "gruppa"
     status: done # Story 5.9 startet etter fungerende kjerneflyt og ble merget 28.11 (PR #42, c6817df). P-07 og P-12B er ikke tatt inn.
   - epic: 4
@@ -114,30 +129,28 @@ action_items:
   - epic: 1
     action: "ÅB-3 utvidet 2026-10-30: story 1.2 må ha periodestart/-slutt på Turnus,
       vakthistorikk fra minst 28 døgn før periodestart, faste vakttider og turnusprofiler
-      med spredning (epics story 1.2). Koordiner med den som har branchen
-      story-1.2-fiktiv-turnus før testdataene lages. Story 4.7 avhenger av dette.
-      Oppdatert 2026-11-02: gruppa valgte vakttidene 07–15, 15–23 og 23–07. Spesifikasjonen
-      for story 1.2 (22:00–07:30) og fasiten for #4127 og #4189 må rettes.
-      Løst 2026-11-04 med PR #5: periodefelt, historikk fra 24.08 (672 timer, AV-09),
-      vakttidene etter AV-02 og turnusprofiler med spredning. Spesifikasjonen og
-      fasiten bruker 15–23 og 23–07."
+      med spredning (epics story 1.2). Koordiner med den som har branchen story-1.2-fiktiv-turnus
+      før testdataene lages. Story 4.7 avhenger av dette. Oppdatert 2026-11-02: gruppa
+      valgte vakttidene 07–15, 15–23 og 23–07. Spesifikasjonen for story 1.2 (22:00–07:30)
+      og fasiten for #4127 og #4189 må rettes. Løst 2026-11-04 med PR #5: periodefelt,
+      historikk fra 24.08 (672 timer, AV-09), vakttidene etter AV-02 og turnusprofiler
+      med spredning. Spesifikasjonen og fasiten bruker 15–23 og 23–07."
     owner: "gruppa"
     status: done
   - epic: 1
     action: "Story 1.1 merget etter selvgjennomgang 2026-10-19 (PR #3): kjør oppsettet
-      fra en ren klone på macOS/Linux og noter resultatet i PR #3.
-      Strøket 2026-11-07 (OP-05): verken sensor eller noen i gruppa har Mac.
-      Koden skrives for å virke på tvers av operativsystem og testes fysisk på
-      Windows. Test fra ren klone er fortsatt åpen i OP-05."
+      fra en ren klone på macOS/Linux og noter resultatet i PR #3. Strøket 2026-11-07
+      (OP-05): verken sensor eller noen i gruppa har Mac. Koden skrives for å virke
+      på tvers av operativsystem og testes fysisk på Windows. Test fra ren klone er
+      fortsatt åpen i OP-05."
     owner: "gruppa (medlem med Mac)"
     status: done
   - epic: 1
     action: "Story 1.1 (PR #3): verifiser at backend installeres og testene kjører
-      med Python 3.12, laveste versjon README oppgir.
-      Verifisert 2026-11-04 på Windows med Python 3.12.5 i en ny venv på main
-      etter story 1.2. Installasjonen og testdata-kommandoen virket, og pytest
-      ga 35 passed. Samme resultat med 3.15.2. I tillegg ga unittest for
-      scripts/ 64 OK."
+      med Python 3.12, laveste versjon README oppgir. Verifisert 2026-11-04 på Windows
+      med Python 3.12.5 i en ny venv på main etter story 1.2. Installasjonen og testdata-kommandoen
+      virket, og pytest ga 35 passed. Samme resultat med 3.15.2. I tillegg ga unittest
+      for scripts/ 64 OK."
     owner: "gruppa"
     status: done
   - epic: 1
@@ -146,3 +159,69 @@ action_items:
       7.0.2) selv om nyere finnes."
     owner: "gruppa"
     status: open
+  - id: "epic-5-retro-t1-avstem-spine"
+    epic: 5
+    action: "T1: Avstem ARCHITECTURE-SPINE.md: driftslogging besluttet (vis_applogg_i_terminalen),
+      klientbibliotek besluttet (urllib), adaptere/forklaringsgrunnlag.py i kildetreet,
+      og 404 ved datafeil i skriveveiene for preferanser i AD-4. Binder gruppa, bør
+      gå som PR."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t2-prov-igjen-feilkoder"
+    epic: 5
+    action: "T2: «Prøv igjen»: vis 409 tolkning_paagar/ikke_feilet og 503 ki_utilgjengelig
+      som melding ved raden og hent listen på nytt, i stedet for å erstatte tabellen
+      (Kandidatflate.tsx:170-173). Komponenttest over de tre kodene."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t3-testhull-og-feilvern-avveining"
+    epic: 5
+    action: "T3: Tett testhullene (mal med tom modell i begge flater, avveiningsruten
+      uten KI, 401 på PUT/POST …/preferanse). Gi avveiningsruten feilvern (avveining_feilet
+      + logger.exception), og logg feiltypen når forklar gir None."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t4-ux-endret-grunnlag"
+    epic: 5
+    action: "T4: UX-story: egen tilstand «Grunnlaget er endret — last listen på nytt»
+      når avveiningens identitet ikke stemmer, i stedet for reservetekst. Vurder å
+      sende vist merke til ruten, så den svarer endret_grunnlag uten KI-kall."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t5-refaktorer-tolkningsflyt"
+    epic: 5
+    action: "T5: Refaktorering: én funksjon for tolkningsflyten og én for «gyldig
+      kandidat» i main.py (brukt av oppstart, Prøv igjen og redigering), svarmodellene
+      ut av main.py, generer_demoinnhold.py importerer _poeng og referanseregelen,
+      og forklaringsnøkkel avgrenses og tar med en hash av prompten."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t6-innlevering-5-8"
+    epic: 5
+    action: "T6: Innlevering 5.8: avgjør ÅB-8, lever nøkkelen, sjekk git-historikken,
+      test fra ren klone med sensornøkkel og demo, bytt nøkkelen etter sensur. Avklar
+      regelen for delvis levering (5.1-presedensen mot «Del opp» i 5.8)."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t7-mutasjonskontroll-av-testpastander"
+    epic: 5
+    action: "T7: I PR-gjennomgang og bmad-build skal hver påstand om at «test X beviser
+      Y» i spesifikasjon eller KI-logg vises med en mutasjon som gjør testen rød (som
+      i 5.4 og 5.9)."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
+  - id: "epic-5-retro-t8-kontroll-av-epic-kontekst"
+    epic: 5
+    action: "T8: Før en regenerert epic-*-context.md committes: diff mot forrige versjon
+      og planverket, og forklar hvert bortfall (jf. f4733be). Kandidat til «Kjente
+      fallgruver» i AGENTS.md."
+    owner: "gruppa"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
