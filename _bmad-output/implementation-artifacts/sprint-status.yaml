@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-19-2026 18:07
-last_updated: 11-26-2026 15:00
+last_updated: 11-28-2026 10:38
 project: IBE160 Programmering med KI
 project_key: NOKEY
 tracking_system: file-system
@@ -68,7 +68,7 @@ development_status:
   4-7-ulempebelastning-per-kandidat: done
   epic-4-retrospective: optional
 
-  epic-5: in-progress
+  epic-5: done
   5-1-tolke-tekstbaserte-ansattpreferanser-med-ki: done
   5-2-rangeringen-bruker-tolkede-preferanser: done
   5-3-avveining-per-kandidat: done
@@ -77,7 +77,7 @@ development_status:
   5-6-test-av-at-utelukkede-kandidater-aldri-når-ki-laget: done # PR #36 merget 22.11, 1e1a57b; demoutvidelsen følger 5.7
   5-7-demo-modus-uten-api-nøkkel: done # PR #38 godkjent av Kim og merget 23.11, 8a9bdfc; Kims oppfølging (demooppslag/kildemerking) committet på samme branch
   5-8-sensor-kan-kjøre-live-ki: done # PR #41 godkjent av Mithad og merget 23.11 (OP-20, Ragnhild); innleveringsoppgavene er utsatt (deferred-work.md)
-  5-9-redigere-preferansetekst-etter-kjerneflyt: review
+  5-9-redigere-preferansetekst-etter-kjerneflyt: done # PR #42 godkjent av Johannes på vegne av gruppa og merget 28.11, c6817df; rettelser etter gjennomgangen i 9293157
   epic-5-retrospective: optional
 action_items:
   - epic: 4
@@ -91,7 +91,7 @@ action_items:
   - epic: 5
     action: "P-10B: Start story 5.9 først etter fungerende kjerneflyt. Hvis tiden ikke rekker, dokumenter den som utsatt. P-07s valgfrie sammenligning er strekkmål, og P-12B er ikke v1-krav."
     owner: "gruppa"
-    status: open
+    status: done # Story 5.9 startet etter fungerende kjerneflyt og ble merget 28.11 (PR #42, c6817df). P-07 og P-12B er ikke tatt inn.
   - epic: 4
     action: "Readiness 2026-10-19: Fjern kompetanse som myk faktor i FR2/FR9-oppsummeringen
       og UX-DR7 i epics.md og i ARCHITECTURE-SPINE.md:193, i tråd med PRD §4.4 og

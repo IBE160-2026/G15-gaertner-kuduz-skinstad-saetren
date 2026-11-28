@@ -125,6 +125,6 @@ Kvalitetssikring: `pytest` i `backend/` ga 930 bestått (929 + den nye Datafeil-
 
 ## Gjenstår
 
-- Godkjenning og merge av PR #42. Ved merge settes 5.9 til `done` i `sprint-status.yaml` med PR-kommentar.
+- ~~Godkjenning og merge av PR #42.~~ Løst 2026-11-28: godkjent av Johannes på vegne av gruppa og merget i `c6817df`. 5.9 er `done` i `sprint-status.yaml`.
 - Manuelt (OP-16): farger og fokusramme, og «endret grunnlag» med godkjenningen åpen i en annen fane, helst på Windows. Demo-modus og tastaturflyten er testet av Ragnhild 2026-11-26 (se `docs/testing.md`).
 - Låsen deles fortsatt ikke mellom prosesser (v1 har én worker). Versjonen gjør at en tekstendring oppdages også mellom prosesser, men to prosesser kan tolke samme versjon samtidig.

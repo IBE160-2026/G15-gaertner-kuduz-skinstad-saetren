@@ -102,7 +102,7 @@ PR-gjennomgang 2026-11-28 (Johannes, `bmad-code-review`): fire lag på Opus (Bli
 - [x] [Review][Patch] modellvalg-stories.md bruker P-10B som eksempel på en story som ikke står i tabellen [docs/modellvalg-stories.md:50] — rad 5.9 (P-10B) står nå i tabellen. (low; Blind Hunter)
 - [x] [Review][Patch] KI-loggen oppgir ikke full testkjøring etter rettingene [docs/ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md:63] — «Full kjøring gjøres av koordinatoren» uten tall; 929 / 90 står bare i specen og sesjonsloggen. (low; Blind Hunter)
 - [x] [Review][Patch] Vurderingsmatrisen sier at nettleserkontrollen gjenstår [docs/emne/vurderingsmatrise.md] — live- og demotest i nettleseren ble gjort 2026-11-26, og PR #42 finnes. Oppdateres ved merge. (low; Blind Hunter)
-- [ ] [Review][Patch] Sprintstatus må settes til `done` ved merge [_bmad-output/implementation-artifacts/sprint-status.yaml:80] — AGENTS.md (i PR-en) sier 5.1–5.9 er ferdige, mens raden står på `review` uten PR-kommentar som de andre i epic 5. (low; Blind Hunter, Acceptance Auditor)
+- [x] [Review][Patch] Sprintstatus må settes til `done` ved merge [_bmad-output/implementation-artifacts/sprint-status.yaml:80] — AGENTS.md (i PR-en) sier 5.1–5.9 er ferdige, mens raden står på `review` uten PR-kommentar som de andre i epic 5. (low; Blind Hunter, Acceptance Auditor)
 - [x] [Review][Patch] Sesjonsloggen teller 8 avviste funn; Review Triage Log har 9 [.logs/ragnhild/969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md:20] — 9 + 9 + 1 = 19. (low; Blind Hunter)
 - [x] [Review][Defer] Ingen frontendtest av 401 på de beskyttede preferansekallene [frontend/src/api.ts:249] — deferred: samme hull finnes for `provPreferanse` fra 5.1; lukkes best med én `<App />`-test for begge.
 
