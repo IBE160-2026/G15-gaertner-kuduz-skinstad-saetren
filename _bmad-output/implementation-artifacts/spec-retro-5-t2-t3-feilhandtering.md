@@ -2,7 +2,8 @@
 title: 'Retro 5, T2 og T3: forventede svar fra «Prøv igjen», feilvern i avveiningsruten og testhull'
 type: 'bugfix'
 created: '2026-11-28'
-status: 'ready-for-dev'
+status: 'in-progress'
+baseline_commit: '5b546e026129382570004f541ace8759fa359985'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -70,22 +71,29 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `frontend/src/tekster.ts` -- de tre radtekstene fra Decisions -- i `kandidatflate`, nær `provPreferanse`.
-- [ ] `frontend/src/komponenter/Kandidatflate.tsx` -- i `provPreferanseHandling`: `ApiFeil` med de fire kodene i matrisen gir statusmelding, radmelding og ny GET. Alt annet gir `tilstandFraFeil` som før.
-- [ ] `frontend/tester/komponenter/kandidatflate.test.tsx` -- `test.each` over de fire kodene: tabellen står, meldingene vises, og `kallTil(GET) === 2`. For 409/503 er raden valgbar. Ved 404 er kandidaten borte fra den nye listen.
-- [ ] `frontend/tester/komponenter/avveining.test.tsx` -- en rad for `mal` med `modell: ""` i `test.each`.
-- [ ] `frontend/tester/komponenter/app.test.tsx` -- 401 på POST og på PUT `…/preferanse` gir innloggingen med `sesjonUtlopt` (`test.each`).
-- [ ] `backend/adaptere/api/main.py` -- `try/except Exception` rundt KI-delen av `avveining`. `logger.exception` med vakt og kandidat, og svaret er `AvveiningFeiletUt(**identitet)`.
-- [ ] `backend/adaptere/ki/openrouter.py` -- én logglinje per `None`-vei i `forklar`, med kandidat-ID og feiltype.
-- [ ] `backend/tester/api/test_avveining.py` -- `ki=None` og en ren `Tolker` gir `avveining_feilet`. En `Forklarer` som kaster, og en `forklaringsnøkkel` som kaster (monkeypatch), gir 200 `avveining_feilet` og en ERROR-post. Demo uten datafil gir `mal` med `modell == ""`.
-- [ ] `backend/tester/ki/test_openrouter.py` -- `caplog` per `None`-vei: riktig nivå og feiltype, og ingen påstandstekst eller modellsvar i meldingen.
-- [ ] `docs/testing.md`, `deferred-work.md`, `docs/ki-logg/2026-11-28-retro-5-t2-t3.md` -- testtabellen, punktet om 401 er løst, og KI-loggen med mutasjonene (T7).
+- [x] `frontend/src/tekster.ts` -- de tre radtekstene fra Decisions -- i `kandidatflate`, nær `provPreferanse`.
+- [x] `frontend/src/komponenter/Kandidatflate.tsx` -- i `provPreferanseHandling`: `ApiFeil` med de fire kodene i matrisen gir statusmelding, radmelding og ny GET. Alt annet gir `tilstandFraFeil` som før.
+- [x] `frontend/tester/komponenter/kandidatflate.test.tsx` -- `test.each` over de fire kodene: tabellen står, meldingene vises, og `kallTil(GET) === 2`. For 409/503 er raden valgbar. Ved 404 er kandidaten borte fra den nye listen.
+- [x] `frontend/tester/komponenter/avveining.test.tsx` -- en rad for `mal` med `modell: ""` i `test.each`.
+- [x] `frontend/tester/komponenter/app.test.tsx` -- 401 på POST og på PUT `…/preferanse` gir innloggingen med `sesjonUtlopt` (`test.each`).
+- [x] `backend/adaptere/api/main.py` -- `try/except Exception` rundt KI-delen av `avveining`. `logger.exception` med vakt og kandidat, og svaret er `AvveiningFeiletUt(**identitet)`.
+- [x] `backend/adaptere/ki/openrouter.py` -- én logglinje per `None`-vei i `forklar`, med kandidat-ID og feiltype.
+- [x] `backend/tester/api/test_avveining.py` -- `ki=None` og en ren `Tolker` gir `avveining_feilet`. En `Forklarer` som kaster, og en `forklaringsnøkkel` som kaster (monkeypatch), gir 200 `avveining_feilet` og en ERROR-post. Demo uten datafil gir `mal` med `modell == ""`.
+- [x] `backend/tester/ki/test_openrouter.py` -- `caplog` per `None`-vei: riktig nivå og feiltype, og ingen påstandstekst eller modellsvar i meldingen.
+- [x] `docs/testing.md`, `deferred-work.md`, `docs/ki-logg/2026-11-28-retro-5-t2-t3.md` -- testtabellen, punktet om 401 er løst, og KI-loggen med mutasjonene (T7).
 
 **Acceptance Criteria:**
 - Gitt «Prøv igjen» med en av kodene i matrisen, når svaret kommer, så står rangeringen, statuslinjen har fokus og meldingen, og knappene er aktive igjen.
 - Gitt en hvilken som helst ny test, når koden den vokter tilbakestilles, så blir testen rød. Mutasjonen og den røde meldingen står i KI-loggen.
 
 ## Implementation Notes
+
+- `PROV_AVVIST` i `Kandidatflate.tsx` krever både status og kode. En annen status med samme kode gir feilpanelet.
+- `forklar` logger `ubrukelig` når `les_jsoninnhold` gir `None`, og `faktakontroll` for alt `valider` avviser.
+- Eksisterende test endret: `test_direkte_sertifikatfeil_logger_årsaken_uten_feiltekst` forventer nå også oppsummeringslinjen fra `forklar` (`… ga reservetekst (nettverk).`). Endringen er tilsiktet.
+- Testen uten forklaringsport krever ingen ERROR-linje. Ellers ville feilvernet skjult at `isinstance(ki, Forklarer)` var fjernet (mutasjon B3).
+- Mutasjonene (M1–M6, B1–B9) og de røde meldingene står i `docs/ki-logg/2026-11-28-retro-5-t2-t3.md`.
+- Manuell kontroll i demo-modus er ikke kjørt. Se «Ikke gjort» i KI-loggen.
 
 ## Spec Change Log
 

@@ -175,6 +175,13 @@ export const TEKSTER = {
     tolkefeil: "Preferansen kunne ikke tolkes. Du kan prøve igjen.",
     tolkEndret: "Preferansen er endret. Rangeringen er oppdatert.",
     provPreferanse: (navn: string) => `Prøv preferansen til ${navn} igjen`,
+    // Kort melding i preferansecellen når «Prøv igjen» får et forventet nei fra API-et.
+    // Nøkkelen er feilkoden. Rangeringen blir stående og hentes på nytt (retro 5, T2).
+    provRad: {
+      tolkning_paagar: "Tolkes allerede.",
+      ikke_feilet: "Endret nå.",
+      ki_utilgjengelig: "Tolkning er ikke tilgjengelig nå.",
+    },
     // Redigering av preferanseteksten (story 5.9, P-10B).
     redigerPreferanse: {
       endre: "Endre",

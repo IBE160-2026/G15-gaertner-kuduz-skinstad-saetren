@@ -641,16 +641,22 @@ def lag_app(
             identitet = dict(vaktnummer=vaktnummer, kandidat_id=ansatt_id, grunnlagsmerke=grunnlag.merke(ansatt_id))
         # Slipp lesetransaksjonen før venting og nettverkskall.
         if isinstance(ki, Forklarer):
-            if isinstance(ki, DemoOppslag):
-                nøkkel = forklaringsnøkkel(grunnlag.vakt, grunnlag.gyldige[ansatt_id], valgt, referanse)
-                paastander = ki.forklar_med_oppslag(valgt, referanse, nøkkel)
-                kilde = ki.siste_kilde
-                generert = ki.generert if kilde == "forhandsgenerert" else None
-            else:
-                paastander = ki.forklar(valgt, referanse)
-                kilde, generert = "live", None
-            if paastander and kilde:
-                return AvveiningUt(**identitet, ki_kilde=kilde, modell=ki.modell, generert=generert, paastander=paastander)
+            # Et uventet unntak i KI-delen gir reservetekst, ikke 500 (retro 5, T3, R5).
+            # Loggen har bare ID-ene og unntaket, aldri påstander eller modellsvar (AD-4).
+            try:
+                if isinstance(ki, DemoOppslag):
+                    nøkkel = forklaringsnøkkel(grunnlag.vakt, grunnlag.gyldige[ansatt_id], valgt, referanse)
+                    paastander = ki.forklar_med_oppslag(valgt, referanse, nøkkel)
+                    kilde = ki.siste_kilde
+                    generert = ki.generert if kilde == "forhandsgenerert" else None
+                else:
+                    paastander = ki.forklar(valgt, referanse)
+                    kilde, generert = "live", None
+                if paastander and kilde:
+                    return AvveiningUt(**identitet, ki_kilde=kilde, modell=ki.modell, generert=generert,
+                                       paastander=paastander)
+            except Exception:
+                logger.exception("Avveining for vakt %s og kandidat %s feilet uventet.", vaktnummer, ansatt_id)
         return AvveiningFeiletUt(**identitet)
 
     @app.post("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/preferanse", response_model=None)

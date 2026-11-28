@@ -162,5 +162,6 @@
 ## Deferred from: code review of spec-5-9-redigere-preferansetekst (2026-11-28)
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
-  summary: "Ingen frontendtest viser at 401 på PUT eller POST `/api/vakter/{nr}/kandidater/{id}/preferanse` gir innloggingen med «sesjonen er utløpt». Fjernes `true` (beskyttet) i `lagrePreferanse` eller `provPreferanse` i `api.ts`, blir ingen test rød."
+  summary: "[LØST 2026-11-28, retro 5, T3] Ingen frontendtest viser at 401 på PUT eller POST `/api/vakter/{nr}/kandidater/{id}/preferanse` gir innloggingen med «sesjonen er utløpt». Fjernes `true` (beskyttet) i `lagrePreferanse` eller `provPreferanse` i `api.ts`, blir ingen test rød."
   evidence: Funnet av Verification Gap og Blind Hunter i PR-gjennomgangen av story 5.9 2026-11-28 (Johannes). Hullet fantes for `provPreferanse` fra story 5.1; én `<App />`-test bør dekke begge kallene.
+  status: Løst 2026-11-28 (T3 i retroen for epic 5, [spesifikasjonen](spec-retro-5-t2-t3-feilhandtering.md)). `test.each` over POST og PUT i `frontend/tester/komponenter/app.test.tsx` gir innloggingen med `sesjonUtlopt`. Med `false` i stedet for `true` i `provPreferanse` eller `lagrePreferanse` blir den tilhørende testen rød ([KI-loggen](../../docs/ki-logg/2026-11-28-retro-5-t2-t3.md)).

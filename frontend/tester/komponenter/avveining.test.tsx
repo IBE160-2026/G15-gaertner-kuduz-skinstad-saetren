@@ -310,12 +310,14 @@ test("ny preferansetolkning bytter nr. 1 og forkaster ventende tekst fra tidlige
   expect(screen.getAllByText(t.kilde(modell))).toHaveLength(1);
 });
 
+// `mal` med tom modell er det backend sender når demoinnhold.json mangler (demo.py, retro 5, T3).
 test.each([
-  ["forhandsgenerert", t.forhandsgenerert(modell, "2026-11-22")],
-  ["mal", t.mal],
-])("viser %s i både kandidatlisten og godkjenningen", async (kilde, etikett) => {
+  ["forhandsgenerert", modell, t.forhandsgenerert(modell, "2026-11-22")],
+  ["mal", modell, t.mal],
+  ["mal", "", t.mal],
+])("viser %s (modell «%s») i både kandidatlisten og godkjenningen", async (kilde, svarmodell, etikett) => {
   window.history.replaceState(null, "", kandidatsti(4127));
-  const svar = { ...live(JONAS, "Kontrollert demotekst."), ki_kilde: kilde,
+  const svar = { ...live(JONAS, "Kontrollert demotekst."), ki_kilde: kilde, modell: svarmodell,
     ...(kilde === "forhandsgenerert" ? { generert: "2026-11-22" } : {}) };
   falskFetch({
     "/api/meg": ok({ ...MEG, demomodus: true }), "/api/vakter/4127": ok(VAKT_4127),

@@ -143,7 +143,9 @@ def test_direkte_sertifikatfeil_logger_årsaken_uten_feiltekst(engine, caplog):
     with caplog.at_level(logging.WARNING, logger="adaptere.ki.openrouter"):
         assert klient.get(f"{LISTE}/6/avveining").json()["status"] == "avveining_feilet"
     advarsler = [r.getMessage() for r in caplog.records if r.name == "adaptere.ki.openrouter"]
-    assert advarsler == ["Nettverksfeil mot OpenRouter: SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED"] * 4
+    # Retro 5, T3: `forklar` legger til én oppsummeringslinje med feiltypen.
+    assert advarsler == ["Nettverksfeil mot OpenRouter: SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED"] * 4 + [
+        "Avveining for kandidat 6 ga reservetekst (nettverk)."]
     assert "Bearer hemmelig" not in caplog.text
 
 
@@ -263,4 +265,78 @@ def test_demo_adapter_rapporterer_mal_kilde_i_http_svaret_uten_oppslag(engine, t
     svar = klient.get(f"{LISTE}/4/avveining").json()
     assert svar["status"] == "ok"
     assert svar["ki_kilde"] == "mal"
+    assert svar["paastander"]
+
+
+# --- Retro 5, T3: feilvern i ruten og ruten uten forklaringsport (R5, R6) -------------
+
+
+class BareTolker:
+    """Ren `Tolker` uten `forklar` og `modell`, slik et oppsett uten forklaringsport ser ut."""
+
+    def tolk(self, tekst):
+        raise AssertionError("Avveiningsruten skal ikke tolke")
+
+
+class KastendeForklarer:
+    modell = "test/modell"
+
+    def tolk(self, tekst):
+        raise AssertionError("Avveiningsruten skal ikke tolke")
+
+    def forklar(self, kandidat, referanse):
+        raise RuntimeError("uventet feil i forklaringsporten")
+
+
+def _identitet(klient: TestClient, ansatt_id: int = 6) -> dict:
+    merke = klient.get(f"{LISTE}/{ansatt_id}").json()["grunnlagsmerke"]
+    return {"vaktnummer": 4127, "kandidat_id": ansatt_id, "grunnlagsmerke": merke}
+
+
+@pytest.mark.parametrize("ki", [None, BareTolker()], ids=["uten-ki", "bare-tolker"])
+def test_uten_forklaringsport_gir_kandidatbundet_reservesvar(engine, caplog, ki):
+    klient = TestClient(lag_app(engine=engine, ki=ki))
+    logg_inn(klient)
+    with caplog.at_level(logging.ERROR, logger="adaptere.api.main"):
+        svar = klient.get(f"{LISTE}/6/avveining")
+    assert svar.status_code == 200
+    assert svar.json() == {"status": "avveining_feilet", **_identitet(klient)}
+    # Ingen forklaringsport er et kjent oppsett, ikke en uventet feil som feilvernet fanger.
+    assert [r for r in caplog.records if r.levelno >= logging.ERROR] == []
+
+
+def _kast(*_args, **_kwargs):
+    raise RuntimeError("uventet feil i forklaringsnøkkelen")
+
+
+@pytest.mark.parametrize("oppsett", ["forklar", "forklaringsnøkkel"])
+def test_uventet_unntak_i_ki_delen_gir_reservesvar_og_én_feillinje(engine, monkeypatch, caplog, tmp_path, oppsett):
+    from adaptere.api import main
+
+    if oppsett == "forklar":
+        ki = KastendeForklarer()
+    else:
+        # Demoadapteren er den eneste som får en oppslagsnøkkel.
+        monkeypatch.setattr(main, "forklaringsnøkkel", _kast)
+        ki = DemoKiAdapter(tmp_path / "mangler.json")
+    klient = TestClient(lag_app(engine=engine, ki=ki), raise_server_exceptions=False)
+    logg_inn(klient)
+    identitet = _identitet(klient)
+    with caplog.at_level(logging.ERROR, logger="adaptere.api.main"):
+        svar = klient.get(f"{LISTE}/6/avveining")
+    assert svar.status_code == 200
+    assert svar.json() == {"status": "avveining_feilet", **identitet}
+    feil = [r for r in caplog.records if r.levelno >= logging.ERROR]
+    assert [(r.name, r.getMessage()) for r in feil] == [
+        ("adaptere.api.main", "Avveining for vakt 4127 og kandidat 6 feilet uventet.")]
+    assert feil[0].exc_info is not None
+
+
+def test_demo_uten_datafil_gir_mal_med_tom_modell(engine, tmp_path: Path) -> None:
+    """`demo.py` gir `modell = ""` når datafilen mangler. Frontend godtar `mal` uten modell."""
+    klient = TestClient(lag_app(engine=engine, ki=DemoKiAdapter(tmp_path / "mangler.json")))
+    logg_inn(klient)
+    svar = klient.get(f"{LISTE}/6/avveining").json()
+    assert {k: svar[k] for k in ("status", "ki_kilde", "modell")} == {"status": "ok", "ki_kilde": "mal", "modell": ""}
+    assert "generert" not in svar
     assert svar["paastander"]

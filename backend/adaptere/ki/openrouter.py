@@ -253,8 +253,12 @@ class OpenRouterKiAdapter:
         return les_svar(svar, self.modell) or Tolkefeil("ubrukelig")
 
     def forklar(self, kandidat: RangertKandidat, referanse: RangertKandidat | None) -> list[str] | None:
+        """Kontrollerte påstander, eller None. Hver None-vei gir én logglinje med
+        kandidat-ID og feiltype, uten påstander eller modellsvar (retro 5, T3, R5)."""
         tillatte = avveining.tillatte_påstander(kandidat, referanse)
         if not any(p.myk_faktor for p in tillatte):
+            # Forventet: ingenting å forklare, så ingen modellkall.
+            logger.info("Avveining for kandidat %s ga reservetekst (ingen_myk_faktor).", kandidat.id)
             return None
         def poeng(rad: RangertKandidat) -> dict:
             return {"kandidat_id": rad.id, "plass": rad.plass,
@@ -265,8 +269,20 @@ class OpenRouterKiAdapter:
         forespørsel = self._forespørsel("avveining", avveining.PROMPT, data, avveining.skjema())
         svar = self._send(forespørsel, None)
         if isinstance(svar, Tolkefeil):
+            self._logg_avveiningsfeil(kandidat.id, svar.feiltype)
             return None
-        return avveining.valider(les_jsoninnhold(svar, krev_unike_felt=True), tillatte)
+        innhold = les_jsoninnhold(svar, krev_unike_felt=True)
+        if innhold is None:
+            self._logg_avveiningsfeil(kandidat.id, "ubrukelig")
+            return None
+        påstander = avveining.valider(innhold, tillatte)
+        if påstander is None:
+            self._logg_avveiningsfeil(kandidat.id, "faktakontroll")
+        return påstander
+
+    @staticmethod
+    def _logg_avveiningsfeil(kandidat_id: int, feiltype: str) -> None:
+        logger.warning("Avveining for kandidat %s ga reservetekst (%s).", kandidat_id, feiltype)
 
     def _transport_med_frist(self, kropp: bytes, headere: dict[str, str], frist: float, plass: ExitStack) -> HttpSvar:
         """urllib begrenser venting på hver lesing, så avveiningen trenger en egen sluttfrist."""

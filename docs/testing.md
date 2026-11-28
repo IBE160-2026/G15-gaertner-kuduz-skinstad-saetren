@@ -148,6 +148,7 @@ har satt opp, feiler testen.
 |---|---|---|
 | [`vaktvalg.test.tsx`](../frontend/tester/komponenter/vaktvalg.test.tsx) | Feil gir «Prøv igjen»; etter godkjenning vises bekreftelse med ansatt og vakt over oppdatert oversikt | 1.5, 3.2 |
 | [`app.test.tsx`](../frontend/tester/komponenter/app.test.tsx) | 401 etter bekreftet sesjon viser innloggingen med «Sesjonen er utløpt» | 1.5 |
+| | 401 på POST («Prøv igjen») og PUT («Lagre») `…/preferanse` viser innloggingen med «Sesjonen er utløpt» | retro 5, T3 |
 | | Stien `/vakt/4127/godkjenning/6` viser godkjenningsflaten; vellykket POST går via `App` til ny Vaktvalg-visning | 3.1, 3.2 |
 | [`kandidatflate.test.tsx`](../frontend/tester/komponenter/kandidatflate.test.tsx) | Feil i kandidatlisten gir «Prøv igjen», og trykket henter listen på nytt. Datafeil viser tekst og datagrense uten liste. Hver rad viser timer i startuka som t:mm, også 0:00 uten vakter | 2.1, 4.1 |
 | | Tomtilstanden (`ingen_gyldige_kandidater`) har ikon, full tekst, boks og innleietekst uten knapp utenom «Vis full liste». `ok` med tom liste gir feiltilstand. Lasting, feil, datafeil og ingen gyldige har ulik tekst, panelklasse og kombinasjon av rolle, ikon og knapp | 2.6 |
@@ -156,9 +157,11 @@ har satt opp, feiler testen.
 | | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. «Vis bare de 5 øverste» lukker listen igjen, med `aria-expanded` og fokus på knappen. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
 | | «Vis alle» og «Vis full liste» er fortsatt åpne med samme rader når vindusbredden endres (1600 → 680 → 1600), og kandidatene hentes ikke på nytt | 4.6 |
 | | «Endre» i preferansecellen: Lagre sender teksten, henter ny rangering uten å laste siden og viser ikke den gamle avveiningen. Statuslinjen får fokus. Avbryt og Esc lukker uten å lagre og gir fokus til «Endre». 422 beholder teksten. `uendret`, `endret`, `ingen`, `venter` og `feilet` har egne meldinger. Sent svar etter vaktbytte forkastes. Demomerknaden vises bare i demo-modus, også gjennom `<App />` med `demomodus` fra `/api/meg`. Høyst ett felt er åpent om gangen. 404 lukker feltet og viser «ikke lenger gyldig» med oppdatert rangering. Blir kandidaten på plass 1, henter det åpne panelet avveiningen for det nye merket. Resultatet vises også i preferansecellen til kandidaten etter at han har flyttet seg, og forsvinner når et felt åpnes, også på en annen rad og etter Avbryt | 5.9 |
+| | «Prøv igjen» med 409 `tolkning_paagar`, 409 `ikke_feilet`, 503 `ki_utilgjengelig` og 404 `ikke_funnet`: tabellen står, statuslinjen har fokus og meldingen, listen hentes på nytt, og knappene er aktive. Raden viser en kort melding, unntatt ved 404, der kandidaten er borte fra den nye listen | retro 5, T2 |
 | [`avveining.test.tsx`](../frontend/tester/komponenter/avveining.test.tsx) | Toppraden henter én forklaring. Andre rader åpnes uavhengig med tastaturet. Feil kandidat gir reservetekst med nøkkeltall. Etter ny preferansetolkning vises forklaringen for den nye topprangerte. | 5.3 |
 | | Godkjenningsflaten avviser svar med feil identitet eller kilde. Et forsinket svar etter sesjonsbytte eller endret grunnlag blir forkastet. Etter HTTP 409 bruker neste godkjenning merket fra det nye grunnlaget. | 5.3 |
 | | Én kandidat får `avveining_feilet` mens en annen får en gyldig forklaring. Begge flater viser reservetekst og fire nøkkeltall for kandidaten som velges. Bekreftelsen sender gjeldende grunnlagsmerke. | 5.4 |
+| | `forhandsgenerert`, `mal` og `mal` med tom `modell` (backend uten `demoinnhold.json`) vises i både kandidatlisten og godkjenningen | 5.7, retro 5, T3 |
 | | Forsinkede svar lar testen velge en uåpnet kandidat, åpne rad to og fullføre godkjenning mens rad én venter. Samme kandidat og merke gir ett forklaringskall gjennom begge flater. Nytt merke, ny flyt, navigasjon med ny sesjonskontroll og annen vakt utløser egne oppslag. Tomtilstanden utløser null forklaringskall. [Nettleserkontroll ved 680 px](ki-logg/2026-11-22-progressiv-lasting.md#nettleserkontroll). | 5.5 |
 | [`godkjenningsflate.test.tsx`](../frontend/tester/komponenter/godkjenningsflate.test.tsx) | «Godkjenn erstatning» sender grunnlagsmerket; endret grunnlag krever nytt trykk; ugyldig kandidat og datafeil stopper godkjenning; allerede bemannet vakt gir bare «Til Vaktvalg» med fokus; sent POST-svar, sesjonsbytte og dobbeltklikk kontrolleres | 3.1, 3.2 |
 | | Kandidatkortets timetall, timebelastningslinje og ulempeindikator for den topprangerte kandidaten, uten avviksnotat, og tekstvarsel ved høy belastning | 4.5 |
@@ -477,3 +480,24 @@ oppbrukt kreditt gir reservetekst, dekkes av de eksisterende 402-testene i
 [`test_openrouter.py`](../backend/tester/ki/test_openrouter.py). Det er ikke prøvd mot en
 ekte tom konto. Live-flyten med sensornøkkelen kontrolleres manuelt fra en ren klone ved
 innlevering, etter sjekklisten.
+
+## Retro 5, T2 og T3 – feilhåndtering og testhull (2026-11-28)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-retro-5-t2-t3-feilhandtering.md)
+retter R2, R5 og R6 i [retroen for epic 5](../_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md).
+
+- **Frontend:** komponenttestene i tabellen over (retro 5, T2 og T3). Testen «nettverksfeil
+  etter forsøk krever oppdatert rangering før valg» er uendret og består: andre feil gir
+  fortsatt feilpanelet.
+- **Avveiningsruten** ([`test_avveining.py`](../backend/tester/api/test_avveining.py)):
+  `ki=None` og en ren `Tolker` gir `avveining_feilet` uten feillinje. En `Forklarer` som
+  kaster, og en `forklaringsnøkkel` som kaster, gir 200 `avveining_feilet` og én ERROR-linje
+  med vakt og kandidat. Demo uten datafil gir `mal` med `modell == ""`.
+- **`forklar`** ([`test_openrouter.py`](../backend/tester/ki/test_openrouter.py)): én
+  logglinje per `None`-vei med kandidat-ID og feiltype (`4xx`, `5xx`, `tidsbudsjett`,
+  `nettverk`, `ubrukelig`, `faktakontroll` på WARNING, `ingen_myk_faktor` på INFO), og
+  ingen påstandstekst, prompt eller modellsvar i loggen. En godkjent forklaring logger ingenting.
+
+Etter endringen bestod 945 backendtester, frontendbygget, 52 modultester og 99
+komponenttester. Mutasjonene som gjorde hver ny test rød, står i
+[KI-loggen](ki-logg/2026-11-28-retro-5-t2-t3.md).

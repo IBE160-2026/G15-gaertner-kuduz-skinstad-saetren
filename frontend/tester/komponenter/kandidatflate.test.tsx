@@ -648,6 +648,47 @@ test("retry failure leaves the candidate available for another attempt", async (
   expect(screen.getByRole("button", { name: t.provPreferanse(first.navn) })).toBeTruthy();
 });
 
+// Retro 5, T2 (R2): et forventet nei fra POST skal ikke erstatte rangeringen med feilpanelet.
+test.each([
+  [409, "tolkning_paagar", feiltekst("tolkning_paagar"), t.provRad.tolkning_paagar],
+  [409, "ikke_feilet", t.tolkEndret, t.provRad.ikke_feilet],
+  [503, "ki_utilgjengelig", feiltekst("ki_utilgjengelig"), t.provRad.ki_utilgjengelig],
+  [404, "ikke_funnet", t.redigerPreferanse.ikkeGyldig, null],
+] as const)("«Prøv igjen» med %i %s beholder rangeringen og henter listen på nytt", async (status, kode, melding, rad) => {
+  const [first, second] = TO_GYLDIGE.kandidater;
+  const failed = { ...first, tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const sti = `${KANDIDATER_URL}/${first.id}/preferanse`;
+  // Ved 404 er kandidaten ikke lenger gyldig og er borte fra den nye listen.
+  const etter = status === 404 ? [{ ...second, plass: 1 }] : [failed, second];
+  const fetch = falskFetch({
+    [VAKT_URL]: ok(VAKT_4127),
+    [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [failed, second] }), ok({ ...TO_GYLDIGE, kandidater: etter })],
+    [`POST ${sti}`]: feil(status, kode),
+  });
+  const bruker = userEvent.setup();
+  render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+  await bruker.click(await screen.findByRole("button", { name: t.provPreferanse(first.navn) }));
+  const statuslinje = await screen.findByText(melding);
+  expect(statuslinje.getAttribute("role")).toBe("status");
+  expect(document.activeElement).toBe(statuslinje);
+  // Tabellen står, og feilpanelets «Prøv igjen» (uten kandidatnavn) vises ikke.
+  expect(screen.getByRole("region", { name: t.rangeringstabell })).toBeTruthy();
+  expect(screen.queryByRole("button", { name: TEKSTER.provIgjen })).toBeNull();
+  expect(kallTil(fetch, KANDIDATER_URL)).toBe(2);
+  expect(kallTil(fetch, `POST ${sti}`)).toBe(1);
+  const navn = [...document.querySelectorAll(".rangeringstabell tbody .ansattnavn")].map((r) => r.textContent);
+  expect(screen.getByRole("button", { name: g.velgEtikett(second.navn) })).toHaveProperty("disabled", false);
+  if (rad) {
+    expect(navn).toEqual([first.navn, second.navn]);
+    expect(screen.getByText(rad).closest("tr")?.textContent).toContain(first.navn);
+    expect(screen.getByRole("button", { name: g.velgEtikett(first.navn) })).toHaveProperty("disabled", false);
+    expect(screen.getByRole("button", { name: t.provPreferanse(first.navn) })).toHaveProperty("disabled", false);
+  } else {
+    expect(navn).toEqual([second.navn]);
+    for (const tekst of Object.values(t.provRad)) expect(screen.queryByText(tekst)).toBeNull();
+  }
+});
+
 
 test("retry focus and late response after changing shifts", async () => {
   const first = TO_GYLDIGE.kandidater[0];

@@ -28,6 +28,34 @@ test("401 fra vaktoversikten etter bekreftet sesjon viser innloggingen med «ses
   expect(kallTil(fetch, "/api/vaktoversikt")).toBe(1);
 });
 
+// Retro 5, T3 (deferred-work 2026-11-28): «Prøv igjen» (POST) og «Lagre» (PUT) er beskyttede kall.
+test.each(["POST", "PUT"] as const)("401 på %s …/preferanse viser innloggingen med «sesjonen er utløpt»", async (metode) => {
+  settSti(kandidatsti(4127));
+  const jonas = { ...TO_GYLDIGE.kandidater[0], tolkestatus: "kunne_ikke_tolkes" as const, preferansekategori: null };
+  const preferanse = `/api/vakter/4127/kandidater/${jonas.id}/preferanse`;
+  const fetch = falskFetch({
+    "/api/meg": ok(MEG),
+    "/api/vakter/4127": ok(VAKT_4127),
+    "/api/vakter/4127/kandidater": ok({ ...TO_GYLDIGE, kandidater: [jonas, TO_GYLDIGE.kandidater[1]] }),
+    [`${metode} ${preferanse}`]: feil(401, "mangler_sesjon"),
+    "/api/innloggingsinfo": ok({ passord_kilde: "tilfeldig" }),
+  });
+  render(<App />);
+  const bruker = userEvent.setup();
+  const kf = TEKSTER.kandidatflate;
+  if (metode === "POST") {
+    await bruker.click(await screen.findByRole("button", { name: kf.provPreferanse(jonas.navn) }));
+  } else {
+    await bruker.click(await screen.findByRole("button", { name: kf.redigerPreferanse.endreEtikett(jonas.navn) }));
+    await bruker.click(screen.getByRole("button", { name: kf.redigerPreferanse.lagreEtikett(jonas.navn) }));
+  }
+
+  expect(await screen.findByRole("heading", { name: TEKSTER.loggInn.overskrift })).toBeTruthy();
+  expect(screen.getByRole("alert").textContent).toBe(TEKSTER.sesjonUtlopt);
+  expect(window.location.pathname).toBe(INNLOGGING_STI);
+  expect(kallTil(fetch, `${metode} ${preferanse}`)).toBe(1);
+});
+
 test("stien /vakt/4127/godkjenning/6 viser godkjenningsflaten for kandidaten", async () => {
   const sti = godkjenningssti(4127, 6);
   expect(sti).toBe("/vakt/4127/godkjenning/6");

@@ -120,6 +120,23 @@ const LAGRET_MELDING: Record<Exclude<LagrePreferanseStatus, "uendret"> | "ikke_g
   ikke_gyldig: rp.ikkeGyldig,
 };
 
+// Forventede nei fra «Prøv igjen» (retro 5, T2, R2). Rangeringen blir stående, listen
+// hentes på nytt, og svaret vises i statuslinjen og ved raden. Andre koder og
+// nettverksfeil gir feilpanelet som før. Ved 404 står kandidaten ikke lenger i
+// tabellen, så den får ingen radmelding (samme som PUT i story 5.9).
+const PROV_AVVIST: Readonly<Record<string, { status: number; melding: string; rad: string | null }>> = {
+  tolkning_paagar: { status: 409, melding: feiltekst("tolkning_paagar"), rad: t.provRad.tolkning_paagar },
+  ikke_feilet: { status: 409, melding: t.tolkEndret, rad: t.provRad.ikke_feilet },
+  ki_utilgjengelig: { status: 503, melding: feiltekst("ki_utilgjengelig"), rad: t.provRad.ki_utilgjengelig },
+  ikke_funnet: { status: 404, melding: rp.ikkeGyldig, rad: null },
+};
+
+function provAvvist(feil: unknown) {
+  if (!(feil instanceof ApiFeil) || !Object.hasOwn(PROV_AVVIST, feil.kode)) return null;
+  const avvist = PROV_AVVIST[feil.kode];
+  return avvist.status === feil.status ? avvist : null;
+}
+
 // Hentes automatisk når vakten er lastet (story 2.1). Bare Gyldige kandidater.
 export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktnummer: number; onVelg: (ansattId: number) => void; demomodus?: boolean }) {
   const [tilstand, setTilstand] = useState<Kandidattilstand>({ type: "laster" });
@@ -136,6 +153,7 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
   const [redigerId, setRedigerId] = useState<number | null>(null);
   // Resultatet av siste lagring vises også i preferansecellen til kandidaten, fordi
   // kandidaten kan ha flyttet seg langt fra statuslinjen (manuell test 2026-11-26).
+  // Et forventet nei fra «Prøv igjen» bruker samme plass (retro 5, T2).
   const [radmelding, setRadmelding] = useState<{ id: number; tekst: string } | null>(null);
   useEffect(() => {
     visningsversjon.current += 1;
@@ -161,12 +179,23 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
     setRadmelding(null);
     statusRef.current?.focus();
     try {
-      const svar = await provPreferanse(vaktnummer, id);
+      let melding: string;
+      let rad: string | null = null;
+      try {
+        const svar = await provPreferanse(vaktnummer, id);
+        melding = svar.status === "tolket" ? t.tolket : svar.status === "feilet" ? t.tolkefeil : t.tolkEndret;
+      } catch (feil) {
+        const avvist = provAvvist(feil);
+        if (!avvist) throw feil;
+        melding = avvist.melding;
+        rad = avvist.rad;
+      }
       if (!gyldig()) return;
       const kandidater = await hentKandidater(vaktnummer);
       if (!gyldig()) return;
       setTilstand(tilstandFraSvar(kandidater));
-      setMelding(svar.status === "tolket" ? t.tolket : svar.status === "feilet" ? t.tolkefeil : t.tolkEndret);
+      setMelding(melding);
+      if (rad) setRadmelding({ id, tekst: rad });
     } catch (feil) {
       if (!gyldig()) return;
       fokuserFeil.current = document.activeElement === statusRef.current;
@@ -303,7 +332,7 @@ const k = t.kolonner;
 type Redigering = {
   id: number | null;
   demomodus: boolean;
-  /** Resultatet av siste lagring for én kandidat, vist i cellen (ikke en live-region). */
+  /** Resultatet av siste lagring eller «Prøv igjen» for én kandidat, vist i cellen (ikke en live-region). */
   melding: { id: number; tekst: string } | null;
   onApne: (id: number) => void;
   onLukk: () => void;

@@ -10,8 +10,9 @@ import logging
 import ssl
 from collections.abc import Callable, Mapping
 from contextlib import ExitStack
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from email.message import Message
+from fractions import Fraction
 from urllib.error import HTTPError, URLError
 
 import pytest
@@ -30,7 +31,8 @@ from adaptere.ki.openrouter import (
 )
 from adaptere.lagring.testdata import PREFERANSER
 from domene.porter.rangering import TolketPreferanse
-from domene.regelmotor.rangering import PREFERANSEPOENG
+from domene.regelmotor.rangering import PREFERANSEPOENG, ranger
+from tester.regelmotor.test_rangering import VAKT, kandidat, vurder
 
 NØKKEL = "test-nokkel-ikke-ekte"
 TEKST_4 = PREFERANSER[4][0]
@@ -492,3 +494,60 @@ def test_nettverksfeil_logges_som_warning_uten_nøkkel(caplog: pytest.LogCapture
         "Nettverksfeil mot OpenRouter: URLError/SSLCertVerificationError/CERTIFICATE_VERIFY_FAILED",
     ]
     assert NØKKEL not in caplog.text and TEKST_4 not in caplog.text
+
+
+# --- Retro 5, T3: én logglinje per None-vei i `forklar` (R5) ---------------------------
+
+MARKØR = "MODELLSVAR-SOM-IKKE-SKAL-LOGGES"
+
+
+def _kandidatpar():
+    return ranger(vurder(kandidat(1, lønn=300), kandidat(2, lønn=400)), VAKT)
+
+
+def _avveiningslinjer(caplog: pytest.LogCaptureFixture) -> list[tuple[int, str]]:
+    return [(r.levelno, r.getMessage()) for r in caplog.records
+            if r.name == "adaptere.ki.openrouter" and r.getMessage().startswith("Avveining for kandidat")]
+
+
+def _egen(retning: str, **ekstra) -> dict:
+    return {"type": "egen", "kandidat_id": 1, "faktor": "kostnad", "retning": retning, **ekstra}
+
+
+@pytest.mark.parametrize(("utfall", "feiltype"), [
+    (status(402), "4xx"),
+    (status(503), "5xx"),
+    (status(429, {"x-ratelimit-reset": str(int((VEGG_START + 100) * 1000))}), "tidsbudsjett"),
+    (Nettverksfeil("URLError"), "nettverk"),
+    (HttpSvar(200, {}, MARKØR.encode()), "ubrukelig"),
+    (HttpSvar(200, {}, innhold({"paastander": [_egen("opp")], "notat": MARKØR}, finish_reason="length")), "ubrukelig"),
+    (HttpSvar(200, {}, innhold({"paastander": [_egen("ned")]})), "faktakontroll"),
+    (HttpSvar(200, {}, innhold({"paastander": [_egen("opp", navn=MARKØR)]})), "faktakontroll"),
+], ids=["4xx", "5xx", "tidsbudsjett", "nettverk", "ikke-json", "avbrutt", "feil-retning", "ekstra-felt"])
+def test_forklar_logger_feiltypen_uten_innhold(caplog: pytest.LogCaptureFixture, utfall: Svar, feiltype: str) -> None:
+    en, to = _kandidatpar()
+    with caplog.at_level(logging.INFO, logger="adaptere.ki.openrouter"):
+        assert adapter(FalskKlokke(), FalskTransport([utfall])).forklar(en, to) is None
+    assert _avveiningslinjer(caplog) == [(logging.WARNING, f"Avveining for kandidat 1 ga reservetekst ({feiltype}).")]
+    tillatte = openrouter.avveining.tillatte_påstander(en, to)
+    assert MARKØR not in caplog.text
+    assert not any(p.tekst in caplog.text for p in tillatte)
+    assert openrouter.avveining.PROMPT not in caplog.text
+
+
+def test_forklar_uten_myk_faktor_logger_på_info_uten_kall(caplog: pytest.LogCaptureFixture) -> None:
+    en, _ = _kandidatpar()
+    lik = Fraction(50)
+    en = replace(en, eksakte_poeng=type(en.eksakte_poeng)(lik, lik, lik, lik, lik))
+    transport = FalskTransport([status(500)])
+    with caplog.at_level(logging.INFO, logger="adaptere.ki.openrouter"):
+        assert adapter(FalskKlokke(), transport).forklar(en, None) is None
+    assert transport.kall == []
+    assert _avveiningslinjer(caplog) == [(logging.INFO, "Avveining for kandidat 1 ga reservetekst (ingen_myk_faktor).")]
+
+
+def test_godkjent_forklaring_logger_ingen_avveiningslinje(caplog: pytest.LogCaptureFixture) -> None:
+    transport = FalskTransport([HttpSvar(200, {}, innhold({"paastander": [_egen("opp")]}))])
+    with caplog.at_level(logging.INFO, logger="adaptere.ki.openrouter"):
+        assert adapter(FalskKlokke(), transport).forklar(*_kandidatpar())
+    assert _avveiningslinjer(caplog) == []
