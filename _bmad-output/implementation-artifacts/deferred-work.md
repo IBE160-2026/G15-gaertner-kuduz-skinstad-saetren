@@ -9,6 +9,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-loggoppsett-backend.md`
   summary: `ARCHITECTURE-SPINE.md` sier at runtime-/driftslogging ikke er besluttet (Consistency Conventions, linje 116, og Deferred, linje 215), mens backend nå viser appens INFO-meldinger i terminalen.
   evidence: Valg C (Ragnhild 2026-11-23): endringen er behandlet som en feilretting innenfor det utsatte punktet, og spinen er ikke rørt. Spinen bør oppdateres ved neste arkitekturgjennomgang eller i retrospektiven for epic 5.
+  status: Løst 2026-11-28 (T1 i retroen for epic 5). Driftsloggingen er ført i Consistency Conventions og strøket under Deferred i `ARCHITECTURE-SPINE.md`.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: Testdataene kan ikke vise at preferansepoeng endrer rekkefølgen. Bare #4127 har gyldige kandidater (fire), og marginene er så store at 25 % preferansevekt ikke snur dem. Jonas, Mette, Thomas og Ingrid står i samme rekkefølge før og etter tolkning.
   evidence: Live-kontroll 2026-11-16: scorene endret seg som regnet (+6,25, +6,25, −12,50, +12,50), rekkefølgen ikke. At poengene kan snu en rekkefølge dekkes bare av enhetstestene i `tester/regelmotor/test_rangering.py`.
