@@ -113,6 +113,8 @@ På en sterk maskin kan flere arbeidere gjøre kjøringen raskere:
   `tester/api/` bakgrunnstolkningen, Rangeringen med lagrede tolkninger og oppstarten.
   Story 5.2 la til at kandidatlisten og godkjenningsgrunnlaget ikke kaller KI i noen
   tolkestatus, og at «Prøv igjen» etter endelig feil beregner rangeringen på nytt.
+  Story 5.9: [`test_preferanseredigering.py`](../backend/tester/api/test_preferanseredigering.py)
+  dekker redigering av teksten (se avsnittet om story 5.9 under).
   [`tester/conftest.py`](../backend/tester/conftest.py) fjerner KI-variablene fra
   miljøet i hver test.
 - **Arkitektur** ([`test_arkitektur.py`](../backend/tester/test_arkitektur.py)):
@@ -153,6 +155,7 @@ har satt opp, feiler testen.
 | | «Velg» sender vaktnummer og id for riktig kandidat, uten kall | 3.1 |
 | | Rangeringstabellen: kolonnene, plass i `rank-badge`, totalscore med én desimal, stilling · ansiennitet, kompetanse- og preferansetagg for alle fire tolkestatuser, `row-alt` på annenhver rad og Velg i siste kolonne. De fem øverste vises; «Vis alle gyldige kandidater» viser resten i rangert rekkefølge, flytter fokus til den første nye raden og virker med tastaturet, og Velg virker for alle. «Vis bare de 5 øverste» lukker listen igjen, med `aria-expanded` og fokus på knappen. Fem eller færre gir ingen knapp, og datafeil og null gyldige gir ingen tabell | 4.4 |
 | | «Vis alle» og «Vis full liste» er fortsatt åpne med samme rader når vindusbredden endres (1600 → 680 → 1600), og kandidatene hentes ikke på nytt | 4.6 |
+| | «Endre» i preferansecellen: Lagre sender teksten, henter ny rangering uten å laste siden og viser ikke den gamle avveiningen. Statuslinjen får fokus. Avbryt og Esc lukker uten å lagre og gir fokus til «Endre». 422 beholder teksten. `uendret`, `endret`, `ingen`, `venter` og `feilet` har egne meldinger. Sent svar etter vaktbytte forkastes. Demomerknaden vises bare i demo-modus, også gjennom `<App />` med `demomodus` fra `/api/meg`. Høyst ett felt er åpent om gangen. 404 lukker feltet og viser «ikke lenger gyldig» med oppdatert rangering. Blir kandidaten på plass 1, henter det åpne panelet avveiningen for det nye merket. Resultatet vises også i preferansecellen til kandidaten etter at han har flyttet seg, og forsvinner når et felt åpnes, også på en annen rad og etter Avbryt | 5.9 |
 | [`avveining.test.tsx`](../frontend/tester/komponenter/avveining.test.tsx) | Toppraden henter én forklaring. Andre rader åpnes uavhengig med tastaturet. Feil kandidat gir reservetekst med nøkkeltall. Etter ny preferansetolkning vises forklaringen for den nye topprangerte. | 5.3 |
 | | Godkjenningsflaten avviser svar med feil identitet eller kilde. Et forsinket svar etter sesjonsbytte eller endret grunnlag blir forkastet. Etter HTTP 409 bruker neste godkjenning merket fra det nye grunnlaget. | 5.3 |
 | | Én kandidat får `avveining_feilet` mens en annen får en gyldig forklaring. Begge flater viser reservetekst og fire nøkkeltall for kandidaten som velges. Bekreftelsen sender gjeldende grunnlagsmerke. | 5.4 |
@@ -376,6 +379,42 @@ kontrollerer oppfriskning, feil, vaktbytte, sene svar og fokus. Nettleserkontrol
 Etter gjennomgangsrettinger bestod 685 backendtester, frontendbygget, 52 modultester
 og 46 komponenttester. Backend ble kjørt med Python 3.12.14 og pakkene i `.venv`;
 `python.exe` i den lokale virtuelle mappen manglet, så installert Python ble brukt direkte.
+
+## Story 5.9 – redigere preferansetekst (2026-11-26)
+
+[Spesifikasjonen](../_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md)
+følger P-10B, P-09 og AV-19. Fra `backend/`:
+`pytest tester/api/test_preferanseredigering.py tester/lagring/test_preferansetolkning.py`.
+Backendtestene dekker hver rad i spesifikasjonens matrise: ny tekst tolkes, endelig
+KI-feil, tom og uendret tekst, 422, 401 og 404 (utelukket, ukjent og annen brukers vakt)
+med `øyeblikksbilde` av alle tabeller, ingen KI, `endret_grunnlag` etter endring, og
+A–B–A både under «Prøv igjen», under oppstartstolkningen og over HTTP med tråder. En egen
+test viser at en ny endring under et pågående kall gir `endret` for det første svaret,
+og en at låsen som ikke blir ledig i tide, gir `venter`. Mutasjoner som fjerner
+versjonssjekken, tilgangskontrollen eller no-op-regelen gjør testene røde
+([KI-loggen](ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md)).
+
+**Manuell test live mot Luna, Ragnhild, macOS, 2026-11-26:** Backend startet med nøkkel
+i terminalen (zsh). Appbaren viste ikke «Demo-modus». På #4127 ga en ny tekst for Jonas ny
+kategori og nye poeng, og han flyttet seg nedover i rangeringen. «Uendret» ved lagring
+uten endring, Avbryt, Esc og tom tekst («Ingen registrert») virket, også i et smalt vindu
+(omtrent halv skjerm). **Funn:** statuslinjen over tabellen ble ikke lagt merke til,
+fordi kandidaten flyttet seg langt fra den. Rettet samme dag: en kort melding vises også
+i preferansecellen til kandidaten (`rp.rad`), og ny komponenttest dekker den. Retestet i
+nettleseren: meldingen står ved Jonas.
+
+**Manuell test i demo-modus og med tastatur, Ragnhild, macOS, 2026-11-26:** Appbaren
+viste «Demo-modus», og merknaden stod under tekstfeltet. En ny tekst ga «kunne ikke
+tolkes», 50 poeng og «Prøv igjen». Jonas' opprinnelige tekst ble tolket igjen. Med bare
+tastatur virket Tab til «Endre», Enter (fokus til feltet), Tab til «Lagre», Enter, og Esc
+(fokus tilbake til «Endre»), og fokus var synlig hele veien.
+
+Gjenstår manuelt (OP-16), foreslått for den som gjennomgår PR-en, helst på Windows
+(OP-05): farger og fokusramme etter sjekklisten over, og «endret grunnlag» med
+godkjenningen åpen i en annen fane (dekket av
+`test_endring_mens_godkjenning_er_åpen_gir_endret_grunnlag`). Regelen `.preferansecelle > .button-kompakt` gir også ny avstand over «Prøv igjen»
+fra story 5.1; kontroller at den knappen fortsatt står riktig i en rad med «kunne ikke
+tolkes».
 
 ## Story 5.3 – avveining per kandidat
 

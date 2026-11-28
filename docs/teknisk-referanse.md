@@ -12,8 +12,8 @@ og [beslutningsreferatet](beslutninger/avklaringspunkter.md).
   `.venv\Scripts\python -m uvicorn adaptere.api.main:app --reload`. Da logges alle ut,
   og preferansetolkningen starter på nytt for tekster som ikke er ferdige. Med live KI
   kan det gi flere betalte kall.
-- Kjør backend med én worker. Låsene som samordner preferansetolkningen ved oppstart og
-  «Prøv igjen», deles ikke mellom flere serverprosesser.
+- Kjør backend med én worker. Låsene som samordner preferansetolkningen ved oppstart,
+  «Prøv igjen» og redigering av teksten, deles ikke mellom flere serverprosesser.
 - Nøkkelen som signerer innloggingen (JWT), lages tilfeldig ved hver oppstart og lagres
   ingen steder. Innloggingen ligger i en `httpOnly`-cookie.
   `TURNUSHJELPEREN_JWT_MINUTTER` må være et positivt heltall, ellers starter ikke API-et.
@@ -31,8 +31,8 @@ og [beslutningsreferatet](beslutninger/avklaringspunkter.md).
   fra 24.08.2026. Testdataene slutter 05.10.2026 kl. 00:00.
 - Det finnes ikke noe migreringsverktøy. Nye tabeller legges til automatisk, men
   endres en eksisterende tabell, må databasefilen slettes og testdataene lastes på nytt.
-  En database fra før story 5.1 mangler kolonnene for preferansetolkning og gir
-  «no such column».
+  En database fra før story 5.1 mangler kolonnene for preferansetolkning, og en fra før
+  story 5.9 mangler `ansatt.preferanseversjon`. Begge gir «no such column».
 - Transaksjonene bygger på standardoppførselen til Pythons `sqlite3`. Les docstringen
   til `lag_engine` i `backend/adaptere/lagring/database.py` før du endrer
   `isolation_level` eller `autocommit`.
@@ -58,13 +58,15 @@ Tidspunkter sendes som ISO 8601 med offset, i `Europe/Oslo`.
 | `POST /vakter/{nr}/kandidater/{id}` | Godkjenner. Krever `{"grunnlagsmerke": "…"}` og svarer `{"status": "godkjent"}`. |
 | `GET /vakter/{nr}/kandidater/{id}/avveining` | KI-forklaringen for én kandidat |
 | `POST /vakter/{nr}/kandidater/{id}/preferanse` | «Prøv igjen» for en preferanse som ikke kunne tolkes |
+| `PUT /vakter/{nr}/kandidater/{id}/preferanse` | Ny preferansetekst. Krever `{"tekst": "…"}` (se under). |
 
 **Kandidatlisten.** Svaret har én av tre statuser, alle med HTTP 200:
 
 - `ok`: `kandidater` er bare gyldige kandidater, sortert etter `plass`. Hver kandidat har
   kompetansenivå, minutter i uka, timebelastning (prosent av 36 t, og `hoy_belastning`
   fra 32,4 t), kostnad, ulempebelastning, `totalscore`, `faktorpoeng`,
-  `preferansepoeng`, `tolkestatus`, `grunnlagsmerke` og `faktorretninger`. Tallene er
+  `preferansepoeng`, `tolkestatus`, `preferansetekst` (råteksten), `grunnlagsmerke` og
+  `faktorretninger`. Tallene er
   uavrundet, og frontend avrunder ved visning.
 - `ingen_gyldige_kandidater`: tom liste. Regelmotoren har kjørt ferdig uten treff.
 - `datafeil` med `kode: "mangler_turnusgrunnlag"` og `datagrense`: testdataene dekker ikke
@@ -87,6 +89,28 @@ kandidat avvises før modellkallet.
 **Prøv igjen.** Svarer `{"status": "tolket" | "feilet" | "endret"}`. 409
 `tolkning_paagar` betyr at teksten allerede tolkes, 409 `ikke_feilet` at den ikke står
 som feilet, og 503 `ki_utilgjengelig` at backend kjører uten KI.
+
+**Ny preferansetekst (story 5.9, P-10B).** Bare for en gyldig kandidat for vakten; ellers
+404 `ikke_funnet`, og ingenting endres. `tekst` må være en streng på høyst 500 tegn, ellers
+422. Teksten trimmes, og tom tekst lagres som ingen tekst («Ingen registrert»). En endret
+tekst nullstiller tolkningen og øker `ansatt.preferanseversjon` med 1 i én
+skrivetransaksjon (`BEGIN IMMEDIATE`). Deretter tolkes den med samme lås og regler som
+«Prøv igjen». Svaret kan derfor ta to deler: venting på låsen i høyst `LAASEVENT_S`
+(100 s), og deretter selve tolkningen i høyst ett tidsbudsjett (90 s, AV-19). Svaret er
+`{"status": …}`:
+
+| Status | Betydning |
+|---|---|
+| `tolket` / `feilet` | Teksten er lagret og tolket, eller kunne ikke tolkes (50 poeng, «Prøv igjen» vises) |
+| `uendret` | Samme tekst som den lagrede. Ingenting er endret. |
+| `ingen` | Tom tekst. Lagret som «Ingen registrert». |
+| `venter` | Lagret, men ikke tolket: backend kjører uten KI, eller låsen ble ikke ledig innen `LAASEVENT_S` (100 s) fordi et pågående forsøk for samme ansatt ikke var ferdig. Teksten tolkes ved neste oppstart av backend med KI; «Prøv igjen» gjelder bare `feilet`. |
+| `endret` | En nyere endring kom imellom. Svaret for denne teksten er forkastet. |
+
+Hver betinget lagring av en tolkning, også ved oppstart og «Prøv igjen», sammenligner
+`preferanseversjon`. Et KI-svar på en eldre versjon lagres derfor ikke, heller ikke når
+teksten er endret fram og tilbake til samme verdi (A–B–A). Versjonen inngår i
+`grunnlagsmerke`, så en endring mens godkjenningsflaten er åpen gir 409 `endret_grunnlag`.
 
 ## KI-integrasjonen
 
@@ -124,7 +148,7 @@ Avgjøres én gang ved oppstart (`ki_fra_miljo` i `backend/adaptere/api/main.py`
 
   En tekst som er endret underveis, gir `… forkastet: teksten er endret.`. En tekst som
   ikke kunne tolkes, gir en `WARNING:`-linje med feiltypen, for eksempel `(nettverk)`.
-  «Prøv igjen» skriver ingen linjer.
+  «Prøv igjen» og redigering skriver ingen linjer.
 
 ### Takt og nye forsøk (AD-7, AV-19)
 
@@ -149,7 +173,8 @@ fire gyldige kandidatene på #4127.
   oppslag (P-06). Stemmer den ikke, brukes et svar satt sammen av kode (`ki_kilde: "mal"`),
   aldri en foreldet sammenligning.
 - En preferansetekst uten forhåndsgenerert treff gir «kunne ikke tolkes» med 50 poeng,
-  aldri en oppdiktet kategori.
+  aldri en oppdiktet kategori. Det gjelder også en tekst turnusansvarlig har endret, og
+  redigeringsfeltet sier det i demo-modus (story 5.9).
 - Innholdet lages på nytt fra roten med `python scripts/generer_demoinnhold.py --live`
   (19 betalte kall, se skriptets docstring). Uten `--live` er det en tørrkjøring.
 

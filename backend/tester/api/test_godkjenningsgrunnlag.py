@@ -18,7 +18,7 @@ from adaptere.lagring.database import lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import grunnlagsmerke
 from adaptere.lagring.modeller import OSLO, AnsattRad, Base, BrukerRad, GodkjenningRad, VaktRad
 from adaptere.lagring.preferansetolkning import lagre_resultat
-from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING, fyll_testdata
+from adaptere.lagring.testdata import ANSATTE, MANGLER_BEMANNING, PREFERANSER, fyll_testdata
 from domene.porter.rangering import TolketPreferanse
 from domene.regelmotor.vurdering import REGLER
 from tester.api.test_kandidater import RANGERT_FELT, forleng_ingrids_første_vakt_i_uka
@@ -45,6 +45,7 @@ JONAS_SOM_TOPPRANGERT = {
     "faktorpoeng": {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 260 / 3},
     "faktorretninger": {"kostnad": "opp", "timebelastning": "opp", "ulempe": "opp", "preferanse": "ned"},
     "preferansepoeng": 50, "tolkestatus": "venter_paa_tolkning", "preferansekategori": None,
+    "preferansetekst": PREFERANSER[4][0],  # Jonas har PRD-tekst nr. 4 (story 5.9)
 }
 
 
@@ -199,6 +200,7 @@ def test_mette_på_4127_har_nøyaktig_dette_svaret_med_jonas_som_topprangert(kli
             "faktorpoeng": {"kostnad": 1780 / 21, "timebelastning": 100, "ulempe": 40},
             "faktorretninger": {"kostnad": "opp", "timebelastning": "opp", "ulempe": "ned", "preferanse": "ned"},
             "preferansepoeng": 50, "tolkestatus": "venter_paa_tolkning", "preferansekategori": None,
+            "preferansetekst": PREFERANSER[5][0],
         },
         "topprangert": JONAS_SOM_TOPPRANGERT,
     }
@@ -325,7 +327,8 @@ def test_lagret_tolkning_endrer_topprangert_uten_live_kall(klient: TestClient, e
     with okter() as session:
         tekst = session.get(AnsattRad, METTE).preferanse
     assert tekst
-    assert lagre_resultat(okter, METTE, tekst, TolketPreferanse("onsker_flere", "Syntetisk testtekst.", "test"))
+    assert lagre_resultat(okter, METTE, tekst, TolketPreferanse("onsker_flere", "Syntetisk testtekst.", "test"),
+                          versjon=0)
     logg_inn(klient)
 
     svar_jonas = klient.get(sti(4127, JONAS)).json()

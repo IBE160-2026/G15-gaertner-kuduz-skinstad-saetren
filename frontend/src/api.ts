@@ -75,6 +75,8 @@ export type RangertKandidat = Kandidat & {
   stilling: string; ansiennitet: number; plass: number; totalscore: number;
   faktorpoeng: { kostnad: number; timebelastning: number; ulempe: number };
   preferansepoeng: number; tolkestatus: Tolkestatus; preferansekategori: string | null;
+  // Råteksten, for forhåndsutfylling når teksten endres (story 5.9). `null` er «Ingen registrert».
+  preferansetekst: string | null;
 };
 
 type Avveiningsgrunnlag = { vaktnummer: number; kandidat_id: number; grunnlagsmerke: string };
@@ -238,4 +240,16 @@ export function godkjennErstatning(vaktnummer: number, ansattId: number, grunnla
 
 export function provPreferanse(vaktnummer: number, ansattId: number): Promise<{ status: "tolket" | "feilet" | "endret" }> {
   return kall(`/api/vakter/${vaktnummer}/kandidater/${ansattId}/preferanse`, { method: "POST" }, true);
+}
+
+// PUT (story 5.9, P-10B). Lagrer ny tekst og tolker den. `uendret`: samme tekst som lagret;
+// `ingen`: tom tekst; `venter`: ingen KI eller låsen ble ikke ledig; `endret`: en nyere endring kom imellom.
+export type LagrePreferanseStatus = "tolket" | "feilet" | "endret" | "uendret" | "ingen" | "venter";
+
+export function lagrePreferanse(vaktnummer: number, ansattId: number, tekst: string): Promise<{ status: LagrePreferanseStatus }> {
+  return kall(`/api/vakter/${vaktnummer}/kandidater/${ansattId}/preferanse`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tekst }),
+  }, true);
 }

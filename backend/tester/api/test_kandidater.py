@@ -73,7 +73,7 @@ KANDIDAT_FELT = {"id", "navn", "kompetansenivå", "minutter_i_uka", "timebelastn
                  "hoy_belastning", "ulempebelastning", "kostnad"}
 RANGERT_FELT = KANDIDAT_FELT | {"stilling", "ansiennitet", "plass", "totalscore", "faktorpoeng",
                                 "preferansepoeng", "tolkestatus", "preferansekategori", "grunnlagsmerke",
-                                "faktorretninger"}
+                                "faktorretninger", "preferansetekst"}
 
 
 def hent(klient: TestClient, nummer: int) -> dict:
@@ -172,7 +172,12 @@ def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
 
     for k in svar["kandidater"]:
         assert set(k) == RANGERT_FELT
-    tekst = str(svar)
+    # Preferanseteksten er fritekst fra den ansatte (story 5.9) og kan inneholde
+    # «vakter»; den er ingen vaktdata og holdes utenfor ordkontrollen. Alt annet i
+    # svaret kontrolleres, også toppnivåfelt som kommer til senere.
+    uten_fritekst = {**svar, "kandidater": [
+        {f: v for f, v in k.items() if f != "preferansetekst"} for k in svar["kandidater"]]}
+    tekst = str(uten_fritekst)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
 

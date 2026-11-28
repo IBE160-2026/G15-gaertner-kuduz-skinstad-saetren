@@ -676,3 +676,270 @@ test("retry focus and late response after changing shifts", async () => {
   expect(screen.queryByText(t.tolket)).toBeNull();
   expect(kallTil(fetch, KANDIDATER_URL)).toBe(1);
 });
+
+describe("Endre preferansetekst (story 5.9, P-10B)", () => {
+  const rp = t.redigerPreferanse;
+  const jonas = { ...TO_GYLDIGE.kandidater[0], preferansetekst: "Gammel tekst." };
+  const mette = TO_GYLDIGE.kandidater[1];
+  const PUT = `PUT ${KANDIDATER_URL}/${jonas.id}/preferanse`;
+  const avveiningUrl = `${KANDIDATER_URL}/${jonas.id}/avveining`;
+  const avveining = (merke: string, tekst: string) => ok({
+    status: "ok", ki_kilde: "live", modell: "test/modell", vaktnummer: 4127, kandidat_id: jonas.id,
+    grunnlagsmerke: merke, paastander: [tekst],
+  });
+  const navn = () => [...document.querySelectorAll(".rangeringstabell tbody .ansattnavn")].map((rad) => rad.textContent);
+
+  async function åpne(bruker: ReturnType<typeof userEvent.setup>) {
+    await bruker.click(await screen.findByRole("button", { name: rp.endreEtikett(jonas.navn) }));
+    return screen.getByRole("textbox", { name: rp.feltEtikett(jonas.navn) }) as HTMLTextAreaElement;
+  }
+
+  test("Lagre sender teksten, henter ny rangering og viser ikke den gamle avveiningen", async () => {
+    const ny = { ...jonas, plass: 2, grunnlagsmerke: "c".repeat(64), preferansetekst: "Ny tekst.",
+      tolkestatus: "tolket" as const, preferansekategori: "vil_unnga", preferansepoeng: 0 };
+    const fetch = falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }),
+        ok({ ...TO_GYLDIGE, kandidater: [{ ...mette, plass: 1 }, ny] })],
+      [avveiningUrl]: avveining(jonas.grunnlagsmerke, "Gammel avveining."),
+      [`${KANDIDATER_URL}/${mette.id}/avveining`]: ok({
+        status: "avveining_feilet", vaktnummer: 4127, kandidat_id: mette.id, grunnlagsmerke: mette.grunnlagsmerke }),
+      [PUT]: ok({ status: "tolket" }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    expect(await screen.findByText("Gammel avveining.")).toBeTruthy();
+    const felt = await åpne(bruker);
+    expect(felt.value).toBe("Gammel tekst.");
+    expect(document.activeElement).toBe(felt);
+    await bruker.clear(felt);
+    await bruker.type(felt, "Ny tekst.");
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText(t.tolket)).toBeTruthy();
+    expect(navn()).toEqual([mette.navn, jonas.navn]);
+    expect(screen.getByText(t.preferansekategorier.vil_unnga)).toBeTruthy();
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(screen.queryByText("Gammel avveining.")).toBeNull();
+    const put = fetch.mock.calls.find(([, init]) => init?.method === "PUT")!;
+    expect(JSON.parse(String(put[1]!.body))).toEqual({ tekst: "Ny tekst." });
+    expect(kallTil(fetch, KANDIDATER_URL)).toBe(2);
+    expect(kallTil(fetch, VAKT_URL)).toBe(1);
+    // Avveiningen ble hentet én gang, for det gamle merket; det nye merket har ikke åpnet panel.
+    expect(kallTil(fetch, avveiningUrl)).toBe(1);
+  });
+
+  test("resultatet vises også i preferansecellen til kandidaten etter at han har flyttet seg", async () => {
+    const ny = { ...jonas, plass: 2, grunnlagsmerke: "c".repeat(64), preferansetekst: "Ny tekst.",
+      tolkestatus: "tolket" as const, preferansekategori: "vil_unnga", preferansepoeng: 0 };
+    falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }),
+        ok({ ...TO_GYLDIGE, kandidater: [{ ...mette, plass: 1 }, ny] })],
+      [PUT]: ok({ status: "tolket" }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    const felt = await åpne(bruker);
+    await bruker.clear(felt);
+    await bruker.type(felt, "Ny tekst.");
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    const radmelding = await screen.findByText(rp.rad.tolket);
+    expect(radmelding.closest("tr")?.textContent).toContain(jonas.navn);
+    expect(navn()).toEqual([mette.navn, jonas.navn]);
+    // Meldingen forsvinner når en ny handling starter, også når handlingen gjelder en
+    // annen rad, og den kommer ikke tilbake etter Avbryt (PR-gjennomgang 2026-11-28).
+    await bruker.click(screen.getByRole("button", { name: rp.endreEtikett(mette.navn) }));
+    expect(screen.queryByText(rp.rad.tolket)).toBeNull();
+    await bruker.click(screen.getByRole("button", { name: rp.avbrytEtikett(mette.navn) }));
+    expect(screen.queryByText(rp.rad.tolket)).toBeNull();
+  });
+
+  test("kandidaten blir på plass 1: det åpne panelet henter avveiningen for det nye merket", async () => {
+    const nyttMerke = "c".repeat(64);
+    const ny = { ...jonas, grunnlagsmerke: nyttMerke, preferansetekst: "Ny tekst.",
+      tolkestatus: "tolket" as const, preferansekategori: "onsker_flere", preferansepoeng: 100 };
+    const fetch = falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }),
+        ok({ ...TO_GYLDIGE, kandidater: [ny, mette] })],
+      [avveiningUrl]: [avveining(jonas.grunnlagsmerke, "Gammel avveining."), avveining(nyttMerke, "Ny avveining.")],
+      [PUT]: ok({ status: "tolket" }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    expect(await screen.findByText("Gammel avveining.")).toBeTruthy();
+    const felt = await åpne(bruker);
+    await bruker.clear(felt);
+    await bruker.type(felt, "Ny tekst.");
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText("Ny avveining.")).toBeTruthy();
+    expect(navn()).toEqual([jonas.navn, mette.navn]);
+    expect(screen.queryByText("Gammel avveining.")).toBeNull();
+    expect(kallTil(fetch, avveiningUrl)).toBe(2);
+  });
+
+  test("statuslinjen får fokus mens teksten lagres", async () => {
+    const fetch = falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas] }) });
+    let svar!: (response: Response) => void;
+    const ventende = new Promise<Response>((resolve) => { svar = resolve; });
+    vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) =>
+      init?.method === "PUT" ? ventende : fetch(input, init));
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    await åpne(bruker);
+    await bruker.keyboard("{Enter}");  // ny linje i feltet, ikke innsending
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(document.activeElement).toBe(screen.getByText(rp.lagrer));
+    expect(screen.getByRole("button", { name: g.velgEtikett(jonas.navn) })).toHaveProperty("disabled", true);
+    await act(async () => { svar(new Response(JSON.stringify({ status: "uendret" }), { status: 200 })); });
+    expect(await screen.findByText(rp.uendret)).toBeTruthy();
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(kallTil(fetch, KANDIDATER_URL)).toBe(1);
+  });
+
+  test("Avbryt og Esc lukker feltet uten å lagre og gir fokus tilbake til «Endre»", async () => {
+    const fetch = falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas] }) });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    let felt = await åpne(bruker);
+    await bruker.type(felt, " endret");
+    await bruker.click(screen.getByRole("button", { name: rp.avbrytEtikett(jonas.navn) }));
+    expect(screen.queryByRole("textbox")).toBeNull();
+    const endre = screen.getByRole("button", { name: rp.endreEtikett(jonas.navn) });
+    expect(document.activeElement).toBe(endre);
+    // Med tastaturet: Enter åpner, feltet er tilbakestilt, Esc lukker.
+    await bruker.keyboard("{Enter}");
+    felt = screen.getByRole("textbox", { name: rp.feltEtikett(jonas.navn) }) as HTMLTextAreaElement;
+    expect(felt.value).toBe("Gammel tekst.");
+    await bruker.keyboard("{Escape}");
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: rp.endreEtikett(jonas.navn) }));
+    // Esc lukker også når fokus står på en av knappene i skjemaet.
+    await bruker.keyboard("{Enter}");
+    screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }).focus();
+    await bruker.keyboard("{Escape}");
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: rp.endreEtikett(jonas.navn) }));
+    expect(fetch.mock.calls.some(([, init]) => init?.method === "PUT")).toBe(false);
+  });
+
+  test("bare ett felt er åpent om gangen", async () => {
+    falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }) });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    await åpne(bruker);
+    await bruker.click(screen.getByRole("button", { name: rp.endreEtikett(mette.navn) }));
+    const felt = screen.getAllByRole("textbox");
+    expect(felt).toHaveLength(1);
+    expect(felt[0].getAttribute("aria-label")).toBe(rp.feltEtikett(mette.navn));
+  });
+
+  test("404 lukker feltet, henter rangeringen og sier at kandidaten ikke lenger er gyldig", async () => {
+    const fetch = falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }),
+        ok({ ...TO_GYLDIGE, kandidater: [{ ...mette, plass: 1 }] })],
+      [PUT]: feil(404, "ikke_funnet"),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    await åpne(bruker);
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText(rp.ikkeGyldig)).toBeTruthy();
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(navn()).toEqual([mette.navn]);
+    expect(screen.getByRole("region", { name: t.rangeringstabell })).toBeTruthy();
+    expect(kallTil(fetch, KANDIDATER_URL)).toBe(2);
+  });
+
+  test("422 viser feilteksten og beholder teksten i feltet", async () => {
+    const fetch = falskFetch({
+      [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas] }),
+      [PUT]: feil(422, "ugyldig_foresporsel"),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    const felt = await åpne(bruker);
+    await bruker.type(felt, " Mer.");
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText(rp.avvist(feiltekst("ugyldig_foresporsel")))).toBeTruthy();
+    expect((screen.getByRole("textbox", { name: rp.feltEtikett(jonas.navn) }) as HTMLTextAreaElement).value).toBe("Gammel tekst. Mer.");
+    expect(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) })).toHaveProperty("disabled", false);
+    expect(kallTil(fetch, KANDIDATER_URL)).toBe(1);
+  });
+
+  test("«endret» fra backend henter rangeringen og sier at preferansen er endret", async () => {
+    falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas] }),
+        ok({ ...TO_GYLDIGE, kandidater: [{ ...jonas, grunnlagsmerke: "d".repeat(64), preferansetekst: "Nyere." }] })],
+      [PUT]: ok({ status: "endret" }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    await åpne(bruker);
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText(t.tolkEndret)).toBeTruthy();
+    expect(screen.queryByRole("textbox")).toBeNull();
+  });
+
+  test.each([
+    ["ingen", rp.ingen], ["venter", rp.venter], ["feilet", t.tolkefeil],
+  ] as const)("status «%s» gir egen melding", async (status, melding) => {
+    falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas] }),
+        ok({ ...TO_GYLDIGE, kandidater: [{ ...jonas, grunnlagsmerke: "e".repeat(64) }] })],
+      [PUT]: ok({ status }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    await åpne(bruker);
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText(melding)).toBeTruthy();
+  });
+
+  test("sent svar etter vaktbytte oppdaterer ikke den nye visningen", async () => {
+    const nyVakt = "/api/vakter/4189";
+    const fetch = falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas] }),
+      [nyVakt]: ok({ ...VAKT_4127, vaktnummer: 4189 }),
+      [`${nyVakt}/kandidater`]: ok(TO_GYLDIGE),
+    });
+    let svar!: (response: Response) => void;
+    const ventende = new Promise<Response>((resolve) => { svar = resolve; });
+    vi.stubGlobal("fetch", (input: RequestInfo | URL, init?: RequestInit) =>
+      init?.method === "PUT" ? ventende : fetch(input, init));
+    const bruker = userEvent.setup();
+    const visning = render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    await åpne(bruker);
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    visning.rerender(<Kandidatflate vaktnummer={4189} onVelg={vi.fn()} />);
+    await screen.findByRole("heading", { name: t.overskrift(4189) });
+    await act(async () => { svar(new Response(JSON.stringify({ status: "tolket" }), { status: 200 })); });
+    expect(screen.queryByText(t.tolket)).toBeNull();
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(kallTil(fetch, KANDIDATER_URL)).toBe(1);
+    // Den nye vakten kan redigeres med en gang.
+    expect(screen.getByRole("button", { name: rp.endreEtikett(mette.navn) })).toHaveProperty("disabled", false);
+  });
+
+  test.each([true, false])("demomerknaden vises bare i demo-modus (demomodus=%s)", async (demomodus) => {
+    falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [jonas] }) });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} demomodus={demomodus} />);
+    expect(screen.queryByText(rp.demo)).toBeNull();
+    const felt = await åpne(bruker);
+    expect(screen.queryByText(rp.demo) !== null).toBe(demomodus);
+    expect(felt.getAttribute("aria-describedby")).toBeTruthy();
+    expect(document.getElementById(felt.getAttribute("aria-describedby")!)!.textContent!.includes(rp.demo)).toBe(demomodus);
+  });
+
+  test("tom tekst forhåndsutfylles som tomt felt", async () => {
+    falskFetch({ [VAKT_URL]: ok(VAKT_4127), [KANDIDATER_URL]: ok({ ...TO_GYLDIGE, kandidater: [{ ...jonas, preferansetekst: null }] }) });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    expect((await åpne(bruker)).value).toBe("");
+  });
+});

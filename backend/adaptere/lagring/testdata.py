@@ -859,6 +859,7 @@ def fyll_testdata(session: Session) -> dict[str, int]:
                 timelønn=timelønn,
                 kompetanse=dict(kompetanse),
                 preferanse=PREFERANSER[preferanse][0] if preferanse else None,
+                preferanseversjon=0,
             )
         )
     session.flush()

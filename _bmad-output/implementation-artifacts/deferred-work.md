@@ -102,10 +102,10 @@
   evidence: Utsatt av Mithad 2026-11-16 og beholdt av Ragnhild ved PR #30. API-endepunkt, knapp og automatiske tester laget 2026-11-19 (`spec-5-1-prov-igjen.md`). Løst 2026-11-19: godkjent av Mithad etter uavhengig gjennomgang, inkludert en egen live-test av samtidighet mot en kjørende backend (se `.logs/mithad-kuduz/979-2026-11-19-22-00-00-gjennomgang-pr-33.md`), og merget til `main` (PR #33). Story 5.1 er `done` i `sprint-status.yaml`.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-prov-igjen.md`
   summary: Flerprosessdrift krever delt lås eller vedvarende versjon for preferanseforsøk.
-  evidence: Gjennomgangen 2026-11-19 fant at låser er per app-prosess og at identiske verdier kan skjule et mellomliggende forsøk. V1 dokumenterer én worker; verifiser atomisk samordning før støtte for flere workers.
+  evidence: Gjennomgangen 2026-11-19 fant at låser er per app-prosess og at identiske verdier kan skjule et mellomliggende forsøk. V1 dokumenterer én worker; verifiser atomisk samordning før støtte for flere workers. Story 5.9 (2026-11-26) legger til en vedvarende versjon for teksten, så en tekstendring oppdages også mellom prosesser. Låsen er fortsatt per prosess, så to prosesser kan fortsatt tolke samme versjon samtidig.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-prov-igjen.md`
-  summary: Test og håndter tekstendring A–B–A under KI-kall når preferanseredigering innføres i story 5.9.
-  evidence: Betinget lagring sammenligner tekstens verdi og kan ikke oppdage en mellomliggende endring tilbake til samme verdi. Den nåværende appen har ikke preferanseredigering.
+  summary: "[Håndtert i kode 2026-11-26 på branchen `story-5.9-redigere-preferansetekst`, gjennomgang gjenstår] Test og håndter tekstendring A–B–A under KI-kall når preferanseredigering innføres i story 5.9."
+  evidence: Betinget lagring sammenla bare tekstens verdi og kunne ikke oppdage en mellomliggende endring tilbake til samme verdi. Story 5.9 innfører `ansatt.preferanseversjon`, som økes ved hver endring og sammenlignes i all betinget lagring (oppstart, «Prøv igjen» og redigering). Testene `test_a_b_a_*` i `backend/tester/api/test_preferanseredigering.py` og `test_a_b_a_forkaster_svaret_på_den_første_a` i `backend/tester/lagring/test_preferansetolkning.py`. Settes til løst når PR-en er gjennomgått og merget.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-1-tolke-tekstbaserte-ansattpreferanser-med-ki.md`
   summary: "[LØST 2026-11-16, AV-19] Gruppa har ikke vedtatt feilreglene for preferansetolkning (3 nye forsøk etter 2/4/8 s, 90 s budsjett, minst 1 s og 60 s ved 429, sluttstatus `kunne_ikke_tolkes` med feiltype). Konstantene i `backend/adaptere/ki/openrouter.py` er Mithads forslag 2026-11-16."
   evidence: P-05/OP-03 og PRD §8 krever avklaring før story 5.1 og 5.2 kan bli `done`. Funnet i kodegjennomgangen 2026-11-16 (blind). Vedtaket føres i `docs/beslutninger/avklaringspunkter.md`. Løst 2026-11-16: Ragnhild Sætren vedtok verdiene på vegne av gruppa (AV-19, `avklaringspunkter.md` §11). «Prøv igjen» er ikke en del av vedtaket og står som eget funn.
@@ -152,3 +152,12 @@
 - source_spec: none
   summary: "Story 5.8, etter sensur: slett eller bytt nøkkelen sensor fikk i OpenRouter, og navngi den ansvarlige personen i innleveringen."
   evidence: Delt ut av story 5.8 2026-11-23 (Ragnhild valgte «Del opp» i bmad-build). Kan først gjøres etter at sensuren er ferdig (epics.md, story 5.8, siste akseptkriterium).
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
+  summary: "[LØST 2026-11-26, PR #42] AGENTS.md sa fortsatt at 5.8 og 5.9 står i backlog, og nevner bare story 5.1 som grunn til å slette en eldre database (5.9 la til `preferanseversjon`)."
+  evidence: Funnet av Blind Hunter i gjennomgangen av story 5.9 2026-11-26. Løst 2026-11-26: Ragnhild valgte å rette AGENTS.md i PR #42, så statusen blir riktig når PR-en merges.
+
+## Deferred from: code review of spec-5-9-redigere-preferansetekst (2026-11-28)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
+  summary: "Ingen frontendtest viser at 401 på PUT eller POST `/api/vakter/{nr}/kandidater/{id}/preferanse` gir innloggingen med «sesjonen er utløpt». Fjernes `true` (beskyttet) i `lagrePreferanse` eller `provPreferanse` i `api.ts`, blir ingen test rød."
+  evidence: Funnet av Verification Gap og Blind Hunter i PR-gjennomgangen av story 5.9 2026-11-28 (Johannes). Hullet fantes for `provPreferanse` fra story 5.1; én `<App />`-test bør dekke begge kallene.

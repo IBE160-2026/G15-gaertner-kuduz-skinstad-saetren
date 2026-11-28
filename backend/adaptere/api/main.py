@@ -30,13 +30,15 @@ from adaptere.api import sesjon
 from adaptere.forklaringsgrunnlag import forklaringsnøkkel
 from adaptere.ki.avveining import Retning, faktorretninger
 from adaptere.ki.demo import DemoKiAdapter, DemoOppslag
-from adaptere.ki.openrouter import STANDARD_MODELL, Forklarer, OpenRouterKiAdapter, Tolker, leverandør
+from adaptere.ki.openrouter import STANDARD_MODELL, TIDSBUDSJETT_S, Forklarer, OpenRouterKiAdapter, Tolker, leverandør
 from adaptere.lagring.brukere import hent_innlogget, hent_passord_kilde, verifiser_innlogging
 from adaptere.lagring.database import lag_engine, lag_sessionmaker
 from adaptere.lagring.kandidatgrunnlag import hent_kandidatgrunnlag, kandidatmerke
 from adaptere.lagring.godkjenninger import lagre_godkjenning
 from adaptere.lagring.modeller import OSLO, AnsattRad
-from adaptere.lagring.preferansetolkning import lagre_resultat, ventende_tekster, les_tolkning, tilstandsmerke
+from adaptere.lagring.preferansetolkning import (
+    lagre_resultat, lagre_tekst, les_tolkning, normaliser_tekst, tilstandsmerke, ventende_tekster,
+)
 from adaptere.lagring.vaktdetaljer import hent_vaktdetaljer
 from adaptere.lagring.vaktoversikt import hent_vaktoversikt
 from domene.porter.rangering import RangertKandidat, TolketPreferanse
@@ -126,6 +128,11 @@ def feil(status: int, kode: str, headers: dict[str, str] | None = None) -> JSONR
 class InnloggingInn(BaseModel):
     brukernavn: StrictStr = Field(max_length=50)  # som kolonnen i `bruker`
     passord: StrictStr = Field(max_length=256)
+
+
+class PreferanseInn(BaseModel):
+    # Story 5.9. Trimmes i `lagre_tekst`; tom tekst lagres som None («Ingen registrert»).
+    tekst: StrictStr = Field(max_length=500)
 
 
 class InnloggetUt(BaseModel):
@@ -247,6 +254,8 @@ class RangertKandidatUt(KandidatUt):
     preferansepoeng: float
     tolkestatus: Tolkestatus
     preferansekategori: str | None
+    # Råteksten, så frontend kan forhåndsutfylle redigeringen (story 5.9).
+    preferansetekst: str | None
     grunnlagsmerke: str
     faktorretninger: dict[str, Retning]
 
@@ -275,6 +284,7 @@ def rangert_ut(rangert: RangertKandidat, kandidat: Kandidat, vakt: Vakt, ulempe:
         ),
         preferansepoeng=rangert.preferansepoeng, tolkestatus=rangert.tolkestatus.value,
         preferansekategori=rangert.tolket_preferanse.kategori if rangert.tolket_preferanse else None,
+        preferansetekst=kandidat.preferanse,
     )
 
 
@@ -407,6 +417,9 @@ def les_rangering(okt: Session, bruker_id: int, vaktnummer: int) -> RangertGrunn
 
 
 KI_MODUSER = ("openrouter", "demo")
+# Hvor lenge en endret preferansetekst venter på et pågående forsøk for samme ansatt
+# (story 5.9). Et forsøk varer høyst ett tidsbudsjett; pluss en margin.
+LAASEVENT_S = TIDSBUDSJETT_S + 10
 TOLKETRÅD = "preferansetolkning"
 
 
@@ -462,7 +475,7 @@ def tolk_ventende(okter: sessionmaker[Session], ki: Tolker, laaser: dict[int, Lo
     except Exception:
         logger.exception(
             "Preferansetolkning stoppet: kunne ikke lese ansatt-tabellen. Er databasen fra før "
-            "story 5.1? Slett den og last testdata på nytt."
+            "story 5.1 eller 5.9? Slett den og last testdata på nytt."
         )
         return
     if ventende:
@@ -671,6 +684,55 @@ def lag_app(
                 forventet = tilstandsmerke(rad)
             if ki is None:
                 return feil(503, "ki_utilgjengelig")
+            resultat = ki.tolk(tekst)
+            verdi = resultat if isinstance(resultat, TolketPreferanse) else resultat.feiltype
+            lagret = lagre_resultat(okter, ansatt_id, tekst, verdi, forventet)
+            return {"status": "endret" if not lagret else "tolket" if isinstance(verdi, TolketPreferanse) else "feilet"}
+        finally:
+            laas.release()
+
+    @app.put("/api/vakter/{vaktnummer}/kandidater/{ansatt_id}/preferanse", response_model=None)
+    def lagre_preferanse(
+        vaktnummer: int, ansatt_id: int, inn: PreferanseInn, request: Request,
+    ) -> dict[str, str] | JSONResponse:
+        """Lagrer ny preferansetekst og tolker den med samme regler som «Prøv igjen» (story 5.9).
+
+        Tilgangen kontrolleres i skrivetransaksjonen, med samme krav som
+        `prov_preferanse`. Svaret er `uendret`, `ingen` (tom tekst), `venter` (ingen
+        KI, eller låsen ble ikke ledig i tide), `endret` (en nyere endring kom
+        imellom), `tolket` eller `feilet`.
+        """
+        bruker_id = request.state.bruker.id
+
+        def gyldig_kandidat(okt: Session) -> bool:
+            grunnlag = hent_kandidatgrunnlag(okt, bruker_id, vaktnummer)
+            if grunnlag is None:
+                return False
+            vurdering = vurder_kandidater(grunnlag.vakt, grunnlag.ansatte, grunnlag.datagrense, grunnlag.historikkstart)
+            return not isinstance(vurdering, Datafeil) and any(k.id == ansatt_id for k in vurdering.gyldige)
+
+        versjon = lagre_tekst(okter, ansatt_id, inn.tekst, gyldig_kandidat)
+        if versjon == "ikke_funnet":
+            return feil(404, "ikke_funnet")
+        if versjon == "uendret":
+            return {"status": "uendret"}
+        if normaliser_tekst(inn.tekst) is None:
+            return {"status": "ingen"}
+        if ki is None:
+            return {"status": "venter"}
+        with laasevakt:
+            laas = tolkelaaser.setdefault(ansatt_id, threading.Lock())
+        # Vent på et pågående forsøk (oppstart, «Prøv igjen» eller en tidligere endring).
+        # Det varer høyst ett tidsbudsjett; versjonen sjekkes på nytt etterpå.
+        if not laas.acquire(timeout=LAASEVENT_S):
+            return {"status": "venter"}
+        try:
+            with okter() as okt:
+                rad = okt.get(AnsattRad, ansatt_id)
+                if rad is None or rad.preferanseversjon != versjon or rad.preferanse is None:
+                    return {"status": "endret"}
+                tekst = rad.preferanse
+                forventet = tilstandsmerke(rad)
             resultat = ki.tolk(tekst)
             verdi = resultat if isinstance(resultat, TolketPreferanse) else resultat.feiltype
             lagret = lagre_resultat(okter, ansatt_id, tekst, verdi, forventet)

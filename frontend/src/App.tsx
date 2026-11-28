@@ -178,7 +178,7 @@ export default function App() {
               onGodkjent={godkjent}
               onTilOversikt={tilVaktvalg}
             />
-          ) : <Kandidatflate vaktnummer={aktivVakt} onVelg={velgKandidat} />}
+          ) : <Kandidatflate vaktnummer={aktivVakt} onVelg={velgKandidat} demomodus={bruker.demomodus} />}
         </AvveiningerForVakt>
       )}
       {bruker && sti !== OVERSIKT_STI && vaktnummer === null && godkjenning === null && (

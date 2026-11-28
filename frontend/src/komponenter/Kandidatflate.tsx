@@ -4,7 +4,9 @@ import {
   gjeldendeSesjonsgenerasjon,
   hentVaktdetaljer,
   hentKandidater,
+  lagrePreferanse,
   provPreferanse,
+  type LagrePreferanseStatus,
   type RangertKandidat,
   type Ulempebelastning,
   type UtelukkelsesOppsummering,
@@ -35,9 +37,11 @@ type Props = {
   vaktnummer: number;
   /** Til godkjenningsflaten for Kandidaten (story 3.1). */
   onVelg: (vaktnummer: number, ansattId: number) => void;
+  /** Fra `/api/meg`. Viser demomerknaden når preferanseteksten endres (story 5.9). */
+  demomodus?: boolean;
 };
 
-export default function Kandidatflate({ vaktnummer, onVelg }: Props) {
+export default function Kandidatflate({ vaktnummer, onVelg, demomodus = false }: Props) {
   const [tilstand, setTilstand] = useState<Tilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
   const retryknapp = useRef<HTMLButtonElement>(null);
@@ -103,13 +107,21 @@ export default function Kandidatflate({ vaktnummer, onVelg }: Props) {
           <div><dt>{t.kompetanse}</dt><dd>{t.minstenivaa(data.minstenivå)}</dd></div>
         </dl>
       </section>
-      <Kandidatliste vaktnummer={data.vaktnummer} onVelg={(ansattId) => onVelg(data.vaktnummer, ansattId)} />
+      <Kandidatliste vaktnummer={data.vaktnummer} demomodus={demomodus} onVelg={(ansattId) => onVelg(data.vaktnummer, ansattId)} />
     </main>
   </>;
 }
 
+const rp = t.redigerPreferanse;
+
+// `ikke_gyldig`: PUT ga 404 fordi kandidaten ikke lenger er gyldig for vakten.
+const LAGRET_MELDING: Record<Exclude<LagrePreferanseStatus, "uendret"> | "ikke_gyldig", string> = {
+  tolket: t.tolket, feilet: t.tolkefeil, endret: t.tolkEndret, ingen: rp.ingen, venter: rp.venter,
+  ikke_gyldig: rp.ikkeGyldig,
+};
+
 // Hentes automatisk når vakten er lastet (story 2.1). Bare Gyldige kandidater.
-export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVelg: (ansattId: number) => void }) {
+export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktnummer: number; onVelg: (ansattId: number) => void; demomodus?: boolean }) {
   const [tilstand, setTilstand] = useState<Kandidattilstand>({ type: "laster" });
   const [forsok, setForsok] = useState(0);
   const retryknapp = useRef<HTMLButtonElement>(null);
@@ -120,11 +132,18 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
   const opptatt = useRef(false);
   const statusRef = useRef<HTMLParagraphElement>(null);
   const fokuserFeil = useRef(true);
+  // Høyst én preferansetekst redigeres om gangen (story 5.9).
+  const [redigerId, setRedigerId] = useState<number | null>(null);
+  // Resultatet av siste lagring vises også i preferansecellen til kandidaten, fordi
+  // kandidaten kan ha flyttet seg langt fra statuslinjen (manuell test 2026-11-26).
+  const [radmelding, setRadmelding] = useState<{ id: number; tekst: string } | null>(null);
   useEffect(() => {
     visningsversjon.current += 1;
     opptatt.current = false;
     setPaagar(false);
     setMelding("");
+    setRedigerId(null);
+    setRadmelding(null);
     fokuserFeil.current = true;
     return () => { visningsversjon.current += 1; };
   }, [vaktnummer]);
@@ -139,6 +158,7 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
     const gyldig = () => versjon === visningsversjon.current && generasjon === gjeldendeSesjonsgenerasjon();
     setPaagar(true);
     setMelding(t.tolker);
+    setRadmelding(null);
     statusRef.current?.focus();
     try {
       const svar = await provPreferanse(vaktnummer, id);
@@ -147,6 +167,61 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
       if (!gyldig()) return;
       setTilstand(tilstandFraSvar(kandidater));
       setMelding(svar.status === "tolket" ? t.tolket : svar.status === "feilet" ? t.tolkefeil : t.tolkEndret);
+    } catch (feil) {
+      if (!gyldig()) return;
+      fokuserFeil.current = document.activeElement === statusRef.current;
+      setTilstand(tilstandFraFeil(feil));
+    } finally {
+      if (gyldig()) { opptatt.current = false; setPaagar(false); }
+    }
+  }
+
+  // Å åpne et felt er en ny handling: meldingen fra forrige lagring fjernes, så den
+  // ikke kommer tilbake etter Avbryt eller blir stående mens en annen rad redigeres.
+  function apneRedigering(id: number) {
+    setRadmelding(null);
+    setRedigerId(id);
+  }
+
+  // Story 5.9: samme mønster som «Prøv igjen». Statuslinjen får fokus, og et sent svar
+  // etter vaktbytte eller ny sesjon vises ikke. 422 beholder tekstfeltet åpent.
+  async function lagrePreferanseHandling(id: number, tekst: string) {
+    if (opptatt.current) return;
+    opptatt.current = true;
+    const generasjon = gjeldendeSesjonsgenerasjon();
+    const versjon = visningsversjon.current;
+    const gyldig = () => versjon === visningsversjon.current && generasjon === gjeldendeSesjonsgenerasjon();
+    setPaagar(true);
+    setMelding(rp.lagrer);
+    setRadmelding(null);
+    statusRef.current?.focus();
+    try {
+      let svar: { status: LagrePreferanseStatus | "ikke_gyldig" };
+      try {
+        svar = await lagrePreferanse(vaktnummer, id, tekst);
+      } catch (feil) {
+        if (feil instanceof ApiFeil && feil.status === 422) {
+          if (gyldig()) setMelding(rp.avvist(feiltekst(feil.kode)));
+          return;
+        }
+        // Kandidaten er ikke lenger gyldig: lukk feltet og vis den oppdaterte rangeringen.
+        if (feil instanceof ApiFeil && feil.status === 404) svar = { status: "ikke_gyldig" };
+        else throw feil;
+      }
+      if (!gyldig()) return;
+      if (svar.status === "uendret") {
+        setRedigerId(null);
+        setMelding(rp.uendret);
+        setRadmelding({ id, tekst: rp.rad.uendret });
+        return;
+      }
+      const kandidater = await hentKandidater(vaktnummer);
+      if (!gyldig()) return;
+      setRedigerId(null);
+      setTilstand(tilstandFraSvar(kandidater));
+      setMelding(LAGRET_MELDING[svar.status]);
+      // Ikke ved «ikke_gyldig»: kandidaten står ikke lenger i tabellen.
+      if (svar.status !== "ikke_gyldig") setRadmelding({ id, tekst: rp.rad[svar.status] });
     } catch (feil) {
       if (!gyldig()) return;
       fokuserFeil.current = document.activeElement === statusRef.current;
@@ -209,7 +284,10 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
       {overskrift}
       <p className="meta">{t.ulempePeriode}</p>
       <p role="status" tabIndex={-1} ref={statusRef}>{melding}</p>
-      <Rangeringstabell vaktnummer={vaktnummer} kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling} />
+      <Rangeringstabell
+        vaktnummer={vaktnummer} kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling}
+        redigering={{ id: redigerId, demomodus, melding: radmelding, onApne: apneRedigering, onLukk: () => setRedigerId(null), onLagre: lagrePreferanseHandling }}
+      />
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>
   );
@@ -222,7 +300,17 @@ export function Kandidatliste({ vaktnummer, onVelg }: { vaktnummer: number; onVe
 // lasting, så valget nullstilles for en ny vakt.
 const k = t.kolonner;
 
-function Rangeringstabell({ vaktnummer, kandidater, onVelg, paagar, onProv }: { vaktnummer: number; kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void; paagar: boolean; onProv: (id: number) => void }) {
+type Redigering = {
+  id: number | null;
+  demomodus: boolean;
+  /** Resultatet av siste lagring for én kandidat, vist i cellen (ikke en live-region). */
+  melding: { id: number; tekst: string } | null;
+  onApne: (id: number) => void;
+  onLukk: () => void;
+  onLagre: (id: number, tekst: string) => void;
+};
+
+function Rangeringstabell({ vaktnummer, kandidater, onVelg, paagar, onProv, redigering }: { vaktnummer: number; kandidater: RangertKandidat[]; onVelg: (ansattId: number) => void; paagar: boolean; onProv: (id: number) => void; redigering: Redigering }) {
   const [visAlle, setVisAlle] = useState(false);
   const førsteNye = useRef<HTMLButtonElement>(null);
   const synlige = synligeKandidater(kandidater, visAlle);
@@ -251,6 +339,7 @@ function Rangeringstabell({ vaktnummer, kandidater, onVelg, paagar, onProv }: { 
             <Kandidatrad
               key={`${vaktnummer}/${kandidat.id}/${kandidat.grunnlagsmerke}/${gjeldendeSesjonsgenerasjon()}`}
               vaktnummer={vaktnummer} kandidat={kandidat} alt={i % 2 === 1} onVelg={onVelg} paagar={paagar} onProv={onProv}
+              redigering={redigering}
               knappRef={i === SYNLIGE_KANDIDATER ? førsteNye : undefined}
             />
           ))}
@@ -316,9 +405,10 @@ type RadProps = {
   knappRef?: RefObject<HTMLButtonElement | null>;
   paagar: boolean;
   onProv: (id: number) => void;
+  redigering: Redigering;
 };
 
-function Kandidatrad({ vaktnummer, kandidat: r, alt, onVelg, knappRef, paagar, onProv }: RadProps) {
+function Kandidatrad({ vaktnummer, kandidat: r, alt, onVelg, knappRef, paagar, onProv, redigering }: RadProps) {
   const [panel, settPanel] = useState<"åpent" | "skjult" | "uåpnet">(r.plass === 1 ? "åpent" : "uåpnet");
   const åpent = panel === "åpent";
   const panelId = `avveining-${r.id}`;
@@ -344,6 +434,10 @@ function Kandidatrad({ vaktnummer, kandidat: r, alt, onVelg, knappRef, paagar, o
         <span className="tag">{preferansetekst(r)}</span>
         <div className="undertekst">{t.preferansePoeng(énDesimal.format(r.preferansepoeng))}</div>
         {r.tolkestatus === "kunne_ikke_tolkes" && <button type="button" className="button-secondary button-kompakt" disabled={paagar} aria-label={t.provPreferanse(r.navn)} onClick={() => onProv(r.id)}>{TEKSTER.provIgjen}</button>}
+        {redigering.melding?.id === r.id && redigering.id !== r.id && (
+          <div className="undertekst preferanse-radmelding">{redigering.melding.tekst}</div>
+        )}
+        <Preferanseredigering kandidat={r} paagar={paagar} redigering={redigering} />
       </td>
       <td>
         <button
@@ -365,6 +459,67 @@ function Kandidatrad({ vaktnummer, kandidat: r, alt, onVelg, knappRef, paagar, o
       </td>
     </tr>
   </>;
+}
+
+// «Endre» i preferansecellen (story 5.9, P-10B). Tekstfeltet er forhåndsutfylt med
+// råteksten. Lagre sender teksten; Avbryt (eller Esc) lukker feltet uten å lagre og gir
+// fokus tilbake til «Endre». Raden monteres på nytt når merket endres etter lagring.
+function Preferanseredigering({ kandidat: r, paagar, redigering }: { kandidat: RangertKandidat; paagar: boolean; redigering: Redigering }) {
+  const åpen = redigering.id === r.id;
+  const [utkast, setUtkast] = useState(r.preferansetekst ?? "");
+  const felt = useRef<HTMLTextAreaElement>(null);
+  const endreknapp = useRef<HTMLButtonElement>(null);
+  const tilbakeTilEndre = useRef(false);
+  const hjelpId = `preferanse-hjelp-${r.id}`;
+
+  useEffect(() => {
+    if (åpen) felt.current?.focus();
+    else if (tilbakeTilEndre.current) {
+      tilbakeTilEndre.current = false;
+      endreknapp.current?.focus();
+    }
+  }, [åpen]);
+
+  function avbryt() {
+    tilbakeTilEndre.current = true;
+    setUtkast(r.preferansetekst ?? "");
+    redigering.onLukk();
+  }
+
+  if (!åpen) return (
+    <button
+      ref={endreknapp} type="button" className="button-secondary button-kompakt" disabled={paagar}
+      aria-label={rp.endreEtikett(r.navn)}
+      onClick={() => { setUtkast(r.preferansetekst ?? ""); redigering.onApne(r.id); }}
+    >
+      {rp.endre}
+    </button>
+  );
+
+  return (
+    <form
+      className="preferanse-redigering" onSubmit={(e) => { e.preventDefault(); redigering.onLagre(r.id, utkast); }}
+      onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); avbryt(); } }}
+    >
+      <textarea
+        ref={felt} aria-label={rp.feltEtikett(r.navn)} aria-describedby={hjelpId} maxLength={500}
+        value={utkast} disabled={paagar}
+        onChange={(e) => setUtkast(e.target.value)}
+      />
+      <div id={hjelpId} className="undertekst">
+        <span>{rp.hjelp}</span>
+        {redigering.demomodus && <> <span>{rp.demo}</span></>}
+      </div>
+      <div className="preferanse-handlinger">
+        <button type="submit" className="button-secondary button-kompakt" disabled={paagar} aria-label={rp.lagreEtikett(r.navn)}>
+          {rp.lagre}
+        </button>
+        <button type="button" className="button-secondary button-kompakt" disabled={paagar} aria-label={rp.avbrytEtikett(r.navn)} onClick={avbryt}>
+          {rp.avbryt}
+        </button>
+      </div>
+    </form>
+  );
 }
 
 // Ekskludert-boksen (story 2.5, UX-DR15). Vist bare når noen er utelukket, enten

@@ -92,6 +92,11 @@ class AnsattRad(Base):
     tolket_teksthash: Mapped[str | None] = mapped_column(String(64))
     tolkefeil: Mapped[str | None] = mapped_column(String(20))
     tolkeformat: Mapped[int | None]
+    # Øker med 1 hver gang turnusansvarlig lagrer en endret `preferanse` (story 5.9).
+    # Hver betinget lagring av en tolkning sammenligner versjonen, så et KI-svar på en
+    # eldre versjon forkastes også når teksten er endret tilbake (A–B–A). Inngår i
+    # grunnlagsmerket som alle kolonner på `ansatt` (P-09).
+    preferanseversjon: Mapped[int] = mapped_column(default=0, server_default="0")
 
 
 class VaktRad(Base):

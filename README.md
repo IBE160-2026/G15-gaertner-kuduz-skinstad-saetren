@@ -130,7 +130,10 @@ Testdataene har to vakter som mangler bemanning: #4127 med fire gyldige kandidat
    #4127 med «Velg vakt — finn erstatter →».
 2. **Gyldige kandidater.** Bare kandidater som består alle fire reglene, vises. De er
    rangert, og for hver kandidat ser du kompetansenivå, kostnad, timer i uka, ulempe
-   og preferanse. Høy belastning og overtid er merket.
+   og preferanse. Høy belastning og overtid er merket. «Endre» i preferansecellen lar deg
+   skrive en ny preferansetekst. Den tolkes, og rangeringen oppdateres (i demo-modus
+   tolkes bare de forhåndsdefinerte tekstene). Endringen lagres i databasen og blir
+   stående til du laster testdataene på nytt (steg 2 i «Kom i gang»).
 3. **Begrunnelse.** «Vis begrunnelse» åpner KI-forklaringen av avveiningen for
    kandidaten. Tallene i forklaringen er kontrollert mot regelmotorens tall før den
    vises. Feiler KI-en, vises nøkkeltallene med en reservetekst, og du kan fortsatt
@@ -219,7 +222,8 @@ kontrolleres manuelt og hvorfor, står i [docs/testing.md](docs/testing.md).
 
 ## Feilsøking
 
-- **«no such column» eller feil om databasen:** Databasen er fra en eldre versjon. Slett
+- **«no such column» eller feil om databasen:** Databasen er fra en eldre versjon, for
+  eksempel fra før preferanseteksten kunne endres (`preferanseversjon`). Slett
   `backend/turnushjelperen.db` og kjør steg 2 på nytt.
 - **Lange filstier på Windows:** Kloner du til en sti lengre enn ca. 130 tegn, kan
   checkout feile med «Filename too long», og `python -m venv` kan feile. Klon til en

@@ -91,6 +91,10 @@
   --visually-hidden-size: 1px;
   --detail-column-min: 180px;
   --avviksnotat-kandidat-min: 220px;
+  /* Tekstfeltet for preferansen i rangeringstabellen (story 5.9). I rem, så det vokser med
+     skriften; tabellen ruller vannrett i smale vinduer (story 4.6). */
+  --preferanse-felt-width: 14rem;
+  --preferanse-felt-rows-min-height: 5rem;
   /* Bredden på den faste «Nr.»-kolonnen i rangeringstabellen (story 4.6). Bevisst i rem,
      ikke px: kolonnen har tekst (plass og totalscore) som skal vokse med skriftstørrelsen,
      og «Kandidat»-kolonnen står fast med denne avstanden fra venstre kant (AV-13).
