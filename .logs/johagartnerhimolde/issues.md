@@ -91,3 +91,4 @@
 - [x] 2026-11-28 [gjennomgang-pr-42](969-2026-11-28-10-29-43-gjennomgang-pr-42.md) — Ved merge av PR #42: sett 5.9 til `done` i `sprint-status.yaml` med PR-kommentar (godkjent av, merget, commit). (løst 2026-11-28: merget i `c6817df`, sprintstatus oppdatert)
 - [ ] 2026-11-28 [retrospektiv-epic-5](968-2026-11-28-11-10-08-retrospektiv-epic-5.md) — Gruppa behandler tiltakene T1–T8 fra retroen for epic 5 (`action_items` `epic-5-retro-*` i `sprint-status.yaml`, [retro-dokumentet](../../_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md)).
 - [ ] 2026-11-28 [retrospektiv-epic-5](968-2026-11-28-11-10-08-retrospektiv-epic-5.md) — Gruppa avklarer S1–S4 i retroen for epic 5, særlig S1: skal 5.8 stå `done` mens innleveringskriteriene venter på ÅB-8?
+- [ ] 2026-11-28 [ab-8-sensornokkel](967-2026-11-28-11-25-55-ab-8-sensornokkel.md) — AV-21: stopp utviklingsbruken på OpenRouter-nøkkelen ved innlevering, og bytt nøkkelen etter sensur (Johannes).
