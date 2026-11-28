@@ -1,10 +1,11 @@
 # Sjekkliste: live KI for sensor (story 5.8)
 
-> **Status:** utkast 2026-11-23, skrevet av Claude Code for Ragnhild Sætren. Ikke
-> gjennomført. Oppgavene er utsatt til nær innleveringsfristen
+> **Status:** utkast 2026-11-23, skrevet av Claude Code for Ragnhild Sætren. Oppgavene er
+> utsatt til nær innleveringsfristen
 > ([deferred-work.md](../../_bmad-output/implementation-artifacts/deferred-work.md),
-> 2026-11-23). Hvilken nøkkel sensor får, er ikke avgjort (ÅB-8 i
-> [epics.md](../../_bmad-output/planning-artifacts/epics.md)). Sensor følger
+> 2026-11-23). ÅB-8 ble avgjort 2026-11-28: sensor får den felles utviklingsnøkkelen (AV-21 i
+> [avklaringspunktene](../beslutninger/avklaringspunkter.md)). De andre punktene er ikke
+> gjennomført. Sensor følger
 > [README: KI: demo-modus eller live](../../README.md#ki-demo-modus-eller-live), og
 > nøkkelen settes i terminalen (AV-20 i
 > [avklaringspunktene](../beslutninger/avklaringspunkter.md)).
@@ -14,8 +15,12 @@ nøkkel, nøkkelprefiks utover `sk-or-v1-…` eller kredittbeløp skal inn i den
 
 ## Før innlevering
 
-- [ ] **Avgjør ÅB-8.** Hele gruppa velger ut fra forbruket i OpenRouters
-  aktivitetsoversikt. Ansvarlig: ______
+- [x] **Avgjør ÅB-8.** Hele gruppa velger ut fra forbruket i OpenRouters
+  aktivitetsoversikt. Ansvarlig: Johannes W. Gaertner, på vegne av gruppa.
+  - **Avgjort 2026-11-28 (AV-21): utfall 1.** Sensor får den felles utviklingsnøkkelen,
+    som har egen kredittgrense. Gruppa hadde brukt omtrent USD 0,2 så langt. Johannes
+    eier nøkkelen og sender den til sensor på e-post og i direktemelding i Teams, i
+    tillegg til innleveringsteksten. Utviklingsbruken på nøkkelen stopper ved innlevering.
   - Grunnlag: én kjøring hos sensor gir opptil 19 tolkekall hver gang backend startes
     med nøkkel (alle 19 etter at testdataene er lastet), og ett kall per forklaring som
     åpnes. Kostnaden per kall leses i aktivitetsoversikten.
@@ -55,26 +60,27 @@ nøkkel, nøkkelprefiks utover `sk-or-v1-…` eller kredittbeløp skal inn i den
 
 ## I innleveringsteksten
 
-- [ ] **Lim inn teksten under, med nøkkelen.** Nøkkelen står bare i
-  innleveringsteksten, aldri i repoet. Ansvarlig: ______
-- [ ] **Navngi den som sletter eller bytter nøkkelen etter sensur**, i teksten under.
-  Ansvarlig: ______
+- [ ] **Lim inn teksten under, med nøkkelen.** Nøkkelen står i innleveringsteksten og
+  sendes i tillegg til sensor på e-post og i direktemelding i Teams, aldri i repoet
+  (AV-21). Ansvarlig: Johannes W. Gaertner
+- [ ] **Navngi den som bytter nøkkelen etter sensur**, i teksten under. Det er Johannes
+  W. Gaertner (AV-21). Ansvarlig: Johannes W. Gaertner
 
 > **Kjøring og innlogging.** Start appen etter [README: Kom i gang](../../README.md#kom-i-gang).
 > Logg inn som `kari.vestby`. Passordet velger du selv i steg 2, variant A. Det står
 > ikke noe passord i repoet.
 >
 > **Live KI.** Appen kan kjøres uten nøkkel i demo-modus. For live KI mot OpenRouter
-> bruker du denne nøkkelen: `<nøkkel settes inn ved innlevering>`. Sett den som
+> bruker du denne nøkkelen: `<nøkkel settes inn ved innlevering>`. Den er også sendt
+> deg på e-post og i Teams. Sett den som
 > `OPENROUTER_API_KEY` i samme terminal som du starter backend fra, slik
 > [README](../../README.md#ki-demo-modus-eller-live) viser. Backend leser ikke `.env`.
 > Live er aktiv når appbaren ikke viser «Demo-modus», og forklaringene merkes
 > «KI-generert · openai/gpt-6-luna». Er kreditten brukt opp, viser appen
-> reservetekst i stedet for KI-forklaringer, og resten virker som før. Nøkkelen slettes
-> eller byttes etter sensur. Ansvarlig for det: `<navn>`.
+> reservetekst i stedet for KI-forklaringer, og resten virker som før. Nøkkelen byttes
+> etter sensur. Ansvarlig for det: Johannes W. Gaertner.
 
 ## Etter sensur
 
-- [ ] **Slett eller bytt nøkkelen sensor fikk, i OpenRouter.** Ved utfall 1 byttes den
-  felles utviklingsnøkkelen. Ved utfall 2 slettes sensornøkkelen. Den som er navngitt
-  i innleveringsteksten, gjør det. Ansvarlig: ______
+- [ ] **Bytt utviklingsnøkkelen i OpenRouter** (utfall 1, AV-21). Ansvarlig: Johannes
+  W. Gaertner

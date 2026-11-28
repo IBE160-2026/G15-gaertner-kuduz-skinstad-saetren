@@ -20,8 +20,8 @@ rangeringstabell (også i smale vinduer), avviksnotatet på godkjenningsflaten, 
 faktakontrollert avveining per kandidat, reservetekst når KI-forklaringen feiler, testen av
 at utelukkede aldri når KI-laget, rader som vises før forklaringene er ferdige,
 demo-modus uten API-nøkkel, sensoroppsett for live KI (5.8: README og
-`docs/innlevering/sjekkliste-live-ki.md`; nøkkelleveransen venter på ÅB-8) og redigering
-av preferansetekst (5.9, P-10B).
+`docs/innlevering/sjekkliste-live-ki.md`; ÅB-8 er avgjort med utviklingsnøkkelen, AV-21,
+og innleveringsoppgavene gjenstår) og redigering av preferansetekst (5.9, P-10B).
 Domenekjernen i
 `backend/domene/` har regelmotoren med alle fire harde regler (kompetanse-minstekrav,
 kolliderende vakt, 11-timersregelen og 35-timersregelen), timer i perioden,

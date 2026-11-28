@@ -106,7 +106,7 @@ Story 5.5 avklarte transporten for progressiv lasting. Hver åpnet rad henter si
 
 ### Åpne beslutninger
 
-> **Status 2026-11-10:** ÅB-1–ÅB-6 er avklart som produktvalg, inkludert P-01–P-04/P-10 og AV-04. ÅB-7 (mobil/nettbrett) er avklart 2026-11-14 (AV-17); ÅB-8 gjelder sensornøkkel nær innlevering. Avklarte krav er ikke dermed implementert eller testet.
+> **Status 2026-11-10:** ÅB-1–ÅB-6 er avklart som produktvalg, inkludert P-01–P-04/P-10 og AV-04. ÅB-7 (mobil/nettbrett) er avklart 2026-11-14 (AV-17); ÅB-8 (sensornøkkel) er avklart 2026-11-28 (AV-21). Avklarte krav er ikke dermed implementert eller testet.
 
 | ID | Beslutning | Kilde | Blokkerer | Status |
 |---|---|---|---|---|
@@ -117,7 +117,7 @@ Story 5.5 avklarte transporten for progressiv lasting. Hver åpnet rad henter si
 | **ÅB-5** | Avgrenset prototypetolkning: minst 11 t hvile både før og etter vurdert Vakt. | AV-04, PRD FR-4 | Grensetester i story 2.3 gjenstår. | Vedtatt 2026-11-02; implementasjon gjenstår |
 | **ÅB-6** | Avgrenset prototypetolkning: minst 35 t sammenhengende fri i hver berørt kalenderuke. | AV-04, PRD FR-5 | Grensetester i story 2.4 gjenstår. | Vedtatt 2026-11-02; implementasjon gjenstår |
 | **ÅB-7** | ~~Responsiv tilpasning: breakpoints og stablingsmønster for nettbrett og mobil~~ — **avklart 2026-11-14 (AV-17).** Mobil og nettbrett er v2. V1 skal fungere godt i smale nettleservinduer på en datamaskin (skjerm på høykant, flere vinduer side om side). Story 4.6 er skrevet om tilsvarende. | DESIGN.md, EXPERIENCE.md § Responsive & Platform, arkitektur § Deferred, referatet §11 | Ingenting. | **Avklart 2026-11-14; implementasjon i story 4.6 gjenstår** |
-| **ÅB-8** | Hvilken nøkkel sensor bruker for live KI: (1) den felles utviklingsnøkkelen, hvis det som er igjen av kreditt holder, eller (2) en egen sensornøkkel med kredittgrense. Avgjøres nær innlevering, når modellen er valgt etter modelltesten og gruppa kjenner det faktiske forbruket. Velges (1), må utviklingsnøkkelen byttes ut etter sensur, og utviklingsbruken på den stoppes etter innlevering. Forbruket per nøkkel kan leses i OpenRouters aktivitetsoversikt. | Faglærers tilbakemelding pkt. 3, PRD §8 | Bare den delen av story 5.8 som gjelder levering av nøkkel. Demo-modus (5.7) og README-oppsettet blokkeres ikke. | Åpen, blokkerer ikke |
+| **ÅB-8** | Hvilken nøkkel sensor bruker for live KI: (1) den felles utviklingsnøkkelen, hvis det som er igjen av kreditt holder, eller (2) en egen sensornøkkel med kredittgrense. Avgjøres nær innlevering, når modellen er valgt etter modelltesten og gruppa kjenner det faktiske forbruket. Velges (1), må utviklingsnøkkelen byttes ut etter sensur, og utviklingsbruken på den stoppes etter innlevering. Forbruket per nøkkel kan leses i OpenRouters aktivitetsoversikt. | Faglærers tilbakemelding pkt. 3, PRD §8 | Bare den delen av story 5.8 som gjelder levering av nøkkel. Demo-modus (5.7) og README-oppsettet blokkeres ikke. | **Avklart 2026-11-28 (AV-21):** utfall 1, den felles utviklingsnøkkelen med egen kredittgrense. Johannes W. Gaertner eier og bytter den etter sensur. |
 
 ### UX-designkrav
 
@@ -1216,6 +1216,8 @@ So that jeg kan vurdere Turnushjelperen uten gruppens tjenester (NFR14, SM-9).
 ### Story 5.8: Sensor kan kjøre live KI
 
 > Lagt til 2026-10-14 (sprint-change-proposal-2026-10-14.md). Bygger på story 5.7. Delen om levering av nøkkel avhenger av ÅB-8.
+
+> **ÅB-8 avgjort 2026-11-28 (AV-21):** Sensor får den felles utviklingsnøkkelen, som har egen kredittgrense. Den står i innleveringsteksten og sendes i tillegg på e-post og i Teams. Johannes W. Gaertner eier nøkkelen og bytter den etter sensur. Kriteriene under er ikke endret. Oppgavene for innlevering og sensur gjenstår ([sjekklisten](../../docs/innlevering/sjekkliste-live-ki.md)).
 
 As a sensor,
 I want en nøkkel med kreditt og en README som forklarer hvordan jeg bruker den,

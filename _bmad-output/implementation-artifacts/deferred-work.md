@@ -149,9 +149,11 @@
 - source_spec: none
   summary: "Story 5.8, innlevering: lever nøkkelen til sensor i innleveringsteksten etter at ÅB-8 er avgjort (felles utviklingsnøkkel eller egen sensornøkkel med kredittgrense), kjør nøkkelsjekken av git-historikken og noter resultatet, og la én person installere fra en ren klone bare etter README og kjøre flyten både med sensornøkkelen og i demo-modus."
   evidence: Delt ut av story 5.8 2026-11-23 (Ragnhild valgte «Del opp» i bmad-build). Oppgavene kan bare gjøres nær innleveringsfristen, og nøkkelleveransen venter på ÅB-8 (epics.md). Byggøkten for 5.8 lager README-veiledningen, kommandoen for nøkkelsjekken og sjekklisten disse oppgavene følger.
+  status: Delvis 2026-11-28. ÅB-8 er avgjort (AV-21): sensor får den felles utviklingsnøkkelen, som har egen kredittgrense. Nøkkelen står i innleveringsteksten og sendes i tillegg på e-post og i Teams av Johannes W. Gaertner, som eier den. Nøkkelsjekken av git-historikken, testen fra ren klone og selve leveransen gjenstår ([sjekklisten](../../docs/innlevering/sjekkliste-live-ki.md)).
 - source_spec: none
   summary: "Story 5.8, etter sensur: slett eller bytt nøkkelen sensor fikk i OpenRouter, og navngi den ansvarlige personen i innleveringen."
   evidence: Delt ut av story 5.8 2026-11-23 (Ragnhild valgte «Del opp» i bmad-build). Kan først gjøres etter at sensuren er ferdig (epics.md, story 5.8, siste akseptkriterium).
+  status: Ansvarlig avklart 2026-11-28 (AV-21). Johannes W. Gaertner bytter utviklingsnøkkelen etter sensur. Selve byttet gjenstår.
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
   summary: "[LØST 2026-11-26, PR #42] AGENTS.md sa fortsatt at 5.8 og 5.9 står i backlog, og nevner bare story 5.1 som grunn til å slette en eldre database (5.9 la til `preferanseversjon`)."
   evidence: Funnet av Blind Hunter i gjennomgangen av story 5.9 2026-11-26. Løst 2026-11-26: Ragnhild valgte å rette AGENTS.md i PR #42, så statusen blir riktig når PR-en merges.

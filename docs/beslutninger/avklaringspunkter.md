@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-25 (P-13 lukket etter ekstern forståelsestest og gruppas designvurdering, ført i §11 og §12); 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-28 (AV-21: sensor bruker utviklingsnøkkelen, ÅB-8 avgjort, ført i §2, §11 og §13); 2026-11-25 (P-13 lukket etter ekstern forståelsestest og gruppas designvurdering, ført i §11 og §12); 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -80,6 +80,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-18 | Porttyper i `domene/porter` | Vedtatt ved godkjenning av PR #29 den 16.11.2026 (Ragnhild Sætren), gjennom gruppas vanlige PR-prosess der ett medlem gjennomgår og godkjenner på vegne av gruppa. Arkitekturvalget bygger på tidligere beslutning og implementasjon. Krever ingen separat gruppegodkjenning. | Portene `TolketPreferanse` og `RangertKandidat` er frosne dataklasser uten logikk, ikke Pydantic-modeller som arkitekturen opprinnelig sa. Pydantic brukes i `adaptere/api` (§11). | Ragnhild Sætren (gjennomgang av PR #29); bekreftes av gruppa |
 | AV-19 | Feilregler for preferansetolkning (P-05/OP-03) | Vedtatt 2026-11-16 (Ragnhild Sætren, på vegne av gruppa) | Ved 5xx og nettverksfeil 3 nye forsøk etter 2, 4 og 8 s. 429 teller ikke som forsøk og venter til `X-RateLimit-Reset` (minst 1 s; 60 s uten lesbar verdi). All venting for én tekst er begrenset til 90 s. 402, andre 4xx og ubrukelige svar prøves ikke på nytt. Sluttstatus er `kunne_ikke_tolkes` med feiltype lagret. Se §11. «Prøv igjen»-knappen er ikke en del av dette vedtaket. | Ragnhild Sætren (verdiene er Mithad Kuduz' forslag i PR #30) |
 | AV-20 | Nøkkel til live KI for sensor (story 5.8) | Vedtatt 2026-11-23 | Sensor setter `OPENROUTER_API_KEY` i terminalen før backend startes, slik README allerede viser. Backend leser fortsatt ikke `.env`. Akseptkriteriet i story 5.8 om å kopiere `.env.example` til `.env` er rettet. Hvilken nøkkel sensor får (ÅB-8), er ikke avgjort her (§11). | Hele gruppa; Ragnhild Sætren bekreftet på vegne av gruppa |
+| AV-21 | Hvilken nøkkel sensor bruker for live KI (ÅB-8, story 5.8) | Vedtatt 2026-11-28 | Sensor bruker den felles utviklingsnøkkelen (utfall 1 i ÅB-8). Nøkkelen har en egen kredittgrense i OpenRouter. Johannes W. Gaertner eier nøkkelen. Han sender den til sensor på e-post og i direktemelding i Teams, og den står i tillegg i innleveringsteksten, aldri i repoet. Utviklingsbruken på nøkkelen stopper ved innlevering, og Johannes bytter nøkkelen etter sensur (§11). | Hele gruppa; Johannes W. Gaertner bekreftet på vegne av gruppa |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
@@ -1024,6 +1025,33 @@ om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt
 - **Ikke endret:** Problemvalideringen er ikke fullført. Behovssamtalen er et lokalt
   signal fra én person, ikke et validert behov.
 
+### 2026-11-28 – Sensor bruker utviklingsnøkkelen (AV-21, ÅB-8, story 5.8)
+
+- **Hvem:** Hele gruppa er beslutningseier (AV-16). Johannes W. Gaertner bekreftet
+  vedtaket på vegne av gruppa.
+- **Grunnlag:** Saldoen på kontoen var USD 4,8 per 2026-11-28, etter at gruppa hadde
+  brukt omtrent USD 0,2 på alt arbeidet så langt, ifølge Johannes. Robusthetstesten
+  kostet USD 0,021 for 218 Luna-kall
+  ([KI-logg](../ki-logg/2026-10-16-robusthet-luna.md)). En kjøring hos sensor gir 19
+  tolkekall ved første oppstart og omtrent ett kall per forklaring som åpnes, så
+  kreditten holder med god margin.
+- **Vurderte alternativer:** (1) den felles utviklingsnøkkelen, eller (2) en egen
+  sensornøkkel med kredittgrense (ÅB-8 i `epics.md`).
+- **Vedtak:** Utfall 1, den felles utviklingsnøkkelen:
+  - Nøkkelen har en egen kredittgrense i OpenRouter.
+  - Johannes eier nøkkelen. Han sender den til sensor på e-post og i direktemelding
+    i Teams, og den står i tillegg i innleveringsteksten.
+  - Utviklingsbruken på nøkkelen stopper ved innlevering.
+  - Johannes bytter nøkkelen etter sensur, og navnet hans står i innleveringsteksten.
+- **Endret:** ÅB-8 i `epics.md` er satt til avklart, med en merknad under story 5.8.
+  Endret er også [sjekklisten for live KI](../innlevering/sjekkliste-live-ki.md),
+  statuslinjen i `AGENTS.md` (AV-08) og 5.8-punktet i `deferred-work.md`.
+  Akseptkriteriene i 5.8 er ikke endret, fordi nøkkelen fortsatt står i
+  innleveringsteksten.
+- **Ikke endret:** De andre oppgavene for innlevering i 5.8 gjenstår: nøkkelsjekk av
+  git-historikken, test fra ren klone med nøkkelen og i demo-modus, og bytte av nøkkelen
+  etter sensur. Kredittgrensens beløp er ikke ført i repoet.
+
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
 Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med skriftlige svar fra alle fire og Kims bekreftelse på vegne av gruppen 2026-11-09. Tabellen registrerer **produktvedtak**, ikke implementasjon eller beståtte tester. Tidligere formuleringer i §3–§11 er historikk; ved motstrid om disse temaene gjelder vedtakene nedenfor. KS-02s fasit for #4127 og KS-04s avgrensede godkjenning av datadekning for #4127/#4189 består.
@@ -1062,6 +1090,6 @@ Kilde: [PRD-beslutningsgrunnlaget](prd-beslutningsgrunnlag-2026-11-07.md), med s
 ### AV-16 – Eier for åpne valg
 
 - **Mobil/nettbrett (OP-02/P-13):** AV-16 gjorde hele gruppa til beslutningseier 2026-11-13. Valget ble tatt 2026-11-14 (AV-17, §11): mobil og nettbrett er v2, og v1 skal fungere godt i smale nettleservinduer. Desktop og gjeldende tilgjengelighetskrav gjelder fortsatt. P-13s oppgavebaserte forståelsestest ble utført og lukket 2026-11-25 (§11).
-- **Sensornøkkel (ÅB-8):** Hele gruppa er beslutningseier. Hvilken OpenRouter-nøkkel sensor får, hvem som betaler og hvor mye kreditt som trengs, avgjøres før innlevering ut fra faktisk forbruk. Ingen nøkkel eller verdi skal inn i repoet.
+- **Sensornøkkel (ÅB-8):** Hele gruppa er beslutningseier. Hvilken OpenRouter-nøkkel sensor får, hvem som betaler og hvor mye kreditt som trengs, avgjøres før innlevering ut fra faktisk forbruk. Ingen nøkkel eller verdi skal inn i repoet. **Avgjort 2026-11-28 (AV-21, §11):** sensor bruker den felles utviklingsnøkkelen, som har egen kredittgrense. Johannes W. Gaertner eier den og bytter den etter sensur.
 
 **Avklart 2026-11-16 (AV-19):** P-05 vedtok avgrensede nye forsøk ved forbigående feil i preferansetolkning. Ventetrinn, antall forsøk, tidsbudsjett, startpunkt for målingen og sluttstatus er nå fastsatt i §11 (AV-19). **Fortsatt åpent:** brukerutløst «Prøv igjen». AD-7s 2/4/8 sekunder, 90 sekunder og `avveining_feilet` beskriver avveining; de overføres ikke automatisk til tolkning. FR-13s 480 minutter er en overstyrbar standard etter OP-10/AD-3. P-12B om historisk lagring av forklaring er fortsatt utenfor v1 og krever eget vedtak og story.
