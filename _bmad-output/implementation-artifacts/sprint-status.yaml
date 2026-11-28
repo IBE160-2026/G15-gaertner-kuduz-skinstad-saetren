@@ -215,7 +215,7 @@ action_items:
       Y» i spesifikasjon eller KI-logg vises med en mutasjon som gjør testen rød (som
       i 5.4 og 5.9)."
     owner: "gruppa"
-    status: open
+    status: done # 2026-11-28: Policy i AGENTS.md og persistent_facts i _bmad/custom/bmad-build.toml.
     ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
   - id: "epic-5-retro-t8-kontroll-av-epic-kontekst"
     epic: 5
@@ -223,5 +223,5 @@ action_items:
       og planverket, og forklar hvert bortfall (jf. f4733be). Kandidat til «Kjente
       fallgruver» i AGENTS.md."
     owner: "gruppa"
-    status: open
+    status: done # 2026-11-28: Kjente fallgruver i AGENTS.md og persistent_facts i _bmad/custom/bmad-build.toml.
     ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"

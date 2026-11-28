@@ -5,6 +5,8 @@ persistent_facts = [
   "file:docs/modellvalg-stories.md",
   "Når en story i docs/modellvalg-stories.md har «Sonnet, gjennomgang med Opus», start minst én av gjennomgangsagentene med model: opus. Gjelder bare Claude Code.",
   "Manuell kontroll trengs bare der automatiske tester ennå ikke dekker det aktuelle (Johannes 2026-11-14, alternativ A, OP-16). «Manual checks» i nye spesifikasjoner tar med relevante punkter fra docs/testing.md, blant annet layout ved representative smale datamaskinvinduer (AV-17), farger, fokusmarkering og ekte backend. Komponenttestene i frontend/tester/komponenter/ dekker flytene som er listet i docs/testing.md, ikke alle tilstander, knapper, ruter eller API-kall. Nye eller endrede koblinger får komponenttester; hvis det ikke lar seg gjøre i storyen, dokumenteres en målrettet manuell kontroll som åpent punkt.",
+  "Mutasjonskontroll (T7, retroen for epic 5): hver påstand i spesifikasjonen, KI-loggen eller PR-teksten om at en test viser noe, skal vises med en mutasjon. Bryt koden testen skal vokte, kjør testen og se den bli rød, tilbakestill, og noter mutasjonen og den røde meldingen ved påstanden. Lar det seg ikke gjøre, skriv hva testen faktisk kontrollerer, ikke hva den skulle bevise.",
+  "Epic-konteksten (T8, retroen for epic 5): blir epic-<N>-context.md kompilert på nytt i steg 01, diff den mot forrige versjon i git og mot planverket før den brukes eller committes. Forklar hvert bortfall av en bindende detalj, eller behold forrige versjon med tillegg. dca2c3f mistet rundt 15 bindende detaljer og ble tilbakestilt i f4733be.",
 ]
 
 activation_steps_append = [

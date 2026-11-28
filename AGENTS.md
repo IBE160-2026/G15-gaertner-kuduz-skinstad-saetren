@@ -77,6 +77,11 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   kvalitetssikret. Emnet vurderer denne dokumentasjonen.
 - En hard regel i regelmotoren er ikke ferdig før den har tester som dekker
   grensetilfellene. Testene er det sterkeste beviset på kvalitetssikring.
+- Sier en spesifikasjon, KI-logg eller PR at en test viser noe, skal det vises med en
+  mutasjon: bryt koden testen skal vokte, se testen bli rød, tilbakestill, og noter
+  mutasjonen og den røde meldingen der påstanden står. Lar det seg ikke gjøre, skriv
+  hva testen faktisk kontrollerer. PR-gjennomgangen sjekker det samme (T7 i retroen
+  for epic 5, slik 5.4 og 5.9 gjorde).
 - `bmad-build` kjøres med underagenter: én samler epic-konteksten, og egne agenter
   gjennomgår koden uten å ha sett implementeringen. Det koster mer enn å gjøre alt i
   én økt, men gir en uavhengig gjennomgang. Valgt av Kuduz 2026-10-24 før story 1.2.
@@ -241,6 +246,12 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   `npm.cmd install` og `npm.cmd run dev`. Funnet av Johannes 2026-11-07 ved den
   manuelle testen av story 1.3. Det gjelder trolig flere i gruppa. README-steg 4 sier
   det samme.
+- `bmad-build` kompilerer `epic-<N>-context.md` på nytt når en fil i planverket er
+  nyere. Den nye filen kan miste bindende detaljer: `dca2c3f` mistet rundt 15, blant
+  annet at Avveiningen ikke skal inn i grunnlagsmerket, og filen ble tilbakestilt i
+  `f4733be`. Før en ny versjon committes: diff mot forrige versjon og planverket, og
+  forklar hvert bortfall i commit-meldingen. Behold heller forrige versjon med
+  tillegg hvis bortfallene ikke har grunnlag (T8 i retroen for epic 5).
 - Kjør ikke flere frontend-testkjøringer samtidig, heller ikke fra parallelle
   underagenter. Komponenttestene starter jsdom og krever mye minne. På en maskin med
   7,7 GB RAM ga fire samtidige kjøringer tidsavbrudd på riktig kode. Derfor har
