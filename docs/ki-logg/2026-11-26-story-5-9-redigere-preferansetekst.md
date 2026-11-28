@@ -60,7 +60,7 @@ Den uavhengige gjennomgangen fant disse feilene og manglene i den genererte kode
 7. **Ventetiden var feil dokumentert, og testen bygde på en skjult margin.** «Innen 100 s» i teknisk referanse stemte ikke: svaret kan vente i høyst 100 s på låsen og deretter bruke ett tidsbudsjett (90 s) på tolkningen. Ventetiden er nå konstanten `LAASEVENT_S` i `main.py`, testen setter den direkte i stedet for å regne seg fram via `TIDSBUDSJETT_S`, og teknisk referanse oppgir begge delene.
 8. **Den manuelle sjekken manglet en sideeffekt.** CSS-regelen `.preferansecelle > .button-kompakt` endrer også avstanden over «Prøv igjen» fra story 5.1. Det står nå i den manuelle kontrollen i `docs/testing.md`.
 
-Etter rettingene bestod `tester/api/test_preferanseredigering.py` (25), ruff på de endrede backendfilene, typesjekken og komponenttestene i `kandidatflate.test.tsx` og `app.test.tsx` (45). Full kjøring gjøres av koordinatoren.
+Etter rettingene bestod `tester/api/test_preferanseredigering.py` (25), ruff på de endrede backendfilene, typesjekken og komponenttestene i `kandidatflate.test.tsx` og `app.test.tsx` (45). Koordinatoren kjørte deretter alt: 929 backendtester, frontendbygg, 52 modultester og 90 komponenttester bestod (se specens Implementation Notes).
 
 ## Rettet etter manuell test
 
@@ -80,8 +80,51 @@ Jonas etter at han har flyttet seg, og at den forsvinner ved neste handling. Tes
 rød da visningen midlertidig ble slått av. Bygg, 52 modultester og 91 komponenttester
 bestod. Retestet i nettleseren av Ragnhild: meldingen står ved Jonas.
 
+## Rettet etter PR-gjennomgang (2026-11-28)
+
+Johannes gjennomgikk PR #42 med `bmad-code-review` i Claude Code (Opus 5.5). Fire lag uten
+kjennskap til implementeringen (Blind Hunter, Edge Case Hunter, Verification Gap,
+Acceptance Auditor) ga 30 funn. Orkestratoren kontrollerte hvert funn i koden.
+Resultatet: 2 til avgjørelse, 12 rettelser, 1 utsatt og 11 avvist (Review Findings i
+spesifikasjonen). Johannes godtok de to avgjørelsene uten endring. Cellemeldingen vises
+ikke når kandidaten faller under plass 5, men statuslinjen dekker det. Promptene for
+rettingene 2026-11-26 føres ikke inn i ettertid. Promptene til gjennomgangslagene står
+i skillen (`.claude/skills/bmad-code-review/`).
+
+Prompten for rettingene, Johannes’ instruksjon etter oppsummeringen: «A1, B2. Gjør nødvendige forbedringer direkte på branchen. Vurder om det er best å endre lekkasjetesten eller dokumentasjonen for testen, deretter utfør endringene direkte på branchen. Når endringer er gjort kommenter det på PR'en»
+
+Hva som var galt, og hva som ble rettet:
+
+1. **Lekkasjetesten var svekket mer enn punkt 4 under «Valg» sier.**
+   - Feilen: `test_vakter_lekker_ikke_i_svaret` kontrollerte bare `kandidater` og `utelukkelser`. `status` og alle nye toppnivåfelt slapp unna ordkontrollen. Påstanden «Kontrollen gjelder fortsatt alle andre felt» stemte derfor ikke.
+   - Valget: testen er rettet, ikke dokumentasjonen. Målet i dokumentasjonen var riktig, mens koden gjorde mindre. Nå kontrolleres hele svaret, og bare `preferansetekst` er tatt ut.
+   - Verifisering med mutasjon: et nytt toppnivåfelt med «vakter 2026-09» i `KandidaterUt` gjør den nye testen rød, mens versjonen fra PR-en forble grønn.
+2. **Cellemeldingen kom tilbake etter Avbryt.**
+   - Feilen: `onApne` nullstilte ikke `radmelding`. Endre → Avbryt viste «Lagret og tolket nå.» igjen, og meldingen ble stående på Jonas mens Mette ble redigert.
+   - Rettingen: `apneRedigering` nullstiller meldingen før feltet åpnes.
+3. **Testen «forsvinner ved neste handling» kunne ikke oppdage feilen i punkt 2.**
+   - Feilen: testen åpnet Jonas' eget felt, og det skjuler meldingen uansett.
+   - Rettingen: testen åpner nå Mettes felt og trykker Avbryt.
+   - Verifisering med mutasjon: uten `setRadmelding(null)` i `apneRedigering` blir testen rød.
+4. **AK1 var ikke testet for kandidaten som blir på plass 1 med åpent panel.**
+   - Rettingen: ny komponenttest der den åpne avveiningen for det nye merket hentes, og den gamle teksten ikke vises.
+   - Verifisering med mutasjon: fjernes både merket i radnøkkelen og `merke` i avhengighetene til `Avveiningspanel`, blir testen rød. Hver av dem alene er nok til at panelet henter på nytt.
+5. **Datafeil-grenen i `gyldig_kandidat` var ikke testet.**
+   - Rettingen: ny backendtest med #4261 satt til ubemannet (P-08). Den gir 404 og endrer ingenting.
+   - Verifisering med mutasjon: uten `not isinstance(vurdering, Datafeil)` blir testen rød, fordi ruten svarer 500.
+6. **Dokumentasjon som var mangelfull eller gått ut på dato:**
+   - `teknisk-referanse.md` sier nå når `venter` tolkes: ved neste oppstart.
+   - README sier at endrede tekster blir stående til testdataene lastes på nytt.
+   - Raden for 5.9 i `testing.md` har fått de testede flytene.
+   - Det utdaterte eksemplet i `modellvalg-stories.md` er fjernet.
+   - 5.9-statusen i vurderingsmatrisen er oppdatert.
+   - Fullkjøringen etter rettingene står i avsnittet over.
+   - Tellingen i Ragnhilds sesjonslogg er rettet: 9 avviste funn, ikke 8.
+
+Kvalitetssikring: `pytest` i `backend/` ga 930 bestått (929 + den nye Datafeil-testen), inkludert arkitektur og ruff. Ruff-testen feilet først fordi den lokale venv-en manglet `ruff` fra PR #40, og ble grønn etter `pip install -r requirements-dev.txt`. `npm run build` var grønt, og `npm run test` ga 52 modultester og 92 komponenttester bestått. Hver mutasjon over er tilbakestilt, og `git diff` er kontrollert.
+
 ## Gjenstår
 
-- PR og gjennomgang av et annet gruppemedlem.
+- Godkjenning og merge av PR #42. Ved merge settes 5.9 til `done` i `sprint-status.yaml` med PR-kommentar.
 - Manuelt (OP-16): farger og fokusramme, og «endret grunnlag» med godkjenningen åpen i en annen fane, helst på Windows. Demo-modus og tastaturflyten er testet av Ragnhild 2026-11-26 (se `docs/testing.md`).
 - Låsen deles fortsatt ikke mellom prosesser (v1 har én worker). Versjonen gjør at en tekstendring oppdages også mellom prosesser, men to prosesser kan tolke samme versjon samtidig.

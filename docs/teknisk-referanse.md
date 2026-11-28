@@ -104,7 +104,7 @@ skrivetransaksjon (`BEGIN IMMEDIATE`). Deretter tolkes den med samme lås og reg
 | `tolket` / `feilet` | Teksten er lagret og tolket, eller kunne ikke tolkes (50 poeng, «Prøv igjen» vises) |
 | `uendret` | Samme tekst som den lagrede. Ingenting er endret. |
 | `ingen` | Tom tekst. Lagret som «Ingen registrert». |
-| `venter` | Lagret, men ikke tolket: backend kjører uten KI, eller låsen ble ikke ledig innen `LAASEVENT_S` (100 s) fordi et pågående forsøk for samme ansatt ikke var ferdig |
+| `venter` | Lagret, men ikke tolket: backend kjører uten KI, eller låsen ble ikke ledig innen `LAASEVENT_S` (100 s) fordi et pågående forsøk for samme ansatt ikke var ferdig. Teksten tolkes ved neste oppstart av backend med KI; «Prøv igjen» gjelder bare `feilet`. |
 | `endret` | En nyere endring kom imellom. Svaret for denne teksten er forkastet. |
 
 Hver betinget lagring av en tolkning, også ved oppstart og «Prøv igjen», sammenligner

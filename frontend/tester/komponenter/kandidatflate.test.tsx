@@ -746,9 +746,36 @@ describe("Endre preferansetekst (story 5.9, P-10B)", () => {
     const radmelding = await screen.findByText(rp.rad.tolket);
     expect(radmelding.closest("tr")?.textContent).toContain(jonas.navn);
     expect(navn()).toEqual([mette.navn, jonas.navn]);
-    // Meldingen forsvinner når en ny handling starter.
-    await åpne(bruker);
+    // Meldingen forsvinner når en ny handling starter, også når handlingen gjelder en
+    // annen rad, og den kommer ikke tilbake etter Avbryt (PR-gjennomgang 2026-11-28).
+    await bruker.click(screen.getByRole("button", { name: rp.endreEtikett(mette.navn) }));
     expect(screen.queryByText(rp.rad.tolket)).toBeNull();
+    await bruker.click(screen.getByRole("button", { name: rp.avbrytEtikett(mette.navn) }));
+    expect(screen.queryByText(rp.rad.tolket)).toBeNull();
+  });
+
+  test("kandidaten blir på plass 1: det åpne panelet henter avveiningen for det nye merket", async () => {
+    const nyttMerke = "c".repeat(64);
+    const ny = { ...jonas, grunnlagsmerke: nyttMerke, preferansetekst: "Ny tekst.",
+      tolkestatus: "tolket" as const, preferansekategori: "onsker_flere", preferansepoeng: 100 };
+    const fetch = falskFetch({
+      [VAKT_URL]: ok(VAKT_4127),
+      [KANDIDATER_URL]: [ok({ ...TO_GYLDIGE, kandidater: [jonas, mette] }),
+        ok({ ...TO_GYLDIGE, kandidater: [ny, mette] })],
+      [avveiningUrl]: [avveining(jonas.grunnlagsmerke, "Gammel avveining."), avveining(nyttMerke, "Ny avveining.")],
+      [PUT]: ok({ status: "tolket" }),
+    });
+    const bruker = userEvent.setup();
+    render(<Kandidatflate vaktnummer={4127} onVelg={vi.fn()} />);
+    expect(await screen.findByText("Gammel avveining.")).toBeTruthy();
+    const felt = await åpne(bruker);
+    await bruker.clear(felt);
+    await bruker.type(felt, "Ny tekst.");
+    await bruker.click(screen.getByRole("button", { name: rp.lagreEtikett(jonas.navn) }));
+    expect(await screen.findByText("Ny avveining.")).toBeTruthy();
+    expect(navn()).toEqual([jonas.navn, mette.navn]);
+    expect(screen.queryByText("Gammel avveining.")).toBeNull();
+    expect(kallTil(fetch, avveiningUrl)).toBe(2);
   });
 
   test("statuslinjen får fokus mens teksten lagres", async () => {

@@ -132,7 +132,8 @@ Testdataene har to vakter som mangler bemanning: #4127 med fire gyldige kandidat
    rangert, og for hver kandidat ser du kompetansenivå, kostnad, timer i uka, ulempe
    og preferanse. Høy belastning og overtid er merket. «Endre» i preferansecellen lar deg
    skrive en ny preferansetekst. Den tolkes, og rangeringen oppdateres (i demo-modus
-   tolkes bare de forhåndsdefinerte tekstene).
+   tolkes bare de forhåndsdefinerte tekstene). Endringen lagres i databasen og blir
+   stående til du laster testdataene på nytt (steg 2 i «Kom i gang»).
 3. **Begrunnelse.** «Vis begrunnelse» åpner KI-forklaringen av avveiningen for
    kandidaten. Tallene i forklaringen er kontrollert mot regelmotorens tall før den
    vises. Feiler KI-en, vises nøkkeltallene med en reservetekst, og du kan fortsatt

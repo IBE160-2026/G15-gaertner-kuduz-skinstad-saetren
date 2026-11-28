@@ -188,6 +188,26 @@ def test_annen_brukers_vakt_gir_404_og_endrer_ingenting(engine: Engine) -> None:
     assert ki.tekster == []
 
 
+def test_vakt_med_datafeil_gir_404_og_endrer_ingenting(engine: Engine) -> None:
+    # P-08: #4261 ligger ved datagrensen, så vurderingen gir Datafeil og ingen er gyldige.
+    # Dekker Datafeil-grenen i `gyldig_kandidat` (PR-gjennomgang 2026-11-28).
+    with lag_sessionmaker(engine).begin() as session:
+        vakt = session.scalar(select(VaktRad).where(VaktRad.vaktnummer == 4261))
+        assert vakt is not None and vakt.tildelt_ansatt_id is not None
+        tildelt = vakt.tildelt_ansatt_id
+        vakt.satt_opp_ansatt_id, vakt.tildelt_ansatt_id, vakt.mangler_bemanning = tildelt, None, True
+    ki = FasitKi()
+    klient = app_klient(engine, ki)
+    assert klient.get("/api/vakter/4261/kandidater").json()["status"] == "datafeil"
+    før = øyeblikksbilde(engine)
+    for ansatt_id in (JONAS, tildelt):
+        svar = klient.put(f"/api/vakter/4261/kandidater/{ansatt_id}/preferanse", json={"tekst": B})
+        assert svar.status_code == 404, ansatt_id
+        assert feilsvar("ikke_funnet")(svar.json())
+    assert øyeblikksbilde(engine) == før
+    assert ki.tekster == []
+
+
 def test_uten_ki_lagres_teksten_og_venter(engine: Engine) -> None:
     klient = app_klient(engine)
     svar = klient.put(STI, json={"tekst": B})

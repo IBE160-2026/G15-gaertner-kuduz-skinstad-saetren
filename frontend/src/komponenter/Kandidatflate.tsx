@@ -176,6 +176,13 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
     }
   }
 
+  // Å åpne et felt er en ny handling: meldingen fra forrige lagring fjernes, så den
+  // ikke kommer tilbake etter Avbryt eller blir stående mens en annen rad redigeres.
+  function apneRedigering(id: number) {
+    setRadmelding(null);
+    setRedigerId(id);
+  }
+
   // Story 5.9: samme mønster som «Prøv igjen». Statuslinjen får fokus, og et sent svar
   // etter vaktbytte eller ny sesjon vises ikke. 422 beholder tekstfeltet åpent.
   async function lagrePreferanseHandling(id: number, tekst: string) {
@@ -279,7 +286,7 @@ export function Kandidatliste({ vaktnummer, onVelg, demomodus = false }: { vaktn
       <p role="status" tabIndex={-1} ref={statusRef}>{melding}</p>
       <Rangeringstabell
         vaktnummer={vaktnummer} kandidater={tilstand.kandidater} onVelg={onVelg} paagar={paagar} onProv={provPreferanseHandling}
-        redigering={{ id: redigerId, demomodus, melding: radmelding, onApne: setRedigerId, onLukk: () => setRedigerId(null), onLagre: lagrePreferanseHandling }}
+        redigering={{ id: redigerId, demomodus, melding: radmelding, onApne: apneRedigering, onLukk: () => setRedigerId(null), onLagre: lagrePreferanseHandling }}
       />
       <EkskludertBoks oppsummering={tilstand.utelukkelser} />
     </section>

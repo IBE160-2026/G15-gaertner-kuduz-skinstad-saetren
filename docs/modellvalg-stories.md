@@ -47,7 +47,7 @@ av Johannes 2026-11-10. Ikke drøftet i gruppa ennå — er dere uenige, endre t
 | 5.9 Redigere preferansetekst (P-10B) | Opus | Skjemaendring, versjon i betinget lagring og grunnlagsmerke (P-09), samtidighet med låsen fra 5.1 |
 | Loggoppsett for backend (feilretting) | Sonnet | Avgrenset konfigurasjon, feil synes i terminalen |
 
-Står en story ikke i tabellen, for eksempel P-10B, bruk regelen over og før den inn her.
+Står en story ikke i tabellen, bruk regelen over og før den inn her.
 
 ## Ellers
 

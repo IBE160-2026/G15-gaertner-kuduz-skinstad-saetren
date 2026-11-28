@@ -86,6 +86,39 @@ context:
 - Gitt en åpen kandidatflate, når turnusansvarlig lagrer ny tekst, så viser tabellen ny status og ny rangering uten at siden lastes på nytt, og den gamle avveiningen hentes ikke for det nye merket.
 - Gitt en eldre database uten `preferanseversjon`, når backend starter, så sier README hva som skal gjøres (slett databasefilen og last testdata).
 
+### Review Findings
+
+PR-gjennomgang 2026-11-28 (Johannes, `bmad-code-review`): fire lag på Opus (Blind Hunter, Edge Case Hunter, Verification Gap, Acceptance Auditor) mot `git diff main...02fbd9c`. 30 funn, kontrollert mot koden og gruppert: 2 decision-needed, 12 patch, 1 defer, 11 avvist. Johannes valgte å godta begge avgjørelsene (A1, B2); 11 rettelser er gjort på branchen, og sprintstatusen settes ved merge.
+
+- [x] [Review][Decision] Cellemeldingen vises ikke når kandidaten faller under plass 5 — `radmelding` vises bare i synlige rader. Faller den endrede kandidaten ut av de fem øverste mens «Vis alle» er av, ser brukeren bare statuslinjen, akkurat i tilfellet cellemeldingen ble laget for (manuell test 2026-11-26). Valg: godta (statuslinjen sier at rangeringen er oppdatert), vis alle automatisk, eller nevn ny plass i statuslinjen. (low; Edge Case Hunter) — **Avgjort: godtatt** (Johannes, A1): statuslinjen sier at rangeringen er oppdatert.
+- [x] [Review][Decision] KI-loggen mangler promptene for rettingene — «Oppgave og prompt» har bare implementeringsagentens instruksjon. Instruksjonen som ga de ni rettelsene etter gjennomgangen, og den som ga `radmelding` etter manuell test, mangler (Policy: «oppgaven, prompten …»). Bare Ragnhild vet ordlyden. (low; Blind Hunter) — **Avgjort: godtatt** (Johannes, B2): implementeringsprompten og rettelsene er beskrevet, som i KI-loggen for 5.8.
+- [x] [Review][Patch] Lekkasjetesten ser bort fra alle toppnivåfelt utenom `kandidater` og `utelukkelser` [backend/tester/api/test_kandidater.py:177] — `status` og ethvert framtidig felt er utenfor ordkontrollen, og KI-loggens «Kontrollen gjelder fortsatt alle andre felt» stemmer ikke. Fjern bare `preferansetekst` fra en kopi av hele `svar`. (medium; Blind Hunter)
+- [x] [Review][Patch] Cellemeldingen kommer tilbake etter Avbryt [frontend/src/komponenter/Kandidatflate.tsx:282] — `onApne` og `onLukk` nullstiller ikke `radmelding`, så «Lagret og tolket nå.» vises igjen etter Endre → Avbryt, og blir stående på Jonas mens Mette redigeres. (low; Edge Case Hunter, Verification Gap)
+- [x] [Review][Patch] Testen «meldingen forsvinner ved neste handling» fanger ikke at den ikke nullstilles [frontend/tester/komponenter/kandidatflate.test.tsx:749] — den åpner Jonas' eget felt, som skjuler meldingen via `redigering.id !== r.id`. Begge `setRadmelding(null)` kan slettes uten at testen blir rød. (low; Verification Gap)
+- [x] [Review][Patch] AK1 er bare testet når kandidaten mister plass 1 [frontend/tester/komponenter/kandidatflate.test.tsx:697] — Jonas flyttes til plass 2 med uåpnet panel, så «gammel avveining hentes ikke» følger av seg selv. Mangler: kandidaten blir på plass 1 med åpent panel og nytt merke. (low; Acceptance Auditor)
+- [x] [Review][Patch] Ingen test av PUT på en vakt med Datafeil [backend/adaptere/api/main.py:707] — `not isinstance(vurdering, Datafeil)` i `gyldig_kandidat` er ikke dekket; uten den blir 404 til 500 (#4261–#4265). (low; Blind Hunter)
+- [x] [Review][Patch] Dokumentasjonen sier ikke når en `venter`-tekst tolkes [docs/teknisk-referanse.md:107] — det skjer først ved neste oppstart, fordi «Prøv igjen» bare godtar `feilet`. README sier heller ikke at endrede tekster blir stående til testdataene lastes på nytt (steg 2). (low; Blind Hunter)
+- [x] [Review][Patch] Raden for 5.9 i testing.md mangler flyter som er testet [docs/testing.md:158] — «ett felt om gangen», 404 («ikke lenger gyldig») og demomerknaden via `<App />`. (low; Blind Hunter)
+- [x] [Review][Patch] modellvalg-stories.md bruker P-10B som eksempel på en story som ikke står i tabellen [docs/modellvalg-stories.md:50] — rad 5.9 (P-10B) står nå i tabellen. (low; Blind Hunter)
+- [x] [Review][Patch] KI-loggen oppgir ikke full testkjøring etter rettingene [docs/ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md:63] — «Full kjøring gjøres av koordinatoren» uten tall; 929 / 90 står bare i specen og sesjonsloggen. (low; Blind Hunter)
+- [x] [Review][Patch] Vurderingsmatrisen sier at nettleserkontrollen gjenstår [docs/emne/vurderingsmatrise.md] — live- og demotest i nettleseren ble gjort 2026-11-26, og PR #42 finnes. Oppdateres ved merge. (low; Blind Hunter)
+- [ ] [Review][Patch] Sprintstatus må settes til `done` ved merge [_bmad-output/implementation-artifacts/sprint-status.yaml:80] — AGENTS.md (i PR-en) sier 5.1–5.9 er ferdige, mens raden står på `review` uten PR-kommentar som de andre i epic 5. (low; Blind Hunter, Acceptance Auditor)
+- [x] [Review][Patch] Sesjonsloggen teller 8 avviste funn; Review Triage Log har 9 [.logs/ragnhild/969-2026-11-26-09-03-19-story-5-9-redigere-preferansetekst.md:20] — 9 + 9 + 1 = 19. (low; Blind Hunter)
+- [x] [Review][Defer] Ingen frontendtest av 401 på de beskyttede preferansekallene [frontend/src/api.ts:249] — deferred: samme hull finnes for `provPreferanse` fra 5.1; lukkes best med én `<App />`-test for begge.
+
+**Avvist:**
+- `false` — Sesjonsloggens åpne punkter motsier `issues.md` (Blind): `issues.md` er den autoritative listen og er oppdatert; sesjonsloggen er et øyeblikksbilde.
+- `false` — No-op-sammenligningen feiler for lagret tekst med blanke i kantene (Edge): alle 15 tekster i testdataene er trimmet, og `lagre_tekst` normaliserer.
+- `false` — `ki.tolk` kan kaste etter at teksten er lagret (Edge): adapterne returnerer `Tolkefeil`; ingen vist vei kaster, og mønsteret er det samme som i `prov_preferanse`.
+- `false` — Endringen av `lagre_tekst`-signaturen avviker fra Code Map (Acceptance): rettingen ville være å endre specen.
+- `low` — PUT tolker på nytt uten å sjekke at tolkningen venter (Acceptance): krever en PUT før oppstartstråden leser listen, og etter omstart må brukeren logge inn på nytt; i praksis uoppnåelig.
+- `low` — Grensen på 500 tegn sjekkes før trimming (Acceptance): avvist før som #13; feltet har `maxLength={500}`.
+- `low` — 500/nettverksfeil etter lagret tekst gir feilflate (Edge): som #16; «Prøv igjen» på feilflaten viser den lagrede teksten.
+- `low` — To faner kan overskrive hverandres tekst (Edge): én turnusansvarlig; retting krever nytt felt i API-et.
+- `low` — Tekst av bare usynlige tegn lagres (Edge): lite sannsynlig, og retting krever ny vakt.
+- `low` — Ingen test for database fra mellom 5.1 og 5.9 (Blind): AK2 gjelder README, som dekker det (`README.md`, «Feilsøking»).
+- `low` — Ny flate for prompt-injeksjon (Blind): teksten kommer fra innlogget turnusansvarlig, og svaret er bundet til kategoriene i `PREFERANSEPOENG` via strengt skjema og validering.
+
 ## Implementation Notes
 
 2026-11-26: Backend, frontend og dokumentasjon implementert. 929 backendtester (inkludert arkitektur og ruff), frontendbygg, 52 modultester og 87 komponenttester bestod. Mutasjoner og valg som spesifikasjonen ikke avgjorde, står i [KI-loggen](../../docs/ki-logg/2026-11-26-story-5-9-redigere-preferansetekst.md). API-et er prøvd mot ekte backend i demo-modus med `curl`. Nettleserkontrollen (OP-16) og live mot Luna gjenstår.

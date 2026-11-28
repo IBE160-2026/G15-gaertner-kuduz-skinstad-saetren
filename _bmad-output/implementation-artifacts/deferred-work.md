@@ -155,3 +155,9 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
   summary: "[LØST 2026-11-26, PR #42] AGENTS.md sa fortsatt at 5.8 og 5.9 står i backlog, og nevner bare story 5.1 som grunn til å slette en eldre database (5.9 la til `preferanseversjon`)."
   evidence: Funnet av Blind Hunter i gjennomgangen av story 5.9 2026-11-26. Løst 2026-11-26: Ragnhild valgte å rette AGENTS.md i PR #42, så statusen blir riktig når PR-en merges.
+
+## Deferred from: code review of spec-5-9-redigere-preferansetekst (2026-11-28)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-5-9-redigere-preferansetekst.md`
+  summary: "Ingen frontendtest viser at 401 på PUT eller POST `/api/vakter/{nr}/kandidater/{id}/preferanse` gir innloggingen med «sesjonen er utløpt». Fjernes `true` (beskyttet) i `lagrePreferanse` eller `provPreferanse` i `api.ts`, blir ingen test rød."
+  evidence: Funnet av Verification Gap og Blind Hunter i PR-gjennomgangen av story 5.9 2026-11-28 (Johannes). Hullet fantes for `provPreferanse` fra story 5.1; én `<App />`-test bør dekke begge kallene.

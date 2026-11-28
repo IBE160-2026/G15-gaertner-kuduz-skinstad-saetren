@@ -173,9 +173,11 @@ def test_vakter_lekker_ikke_i_svaret(klient: TestClient, nummer: int) -> None:
     for k in svar["kandidater"]:
         assert set(k) == RANGERT_FELT
     # Preferanseteksten er fritekst fra den ansatte (story 5.9) og kan inneholde
-    # «vakter»; den er ingen vaktdata og holdes utenfor ordkontrollen.
-    tekst = str([{f: v for f, v in k.items() if f != "preferansetekst"} for k in svar["kandidater"]]
-                + [svar["utelukkelser"]])
+    # «vakter»; den er ingen vaktdata og holdes utenfor ordkontrollen. Alt annet i
+    # svaret kontrolleres, også toppnivåfelt som kommer til senere.
+    uten_fritekst = {**svar, "kandidater": [
+        {f: v for f, v in k.items() if f != "preferansetekst"} for k in svar["kandidater"]]}
+    tekst = str(uten_fritekst)
     for ord_ in ("vakter", "start", "slutt", "tildelt", "kolliderer", "2026-09"):
         assert ord_ not in tekst
 
