@@ -1219,6 +1219,8 @@ So that jeg kan vurdere Turnushjelperen uten gruppens tjenester (NFR14, SM-9).
 
 > **ÅB-8 avgjort 2026-11-28 (AV-21):** Sensor får den felles utviklingsnøkkelen, som har egen kredittgrense. Den står i innleveringsteksten og sendes i tillegg på e-post og i Teams. Johannes W. Gaertner eier nøkkelen og bytter den etter sensur. Kriteriene under er ikke endret. Oppgavene for innlevering og sensur gjenstår ([sjekklisten](../../docs/innlevering/sjekkliste-live-ki.md)).
 
+> **Delvis levert, delt ut etter AV-22 (2026-11-28):** Storyen står som `done`, men kriteriene om nøkkelleveranse, nøkkelsjekk av git-historikken, test fra ren klone og bytte av nøkkelen etter sensur er ikke oppfylt. De er delt ut til `deferred-work.md` fordi de hører til innleveringen og sensuren.
+
 As a sensor,
 I want en nøkkel med kreditt og en README som forklarer hvordan jeg bruker den,
 So that jeg kan se live KI-forklaringer uten egen konto og uten å spørre gruppa.

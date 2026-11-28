@@ -67,6 +67,9 @@ i roten, PRD, UX, arkitektur og epics under `_bmad-output/planning-artifacts/`.
   ettertid. Det står ikke i diffen og kan ikke rekonstrueres senere.
 - Måtte generert kode rettes, si i brødteksten hva som var galt. Det er
   dokumentasjonen av kvalitetssikring emnet ber om.
+- En story settes til `done` med akseptkriterier delt ut til `deferred-work.md` bare
+  når kriteriene hører til innleveringen eller sensuren. Kan de oppfylles før
+  fristen, står storyen `in-progress` (AV-22).
 - Uansett vei skal kvalitetssikringen kunne spores: i branch er det PR-gjennomgangen,
   rett på `main` er det commit-meldingen og, for KI-generert kode, KI-loggen.
 - Kode generert av KI logges i `docs/ki-logg/<dato>-<tema>.md`: oppgaven, prompten,

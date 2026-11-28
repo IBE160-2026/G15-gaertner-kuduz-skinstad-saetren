@@ -207,7 +207,7 @@ action_items:
       test fra ren klone med sensornøkkel og demo, bytt nøkkelen etter sensur. Avklar
       regelen for delvis levering (5.1-presedensen mot «Del opp» i 5.8)."
     owner: "gruppa"
-    status: open
+    status: open # ÅB-8 avgjort (AV-21) og regelen for delvis levering vedtatt (AV-22) 2026-11-28. Leveranse, nøkkelsjekk, ren klone og bytte etter sensur gjenstår.
     ref: "_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md"
   - id: "epic-5-retro-t7-mutasjonskontroll-av-testpastander"
     epic: 5

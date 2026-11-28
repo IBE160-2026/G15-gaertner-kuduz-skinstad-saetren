@@ -6,7 +6,7 @@
 > **Deltakere:** Johannes W. Gaertner, Mithad Kuduz, Kim O. Skinstad og Ragnhild Sætren  
 > **Beslutningsgrunnlag:** [IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf](IBE160_Beslutningsgrunnlag_PR4_Story12_OPPDATERT.pdf) (oppdatert 2026-10-31, 6 sider)  
 > **Dokumentstatus:** Beslutningsreferat; vedtatte beslutninger og åpne oppfølgingspunkter  
-> **Sist oppdatert:** 2026-11-28 (AV-21: sensor bruker utviklingsnøkkelen, ÅB-8 avgjort, ført i §2, §11 og §13); 2026-11-25 (P-13 lukket etter ekstern forståelsestest og gruppas designvurdering, ført i §11 og §12); 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
+> **Sist oppdatert:** 2026-11-28 (AV-22: regel for delvis levering av en story, T6 i retroen for epic 5, ført i §2 og §11); 2026-11-28 (AV-21: sensor bruker utviklingsnøkkelen, ÅB-8 avgjort, ført i §2, §11 og §13); 2026-11-25 (P-13 lukket etter ekstern forståelsestest og gruppas designvurdering, ført i §11 og §12); 2026-11-19 (story 5.1 ferdigstilt med «Prøv igjen», PR #33, OP-03 løst, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (story 5.1 står som `in-progress`, «Prøv igjen» utsatt, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-19: feilregler for preferansetolkning, ført i §2, §11 og §13); 2026-11-16 (story 4.4 ferdig, statuslinjen i AGENTS.md, ført i §11); 2026-11-16 (AV-18: porttyper som frosne dataklasser, ført i §2 og §11); 2026-11-15 (lik totalscore med eksakt `Fraction` og statuslinjen i AGENTS.md etter story 4.4, ført i §11); 2026-11-15 (faktarettelser i AGENTS.md, ført i §11); 2026-11-14 (AV-17: mobil og nettbrett er v2, smale nettleservinduer gjelder i v1; OP-16: komponenttester for frontend og manuell kontroll etter alternativ A, ført i §2 og §11); 2026-11-13 (AV-15/AV-16: målbare suksessmål og beslutningseiere ført i §13); 2026-11-12 (OP-05: test på macOS og fra ren klone ført i §11; K-01 løst og OP-09 bortfalt, ført i §11); 2026-11-11 (avgrensning og akseptmål for forståelsestesten i P-13 ført i §12; 2026-11-10: P-01–P-13 og E-01/E-02 fra beslutningsgrunnlaget 2026-11-07 ført i §12, dokumentvedtak skilt fra implementasjon og utestående kontroll)
 > **Plassering:** `docs/beslutninger/avklaringspunkter.md`
 
 ## 1. Formål, status og leseveiledning
@@ -81,6 +81,7 @@ Dette dokumentet gjengir beslutningene fra gruppemøtet 2. november 2026 om PR #
 | AV-19 | Feilregler for preferansetolkning (P-05/OP-03) | Vedtatt 2026-11-16 (Ragnhild Sætren, på vegne av gruppa) | Ved 5xx og nettverksfeil 3 nye forsøk etter 2, 4 og 8 s. 429 teller ikke som forsøk og venter til `X-RateLimit-Reset` (minst 1 s; 60 s uten lesbar verdi). All venting for én tekst er begrenset til 90 s. 402, andre 4xx og ubrukelige svar prøves ikke på nytt. Sluttstatus er `kunne_ikke_tolkes` med feiltype lagret. Se §11. «Prøv igjen»-knappen er ikke en del av dette vedtaket. | Ragnhild Sætren (verdiene er Mithad Kuduz' forslag i PR #30) |
 | AV-20 | Nøkkel til live KI for sensor (story 5.8) | Vedtatt 2026-11-23 | Sensor setter `OPENROUTER_API_KEY` i terminalen før backend startes, slik README allerede viser. Backend leser fortsatt ikke `.env`. Akseptkriteriet i story 5.8 om å kopiere `.env.example` til `.env` er rettet. Hvilken nøkkel sensor får (ÅB-8), er ikke avgjort her (§11). | Hele gruppa; Ragnhild Sætren bekreftet på vegne av gruppa |
 | AV-21 | Hvilken nøkkel sensor bruker for live KI (ÅB-8, story 5.8) | Vedtatt 2026-11-28 | Sensor bruker den felles utviklingsnøkkelen (utfall 1 i ÅB-8). Nøkkelen har en egen kredittgrense i OpenRouter. Johannes W. Gaertner eier nøkkelen. Han sender den til sensor på e-post og i direktemelding i Teams, og den står i tillegg i innleveringsteksten, aldri i repoet. Utviklingsbruken på nøkkelen stopper ved innlevering, og Johannes bytter nøkkelen etter sensur (§11). | Hele gruppa; Johannes W. Gaertner bekreftet på vegne av gruppa |
+| AV-22 | Delvis levering av en story (T6 og S1 i retroen for epic 5) | Vedtatt 2026-11-28 | En story kan settes til `done` med akseptkriterier delt ut til `deferred-work.md` («Del opp») bare når kriteriene ikke kan oppfylles før innleveringsfristen, fordi de hører til innleveringen eller sensuren. Kriteriene endres ikke. Kriterier som kan oppfylles før fristen, holder storyen `in-progress`, som story 5.1. Story 5.8 blir stående `done` (§11). | Hele gruppa; Johannes W. Gaertner bekreftet på vegne av gruppa |
 | OP-10 | Story 1.3 | Vedtatt 2026-11-06; de fire spørsmålene avklart i spesifikasjonen 2026-11-06 | Johannes W. Gaertner tar Story 1.3. Vite-proxy, personlig eller tilfeldig testpassord, PyJWT 2.15.1 og `hashlib.scrypt`, tabellen `bruker`. JWT-nøkkelen lages tilfeldig ved oppstart, avvik fra epics (§11). | Johannes W. Gaertner |
 | OP-11 | Story 1.5 | Meldt 2026-11-08 | Mithad Kuduz tar Story 1.5, Vaktoversikt med «Krever handling». Implementeringen starter etter at PR #8 (Story 1.4) er merget (§11). | Mithad Kuduz |
 | OP-12 | Story 2.3 | Meldt 2026-11-11 | Mithad Kuduz tar Story 2.3, 11-timersregelen (daglig hvile). Implementeringen starter etter at PR #14 (Story 2.2) er merget, og etter at gruppa har avklart om overlappende vakter også skal telle under 11-timersregelen (§11). | Mithad Kuduz |
@@ -1051,6 +1052,34 @@ om fire nye individuelle stemmer. Versjonslåser, 5.9 og sensoropplegg ble holdt
 - **Ikke endret:** De andre oppgavene for innlevering i 5.8 gjenstår: nøkkelsjekk av
   git-historikken, test fra ren klone med nøkkelen og i demo-modus, og bytte av nøkkelen
   etter sensur. Kredittgrensens beløp er ikke ført i repoet.
+
+### 2026-11-28 – Regel for delvis levering av en story (AV-22, T6 i retroen for epic 5)
+
+- **Hvem:** Hele gruppa. Johannes W. Gaertner bekreftet vedtaket på vegne av gruppa.
+- **Grunnlag:** Retroen for epic 5 (P3, T6 og spørsmål S1 i
+  [retro-dokumentet](../../_bmad-output/implementation-artifacts/epic-5-retro-2026-11-28.md))
+  fant to ulike regler for samme situasjon. Story 5.1 ble stående `in-progress` til
+  «Prøv igjen» var levert. Story 5.8 ble satt til `done` med fire kriterier delt ut
+  til `deferred-work.md` («Del opp», Ragnhild Sætren 2026-11-23).
+- **Vurderte alternativer:** (1) 5.1-presedensen for alle: 5.8 tilbake til
+  `in-progress` til innleveringsoppgavene er gjort, eller (2) «Del opp» er lov når
+  kriteriene ikke kan oppfylles før fristen.
+- **Vedtak:** Utfall 2:
+  - En story kan settes til `done` med kriterier delt ut til `deferred-work.md` bare
+    når kriteriene hører til innleveringen eller sensuren og derfor ikke kan
+    oppfylles før fristen.
+  - Hvert utdelt kriterium står i `deferred-work.md` med ansvarlig og status, og
+    storyen i `epics.md` har en merknad om hvilke kriterier som er delt ut.
+  - Akseptkriteriene endres ikke, og de utdelte kriteriene regnes ikke som oppfylt.
+    Retroen og vurderingsmatrisen fører dem som åpne punkter.
+  - Kriterier som kan oppfylles før fristen, holder storyen `in-progress`, som story
+    5.1. Der gjelder presedensen fortsatt.
+- **Endret:** Story 5.8 blir stående `done`, og merknaden under 5.8 i `epics.md`
+  viser til AV-22. S1 i retroen er besvart. Regelen står kort i Policy i `AGENTS.md`.
+  T6 i `sprint-status.yaml` står fortsatt som åpen, fordi innleveringsoppgavene
+  gjenstår.
+- **Ikke endret:** Akseptkriteriene i 5.8 og oppgavene i
+  [sjekklisten for live KI](../innlevering/sjekkliste-live-ki.md).
 
 ## 12. PRD-vedtak 2026-11-09 og status ved dokumentsamordning
 
